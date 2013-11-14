@@ -1,0 +1,33 @@
+def getVersionFromGit = {
+	->
+	def standard = new ByteArrayOutputStream()
+	def error = new ByteArrayOutputStream()
+	exec {
+		commandLine 'git', 'describe', '--tags'
+		standardOutput = standard
+		errorOutput = error
+		ignoreExitValue = true
+	}
+
+	if (error.toString().isEmpty())
+		return standard.toString().trim()
+	else
+		return 'SNAPSHOT'
+}
+
+allprojects { version = getVersionFromGit() }
+
+subprojects {
+	apply plugin: 'java'
+
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+
+	sourceSets{
+		api
+		impl
+		test
+	}
+}
+
+repositories { mavenCentral() }

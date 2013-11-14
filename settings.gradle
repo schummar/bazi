@@ -1,0 +1,8 @@
+include 'bazi.biprop',
+	'bazi.bmm',
+	'bazi.bmm_pow',
+	'bazi.cl',
+	'bazi.common',
+	'bazi.gui',
+	'bazi.monoprop',
+	'bazi.separate'
