@@ -1,0 +1,138 @@
+<pre>
+==================================================
+- database updated                           [new]
+==================================================
+Version: 2013.10, released 2013.10.21
+- fixed problem in command line mode     [patched]
+- fixed problem with ties                [patched]
+- Base+Min..Max(pow) columns are now sorted in
+  ascending order                            [new]
+- better display of divisor intervals without
+  upper bound                            [patched]
+- fixed quotient column in biproportional methods
+                                         [patched]
+==================================================
+Version: 2013.06, released 2013.06.06
+- improved handling of min/max when ties
+  occur                                      [new]
+- VPV now correctly works with quota
+  methods                                [patched]
+- numbers in the 'absolute majority' notice are
+  rounded properly                       [patched]
+- districtoption 'separate' is now read when
+  starting BAZI via command line         [patched]
+- minor bug fixes                        [patched]
+==================================================
+Version: 2013.03, released 2013.03.07
+- reintroduced Min/Max for quota methods     [new]
+- the original values given for Dir are displayed
+  in the results just like it already had been
+  when using Min/Max                         [new]
+- fixed some problems with the display of the
+  split value and a few other minor bugs [patched]
+==================================================
+Version: 2013.02, released 2013.02.18
+- database -> Deutschland -> BWG 2013        [new]
+- fixed a bug when using 3rdCol and
+  base+min..max                          [patched]
+==================================================
+Version: 2012.12, released 2012.12.13
+- minor bug fixes                        [patched]
+==================================================
+Version: 2012.11, released 2012.11.15
+- when using Min+x% or VPV option the house size
+  is automatically incremented until all minimum
+  restrictions cease to be binding           [new]
+- problems with quota variants fixed     [patched]
+- vote totals of subapportionments are now
+  correctly calculated                   [patched]
+- minor rounding problems fixed          [patched]
+- minor errors in tool tips fixed        [patched] 
+==================================================
+Version: 2012.10, released 2012.10.10
+- show split value instead of quota          [new]
+- 3rd column option Min+x%                   [new]
+- Option menue extended to set Min+x%        [new]
+- 3rd column option VPV                      [new]
+- improvement of choice of divisor when minimum
+  restriction ceases to be binding           [new]
+==================================================
+Version: 2012.07, released 2012.07.14
+- error handling concerning minTied, maxTied,
+  minUntied and maxUntied improved       [patched]
+- technical adjustments to work with
+  RBazi-package made                     [patched]
+- residual fits renamed                  [patched]
+- Droop Quote 3 modified                 [patched]
+- minor changes                          [patched]
+- minor errors in database fixed         [patched] 
+==================================================
+Version: 2011.12, released 2011.12.02
+- when a minimum or maximum contrains holds,
+  they are marked with a '•'                 [new]
+- hotkeys for main functions available       [new]
+- multiple housesizes forbidden when using 
+  districts                                  [new]
+- database -> Deutschland -> Bundestag ->
+  Direktmandatsorientierte Proporzanpassung  [new]
+- minor fixes                            [patched]
+==================================================
+Version: 2011.08, released 2011.08.29
+- base+min..max: parameters can no longer be
+  entered in the third column but via
+  Options > Base+Min..Max(Pwr)           [patched]
+- base+min..max(pwr): Same as base+min..max,
+  except when it would allocate to the largest
+  participant more than "Max" seats.
+  Then base+prop(Pwr) calculates an exponent E
+  such that the largest participant gets exactly
+  Max seats when the inputs p_i are power-weighted
+  into p_i^E.                                [new]
+- former labels "Diff" and "Discrep." are now
+  "Legal" and "Legal-[method name]"      [patched]
+- when option of type "Min", "Max", "Min..Max",
+  "base+min..max", "base+min..max(pwr)" is used
+  quota methods cannot be selected       [patched]
+==================================================
+Version: 2011.08, released 2011.08.29
+- base+min..max: parameters can no longer be
+  entered in the third column but via
+  Options > Base+Min..Max(Pwr)           [patched]
+- base+min..max(pwr): Same as base+min..max,
+  except when it would allocate to the largest
+  participant more than "Max" seats.
+  Then base+prop(Pwr) calculates an exponent E
+  such that the largest participant gets exactly
+  Max seats when the inputs p_i are power-weighted
+  into p_i^E.                                [new]
+- former labels "Diff" and "Discrep." are now
+  "Legal" and "Legal-[method name]"      [patched]
+- when option of type "Min", "Max", "Min..Max",
+  "base+min..max", "base+min..max(pwr)" is used
+  quota methods cannot be selected       [patched]
+==================================================
+Version: 2011.05, released 2011.05.27
+- Data base > Sverige > Riksdagsval          [new]
+==================================================
+Version: 2011.04, released 2011.04.13
+- Input panel, third column, header choices  [new]
+  Method:  base+prop
+  Label:   b+Min..Max
+  Example: 5+1..91, meaning:
+  Each party gets 5 base seats, plus the remaining
+  seats (= house size minus 5 seats per party)
+  are apportioned observing a minimum of 1 seat
+  and a maximum of 91 seats.
+  (See <a href='www.uni-augsburg.de/pukelsheim/2011f.pdf'>www.uni-augsburg.de/pukelsheim/2011f.pdf</a>)
+- Input panel, third column, header choices:
+  Quota methods ignore any option of type
+  "Min", "Max", "Min..Max"               [patched]
+- Method panel: DivUp renamed DivUpw         [new]
+- Help > Update check                        [new]
+- Data base > Schweiz > Thurgau              [new]
+- Data base > Europe > EP Composition        [new]
+==================================================
+Previous versions: not documented
+First version: 2000
+================================================== 
+</pre>

@@ -1,0 +1,47 @@
+BAZI - Berechnung von Anzahlen mit Zuteilungsmethoden im Internet
+=====================================================================
+(Version offline.@version@)
+Internetseite: http://www.math.uni-augsburg.de/stochastik/bazi/
+
+
+
+Voraussetzungen
+---------------
+Um BAZI benutzen zu koennen, muessen Sie einen Java-Interpreter installiert haben.
+Dieser muss Java SE und die Java Foundation Classes (JFC) unterstuetzen.
+Falls auf Ihrem System kein Java-Interpreter installiert ist, koennen Sie sich unter 
+    http://java.com/ -> "Kostenloser Java-Download"
+das Programm 
+    Java SE Runtime Environment, Version 6 (JRE) 
+downloaden und installieren.
+
+BAZI laeuft mit Java Version 1.6 oder hoeher.
+Es ist allerdings ratsam, die aktuelle Version 1.7 zu nutzen.
+
+Ausfuehrung
+-----------
+
+Windows:
+Starten Sie BAZI durch einen Doppelklick auf die Datei bazi.bat
+Alternativ koennen Sie eine Verknuepfung fuer .jar-Dateien einrichten, so dass BAZI durch
+Doppelklick auf bazi.jar gestartet wird:
+Waehlen Sie im Explorer im Menue "Extras" den Punkt "Orderoptionen". Dort markieren Sie im
+Reiter "Dateitypen" die Zeile "JAR...". Nach Anklicken des Buttons "Erweitert" oeffnet sich
+der der Dialog "Dateityp bearbeiten". Hier markieren Sie die Aktion "open" und klicken auf 
+"Bearbeiten...". Im sich nun oeffnenden Dialog geben Sie als "Anwendung fuer diesen Vorgang"
+folgende Zeile ein (ersetzen Sie $JAVAHOME durch das Verzeichnis Ihrer Java-Installation):
+"$JAVAHOME\bin\javaw.exe" -jar "%1" %*
+
+Linux:
+Starten Sie BAZI in der Konsole mit
+# ./bazi.sh
+Eventuell muss diese Datei noch ausfehrbar gemacht werden, dies geschieht mit:
+# chmod u+x bazi.sh
+
+Auf anderen Betriebssystem geben Sie die Befehlszeile
+    java -jar bazi.jar
+ein.
+
+
+
+Copyright 2000-2013 by Augsburg University

@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.*
+
 def getVersionFromGit = {
 	->
 	def standard = new ByteArrayOutputStream()
@@ -24,9 +26,20 @@ subprojects {
 	targetCompatibility = 1.7
 
 	sourceSets{
-		api
-		impl
-		test
+		main{
+			java{
+				srcDirs = [
+					'src/main/java/api',
+					'src/main/java/impl'
+				]
+			}
+		}
+	}
+
+	processResources {
+		filter ReplaceTokens, tokens: [
+			"version": getVersion()
+		]
 	}
 }
 
