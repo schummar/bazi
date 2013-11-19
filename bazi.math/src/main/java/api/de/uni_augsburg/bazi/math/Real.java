@@ -37,9 +37,9 @@ public interface Real
 	public boolean equals(String that);
 	public boolean equals(long that);
 
-	public int compare(Real that);
-	public int compare(String that);
-	public int compare(long that);
+	public int compareTo(Real that);
+	public int compareTo(String that);
+	public int compareTo(long that);
 
 	public Real neg();
 	public Real inv();

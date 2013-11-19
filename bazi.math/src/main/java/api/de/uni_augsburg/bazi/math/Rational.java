@@ -10,8 +10,8 @@ public interface Rational extends Real
 	@Override public Rational add(long that);
 
 	public Rational sub(Rational that);
-	@Override public Real sub(String that);
-	@Override public Real sub(long that);
+	@Override public Rational sub(String that);
+	@Override public Rational sub(long that);
 
 	public Rational mul(Rational that);
 	@Override public Rational mul(String that);
@@ -36,9 +36,9 @@ public interface Rational extends Real
 	@Override public boolean equals(String that);
 	@Override public boolean equals(long that);
 
-	public int compare(Rational that);
-	@Override public int compare(String that);
-	@Override public int compare(long that);
+	public int compareTo(Rational that);
+	@Override public int compareTo(String that);
+	@Override public int compareTo(long that);
 
 	@Override public Rational neg();
 	@Override public Rational inv();

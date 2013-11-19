@@ -5,11 +5,27 @@ import java.math.BigInteger;
 
 class BRational implements Rational
 {
+	private static BigRational unpack(Rational that)
+	{
+		BigInteger n = that.getNumerator().getValue();
+		BigInteger d = that.getDenominator().getValue();
+		return new BigRational(n, d);
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
 	private final BigRational value;
+
+	// //////////////////////////////////////////////////////////////////////////
 
 	public BRational(BigRational value)
 	{
 		this.value = value;
+	}
+
+	public BRational(long l)
+	{
+		value = new BigRational(l);
 	}
 
 	public BRational(Rational q)
@@ -22,19 +38,16 @@ class BRational implements Rational
 		value = new BigRational(s);
 	}
 
-	public BRational(long l)
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational add(long that)
 	{
-		value = new BigRational(l);
+		return add(new BRational(that));
 	}
 
-	@Override public Rational getLo()
+	@Override public Rational add(Rational that)
 	{
-		return this;
-	}
-
-	@Override public Rational getHi()
-	{
-		return this;
+		return new BRational(value.add(unpack(that)));
 	}
 
 	@Override public Real add(Real that)
@@ -42,217 +55,263 @@ class BRational implements Rational
 		return new BReal(this).add(that);
 	}
 
-	@Override public Int getNumerator()
+	@Override public Rational add(String that)
 	{
-		return new BInt(value.getNumerator());
+		return add(new BRational(that));
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public int compareTo(long that)
+	{
+		return compareTo(new BRational(that));
+	}
+
+	@Override public int compareTo(Rational that)
+	{
+		return value.compareTo(unpack(that));
+	}
+
+	@Override public int compareTo(Real that)
+	{
+		return new BReal(this).compareTo(that);
+	}
+
+	@Override public int compareTo(String that)
+	{
+		return compareTo(new BRational(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational div(long that)
+	{
+		return div(new BRational(that));
+	}
+
+	@Override public Rational div(Rational that)
+	{
+		return mul(that.inv());
+	}
+
+	@Override public Real div(Real that)
+	{
+		return new BReal(this).div(that);
+	}
+
+	@Override public Rational div(String that)
+	{
+		return div(new BRational(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public boolean equals(long that)
+	{
+		return equals(new BRational(that));
+	}
+
+	@Override public boolean equals(Rational that)
+	{
+		return compareTo(that) == 0;
+	}
+
+	@Override public boolean equals(Real that)
+	{
+		return new BReal(this).equals(that);
+	}
+
+	@Override public boolean equals(String that)
+	{
+		return equals(new BRational(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
 
 	@Override public Int getDenominator()
 	{
 		return new BInt(value.getDenominator());
 	}
 
-	@Override public Rational add(Rational that)
+	@Override public Rational getHi()
 	{
-		BigInteger n = that.getNumerator().getValue();
-		BigInteger d = that.getDenominator().getValue();
-		return new BRational(value.add(new BigRational(n, d)));
+		return this;
 	}
 
-	@Override public Rational add(String that)
+	@Override public Rational getLo()
 	{
-		return add(new BRational(that));
+		return this;
 	}
 
-	@Override public Rational add(long that)
+	@Override public Int getNumerator()
 	{
-		return add(new BRational(that));
+		return new BInt(value.getNumerator());
 	}
 
-	@Override public Real sub(Real that)
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational inv()
 	{
-		throw new RuntimeException("'Real.sub' not yet implemented");
+		if (value.sign() == 0)
+			return BMath.INF;
+
+		return new BRational(value.inv());
 	}
 
-	@Override public Real mul(Real that)
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational max(long that)
 	{
-		throw new RuntimeException("'Real.mul' not yet implemented");
+		return max(new BRational(that));
 	}
 
-	@Override public Real div(Real that)
+	@Override public Rational max(Rational that)
 	{
-		throw new RuntimeException("'Real.div' not yet implemented");
-	}
-
-	@Override public Real pow(Real that)
-	{
-		throw new RuntimeException("'Real.pow' not yet implemented");
-	}
-
-	@Override public Real pow(String that)
-	{
-		throw new RuntimeException("'Real.pow' not yet implemented");
-	}
-
-	@Override public Real min(Real that)
-	{
-		throw new RuntimeException("'Real.min' not yet implemented");
+		return compareTo(that) >= 0 ? this : that;
 	}
 
 	@Override public Real max(Real that)
 	{
-		throw new RuntimeException("'Real.max' not yet implemented");
+		return new BReal(this).max(that);
 	}
 
-	@Override public boolean equals(Real that)
+	@Override public Rational max(String that)
 	{
-		throw new RuntimeException("'Real.equals' not yet implemented");
+		return max(new BRational(that));
 	}
 
-	@Override public int compare(Real that)
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational min(long that)
 	{
-		throw new RuntimeException("'Real.compare' not yet implemented");
+		return min(new BRational(that));
 	}
 
-	@Override public String toString(int precision)
+	@Override public Rational min(Rational that)
 	{
-		return value.toStringDot(precision);
+		return compareTo(that) <= 0 ? this : that;
 	}
+
+	@Override public Real min(Real that)
+	{
+		return new BReal(this).min(that);
+	}
+
+	@Override public Rational min(String that)
+	{
+		return min(new BRational(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational mul(long that)
+	{
+		return mul(new BRational(that));
+	}
+
+	@Override public Rational mul(Rational that)
+	{
+		return new BRational(value.mul(unpack(that)));
+	}
+
+	@Override public Real mul(Real that)
+	{
+		return new BReal(this).mul(that);
+	}
+
+	@Override public Rational mul(String that)
+	{
+		return mul(new BRational(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational neg()
+	{
+		return new BRational(value.neg());
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational pow(Int that)
+	{
+		if (sgn() == 0)
+			return this;
+		if (that.sgn() == 0)
+			return BInt.ONE;
+
+		boolean inv = that.sgn() < 0;
+		if (inv)
+			that = that.neg();
+		BigRational pow = BigRational.ONE;
+
+		if (that.compareTo(Integer.MAX_VALUE) > 0)
+		{
+			BigRational maxpow = value.pow(Integer.MAX_VALUE);
+			while (that.compareTo(Integer.MAX_VALUE) > 0)
+			{
+				that = that.sub(Integer.MAX_VALUE);
+				pow = pow.mul(maxpow);
+			}
+		}
+		pow = pow.mul(value.pow(that.getValue().intValue()));
+
+		return new BRational(inv ? pow.inv() : pow);
+	}
+
+	@Override public Rational pow(long that)
+	{
+		return pow(new BInt(that));
+	}
+
+	@Override public Real pow(Real that)
+	{
+		return new BReal(this).pow(that);
+	}
+
+	@Override public Real pow(String that)
+	{
+		return new BReal(this).pow(that);
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public int sgn()
+	{
+		return compareTo(0);
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational sub(long that)
+	{
+		return sub(new BRational(that));
+	}
+
+	@Override public Rational sub(Rational that)
+	{
+		return add(that.neg());
+	}
+
+	@Override public Real sub(Real that)
+	{
+		return new BReal(this).sub(that);
+	}
+
+	@Override public Rational sub(String that)
+	{
+		return sub(new BRational(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
 
 	@Override public String toString()
 	{
 		return toString(16);
 	}
 
-	@Override public Rational sub(Rational that)
+	@Override public String toString(int precision)
 	{
-		throw new RuntimeException("'Rational.sub' not yet implemented");
+		return value.toStringDot(precision);
 	}
-
-	@Override public Real sub(String that)
-	{
-		throw new RuntimeException("'Rational.sub' not yet implemented");
-	}
-
-	@Override public Real sub(long that)
-	{
-		throw new RuntimeException("'Rational.sub' not yet implemented");
-	}
-
-	@Override public Rational mul(Rational that)
-	{
-		throw new RuntimeException("'Rational.mul' not yet implemented");
-	}
-
-	@Override public Rational mul(String that)
-	{
-		throw new RuntimeException("'Rational.mul' not yet implemented");
-	}
-
-	@Override public Rational mul(long that)
-	{
-		throw new RuntimeException("'Rational.mul' not yet implemented");
-	}
-
-	@Override public Rational div(Rational that)
-	{
-		throw new RuntimeException("'Rational.div' not yet implemented");
-	}
-
-	@Override public Rational div(String that)
-	{
-		throw new RuntimeException("'Rational.div' not yet implemented");
-	}
-
-	@Override public Rational div(long that)
-	{
-		throw new RuntimeException("'Rational.div' not yet implemented");
-	}
-
-	@Override public Rational pow(Int that)
-	{
-		throw new RuntimeException("'Rational.pow' not yet implemented");
-	}
-
-	@Override public Rational pow(long that)
-	{
-		throw new RuntimeException("'Rational.pow' not yet implemented");
-	}
-
-	@Override public Rational min(Rational that)
-	{
-		throw new RuntimeException("'Rational.min' not yet implemented");
-	}
-
-	@Override public Rational min(String that)
-	{
-		throw new RuntimeException("'Rational.min' not yet implemented");
-	}
-
-	@Override public Rational min(long that)
-	{
-		throw new RuntimeException("'Rational.min' not yet implemented");
-	}
-
-	@Override public Rational max(Rational that)
-	{
-		throw new RuntimeException("'Rational.max' not yet implemented");
-	}
-
-	@Override public Rational max(String that)
-	{
-		throw new RuntimeException("'Rational.max' not yet implemented");
-	}
-
-	@Override public Rational max(long that)
-	{
-		throw new RuntimeException("'Rational.max' not yet implemented");
-	}
-
-	@Override public boolean equals(Rational that)
-	{
-		throw new RuntimeException("'Rational.equals' not yet implemented");
-	}
-
-	@Override public boolean equals(String that)
-	{
-		throw new RuntimeException("'Rational.equals' not yet implemented");
-	}
-
-	@Override public boolean equals(long that)
-	{
-		throw new RuntimeException("'Rational.equals' not yet implemented");
-	}
-
-	@Override public int compare(Rational that)
-	{
-		throw new RuntimeException("'Rational.compare' not yet implemented");
-	}
-
-	@Override public int compare(String that)
-	{
-		throw new RuntimeException("'Rational.compare' not yet implemented");
-	}
-
-	@Override public int compare(long that)
-	{
-		throw new RuntimeException("'Rational.compare' not yet implemented");
-	}
-
-	@Override public Rational neg()
-	{
-		throw new RuntimeException("'Rational.neg' not yet implemented");
-	}
-
-	@Override public Rational inv()
-	{
-		throw new RuntimeException("'Rational.inv' not yet implemented");
-	}
-
-	@Override public int sgn()
-	{
-		throw new RuntimeException("'Rational.sgn' not yet implemented");
-	}
-
-
 }

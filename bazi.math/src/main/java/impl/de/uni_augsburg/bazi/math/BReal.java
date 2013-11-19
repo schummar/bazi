@@ -7,6 +7,11 @@ class BReal implements Real
 
 	// //////////////////////////////////////////////////////////////////////////
 
+	public BReal(long l)
+	{
+		lo = hi = new BRational(l);
+	}
+
 	public BReal(Rational lo, Rational hi)
 	{
 		this.lo = lo;
@@ -24,24 +29,12 @@ class BReal implements Real
 		lo = hi = new BRational(s);
 	}
 
-	public BReal(long l)
-	{
-		lo = hi = new BRational(l);
-	}
-
 	// //////////////////////////////////////////////////////////////////////////
 
-	@Override public Rational getLo()
+	@Override public Real add(long that)
 	{
-		return lo;
+		return add(new BReal(that));
 	}
-
-	@Override public Rational getHi()
-	{
-		return hi;
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
 
 	@Override public Real add(Real that)
 	{
@@ -53,52 +46,33 @@ class BReal implements Real
 		return add(new BReal(that));
 	}
 
-	@Override public Real add(long that)
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public int compareTo(long that)
 	{
-		return add(new BReal(that));
+		return compareTo(new BReal(that));
+	}
+
+	@Override public int compareTo(Real that)
+	{
+		if (hi.compareTo(that.getLo()) < 0)
+			return -1;
+		if (lo.compareTo(that.getHi()) > 0)
+			return 1;
+		return 0;
+	}
+
+	@Override public int compareTo(String that)
+	{
+		return compareTo(new BReal(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
 
-	@Override public Real sub(Real that)
+	@Override public Real div(long that)
 	{
-		return new BReal(lo.sub(that.getLo()), hi.sub(that.getHi()));
+		return div(new BReal(that));
 	}
-
-	@Override public Real sub(String that)
-	{
-		return sub(new BReal(that));
-	}
-
-	@Override public Real sub(long that)
-	{
-		return sub(new BReal(that));
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-
-	@Override public Real mul(Real that)
-	{
-		Rational[] qs = {
-				lo.mul(that.getLo()),
-				lo.mul(that.getHi()),
-				hi.mul(that.getLo()),
-				hi.mul(that.getHi())
-		};
-		return new BReal(BMath.min(qs), BMath.max(qs));
-	}
-
-	@Override public Real mul(String that)
-	{
-		return mul(new BReal(that));
-	}
-
-	@Override public Real mul(long that)
-	{
-		return mul(new BReal(that));
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
 
 	@Override public Real div(Real that)
 	{
@@ -116,12 +90,113 @@ class BReal implements Real
 		return div(new BReal(that));
 	}
 
-	@Override public Real div(long that)
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public boolean equals(long that)
 	{
-		return div(new BReal(that));
+		return equals(new BReal(that));
+	}
+
+	@Override public boolean equals(Real that)
+	{
+		return compareTo(that) == 0;
+	}
+
+	@Override public boolean equals(String that)
+	{
+		return equals(new BReal(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational getHi()
+	{
+		return hi;
+	}
+
+	@Override public Rational getLo()
+	{
+		return lo;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Real inv()
+	{
+		Rational[] qs = { lo.inv(), hi.inv() };
+		return new BReal(BMath.min(qs), BMath.max(qs));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Real max(long that)
+	{
+		return max(new BReal(that));
+	}
+
+	@Override public Real max(Real that)
+	{
+		return new BReal(lo.max(that.getLo()), hi.max(that.getHi()));
+	}
+
+	@Override public Real max(String that)
+	{
+		return max(new BReal(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Real min(long that)
+	{
+		return min(new BReal(that));
+	}
+
+	@Override public Real min(Real that)
+	{
+		return new BReal(lo.min(that.getLo()), hi.min(that.getHi()));
+	}
+
+	@Override public Real min(String that)
+	{
+		return min(new BReal(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Real mul(long that)
+	{
+		return mul(new BReal(that));
+	}
+
+	@Override public Real mul(Real that)
+	{
+		Rational[] qs = {
+				lo.mul(that.getLo()),
+				lo.mul(that.getHi()),
+				hi.mul(that.getLo()),
+				hi.mul(that.getHi())
+		};
+		return new BReal(BMath.min(qs), BMath.max(qs));
+	}
+
+	@Override public Real mul(String that)
+	{
+		return mul(new BReal(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Real neg()
+	{
+		return new BReal(hi.neg(), lo.neg());
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Real pow(long that)
+	{
+		throw new RuntimeException("'BReal.pow' not yet implemented");
+	}
 
 	@Override public Real pow(Real that)
 	{
@@ -133,105 +208,39 @@ class BReal implements Real
 		throw new RuntimeException("'BReal.pow' not yet implemented");
 	}
 
-	@Override public Real pow(long that)
-	{
-		throw new RuntimeException("'BReal.pow' not yet implemented");
-	}
-
 	// //////////////////////////////////////////////////////////////////////////
-
-	@Override public Real min(Real that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	@Override public Real min(String that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	@Override public Real min(long that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-
-	@Override public Real max(Real that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	};
-
-	@Override public Real max(String that)
-	{
-		throw new RuntimeException("'BReal.max' not yet implemented");
-	}
-
-	@Override public Real max(long that)
-	{
-		throw new RuntimeException("'BReal.max' not yet implemented");
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-
-	@Override public boolean equals(Real that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	@Override public boolean equals(String that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	@Override public boolean equals(long that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-
-	@Override public int compare(Real that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	@Override public int compare(String that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	@Override public int compare(long that)
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-
-	@Override public Real neg()
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
-
-	@Override public Real inv()
-	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
-	}
 
 	@Override public int sgn()
 	{
-		throw new RuntimeException("'BReal.min' not yet implemented");
+		return compareTo(0);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
 
-	@Override public String toString(int precision)
+	@Override public Real sub(long that)
 	{
-		return String.format("[%s ; %s]", lo, hi);
+		return sub(new BReal(that));
 	}
+
+	@Override public Real sub(Real that)
+	{
+		return new BReal(lo.sub(that.getLo()), hi.sub(that.getHi()));
+	}
+
+	@Override public Real sub(String that)
+	{
+		return sub(new BReal(that));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
 
 	@Override public String toString()
 	{
 		return toString(16);
+	}
+
+	@Override public String toString(int precision)
+	{
+		return String.format("[%s ; %s]", lo, hi);
 	}
 }
