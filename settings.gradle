@@ -4,5 +4,6 @@ include 'bazi.biprop',
 	'bazi.cl',
 	'bazi.common',
 	'bazi.gui',
+	'bazi.math',
 	'bazi.monoprop',
 	'bazi.separate'
