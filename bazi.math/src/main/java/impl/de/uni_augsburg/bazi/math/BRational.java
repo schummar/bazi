@@ -62,6 +62,13 @@ class BRational implements Rational
 
 	// //////////////////////////////////////////////////////////////////////////
 
+	@Override public Int ceil()
+	{
+		return new BInt(value.ceil().getNumerator());
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
 	@Override public int compareTo(long that)
 	{
 		return compareTo(new BRational(that));
@@ -125,6 +132,20 @@ class BRational implements Rational
 	{
 		return equals(new BRational(that));
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Int floor()
+	{
+		return new BInt(value.floor().getNumerator());
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational frac()
+	{
+		return sub(floor());
+	};
 
 	// //////////////////////////////////////////////////////////////////////////
 
@@ -238,7 +259,7 @@ class BRational implements Rational
 		if (sgn() == 0)
 			return this;
 		if (that.sgn() == 0)
-			return BInt.ONE;
+			return BMath.ONE;
 
 		boolean inv = that.sgn() < 0;
 		if (inv)
@@ -273,6 +294,14 @@ class BRational implements Rational
 	{
 		return new BReal(this).pow(that);
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Int round()
+	{
+		return new BInt(value.round().getNumerator());
+	}
+
 
 	// //////////////////////////////////////////////////////////////////////////
 

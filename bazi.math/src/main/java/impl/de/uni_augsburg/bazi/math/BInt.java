@@ -2,9 +2,10 @@ package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
 
+import de.uni_augsburg.bazi.common.Resources;
+
 class BInt implements Int
 {
-	public static final Int ONE = new BInt(1);
 
 	// //////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +54,13 @@ class BInt implements Int
 	{
 		return new BRational(this).add(that);
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Int ceil()
+	{
+		return this;
+	};
 
 	// //////////////////////////////////////////////////////////////////////////
 
@@ -132,9 +140,23 @@ class BInt implements Int
 
 	// //////////////////////////////////////////////////////////////////////////
 
+	@Override public Int floor()
+	{
+		return this;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Rational frac()
+	{
+		return BMath.ZERO;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
 	@Override public Int getDenominator()
 	{
-		return ONE;
+		return BMath.ONE;
 	}
 
 	@Override public Rational getHi()
@@ -155,6 +177,15 @@ class BInt implements Int
 	@Override public BigInteger getValue()
 	{
 		return value;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public int intValue()
+	{
+		if (compareTo(Integer.MAX_VALUE) > 0)
+			throw new RuntimeException(Resources.get("int.intvalue"));
+		return value.intValue();
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -272,6 +303,13 @@ class BInt implements Int
 	@Override public Real pow(String that)
 	{
 		return new BReal(this).pow(that);
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Int round()
+	{
+		return this;
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

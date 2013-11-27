@@ -1,6 +1,6 @@
 package de.uni_augsburg.bazi.math;
 
-public interface Real
+public interface Real extends Comparable<Real>
 {
 	public Rational getLo();
 	public Rational getHi();
@@ -37,7 +37,7 @@ public interface Real
 	public boolean equals(String that);
 	public boolean equals(long that);
 
-	public int compareTo(Real that);
+	@Override public int compareTo(Real that);
 	public int compareTo(String that);
 	public int compareTo(long that);
 
@@ -45,14 +45,11 @@ public interface Real
 	public Real inv();
 	public int sgn();
 
+	public Int ceil();
+	public Int floor();
+	public Int round();
+	public Real frac();
+
 
 	public String toString(int precision);
-
-	public static class Generator
-	{
-		public static Real get(String s)
-		{
-			return new BReal(s);
-		}
-	}
 }

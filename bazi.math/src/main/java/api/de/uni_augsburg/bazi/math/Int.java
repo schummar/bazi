@@ -31,4 +31,8 @@ public interface Int extends Rational
 
 	@Override public Int neg();
 	@Override public int sgn();
+
+	@Override public Rational frac();
+
+	public int intValue();
 }

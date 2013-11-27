@@ -44,12 +44,5 @@ public interface Rational extends Real
 	@Override public Rational inv();
 	@Override public int sgn();
 
-
-	static class Generator
-	{
-		static Rational get(String s)
-		{
-			return new BRational(s);
-		}
-	}
+	@Override public Rational frac();
 }
