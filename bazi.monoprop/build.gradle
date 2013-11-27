@@ -1,0 +1,6 @@
+dependencies {
+	compile project(':bazi.common')
+	compile project(':bazi.math')
+	compile 'com.google.guava:guava:15.0'
+	testCompile 'com.google.code.gson:gson:2.2.4'
+}
