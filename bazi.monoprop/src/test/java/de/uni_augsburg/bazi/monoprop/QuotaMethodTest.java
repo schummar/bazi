@@ -1,74 +1,23 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 
-import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.common.Json;
 
 public class QuotaMethodTest
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
-		final int seats = 1;
-		final int[] votes = { 1, 1 };
-		final String[] names = { "A", "B" };
+		String json = Resources.toString(Resources.getResource(QuotaMethodTest.class, "test_input.bazi"), Charsets.UTF_8);
+		System.out.println("Warnings: " + Json.checkJson(json, DummyInput.class));
 
-		MonopropMethod.Input input = new MonopropMethod.Input()
-		{
-			@Override public Int getSeats()
-			{
-				return BMath.value(seats);
-			}
-
-			@Override public ImmutableList<? extends Party> getParties()
-			{
-				List<Party> parties = new ArrayList<>();
-				for (int i = 0; i < votes.length; i++)
-				{
-					final int j = i;
-					parties.add(new Party()
-					{
-						@Override public Rational getVotes()
-						{
-							return BMath.value(votes[j]);
-						}
-
-						@Override public String getName()
-						{
-							return names[j];
-						}
-
-						@Override public Int getMin()
-						{
-							return BMath.ZERO;
-						}
-
-						@Override public Int getMax()
-						{
-							return BMath.ZERO;
-						}
-
-						@Override public Int getDir()
-						{
-							return BMath.ZERO;
-						}
-					});
-				}
-				return ImmutableList.copyOf(parties);
-			}
-		};
-
-		QuotaMethod qm = new QuotaMethod(QuotaFunctions.HARE, ResidualHandlers.GREATEST_REMINDERS);
+		MonopropMethod.Input input = Json.fromJson(json, DummyInput.class);
+		MonopropMethod qm = new QuotaMethod(QuotaFunctions.HARE, ResidualHandlers.GREATEST_REMINDERS);
 		MonopropMethod.Output output = qm.calculate(input);
 
-
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		System.out.println(gson.toJson(output));
+		System.out.println(Json.toJson(output));
 	}
 }

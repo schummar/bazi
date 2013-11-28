@@ -152,8 +152,7 @@ public class Json
 
 	public static <T> ImmutableList<String> checkJson(String json, Class<T> type)
 	{
-		return checkJson(json, new TypeToken<Class<T>>()
-		{});
+		return checkJson(json, TypeToken.get(type));
 	}
 
 	public static <T> ImmutableList<String> checkJson(String json, TypeToken<T> type)

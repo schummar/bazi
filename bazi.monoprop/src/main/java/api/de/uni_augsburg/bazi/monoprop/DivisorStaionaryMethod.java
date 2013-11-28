@@ -9,9 +9,9 @@ import de.uni_augsburg.bazi.math.Rational;
 public class DivisorStaionaryMethod implements MonopropMethod
 {
 	public static final DivisorStaionaryMethod
-			DIVSTD = new DivisorStaionaryMethod(BMath.value("0.5")),
-			DIVDWN = new DivisorStaionaryMethod(BMath.value(1)),
-			DIVUPW = new DivisorStaionaryMethod(BMath.value(0));
+			DIVSTD = new DivisorStaionaryMethod(BMath.rationalOf("0.5")),
+			DIVDWN = new DivisorStaionaryMethod(BMath.intOf(1)),
+			DIVUPW = new DivisorStaionaryMethod(BMath.intOf(0));
 
 	public DivisorStaionaryMethod(Rational parameter)
 	{}

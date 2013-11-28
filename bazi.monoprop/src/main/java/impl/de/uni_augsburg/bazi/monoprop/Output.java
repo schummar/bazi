@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
-import de.uni_augsburg.bazi.monoprop.MonopropMethod;
-import de.uni_augsburg.bazi.monoprop.Uniqueness;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod.Input;
 
 class Output implements MonopropMethod.Output
@@ -31,14 +29,14 @@ class Output implements MonopropMethod.Output
 
 	public static class Party implements MonopropMethod.Output.Party
 	{
-		private final Input.Party iParty;
+		private final Input.Party inputParty;
 		private final Rational quotient;
 		private final Int seats;
 		private final Uniqueness uniqueness;
 
-		public Party(de.uni_augsburg.bazi.monoprop.MonopropMethod.Input.Party iParty, Rational quotient, Int seats, Uniqueness uniqueness)
+		public Party(MonopropMethod.Input.Party inputParty, Rational quotient, Int seats, Uniqueness uniqueness)
 		{
-			this.iParty = iParty;
+			this.inputParty = inputParty;
 			this.quotient = quotient;
 			this.seats = seats;
 			this.uniqueness = uniqueness;
@@ -46,23 +44,23 @@ class Output implements MonopropMethod.Output
 
 		@Override public String getName()
 		{
-			return iParty.getName();
+			return inputParty.getName();
 		}
 		@Override public Rational getVotes()
 		{
-			return iParty.getVotes();
+			return inputParty.getVotes();
 		}
 		@Override public Int getMin()
 		{
-			return iParty.getMin();
+			return inputParty.getMin();
 		}
 		@Override public Int getMax()
 		{
-			return iParty.getMax();
+			return inputParty.getMax();
 		}
 		@Override public Int getDir()
 		{
-			return iParty.getDir();
+			return inputParty.getDir();
 		}
 		@Override public Rational getQuotient()
 		{

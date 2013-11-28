@@ -11,9 +11,9 @@ public class BMath
 		return new BInt(l);
 	}
 
-	public static Rational intOf(String s)
+	public static Int intOf(String s)
 	{
-		return new BRational(s);
+		return new BInt(s);
 	}
 
 	public static Rational rationalOf(String s)
