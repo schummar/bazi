@@ -5,6 +5,7 @@ public class BMath
 	public static final Int ZERO = new BInt(0), ONE = new BInt(1), MINUS_ONE = new BInt(-1);
 	public static final Int INF = new BInt(0), INFN = new BInt(0), NAN = new BInt(0);
 	public static final int DEFAULT_PRECISION = 16;
+	public static final Rational HALF = new BRational("0.5");
 
 	public static Int intOf(long l)
 	{

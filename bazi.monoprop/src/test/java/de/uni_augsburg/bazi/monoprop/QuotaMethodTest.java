@@ -15,7 +15,7 @@ public class QuotaMethodTest
 		System.out.println("Warnings: " + Json.checkJson(json, DummyInput.class));
 
 		MonopropMethod.Input input = Json.fromJson(json, DummyInput.class);
-		MonopropMethod qm = new QuotaMethod(QuotaFunctions.HARE, ResidualHandlers.GREATEST_REMINDERS);
+		MonopropMethod qm = new QuotaMethod(QuotaFunction.HARE, ResidualHandler.GREATEST_REMINDERS);
 		MonopropMethod.Output output = qm.calculate(input);
 
 		System.out.println(Json.toJson(output));

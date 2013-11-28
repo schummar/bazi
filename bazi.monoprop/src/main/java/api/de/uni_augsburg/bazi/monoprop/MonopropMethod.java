@@ -9,6 +9,10 @@ public interface MonopropMethod
 {
 	public Output calculate(Input input);
 
+
+	// ////////////////////////////////////////////////////////////////////////
+
+
 	public interface Input
 	{
 		public Int getSeats();

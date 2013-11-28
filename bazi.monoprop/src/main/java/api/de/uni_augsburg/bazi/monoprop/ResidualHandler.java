@@ -11,11 +11,21 @@ import de.uni_augsburg.bazi.common.Pair;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
-import de.uni_augsburg.bazi.monoprop.QuotaMethod.ResidualHandler;
 
-public enum ResidualHandlers implements ResidualHandler
+public interface ResidualHandler
 {
-	GREATEST_REMINDERS
+	public ImmutableList<Pair<Integer, Uniqueness>> getIncrementsAndUniqueness(ImmutableList<Pair<Int, Rational>> seatsAndRests, int residual);
+
+	public static final ResidualHandler
+			GREATEST_REMINDERS = new GreatestReminders(),
+			GREATEST_REMAINDERS_MIN = new GreatestRemindersMin(),
+			WINNER_TAKES_ALL = new WinnerTakesAll();
+
+
+	// //////////////////////////////////////////////////////////////////////////
+
+
+	public static class GreatestReminders implements ResidualHandler
 	{
 		@Override public ImmutableList<Pair<Integer, Uniqueness>> getIncrementsAndUniqueness(ImmutableList<Pair<Int, Rational>> seatsAndRests, int residual)
 		{
@@ -26,7 +36,7 @@ public enum ResidualHandlers implements ResidualHandler
 				indexAndFrac.add(Pair.of(i, seatsAndRests.get(i).getSecond()));
 				result.add(Pair.of(0, Uniqueness.UNIQUE));
 			}
-			sort(indexAndFrac);
+			Collections.sort(indexAndFrac, RESIDUAL_COMPARATOR);
 
 
 			Rational tieLeft = indexAndFrac.get(residual - 1).getSecond();
@@ -48,9 +58,13 @@ public enum ResidualHandlers implements ResidualHandler
 
 			return ImmutableList.copyOf(result);
 		}
-	},
+	}
 
-	GREATEST_REMAINDERS_MIN
+
+	// //////////////////////////////////////////////////////////////////////////
+
+
+	public static class GreatestRemindersMin implements ResidualHandler
 	{
 		@Override public ImmutableList<Pair<Integer, Uniqueness>> getIncrementsAndUniqueness(ImmutableList<Pair<Int, Rational>> seatsAndRests, int residual)
 		{
@@ -62,7 +76,7 @@ public enum ResidualHandlers implements ResidualHandler
 				indexAndFrac.add(Pair.of(i, frac));
 				result.add(Pair.of(0, Uniqueness.UNIQUE));
 			}
-			sort(indexAndFrac);
+			Collections.sort(indexAndFrac, RESIDUAL_COMPARATOR);
 
 
 			Rational tieLeft = indexAndFrac.get(residual - 1).getSecond();
@@ -86,10 +100,13 @@ public enum ResidualHandlers implements ResidualHandler
 
 			return ImmutableList.copyOf(result);
 		}
+	}
 
-	},
 
-	WINNER_TAKES_ALL
+	// //////////////////////////////////////////////////////////////////////////
+
+
+	public static class WinnerTakesAll implements ResidualHandler
 	{
 		@Override public ImmutableList<Pair<Integer, Uniqueness>> getIncrementsAndUniqueness(ImmutableList<Pair<Int, Rational>> seatsAndRests, int residual)
 		{
@@ -100,7 +117,7 @@ public enum ResidualHandlers implements ResidualHandler
 				indexAndWeight.add(Pair.of(i, seatsAndRests.get(i).getFirst().add(seatsAndRests.get(i).getSecond())));
 				result.add(Pair.of(0, Uniqueness.UNIQUE));
 			}
-			sort(indexAndWeight);
+			Collections.sort(indexAndWeight, RESIDUAL_COMPARATOR);
 
 
 			Rational tieLeft = indexAndWeight.get(0).getSecond();
@@ -122,17 +139,17 @@ public enum ResidualHandlers implements ResidualHandler
 
 			return ImmutableList.copyOf(result);
 		}
-
-	};
-
-	private static void sort(List<Pair<Integer, Rational>> indexAndWeight)
-	{
-		Collections.sort(indexAndWeight, new Comparator<Pair<Integer, Rational>>()
-		{
-			@Override public int compare(Pair<Integer, Rational> o1, Pair<Integer, Rational> o2)
-			{
-				return o2.getSecond().compareTo(o1.getSecond());
-			}
-		});
 	}
+
+
+	// //////////////////////////////////////////////////////////////////////////
+
+
+	static Comparator<Pair<Integer, Rational>> RESIDUAL_COMPARATOR = new Comparator<Pair<Integer, Rational>>()
+	{
+		@Override public int compare(Pair<Integer, Rational> o1, Pair<Integer, Rational> o2)
+		{
+			return o2.getSecond().compareTo(o1.getSecond());
+		}
+	};
 }

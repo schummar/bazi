@@ -10,8 +10,6 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod.Input;
-import de.uni_augsburg.bazi.monoprop.QuotaMethod.QuotaFunction;
-import de.uni_augsburg.bazi.monoprop.QuotaMethod.ResidualHandler;
 
 class QuotaMethodImpl
 {
@@ -47,7 +45,7 @@ class QuotaMethodImpl
 			Rational quotient = quotients.get(i);
 			Int seats = seatsAndRests.get(i).getFirst().add(incrementAndUniqueness.get(i).getFirst());
 			Uniqueness uniqueness = incrementAndUniqueness.get(i).getSecond();
-			outputParties.add(new Output.Party(party, quotient, seats, uniqueness));
+			outputParties.add(new Output.Party(party.getName(), party.getVotes(), party.getMin(), party.getMax(), party.getDir(), quotient, seats, uniqueness));
 		}
 
 		return new Output(input.getSeats(), ImmutableList.copyOf(outputParties));
