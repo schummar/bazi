@@ -1,9 +1,11 @@
 package de.uni_augsburg.bazi.common;
 
+import java.util.Arrays;
+
 public class Resources
 {
-	public static String get(String key)
+	public static String get(String key, Object... args)
 	{
-		throw new RuntimeException("not yet implemented");
+		return String.format("%s %s", key, Arrays.toString(args));
 	}
 }
