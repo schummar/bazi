@@ -1,5 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
+import de.uni_augsburg.bazi.common.Json.Adapter;
+import de.uni_augsburg.bazi.common.Json.JsonAdapter;
+
 public interface Rational extends Real
 {
 	public Int getNumerator();
@@ -45,4 +48,13 @@ public interface Rational extends Real
 	@Override public int sgn();
 
 	@Override public Rational frac();
+
+
+	@JsonAdapter public static final Adapter<Rational> ADAPTER = new Adapter<Rational>()
+	{
+		@Override public Rational fromString(String s)
+		{
+			return new BRational(s);
+		}
+	};
 }

@@ -1,5 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
+import de.uni_augsburg.bazi.common.Json.Adapter;
+import de.uni_augsburg.bazi.common.Json.JsonAdapter;
+
 public interface Real extends Comparable<Real>
 {
 	public Rational getLo();
@@ -50,6 +53,14 @@ public interface Real extends Comparable<Real>
 	public Int round();
 	public Real frac();
 
-
 	public String toString(int precision);
+
+
+	@JsonAdapter public static final Adapter<Real> ADAPTER = new Adapter<Real>()
+	{
+		@Override public Real fromString(String s)
+		{
+			return new BReal(s);
+		}
+	};
 }

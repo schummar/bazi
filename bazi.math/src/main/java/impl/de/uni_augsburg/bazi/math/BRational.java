@@ -336,11 +336,16 @@ class BRational implements Rational
 
 	@Override public String toString()
 	{
-		return toString(16);
+		String dot = toString(BMath.DEFAULT_PRECISION);
+		if (equals(new BRational(dot)))
+			return dot;
+		return value.toString();
 	}
 
 	@Override public String toString(int precision)
 	{
-		return value.toStringDot(precision);
+		return value.toStringDot(precision)
+				.replaceAll("0*$", "")
+				.replaceAll("\\.$", "");
 	}
 }

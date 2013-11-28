@@ -265,11 +265,13 @@ class BReal implements Real
 
 	@Override public String toString()
 	{
-		return toString(16);
+		if (lo.equals(hi))
+			return lo.toString();
+		return String.format("[%s ; %s]", lo.toString(), hi.toString());
 	}
 
 	@Override public String toString(int precision)
 	{
-		return String.format("[%s ; %s]", lo, hi);
+		return String.format("[%s ; %s]", lo.toString(precision), hi.toString(precision)); // TODO round
 	}
 }

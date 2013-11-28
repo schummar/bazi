@@ -2,6 +2,9 @@ package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
 
+import de.uni_augsburg.bazi.common.Json.Adapter;
+import de.uni_augsburg.bazi.common.Json.JsonAdapter;
+
 public interface Int extends Rational
 {
 	public BigInteger getValue();
@@ -35,4 +38,13 @@ public interface Int extends Rational
 	@Override public Rational frac();
 
 	public int intValue();
+
+
+	@JsonAdapter public static final Adapter<Int> ADAPTER = new Adapter<Int>()
+	{
+		@Override public Int fromString(String s)
+		{
+			return new BInt(s);
+		}
+	};
 }
