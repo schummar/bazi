@@ -2,6 +2,8 @@ package de.uni_augsburg.bazi.monoprop;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uni_augsburg.bazi.common.Json.Adapter;
+import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 
@@ -25,8 +27,28 @@ public interface MonopropMethod
 			public Int getMin();
 			public Int getMax();
 			public Int getDir();
+
+			@JsonAdapter public static final Adapter<Party> ADAPTER = new Adapter<Party>()
+			{
+				@Override public Class<? extends Party> getPlainType()
+				{
+					return de.uni_augsburg.bazi.monoprop.Input.Party.class;
+				}
+			};
 		}
+
+		@JsonAdapter public static final Adapter<Input> ADAPTER = new Adapter<Input>()
+		{
+			@Override public Class<? extends Input> getPlainType()
+			{
+				return de.uni_augsburg.bazi.monoprop.Input.class;
+			}
+		};
 	}
+
+
+	// ////////////////////////////////////////////////////////////////////////
+
 
 	public interface Output extends Input
 	{
@@ -37,6 +59,23 @@ public interface MonopropMethod
 			public Int getSeats();
 			public Uniqueness getUniqueness();
 			public Rational getQuotient();
+
+			@JsonAdapter public static final Adapter<Party> ADAPTER = new Adapter<Party>()
+			{
+				@Override public Class<? extends Party> getPlainType()
+				{
+					return de.uni_augsburg.bazi.monoprop.Output.Party.class;
+				}
+			};
 		}
+
+		@JsonAdapter public static final Adapter<Output> ADAPTER = new Adapter<Output>()
+		{
+			@Override public Class<? extends Output> getPlainType()
+			{
+				return de.uni_augsburg.bazi.monoprop.Output.class;
+			}
+		};
+
 	}
 }

@@ -12,9 +12,9 @@ public class QuotaMethodTest
 	public static void main(String[] args) throws IOException
 	{
 		String json = Resources.toString(Resources.getResource(QuotaMethodTest.class, "test_input.bazi"), Charsets.UTF_8);
-		System.out.println("Warnings: " + Json.checkJson(json, DummyInput.class));
+		// System.out.println("Warnings: " + Json.checkJson(json, Input.class));
 
-		MonopropMethod.Input input = Json.fromJson(json, DummyInput.class);
+		MonopropMethod.Input input = Json.fromJson(json, Input.class);
 		MonopropMethod qm = new QuotaMethod(QuotaFunction.HARE, ResidualHandler.GREATEST_REMINDERS);
 		MonopropMethod.Output output = qm.calculate(input);
 

@@ -1,5 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
 import de.uni_augsburg.bazi.common.Json.Adapter;
 import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
@@ -52,9 +55,13 @@ public interface Rational extends Real
 
 	@JsonAdapter public static final Adapter<Rational> ADAPTER = new Adapter<Rational>()
 	{
-		@Override public Rational fromString(String s)
+		@Override public Rational read(JsonReader in) throws java.io.IOException
 		{
-			return new BRational(s);
+			return new BRational(in.nextString());
+		}
+		@Override public void write(JsonWriter out, Rational value) throws java.io.IOException
+		{
+			out.value(value.toString());
 		}
 	};
 }

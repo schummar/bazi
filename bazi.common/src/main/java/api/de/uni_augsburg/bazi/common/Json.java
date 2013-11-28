@@ -32,9 +32,6 @@ import com.google.gson.stream.JsonWriter;
 
 public class Json
 {
-	@Retention(RetentionPolicy.RUNTIME) public static @interface JsonAdapter
-	{}
-
 	// Gson delegate ////////////////////////////////////////////////////////////
 
 	private static Gson DEFAULT = null;
@@ -259,43 +256,40 @@ public class Json
 	{
 		@Override public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
 		{
-			Adapter<T> adapter = getCustomAdapter(type.getRawType());
-			return adapter != null ? new Wrapper<>(adapter).nullSafe() : null;
+			Adapter<T> adapter = getAdapterForType(type.getRawType());
+			if (adapter != null)
+				return adapter.nullSafe();
+
+			return null;
 		}
 	};
 
-	private static class Wrapper<T> extends TypeAdapter<T>
-	{
-		private final Adapter<T> delegate;
 
-		public Wrapper(Adapter<T> delegate)
+	// //////////////////////////////////////////////////////////////////////////
+
+
+	@Retention(RetentionPolicy.RUNTIME) public static @interface JsonAdapter
+	{}
+
+	public static class Adapter<T> extends TypeAdapter<T>
+	{
+		public Class<? extends T> getPlainType()
 		{
-			this.delegate = delegate;
+			return null;
 		}
+
 		@Override public void write(JsonWriter out, T value) throws IOException
 		{
-			out.value(delegate.toString(value));
+			new GsonBuilder().setPrettyPrinting().create().toJson(value, value.getClass(), out);
 		}
+
 		@Override public T read(JsonReader in) throws IOException
 		{
-			return delegate.fromString(in.nextString());
+			return createGson().fromJson(in, getPlainType());
 		}
 	}
 
-	public static abstract class Adapter<T>
-	{
-		public boolean isCorrect(String s)
-		{
-			return true;
-		}
-		public String toString(T value)
-		{
-			return value.toString();
-		}
-		public abstract T fromString(String s);
-	}
-
-	@SuppressWarnings("unchecked") public static <T> Adapter<T> getCustomAdapter(Class<? super T> type)
+	@SuppressWarnings("unchecked") public static <T> Adapter<T> getAdapterForType(Class<? super T> type)
 	{
 		for (Field field : type.getFields())
 		{

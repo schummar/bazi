@@ -1,16 +1,25 @@
 package de.uni_augsburg.bazi.monoprop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 
+import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 
 class Input implements MonopropMethod.Input
 {
-	private final Int seats;
-	private final ImmutableList<? extends Party> parties;
+	public Int seats;
+	public List<? extends Party> parties;
 
-	public Input(Int seats, ImmutableList<? extends Party> parties)
+	public Input()
+	{
+		this.seats = BMath.ZERO;
+		this.parties = new ArrayList<>();
+	}
+	public Input(Int seats, List<? extends Party> parties)
 	{
 		this.seats = seats;
 		this.parties = parties;
@@ -21,16 +30,24 @@ class Input implements MonopropMethod.Input
 	}
 	@Override public ImmutableList<? extends Party> getParties()
 	{
-		return parties;
+		return ImmutableList.copyOf(parties);
 	}
 
 
 	public static class Party implements MonopropMethod.Input.Party
 	{
-		private final String name;
-		private final Rational votes;
-		private final Int min, max, dir;
+		public String name;
+		public Rational votes;
+		public Int min, max, dir;
 
+		public Party()
+		{
+			this.name = "";
+			this.votes = BMath.ZERO;
+			this.min = BMath.ZERO;
+			this.max = BMath.ZERO;
+			this.dir = BMath.ZERO;
+		}
 		public Party(String name, Rational votes, Int min, Int max, Int dir)
 		{
 			this.name = name;

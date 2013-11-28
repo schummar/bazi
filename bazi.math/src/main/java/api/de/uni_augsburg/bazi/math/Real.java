@@ -1,5 +1,10 @@
 package de.uni_augsburg.bazi.math;
 
+import java.io.IOException;
+
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
 import de.uni_augsburg.bazi.common.Json.Adapter;
 import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
@@ -58,9 +63,13 @@ public interface Real extends Comparable<Real>
 
 	@JsonAdapter public static final Adapter<Real> ADAPTER = new Adapter<Real>()
 	{
-		@Override public Real fromString(String s)
+		@Override public Real read(JsonReader in) throws IOException
 		{
-			return new BReal(s);
+			return new BReal(in.nextString());
+		}
+		@Override public void write(JsonWriter out, Real value) throws IOException
+		{
+			out.value(value.toString());
 		}
 	};
 }

@@ -2,6 +2,9 @@ package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
 
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
 import de.uni_augsburg.bazi.common.Json.Adapter;
 import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
@@ -42,9 +45,13 @@ public interface Int extends Rational
 
 	@JsonAdapter public static final Adapter<Int> ADAPTER = new Adapter<Int>()
 	{
-		@Override public Int fromString(String s)
+		@Override public Int read(JsonReader in) throws java.io.IOException
 		{
-			return new BInt(s);
+			return new BInt(in.nextString());
+		}
+		@Override public void write(JsonWriter out, Int value) throws java.io.IOException
+		{
+			out.value(value.toString());
 		}
 	};
 }
