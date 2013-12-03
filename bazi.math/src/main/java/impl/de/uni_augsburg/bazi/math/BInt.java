@@ -1,10 +1,16 @@
 package de.uni_augsburg.bazi.math;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 import de.uni_augsburg.bazi.common.Resources;
 
-class BInt implements Int
+@JsonAdapter(BInt.Adapter.class) class BInt implements Int
 {
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -356,5 +362,20 @@ class BInt implements Int
 	@Override public String toString(int precision)
 	{
 		return value.toString();
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	public static class Adapter extends TypeAdapter<BInt>
+	{
+		@Override public void write(JsonWriter out, BInt value) throws IOException
+		{
+			out.value(value.toString());
+		}
+
+		@Override public BInt read(JsonReader in) throws IOException
+		{
+			return new BInt(in.nextString());
+		}
 	}
 }

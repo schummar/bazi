@@ -1,9 +1,15 @@
 package de.uni_augsburg.bazi.math;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
-class BRational implements Rational
+import de.uni_augsburg.bazi.common.Json.JsonAdapter;
+
+@JsonAdapter(BRational.Adapter.class) class BRational implements Rational
 {
 	private static BigRational unpack(Rational that)
 	{
@@ -347,5 +353,20 @@ class BRational implements Rational
 		return value.toStringDot(precision)
 				.replaceAll("0*$", "")
 				.replaceAll("\\.$", "");
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	public static class Adapter extends TypeAdapter<BRational>
+	{
+		@Override public void write(JsonWriter out, BRational value) throws IOException
+		{
+			out.value(value.toString());
+		}
+
+		@Override public BRational read(JsonReader in) throws IOException
+		{
+			return new BRational(in.nextString());
+		}
 	}
 }

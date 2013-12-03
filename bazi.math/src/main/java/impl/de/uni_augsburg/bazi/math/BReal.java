@@ -1,7 +1,14 @@
 package de.uni_augsburg.bazi.math;
 
+import java.io.IOException;
 
-class BReal implements Real
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import de.uni_augsburg.bazi.common.Json.JsonAdapter;
+
+@JsonAdapter(BReal.Adapter.class) class BReal implements Real
 {
 	private final Rational lo, hi;
 
@@ -273,5 +280,21 @@ class BReal implements Real
 	@Override public String toString(int precision)
 	{
 		return String.format("[%s ; %s]", lo.toString(precision), hi.toString(precision)); // TODO round
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	public static class Adapter extends TypeAdapter<BReal>
+	{
+
+		@Override public void write(JsonWriter out, BReal value) throws IOException
+		{
+			out.value(value.toString());
+		}
+
+		@Override public BReal read(JsonReader in) throws IOException
+		{
+			return new BReal(in.nextString());
+		}
 	}
 }

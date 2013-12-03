@@ -2,13 +2,9 @@ package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
+import de.uni_augsburg.bazi.common.DefaultImplementation;
 
-import de.uni_augsburg.bazi.common.Json.Adapter;
-import de.uni_augsburg.bazi.common.Json.JsonAdapter;
-
-public interface Int extends Rational
+@DefaultImplementation(BInt.class) public interface Int extends Rational
 {
 	public BigInteger getValue();
 
@@ -41,17 +37,4 @@ public interface Int extends Rational
 	@Override public Rational frac();
 
 	public int intValue();
-
-
-	@JsonAdapter public static final Adapter<Int> ADAPTER = new Adapter<Int>()
-	{
-		@Override public Int read(JsonReader in) throws java.io.IOException
-		{
-			return new BInt(in.nextString());
-		}
-		@Override public void write(JsonWriter out, Int value) throws java.io.IOException
-		{
-			out.value(value.toString());
-		}
-	};
 }

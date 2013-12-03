@@ -1,14 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
-import java.io.IOException;
+import de.uni_augsburg.bazi.common.DefaultImplementation;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
-import de.uni_augsburg.bazi.common.Json.Adapter;
-import de.uni_augsburg.bazi.common.Json.JsonAdapter;
-
-public interface Real extends Comparable<Real>
+@DefaultImplementation(BReal.class) public interface Real extends Comparable<Real>
 {
 	public Rational getLo();
 	public Rational getHi();
@@ -59,17 +53,4 @@ public interface Real extends Comparable<Real>
 	public Real frac();
 
 	public String toString(int precision);
-
-
-	@JsonAdapter public static final Adapter<Real> ADAPTER = new Adapter<Real>()
-	{
-		@Override public Real read(JsonReader in) throws IOException
-		{
-			return new BReal(in.nextString());
-		}
-		@Override public void write(JsonWriter out, Real value) throws IOException
-		{
-			out.value(value.toString());
-		}
-	};
 }
