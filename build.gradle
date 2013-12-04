@@ -44,4 +44,10 @@ subprojects {
 			"version": getVersion()
 		]
 	}
+	
+	dependencies {
+		compile 'com.google.guava:guava:15.0'
+		testCompile 'junit:junit:4.4'
+		testCompile 'com.google.code.gson:gson:2.2.4'
+	}
 }

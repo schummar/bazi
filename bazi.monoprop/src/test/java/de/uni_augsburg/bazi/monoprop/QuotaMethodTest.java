@@ -9,6 +9,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import de.uni_augsburg.bazi.common.Json;
+import de.uni_augsburg.bazi.common.Version;
 
 public class QuotaMethodTest
 {
@@ -17,6 +18,7 @@ public class QuotaMethodTest
 	public static void main(String[] args) throws IOException, NoSuchMethodException, SecurityException
 	{
 		BasicConfigurator.configure();
+		log.debug("version: " + Version.getCurrentVersionName());
 		log.debug("begin");
 
 		String json = Resources.toString(Resources.getResource(QuotaMethodTest.class, "test_input.bazi"), Charsets.UTF_8);
