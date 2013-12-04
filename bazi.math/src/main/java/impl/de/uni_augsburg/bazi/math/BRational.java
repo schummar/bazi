@@ -2,7 +2,9 @@ package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
 
-class BRational implements Rational
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
+
+@SerializeAsString class BRational implements Rational
 {
 	private static BigRational unpack(Rational that)
 	{

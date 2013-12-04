@@ -10,16 +10,17 @@ import de.uni_augsburg.bazi.common.Json;
 
 public class BMath
 {
+	private static final Map<Long, Int> LONG_TO_INT_CACHE = new HashMap<>();
+	private static final Map<String, Int> STRING_TO_INT_CACHE = new HashMap<>();
+	private static final Map<String, Rational> STRING_TO_RATIONAL_CACHE = new HashMap<>();
+
+
 	public static final Int ZERO = new BInt(0), ONE = new BInt(1), MINUS_ONE = new BInt(-1);
 	public static final Int INF = new Infinity(1), INFN = new Infinity(-1), NAN = new NaN();
 	public static final int DEFAULT_PRECISION = 16;
 	public static final Rational HALF = valueOf("0.5");
 
 	public static final String INF_STRING = "oo", INFN_STRING = "-oo", NAN_STRING = "nan";
-
-	private static final Map<Long, Int> LONG_TO_INT_CACHE = new HashMap<>();
-	private static final Map<String, Int> STRING_TO_INT_CACHE = new HashMap<>();
-	private static final Map<String, Rational> STRING_TO_RATIONAL_CACHE = new HashMap<>();
 
 	public static Int valueOf(long l)
 	{
@@ -108,6 +109,22 @@ public class BMath
 		@Override public Int deserialize(JsonReader in) throws IOException
 		{
 			return intValueOf(in.nextString());
+		}
+	}
+
+	public static class RationalDeserializer implements Json.Deserializer<Rational>
+	{
+		@Override public Rational deserialize(JsonReader in) throws IOException
+		{
+			return valueOf(in.nextString());
+		}
+	}
+
+	public static class RealDeserializer implements Json.Deserializer<Real>
+	{
+		@Override public Real deserialize(JsonReader in) throws IOException
+		{
+			return valueOf(in.nextString());
 		}
 	}
 }

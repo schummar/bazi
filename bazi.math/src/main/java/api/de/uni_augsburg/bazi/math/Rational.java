@@ -1,7 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
+import de.uni_augsburg.bazi.common.Json.Deserialize;
 
-public interface Rational extends Real
+@Deserialize(BMath.RationalDeserializer.class) public interface Rational extends Real
 {
 	public Int getNumerator();
 	public Int getDenominator();

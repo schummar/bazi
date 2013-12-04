@@ -1,7 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
+import de.uni_augsburg.bazi.common.Json.Deserialize;
 
-public interface Real extends Comparable<Real>
+@Deserialize(BMath.RealDeserializer.class) public interface Real extends Comparable<Real>
 {
 	public Rational getLo();
 	public Rational getHi();

@@ -3,6 +3,10 @@ package de.uni_augsburg.bazi.common;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -48,10 +52,12 @@ public class Json
 				return (TypeAdapter<T>) adapters.get(type);
 
 			boolean serializeAsString = isSerializeAsString(type);
+			Class<? extends T> deserializeAsClass = getDeserializeAsClass(type);
+			TypeAdapter<? extends T> adapterToDeserialize = deserializeAsClass != null ? gson.getAdapter(deserializeAsClass) : null;
 			Serializer<T> serializer = getSerializer(type);
 			Deserializer<T> deserializer = getDeserializer(type);
 			TypeAdapter<T> def = gson.getDelegateAdapter(TYPE_ADAPTER_FACTORY, type);
-			TypeAdapter<T> ta = new Adapter<>(serializeAsString, serializer, deserializer, def).nullSafe();
+			TypeAdapter<T> ta = new Adapter<>(serializeAsString, adapterToDeserialize, serializer, deserializer, def).nullSafe();
 
 			adapters.put(type, ta);
 			return ta;
@@ -61,13 +67,15 @@ public class Json
 	private static class Adapter<T> extends TypeAdapter<T>
 	{
 		private final boolean serializeAsString;
+		private final TypeAdapter<? extends T> adapterToDeserialize;
 		private final Serializer<T> serializer;
 		private final Deserializer<T> deserializer;
 		private final TypeAdapter<T> def;
 
-		public Adapter(boolean serializeAsString, Serializer<T> serializer, Deserializer<T> deserializer, TypeAdapter<T> def)
+		public Adapter(boolean serializeAsString, TypeAdapter<? extends T> adapterToDeserialize, Serializer<T> serializer, Deserializer<T> deserializer, TypeAdapter<T> def)
 		{
 			this.serializeAsString = serializeAsString;
+			this.adapterToDeserialize = adapterToDeserialize;
 			this.serializer = serializer;
 			this.deserializer = deserializer;
 			this.def = def;
@@ -83,6 +91,8 @@ public class Json
 		}
 		@Override public T read(JsonReader in) throws IOException
 		{
+			if (adapterToDeserialize != null)
+				return adapterToDeserialize.read(in);
 			if (deserializer != null)
 				return deserializer.deserialize(in);
 			return def.read(in);
@@ -92,10 +102,15 @@ public class Json
 
 	// //////////////////////////////////////////////////////////////////////////
 
-	public static @interface SerializeAsString
+	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface SerializeAsString
 	{}
 
-	public static @interface Serialize
+	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface DeserializeAsClass
+	{
+		Class<?> value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface Serialize
 	{
 		Class<? extends Serializer<?>> value();
 	}
@@ -105,7 +120,7 @@ public class Json
 		public void serialize(JsonWriter out, T value) throws IOException;
 	}
 
-	public static @interface Deserialize
+	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface Deserialize
 	{
 		Class<? extends Deserializer<?>> value();
 	}
@@ -118,6 +133,15 @@ public class Json
 	public static <T> boolean isSerializeAsString(TypeToken<T> type)
 	{
 		return type.getRawType().isAnnotationPresent(SerializeAsString.class);
+	}
+
+	@SuppressWarnings("unchecked") public static <T> Class<? extends T> getDeserializeAsClass(TypeToken<T> type)
+	{
+		DeserializeAsClass s = type.getRawType().getAnnotation(DeserializeAsClass.class);
+		if (s == null)
+			return null;
+
+		return (Class<? extends T>) s.value();
 	}
 
 	@SuppressWarnings("unchecked") public static <T> Serializer<T> getSerializer(TypeToken<T> type)
@@ -226,12 +250,19 @@ public class Json
 
 			else if (currentElement.isJsonObject())
 			{
+				if (getDeserializer(currentType) != null)
+					continue;
+
+				Class<?> currentClass = getDeserializeAsClass(currentType);
+				if (currentClass == null)
+					currentClass = currentType.getRawType();
+
 				JsonObject jo = currentElement.getAsJsonObject();
 				for (Entry<String, JsonElement> entry : jo.entrySet())
 				{
 					String key = entry.getKey();
 					boolean found = false;
-					for (Field field : ((Class<?>) currentType.getType()).getFields())
+					for (Field field : currentClass.getFields())
 						if (field.getName().equals(key))
 						{
 							found = true;

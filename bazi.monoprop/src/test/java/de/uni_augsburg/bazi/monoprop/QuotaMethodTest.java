@@ -5,9 +5,10 @@ import java.io.IOException;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+
 import de.uni_augsburg.bazi.common.Json;
-import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
 
 public class QuotaMethodTest
 {
@@ -17,19 +18,22 @@ public class QuotaMethodTest
 	{
 		BasicConfigurator.configure();
 		log.debug("begin");
-		//
-		// String json = Resources.toString(Resources.getResource(QuotaMethodTest.class, "test_input.bazi"), Charsets.UTF_8);
-		// log.debug("Warnings: " + Json.checkJson(json, PlainInput.class));
-		//
-		// MonopropMethod.Input input = Json.fromJson(json, PlainInput.class);
-		// MonopropMethod qm = new QuotaMethod(QuotaFunction.HARE, ResidualHandler.GREATEST_REMINDERS);
-		//
-		// log.debug("start calculation");
-		// MonopropMethod.Output output = qm.calculate(input);
-		// log.debug("end calculation");
-		//
-		// log.debug(Json.toJson(output));
-		// log.debug("end");
+
+		String json = Resources.toString(Resources.getResource(QuotaMethodTest.class, "test_input.bazi"), Charsets.UTF_8);
+		log.debug("warnings: " + Json.checkJson(json, MonopropMethod.Input.class));
+
+		MonopropMethod.Input input = Json.fromJson(json, MonopropMethod.Input.class);
+		MonopropMethod qm = new QuotaMethod(QuotaFunction.HARE, ResidualHandler.GREATEST_REMINDERS);
+
+		log.debug("start calculation");
+		long t = System.nanoTime();
+		MonopropMethod.Output output = qm.calculate(input);
+		t = System.nanoTime() - t;
+		log.debug(String.format("end calculation (%s ms)", t / 1000.0 / 1000.0));
+
+
+		log.debug("output: " + Json.toJson(output));
+		log.debug("end");
 
 		// Int allSeats = BMath.intOf(4);
 		// final Int[] seats = { BMath.ZERO, BMath.ZERO, BMath.ZERO };
@@ -74,8 +78,5 @@ public class QuotaMethodTest
 		//
 		// System.out.println(Arrays.toString(seats));
 		// System.out.println(Arrays.toString(un));
-
-		Int i = BMath.valueOf(1);
-		System.out.println(Json.toJson(i));
 	}
 }

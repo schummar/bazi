@@ -1,7 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
-class BReal implements Real
+@SerializeAsString class BReal implements Real
 {
 	private final Rational lo, hi;
 
