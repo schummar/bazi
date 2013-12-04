@@ -1,8 +1,7 @@
 package de.uni_augsburg.bazi.math;
 
-import de.uni_augsburg.bazi.common.DefaultImplementation;
 
-@DefaultImplementation(BRational.class) public interface Rational extends Real
+public interface Rational extends Real
 {
 	public Int getNumerator();
 	public Int getDenominator();

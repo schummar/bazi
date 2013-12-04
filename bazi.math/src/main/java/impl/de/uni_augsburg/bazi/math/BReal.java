@@ -1,14 +1,7 @@
 package de.uni_augsburg.bazi.math;
 
-import java.io.IOException;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
-import de.uni_augsburg.bazi.common.Json.JsonAdapter;
-
-@JsonAdapter(BReal.Adapter.class) class BReal implements Real
+class BReal implements Real
 {
 	private final Rational lo, hi;
 
@@ -27,13 +20,10 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	public BReal(Real r)
 	{
+		if (r.isSpecial())
+			throw new RuntimeException("cant create BReal from special number");
 		lo = r.getLo();
 		hi = r.getHi();
-	}
-
-	public BReal(String s)
-	{
-		lo = hi = new BRational(s);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -45,12 +35,14 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Real add(Real that)
 	{
+		if (that.isSpecial())
+			return that.add(this);
 		return new BReal(lo.add(that.getLo()), hi.add(that.getHi()));
 	}
 
 	@Override public Real add(String that)
 	{
-		return add(new BReal(that));
+		return add(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -70,6 +62,9 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public int compareTo(Real that)
 	{
+		if (that.isSpecial())
+			return -that.compareTo(this);
+
 		if (hi.compareTo(that.getLo()) < 0)
 			return -1;
 		if (lo.compareTo(that.getHi()) > 0)
@@ -79,7 +74,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public int compareTo(String that)
 	{
-		return compareTo(new BReal(that));
+		return compareTo(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -91,6 +86,9 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Real div(Real that)
 	{
+		if (that.isSpecial())
+			return that.div(this).inv();
+
 		Rational[] qs = {
 				lo.div(that.getLo()),
 				lo.div(that.getHi()),
@@ -102,7 +100,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Real div(String that)
 	{
-		return div(new BReal(that));
+		return div(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -119,7 +117,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public boolean equals(String that)
 	{
-		return equals(new BReal(that));
+		return equals(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -158,6 +156,13 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	// //////////////////////////////////////////////////////////////////////////
 
+	@Override public boolean isSpecial()
+	{
+		return false;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
 	@Override public Real max(long that)
 	{
 		return max(new BReal(that));
@@ -165,12 +170,14 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Real max(Real that)
 	{
+		if (that.isSpecial())
+			return that.max(this);
 		return new BReal(lo.max(that.getLo()), hi.max(that.getHi()));
 	}
 
 	@Override public Real max(String that)
 	{
-		return max(new BReal(that));
+		return max(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -182,12 +189,14 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Real min(Real that)
 	{
+		if (that.isSpecial())
+			return that.min(this);
 		return new BReal(lo.min(that.getLo()), hi.min(that.getHi()));
 	}
 
 	@Override public Real min(String that)
 	{
-		return min(new BReal(that));
+		return min(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -199,6 +208,9 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Real mul(Real that)
 	{
+		if (that.isSpecial())
+			return that.mul(this);
+
 		Rational[] qs = {
 				lo.mul(that.getLo()),
 				lo.mul(that.getHi()),
@@ -210,7 +222,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Real mul(String that)
 	{
-		return mul(new BReal(that));
+		return mul(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -260,12 +272,14 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Real sub(Real that)
 	{
+		if (that.isSpecial())
+			return that.sub(this).neg();
 		return new BReal(lo.sub(that.getLo()), hi.sub(that.getHi()));
 	}
 
 	@Override public Real sub(String that)
 	{
-		return sub(new BReal(that));
+		return sub(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -280,21 +294,5 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 	@Override public String toString(int precision)
 	{
 		return String.format("[%s ; %s]", lo.toString(precision), hi.toString(precision)); // TODO round
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-
-	public static class Adapter extends TypeAdapter<BReal>
-	{
-
-		@Override public void write(JsonWriter out, BReal value) throws IOException
-		{
-			out.value(value.toString());
-		}
-
-		@Override public BReal read(JsonReader in) throws IOException
-		{
-			return new BReal(in.nextString());
-		}
 	}
 }

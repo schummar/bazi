@@ -1,9 +1,8 @@
 package de.uni_augsburg.bazi.common;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -48,62 +47,107 @@ public class Json
 			if (adapters.containsKey(type))
 				return (TypeAdapter<T>) adapters.get(type);
 
-			TypeAdapter<T> ta = getTypeAdapter(gson, type);
-			if (ta != null)
-				ta = ta.nullSafe();
+			boolean serializeAsString = isSerializeAsString(type);
+			Serializer<T> serializer = getSerializer(type);
+			Deserializer<T> deserializer = getDeserializer(type);
+			TypeAdapter<T> def = gson.getDelegateAdapter(TYPE_ADAPTER_FACTORY, type);
+			TypeAdapter<T> ta = new Adapter<>(serializeAsString, serializer, deserializer, def).nullSafe();
 
 			adapters.put(type, ta);
 			return ta;
 		}
 	};
 
+	private static class Adapter<T> extends TypeAdapter<T>
+	{
+		private final boolean serializeAsString;
+		private final Serializer<T> serializer;
+		private final Deserializer<T> deserializer;
+		private final TypeAdapter<T> def;
+
+		public Adapter(boolean serializeAsString, Serializer<T> serializer, Deserializer<T> deserializer, TypeAdapter<T> def)
+		{
+			this.serializeAsString = serializeAsString;
+			this.serializer = serializer;
+			this.deserializer = deserializer;
+			this.def = def;
+		}
+		@Override public void write(JsonWriter out, T value) throws IOException
+		{
+			if (serializeAsString)
+				out.value(value.toString());
+			else if (serializer != null)
+				serializer.serialize(out, value);
+			else
+				def.write(out, value);
+		}
+		@Override public T read(JsonReader in) throws IOException
+		{
+			if (deserializer != null)
+				return deserializer.deserialize(in);
+			return def.read(in);
+		}
+	}
+
 
 	// //////////////////////////////////////////////////////////////////////////
 
+	public static @interface SerializeAsString
+	{}
 
-	public static <T> TypeAdapter<T> getTypeAdapter(Gson gson, TypeToken<T> type)
+	public static @interface Serialize
 	{
-		TypeAdapter<T> ta = getDelegateAdapter(gson, type);
-		if (ta != null)
-			return ta;
-		return getDeclaredAdapter(gson, type);
+		Class<? extends Serializer<?>> value();
 	}
 
-	public static <T> TypeAdapter<T> getDelegateAdapter(Gson gson, TypeToken<T> type)
+	public static interface Serializer<T>
 	{
-		TypeToken<T> delegate = getDefaultImplementation(type);
-		if (delegate != null)
-			return gson.getAdapter(delegate);
-		return null;
+		public void serialize(JsonWriter out, T value) throws IOException;
 	}
 
-	@SuppressWarnings("unchecked") public static <T> TypeToken<T> getDefaultImplementation(TypeToken<T> type)
+	public static @interface Deserialize
 	{
-		DefaultImplementation def = type.getRawType().getAnnotation(DefaultImplementation.class);
-		if (def == null || !type.getRawType().isAssignableFrom(def.value()))
-			return null;
-
-		return (TypeToken<T>) TypeToken.get(def.value());
+		Class<? extends Deserializer<?>> value();
 	}
 
-	@SuppressWarnings("unchecked") public static <T> TypeAdapter<T> getDeclaredAdapter(Gson gson, TypeToken<T> type)
+	public static interface Deserializer<T>
 	{
-		JsonAdapter ja = type.getRawType().getAnnotation(JsonAdapter.class);
-		if (ja == null || !TypeAdapter.class.isAssignableFrom(ja.value()))
+		public T deserialize(JsonReader in) throws IOException;
+	}
+
+	public static <T> boolean isSerializeAsString(TypeToken<T> type)
+	{
+		return type.getRawType().isAnnotationPresent(SerializeAsString.class);
+	}
+
+	@SuppressWarnings("unchecked") public static <T> Serializer<T> getSerializer(TypeToken<T> type)
+	{
+		Serialize s = type.getRawType().getAnnotation(Serialize.class);
+		if (s == null)
 			return null;
 
 		try
 		{
-			return (TypeAdapter<T>) ja.value().newInstance();
+			return (Serializer<T>) s.value().newInstance();
 		}
 		catch (InstantiationException | IllegalAccessException e)
 		{}
 		return null;
 	}
 
-	@Retention(RetentionPolicy.RUNTIME) public static @interface JsonAdapter
+	@SuppressWarnings("unchecked") public static <T> Deserializer<T> getDeserializer(TypeToken<T> type)
 	{
-		Class<? extends TypeAdapter<?>> value();
+		Deserialize s = type.getRawType().getAnnotation(Deserialize.class);
+		if (s == null)
+			return null;
+
+		try
+		{
+			return (Deserializer<T>) s.value().newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{}
+		return null;
 	}
 
 

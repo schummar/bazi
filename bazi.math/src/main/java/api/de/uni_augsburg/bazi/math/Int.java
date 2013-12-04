@@ -2,9 +2,9 @@ package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
 
-import de.uni_augsburg.bazi.common.DefaultImplementation;
+import de.uni_augsburg.bazi.common.Json.Deserialize;
 
-@DefaultImplementation(BInt.class) public interface Int extends Rational
+@Deserialize(BMath.IntDeserializer.class) public interface Int extends Rational
 {
 	public BigInteger getValue();
 

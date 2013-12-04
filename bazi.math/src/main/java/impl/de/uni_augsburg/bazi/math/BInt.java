@@ -1,16 +1,11 @@
 package de.uni_augsburg.bazi.math;
 
-import java.io.IOException;
 import java.math.BigInteger;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
-import de.uni_augsburg.bazi.common.Json.JsonAdapter;
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 import de.uni_augsburg.bazi.common.Resources;
 
-@JsonAdapter(BInt.Adapter.class) class BInt implements Int
+@SerializeAsString class BInt implements Int
 {
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -29,15 +24,19 @@ import de.uni_augsburg.bazi.common.Resources;
 		value = BigInteger.valueOf(l);
 	}
 
-	public BInt(String s)
+	public BInt(Int i)
 	{
-		value = new BigInteger(s);
+		if (i.isSpecial())
+			throw new RuntimeException("cant create BInt from special number");
+		value = i.getValue();
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
 
 	@Override public Int add(Int that)
 	{
+		if (that.isSpecial())
+			return that.add(this);
 		return new BInt(value.add(that.getValue()));
 	}
 
@@ -72,6 +71,8 @@ import de.uni_augsburg.bazi.common.Resources;
 
 	@Override public int compareTo(Int that)
 	{
+		if (that.isSpecial())
+			return -that.compareTo(this);
 		return value.compareTo(that.getValue());
 	}
 
@@ -121,6 +122,8 @@ import de.uni_augsburg.bazi.common.Resources;
 
 	@Override public boolean equals(Int that)
 	{
+		if (that.isSpecial())
+			return that.equals(this);
 		return value.equals(that.getValue());
 	}
 
@@ -203,8 +206,17 @@ import de.uni_augsburg.bazi.common.Resources;
 
 	// //////////////////////////////////////////////////////////////////////////
 
+	@Override public boolean isSpecial()
+	{
+		return false;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
 	@Override public Int max(Int that)
 	{
+		if (that.isSpecial())
+			return that.max(this);
 		return compareTo(that) >= 0 ? this : that;
 	}
 
@@ -232,6 +244,8 @@ import de.uni_augsburg.bazi.common.Resources;
 
 	@Override public Int min(Int that)
 	{
+		if (that.isSpecial())
+			return that.min(this);
 		return compareTo(that) <= 0 ? this : that;
 	}
 
@@ -259,6 +273,8 @@ import de.uni_augsburg.bazi.common.Resources;
 
 	@Override public Int mul(Int that)
 	{
+		if (that.isSpecial())
+			return that.mul(this);
 		return new BInt(value.multiply(that.getValue()));
 	}
 
@@ -329,6 +345,8 @@ import de.uni_augsburg.bazi.common.Resources;
 
 	@Override public Int sub(Int that)
 	{
+		if (that.isSpecial())
+			return that.sub(this).neg();
 		return add(that.neg());
 	}
 
@@ -362,20 +380,5 @@ import de.uni_augsburg.bazi.common.Resources;
 	@Override public String toString(int precision)
 	{
 		return value.toString();
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-
-	public static class Adapter extends TypeAdapter<BInt>
-	{
-		@Override public void write(JsonWriter out, BInt value) throws IOException
-		{
-			out.value(value.toString());
-		}
-
-		@Override public BInt read(JsonReader in) throws IOException
-		{
-			return new BInt(in.nextString());
-		}
 	}
 }

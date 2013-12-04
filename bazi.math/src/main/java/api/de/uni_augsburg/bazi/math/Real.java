@@ -1,8 +1,7 @@
 package de.uni_augsburg.bazi.math;
 
-import de.uni_augsburg.bazi.common.DefaultImplementation;
 
-@DefaultImplementation(BReal.class) public interface Real extends Comparable<Real>
+public interface Real extends Comparable<Real>
 {
 	public Rational getLo();
 	public Rational getHi();
@@ -51,6 +50,8 @@ import de.uni_augsburg.bazi.common.DefaultImplementation;
 	public Int floor();
 	public Int round();
 	public Real frac();
+
+	public boolean isSpecial();
 
 	public String toString(int precision);
 }

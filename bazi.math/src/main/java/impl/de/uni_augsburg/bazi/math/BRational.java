@@ -1,15 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
-import java.io.IOException;
 import java.math.BigInteger;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
-import de.uni_augsburg.bazi.common.Json.JsonAdapter;
-
-@JsonAdapter(BRational.Adapter.class) class BRational implements Rational
+class BRational implements Rational
 {
 	private static BigRational unpack(Rational that)
 	{
@@ -36,12 +29,9 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	public BRational(Rational q)
 	{
+		if (q.isSpecial())
+			throw new RuntimeException("cant create BRational from special number");
 		value = new BigRational(q.getNumerator().getValue(), q.getDenominator().getValue());
-	}
-
-	public BRational(String s)
-	{
-		value = new BigRational(s);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -53,6 +43,8 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational add(Rational that)
 	{
+		if (that.isSpecial())
+			return that.add(this);
 		return new BRational(value.add(unpack(that)));
 	}
 
@@ -63,7 +55,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational add(String that)
 	{
-		return add(new BRational(that));
+		return add(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -82,6 +74,8 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public int compareTo(Rational that)
 	{
+		if (that.isSpecial())
+			return -that.compareTo(this);
 		return value.compareTo(unpack(that));
 	}
 
@@ -92,7 +86,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public int compareTo(String that)
 	{
-		return compareTo(new BRational(that));
+		return compareTo(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -114,7 +108,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational div(String that)
 	{
-		return div(new BRational(that));
+		return div(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -136,7 +130,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public boolean equals(String that)
 	{
-		return equals(new BRational(that));
+		return equals(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -187,6 +181,13 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	// //////////////////////////////////////////////////////////////////////////
 
+	@Override public boolean isSpecial()
+	{
+		return false;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
 	@Override public Rational max(long that)
 	{
 		return max(new BRational(that));
@@ -194,6 +195,8 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational max(Rational that)
 	{
+		if (that.isSpecial())
+			return that.max(this);
 		return compareTo(that) >= 0 ? this : that;
 	}
 
@@ -204,7 +207,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational max(String that)
 	{
-		return max(new BRational(that));
+		return max(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -216,6 +219,8 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational min(Rational that)
 	{
+		if (that.isSpecial())
+			return that.min(this);
 		return compareTo(that) <= 0 ? this : that;
 	}
 
@@ -226,7 +231,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational min(String that)
 	{
-		return min(new BRational(that));
+		return min(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -238,6 +243,8 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational mul(Rational that)
 	{
+		if (that.isSpecial())
+			return that.mul(this);
 		return new BRational(value.mul(unpack(that)));
 	}
 
@@ -248,7 +255,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational mul(String that)
 	{
-		return mul(new BRational(that));
+		return mul(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -262,6 +269,15 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational pow(Int that)
 	{
+		if (that.isSpecial())
+		{
+			if (that.equals(BMath.INF))
+				return BMath.INF;
+			if (that.equals(BMath.INFN))
+				return BMath.ZERO;
+			return BMath.NAN;
+		}
+
 		if (sgn() == 0)
 			return this;
 		if (that.sgn() == 0)
@@ -313,7 +329,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public int sgn()
 	{
-		return compareTo(0);
+		return compareTo(BMath.ZERO);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -325,6 +341,8 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational sub(Rational that)
 	{
+		if (that.isSpecial())
+			return that.sub(this).neg();
 		return add(that.neg());
 	}
 
@@ -335,7 +353,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 
 	@Override public Rational sub(String that)
 	{
-		return sub(new BRational(that));
+		return sub(BMath.valueOf(that));
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -343,7 +361,7 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 	@Override public String toString()
 	{
 		String dot = toString(BMath.DEFAULT_PRECISION);
-		if (equals(new BRational(dot)))
+		if (equals(BMath.valueOf(dot)))
 			return dot;
 		return value.toString();
 	}
@@ -353,20 +371,5 @@ import de.uni_augsburg.bazi.common.Json.JsonAdapter;
 		return value.toStringDot(precision)
 				.replaceAll("0*$", "")
 				.replaceAll("\\.$", "");
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-
-	public static class Adapter extends TypeAdapter<BRational>
-	{
-		@Override public void write(JsonWriter out, BRational value) throws IOException
-		{
-			out.value(value.toString());
-		}
-
-		@Override public BRational read(JsonReader in) throws IOException
-		{
-			return new BRational(in.nextString());
-		}
 	}
 }

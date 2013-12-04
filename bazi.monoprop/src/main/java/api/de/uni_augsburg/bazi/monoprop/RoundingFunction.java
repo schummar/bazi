@@ -14,9 +14,9 @@ public interface RoundingFunction
 
 
 	public static final RoundingFunction
-			DIV_STD = new Stationary(BMath.rationalOf("0.5"), null),
-			DIV_DWD = new Stationary(BMath.intOf(1), null),
-			DIV_UPW = new Stationary(BMath.intOf(0), null),
+			DIV_STD = new Stationary(BMath.valueOf("0.5"), null),
+			DIV_DWD = new Stationary(BMath.valueOf(1), null),
+			DIV_UPW = new Stationary(BMath.valueOf(0), null),
 			DIV_GEO = new Geometric(),
 			DIV_HAR = new Harmonic();
 
