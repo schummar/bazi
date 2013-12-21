@@ -1,6 +1,11 @@
 import org.apache.tools.ant.filters.*
 
-dependencies { compile project(':bazi.common') }
+dependencies {
+	compile project(':bazi.common')
+	compile project(':bazi.monoprop')
+	compile project(':bazi.divisor')
+	compile project(':bazi.quota')
+}
 
 buildscript {
 	repositories { mavenCentral() }
