@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import de.uni_augsburg.bazi.common.Json;
-
 public class PriorityQueue<A>
 {
 	public static interface CompGen<A, C extends Comparable<C>>
@@ -109,7 +107,6 @@ public class PriorityQueue<A>
 		Collections.sort(increase, increaseComparator);
 		Collections.sort(decrease, decreaseComparator);
 		A nextDecerase = nextDecrease();
-		System.out.println(Json.toJson(nextDecerase));
 		return compare(nextDecerase, CompType.DECREASE, arg, CompType.INCREASE) <= 0;
 	}
 
@@ -118,6 +115,6 @@ public class PriorityQueue<A>
 		Collections.sort(increase, increaseComparator);
 		Collections.sort(decrease, decreaseComparator);
 		A nextIncrease = nextIncrease();
-		return compare(nextIncrease, CompType.INCREASE, arg, CompType.DECREASE) <= 0;
+		return compare(nextIncrease, CompType.INCREASE, arg, CompType.DECREASE) >= 0;
 	}
 }
