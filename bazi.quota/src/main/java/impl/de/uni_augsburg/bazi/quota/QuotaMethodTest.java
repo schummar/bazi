@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.cl;
+package de.uni_augsburg.bazi.quota;
 
 import java.io.IOException;
 
@@ -11,9 +11,6 @@ import com.google.common.io.Resources;
 import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.common.Version;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod;
-import de.uni_augsburg.bazi.quota.QuotaFunction;
-import de.uni_augsburg.bazi.quota.QuotaMethod;
-import de.uni_augsburg.bazi.quota.ResidualHandler;
 
 public class QuotaMethodTest
 {
