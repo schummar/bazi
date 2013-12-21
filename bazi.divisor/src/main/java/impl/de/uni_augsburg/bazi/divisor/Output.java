@@ -1,4 +1,5 @@
-package de.uni_augsburg.bazi.quota;
+package de.uni_augsburg.bazi.divisor;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,27 +9,28 @@ import com.google.common.collect.ImmutableList;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod;
 import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
 
-class Output implements QuotaMethod.Output
+class Output implements DivisorMethod.Output
 {
 	public Int seats;
 	public List<? extends Party> parties;
-	public Rational quota;
+	public Real divisor;
 
 	public Output()
 	{
 		this.seats = BMath.ZERO;
 		this.parties = new ArrayList<>();
-		this.quota = BMath.ZERO;
+		this.divisor = BMath.ZERO;
 	}
-	public Output(Int seats, List<? extends Party> parties, Rational quota)
+	public Output(Int seats, List<? extends Party> parties, Real divisor)
 	{
 		this.seats = seats;
 		this.parties = parties;
-		this.quota = quota;
+		this.divisor = divisor;
 	}
 	@Override public Int getSeats()
 	{
@@ -38,9 +40,9 @@ class Output implements QuotaMethod.Output
 	{
 		return ImmutableList.copyOf(parties);
 	}
-	@Override public Rational getQuota()
+	@Override public Real getDivisor()
 	{
-		return quota;
+		return divisor;
 	}
 
 	public static class Party implements MonopropMethod.Output.Party
