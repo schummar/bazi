@@ -5,18 +5,45 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import de.uni_augsburg.bazi.math.Real;
-
-public abstract class PriorityQueue
+public class PriorityQueue<A>
 {
+	public static interface CompGen<A, C extends Comparable<C>>
+	{
+		public C getIncreseValue(A arg);
+		public C getDecreaseValue(A arg);
+	}
+
+	private static enum CompType
+	{
+		INCREASE
+		{
+			@Override public <A, C extends Comparable<C>> C get(CompGen<A, C> compGen, A arg)
+			{
+				return compGen.getIncreseValue(arg);
+			}
+		},
+		DECREASE
+		{
+			@Override public <A, C extends Comparable<C>> C get(CompGen<A, C> compGen, A arg)
+			{
+				return compGen.getDecreaseValue(arg);
+			}
+		};
+		public abstract <A, C extends Comparable<C>> C get(CompGen<A, C> compGen, A arg);
+	}
+
+	private final List<A> data;
+	private final List<CompGen<A, ? extends Comparable<?>>> compGens;
 	private final List<Integer> increase, decrease;
 
-	public PriorityQueue(int size)
+	public PriorityQueue(List<A> data, List<CompGen<A, ? extends Comparable<?>>> compGens)
 	{
+		this.data = data;
+		this.compGens = compGens;
 		this.increase = new ArrayList<>();
 		this.decrease = new ArrayList<>();
 
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < data.size(); i++)
 		{
 			this.increase.add(i);
 			this.decrease.add(i);
@@ -27,64 +54,67 @@ public abstract class PriorityQueue
 	{
 		@Override public int compare(Integer o1, Integer o2)
 		{
-			return -PriorityQueue.compare(increaseValue(o1), increasePreference(o1), increaseValue(o2), increasePreference(o2));
+			return -PriorityQueue.this.compare(data.get(o1), CompType.INCREASE, data.get(o2), CompType.INCREASE);
 		}
 	};
 	private final Comparator<Integer> decreaseComparator = new Comparator<Integer>()
 	{
 		@Override public int compare(Integer o1, Integer o2)
 		{
-			return -PriorityQueue.compare(decreaseValue(o1).neg(), -decreasePreference(o1), decreaseValue(o2).neg(), -decreasePreference(o2));
+			return -PriorityQueue.this.compare(data.get(o1), CompType.DECREASE, data.get(o2), CompType.DECREASE);
 		}
 	};
 
-	private static int compare(Real value1, int advantage1, Real value2, int advantage2)
+	private int compare(A arg0, CompType compType0, A arg1, CompType compType1)
 	{
-		int comp = value1.compareTo(value2);
-		if (comp != 0)
-			return comp;
-		return advantage1 - advantage2;
+		for (CompGen<A, ?> compGen : compGens)
+		{
+			int comp = compare(arg0, compType0, arg1, compType1, compGen);
+			if (comp != 0)
+				return comp;
+		}
+		return 0;
 	}
 
-	public int nextIncrease()
+	private static <A, C extends Comparable<C>> int compare(A arg0, CompType compType0, A arg1, CompType compType1, CompGen<A, C> compGen)
+	{
+		return compType0.get(compGen, arg0).compareTo(compType1.get(compGen, arg1));
+	}
+
+	public A nextIncrease()
 	{
 		Collections.sort(increase, increaseComparator);
-		return increase.get(0);
+		return data.get(increase.get(0));
 	}
 
-	public int nextDecrease()
+	public A nextDecrease()
 	{
 		Collections.sort(decrease, decreaseComparator);
-		return decrease.get(0);
+		return data.get(decrease.get(0));
 	}
 
-	public Uniqueness getUniqueness(int i)
+	public Uniqueness getUniqueness(A arg)
 	{
-		if (canBeMore(i))
+		if (canBeMore(arg))
 			return Uniqueness.CAN_BE_MORE;
-		if (canBeLess(i))
+		if (canBeLess(arg))
 			return Uniqueness.CAN_BE_LESS;
 		return Uniqueness.UNIQUE;
 	}
 
-	public boolean canBeMore(int i)
+	public boolean canBeMore(A arg)
 	{
 		Collections.sort(increase, increaseComparator);
 		Collections.sort(decrease, decreaseComparator);
-		int nextDecerase = nextDecrease();
-		return compare(decreaseValue(nextDecerase), -decreasePreference(nextDecerase), increaseValue(i), increasePreference(i)) <= 0;
+		A nextDecerase = nextDecrease();
+		return compare(nextDecerase, CompType.DECREASE, arg, CompType.INCREASE) <= 0;
 	}
-	public boolean canBeLess(int i)
+
+	public boolean canBeLess(A arg)
 	{
 		Collections.sort(increase, increaseComparator);
 		Collections.sort(decrease, decreaseComparator);
-		int nextIncrease = nextIncrease();
-		return compare(increaseValue(nextIncrease).neg(), -increasePreference(nextIncrease), decreaseValue(i).neg(), decreasePreference(i)) <= 0;
+		A nextIncrease = nextIncrease();
+		return compare(nextIncrease, CompType.INCREASE, arg, CompType.DECREASE) <= 0;
 	}
-
-
-	public abstract Real increaseValue(int i);
-	public abstract Real decreaseValue(int i);
-	public abstract int increasePreference(int i);
-	public abstract int decreasePreference(int i);
 }
