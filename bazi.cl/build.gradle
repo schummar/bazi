@@ -1,36 +1,6 @@
-import org.apache.tools.ant.filters.*
-
 dependencies {
 	compile project(':bazi.common')
 	compile project(':bazi.monoprop')
 	compile project(':bazi.divisor')
 	compile project(':bazi.quota')
-}
-
-buildscript {
-	repositories { mavenCentral() }
-
-	dependencies { classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1' }
-}
-
-apply plugin: 'fatjar'
-
-fatJar {
-	archiveName = 'bazi.jar'
-	manifest { attributes 'Main-Class': 'de.uni_augsburg.bazi.cl.BAZI' }
-}
-
-apply plugin: 'distribution'
-
-distributions {
-	main {
-		baseName = 'bazi'
-		contents {
-			from 'build/libs/bazi.jar'
-			filter ReplaceTokens, tokens: [
-				'version': getVersion(),
-				'year': Calendar.getInstance().get(Calendar.YEAR).toString()
-			]
-		}
-	}
 }
