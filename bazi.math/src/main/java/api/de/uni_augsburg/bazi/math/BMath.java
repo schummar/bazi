@@ -82,7 +82,7 @@ public class BMath
 
 	public static Rational max(Rational... qs)
 	{
-		Rational max = INF;
+		Rational max = INFN;
 		for (Rational q : qs)
 			max = max.max(q);
 		return max;
