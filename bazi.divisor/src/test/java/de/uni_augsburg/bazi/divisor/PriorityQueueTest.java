@@ -9,6 +9,7 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.InDecreaseQueue;
+import de.uni_augsburg.bazi.monoprop.InDecreaseQueue.NoInDecreasePossible;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod;
 import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
@@ -27,29 +28,12 @@ public class PriorityQueueTest
 		{
 			Real r0 = p0.getVotes().div(r.getBorder(s0));
 			Real r1 = p1.getVotes().div(r.getBorder(s1));
-			int comp = r0.compareTo(r1);
-			if (comp != 0)
-				return comp;
-			return bias(p0, s0) - bias(p1, s1);
-		}
-
-		@Override public boolean canHaveSeats(MonopropMethod.Input.Party p, Int s)
-		{
-			return s.compareTo(p.getMin()) >= 0 && s.compareTo(p.getMax()) <= 0;
-		}
-
-		private static int bias(MonopropMethod.Input.Party p, Int s)
-		{
-			if (s.sub(1).compareTo(p.getMin()) < 0)
-				return 1;
-			if (s.compareTo(p.getMax()) > 0)
-				return -1;
-			return 0;
+			return r0.compareTo(r1);
 		}
 	}
 
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws NoInDecreasePossible
 	{
 		Int allSeats = BMath.valueOf(4);
 		// final Int[] seats = { BMath.ZERO, BMath.ZERO, BMath.ZERO };
@@ -58,33 +42,17 @@ public class PriorityQueueTest
 		final RoundingFunction.Stationary r = new RoundingFunction.Stationary(BMath.HALF, null);
 
 		List<Party> parties = Arrays.asList(
-				new Party("A", BMath.valueOf("1"), BMath.valueOf(0), BMath.valueOf(10), BMath.ZERO, BMath.ZERO, BMath.ZERO, null),
-				new Party("B", BMath.valueOf("1"), BMath.valueOf(0), BMath.valueOf(10), BMath.ZERO, BMath.ZERO, BMath.ZERO, null),
+				new Party("A", BMath.valueOf("1"), BMath.valueOf(0), BMath.valueOf(2), BMath.ZERO, BMath.ZERO, BMath.ZERO, null),
+				new Party("B", BMath.valueOf("1"), BMath.valueOf(0), BMath.valueOf(2), BMath.ZERO, BMath.ZERO, BMath.ZERO, null),
 				new Party("C", BMath.valueOf("1"), BMath.valueOf(0), BMath.valueOf(10), BMath.ZERO, BMath.ZERO, BMath.ZERO, null)
 				);
-		Int[] seats = new Int[parties.size()];
-		Uniqueness[] uniquenesses = new Uniqueness[parties.size()];
+		Int[] seats = new Int[] { BMath.ZERO, BMath.ZERO, BMath.ZERO };
 
 		InDecreaseQueue q = new InDecreaseQueue(parties, seats, new Comp(r));
 		q.increase(allSeats);
+		Uniqueness[] uniquenesses = q.getUniquenesses();
 
-
-		for (Int sum = BMath.ZERO; sum.compareTo(allSeats) < 0; sum = sum.add(1))
-		{
-			Party next = increasePQ.next(parties);
-			next.seats = next.seats.add(1);
-		}
-
-		Party lastIncreased = decreasePQ.next(parties);
-		Party lastDecreased = increasePQ.next(parties);
-		for (Party p : parties)
-			if (increasePQ.isTiedWithNext(p, parties))
-				p.uniqueness = Uniqueness.CAN_BE_LESS;
-			else if (decreasePQ.isTiedWithNext(p, parties))
-				p.uniqueness = Uniqueness.CAN_BE_MORE;
-			else
-				p.uniqueness = Uniqueness.UNIQUE;
-
-		System.out.println(Json.toJson(parties));
+		System.out.println(Json.toJson(seats));
+		System.out.println(Json.toJson(uniquenesses));
 	}
 }
