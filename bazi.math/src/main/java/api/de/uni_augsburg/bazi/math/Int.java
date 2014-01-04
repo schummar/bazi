@@ -1,10 +1,11 @@
 package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import de.uni_augsburg.bazi.common.Json.Deserialize;
 
-@Deserialize(BMath.IntDeserializer.class) public interface Int extends Rational
+@Deserialize(BMath.IntDeserializer.class) public interface Int extends Rational, Iterable<Int>
 {
 	public BigInteger getValue();
 
@@ -37,4 +38,6 @@ import de.uni_augsburg.bazi.common.Json.Deserialize;
 	@Override public Rational frac();
 
 	public int intValue();
+	public List<Int> countTo(Int to);
+	public List<Int> countTo();
 }

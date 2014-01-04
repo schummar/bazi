@@ -1,6 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.List;
 
 class Infinity implements Int
 {
@@ -78,6 +80,18 @@ class Infinity implements Int
 	@Override public int compareTo(String that)
 	{
 		return compareTo(BMath.valueOf(that));
+	}
+
+	// ///////////////////////////////////////////////////////////////////////////
+
+	@Override public List<Int> countTo()
+	{
+		throw new RuntimeException("cannot count to infinity");
+	}
+
+	@Override public List<Int> countTo(Int to)
+	{
+		throw new RuntimeException("cannot count from infinity");
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////
@@ -193,6 +207,13 @@ class Infinity implements Int
 	@Override public boolean isSpecial()
 	{
 		return true;
+	}
+
+	// ///////////////////////////////////////////////////////////////////////////
+
+	@Override public Iterator<Int> iterator()
+	{
+		return new IntIterator(BMath.ZERO, this);
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////

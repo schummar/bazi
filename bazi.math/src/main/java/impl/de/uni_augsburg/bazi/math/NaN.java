@@ -1,6 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.List;
 
 class NaN implements Int
 {
@@ -66,6 +68,18 @@ class NaN implements Int
 	@Override public int compareTo(String that)
 	{
 		throw new RuntimeException("cant compare to NaN");
+	}
+
+	// ///////////////////////////////////////////////////////////////////////////
+
+	@Override public List<Int> countTo()
+	{
+		throw new RuntimeException("cannot count to NaN");
+	}
+
+	@Override public List<Int> countTo(Int to)
+	{
+		throw new RuntimeException("cannot count from NaN");
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////
@@ -172,9 +186,18 @@ class NaN implements Int
 		return this;
 	}
 
+	// ///////////////////////////////////////////////////////////////////////////
+
 	@Override public boolean isSpecial()
 	{
 		return true;
+	}
+
+	// ///////////////////////////////////////////////////////////////////////////
+
+	@Override public Iterator<Int> iterator()
+	{
+		throw new RuntimeException("cannot iterate over NaN");
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////

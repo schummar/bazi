@@ -1,6 +1,10 @@
 package de.uni_augsburg.bazi.math;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 import de.uni_augsburg.bazi.common.Resources;
@@ -94,6 +98,22 @@ import de.uni_augsburg.bazi.common.Resources;
 	@Override public int compareTo(String that)
 	{
 		return new BRational(this).compareTo(that);
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public List<Int> countTo()
+	{
+		return BMath.ZERO.countTo(this);
+	}
+
+	@Override public List<Int> countTo(final Int that)
+	{
+		List<Int> res = new ArrayList<Int>();
+		final Int increment = compareTo(that) <= 0 ? BMath.ONE : BMath.MINUS_ONE;
+		for (Int i = this; !i.equals(that); i = i.add(increment))
+			res.add(i);
+		return res;
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -209,6 +229,34 @@ import de.uni_augsburg.bazi.common.Resources;
 	@Override public boolean isSpecial()
 	{
 		return false;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+
+	@Override public Iterator<Int> iterator()
+	{
+		final Int to = this, increment = to.compareTo(BMath.ZERO) >= 0 ? BMath.ONE : BMath.MINUS_ONE;
+		return new Iterator<Int>()
+		{
+			private Int i = BMath.ZERO;
+
+			@Override public void remove()
+			{
+				throw new UnsupportedOperationException();
+			}
+			@Override public Int next()
+			{
+				if (!hasNext())
+					throw new NoSuchElementException();
+				Int j = i;
+				i = i.add(increment);
+				return j;
+			}
+			@Override public boolean hasNext()
+			{
+				return !i.equals(to);
+			}
+		};
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
