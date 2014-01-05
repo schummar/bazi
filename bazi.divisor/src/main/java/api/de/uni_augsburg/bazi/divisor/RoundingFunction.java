@@ -11,6 +11,7 @@ public interface RoundingFunction
 {
 	public Real getBorder(Int value);
 	public Real[] getBorders(Real value);
+	public Int round(Real value);
 
 
 	public static final RoundingFunction
@@ -51,8 +52,19 @@ public interface RoundingFunction
 				lo = getBorder(value.floor().sub(1));
 			return new Rational[] { lo, hi };
 		}
-	}
 
+		@Override public Int round(Real value)
+		{
+			if (value.compareTo(getBorder(value.floor())) > 0)
+				return value.ceil();
+			return value.floor();
+		}
+
+		public Rational getParam()
+		{
+			return r;
+		}
+	}
 
 	// //////////////////////////////////////////////////////////////////////////
 
@@ -84,6 +96,13 @@ public interface RoundingFunction
 				lo = getBorder(value.floor().sub(1));
 			return new Real[] { lo, hi };
 		}
+
+		@Override public Int round(Real value)
+		{
+			if (value.compareTo(getBorder(value.floor())) > 0)
+				return value.ceil();
+			return value.floor();
+		}
 	}
 
 
@@ -105,6 +124,13 @@ public interface RoundingFunction
 				lo = getBorder(value.floor().sub(1));
 			return new Real[] { lo, hi };
 		}
+
+		@Override public Int round(Real value)
+		{
+			if (value.compareTo(getBorder(value.floor())) > 0)
+				return value.ceil();
+			return value.floor();
+		}
 	}
 
 
@@ -125,6 +151,13 @@ public interface RoundingFunction
 			if (!value.equals(hi))
 				lo = getBorder(value.floor().sub(1));
 			return new Rational[] { lo, hi };
+		}
+
+		@Override public Int round(Real value)
+		{
+			if (value.compareTo(getBorder(value.floor())) > 0)
+				return value.ceil();
+			return value.floor();
 		}
 	}
 }

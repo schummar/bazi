@@ -2,6 +2,7 @@ package de.uni_augsburg.bazi.math;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.stream.JsonReader;
@@ -54,6 +55,37 @@ public class BMath
 				STRING_TO_RATIONAL_CACHE.put(s, q = new BRational(new BigRational(s)));
 			return q;
 		}
+	}
+
+	public static Int sum(Int... is)
+	{
+		Int sum = ZERO;
+		for (Int i : is)
+			sum = sum.add(i);
+		return sum;
+	}
+
+	public static Int sumInt(List<Int> is)
+	{
+		Int sum = ZERO;
+		for (Int i : is)
+			sum = sum.add(i);
+		return sum;
+	}
+
+	public static Rational sum(Rational... qs)
+	{
+		Rational sum = ZERO;
+		for (Rational q : qs)
+			sum = sum.add(q);
+		return sum;
+	}
+	public static Real sum(Real... rs)
+	{
+		Real sum = ZERO;
+		for (Real r : rs)
+			sum = sum.add(r);
+		return sum;
 	}
 
 	public static Real min(Real... rs)

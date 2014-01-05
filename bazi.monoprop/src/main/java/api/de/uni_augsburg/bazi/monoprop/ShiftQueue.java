@@ -9,15 +9,15 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod.Input.Party;
 
-public class InDecreaseQueue
+public class ShiftQueue
 {
 	private final List<? extends Party> parties;
-	private final Int[] seats;
+	private final List<Int> seats;
 	private final Comp comp;
 
 	private final List<Integer> increase, decrease;
 
-	public InDecreaseQueue(List<? extends Party> parties, Int[] seats, final Comp comp)
+	public ShiftQueue(List<? extends Party> parties, List<Int> seats, final Comp comp)
 	{
 		this.parties = parties;
 		this.seats = seats;
@@ -32,59 +32,73 @@ public class InDecreaseQueue
 		update();
 	}
 
-	public void increase(Int n) throws NoInDecreasePossible
+	public void shift(Int n) throws NoShiftPossible
 	{
-		for (Int i = BMath.ZERO; i.compareTo(n) < 0; i = i.add(1))
-			increase();
+		int sgn = n.sgn();
+		if (sgn > 0)
+		{
+			for (Int i = BMath.ZERO; i.compareTo(n) < 0; i = i.add(1))
+				increase();
+		}
+		else if (sgn < 0)
+		{
+			n = n.neg();
+			for (Int i = BMath.ZERO; i.compareTo(n) < 0; i = i.add(1))
+				decrease();
+		}
 	}
 
-	public void increase() throws NoInDecreasePossible
+	public void increase() throws NoShiftPossible
 	{
 		int i = increase.get(0);
-		Int s = seats[i].add(1);
+		Int s = seats.get(i).add(1);
 
 		if (s.compareTo(parties.get(i).getMax()) > 0)
-			throw new NoInDecreasePossible();
+			throw new NoShiftPossible();
 
-		seats[i] = seats[i].add(1);
+		seats.set(i, seats.get(i).add(1));
 		update();
 	}
 
-	public void decrease(Int n) throws NoInDecreasePossible
+	public int nextIncrease()
 	{
-		for (Int i = BMath.ZERO; i.compareTo(n) < 0; i = i.add(1))
-			decrease();
+		return increase.get(0);
 	}
 
-	public void decrease() throws NoInDecreasePossible
+	public void decrease() throws NoShiftPossible
 	{
 		int i = decrease.get(0);
-		Int s = seats[i].sub(1);
+		Int s = seats.get(i).sub(1);
 
 		if (s.compareTo(parties.get(i).getMin()) < 0)
-			throw new NoInDecreasePossible();
+			throw new NoShiftPossible();
 
-		seats[i] = seats[i].sub(1);
+		seats.set(i, seats.get(i).sub(1));
 		update();
 	}
 
-	public Uniqueness[] getUniquenesses()
+	public int nextDecrease()
 	{
-		Uniqueness[] uniquenesses = new Uniqueness[parties.size()];
-		for (int i = 0; i < uniquenesses.length; i++)
-			uniquenesses[i] = Uniqueness.UNIQUE;
+		return decrease.get(0);
+	}
+
+	public List<Uniqueness> getUniquenesses()
+	{
+		List<Uniqueness> uniquenesses = new ArrayList<>();
+		for (int i = 0; i < parties.size(); i++)
+			uniquenesses.add(Uniqueness.UNIQUE);
 
 		int lastIncrease = decrease.get(0);
 		for (int i : increase)
-			if (compare(parties.get(i), seats[i].add(1), parties.get(lastIncrease), seats[lastIncrease]) >= 0)
-				uniquenesses[i] = Uniqueness.CAN_BE_MORE;
+			if (compare(parties.get(i), seats.get(i).add(1), parties.get(lastIncrease), seats.get(lastIncrease)) >= 0)
+				uniquenesses.set(i, Uniqueness.CAN_BE_MORE);
 			else
 				break;
 
 		int lastDecrease = increase.get(0);
 		for (int i : decrease)
-			if (compare(parties.get(i), seats[i], parties.get(lastDecrease), seats[lastDecrease].add(1)) <= 0)
-				uniquenesses[i] = Uniqueness.CAN_BE_LESS;
+			if (compare(parties.get(i), seats.get(i), parties.get(lastDecrease), seats.get(lastDecrease).add(1)) <= 0)
+				uniquenesses.set(i, Uniqueness.CAN_BE_LESS);
 			else
 				break;
 
@@ -97,7 +111,7 @@ public class InDecreaseQueue
 		{
 			@Override public int compare(Integer i0, Integer i1)
 			{
-				int comp = -InDecreaseQueue.this.compare(parties.get(i0), seats[i0].add(1), parties.get(i1), seats[i1].add(1));
+				int comp = -ShiftQueue.this.compare(parties.get(i0), seats.get(i0).add(1), parties.get(i1), seats.get(i1).add(1));
 				if (comp == 0)
 					comp = i0.compareTo(i1);
 				return comp;
@@ -107,7 +121,7 @@ public class InDecreaseQueue
 		{
 			@Override public int compare(Integer i0, Integer i1)
 			{
-				int comp = InDecreaseQueue.this.compare(parties.get(i0), seats[i0].sub(1), parties.get(i1), seats[i1].sub(1));
+				int comp = ShiftQueue.this.compare(parties.get(i0), seats.get(i0).sub(1), parties.get(i1), seats.get(i1).sub(1));
 				if (comp == 0)
 					comp = -i0.compareTo(i1);
 				return comp;
@@ -137,7 +151,7 @@ public class InDecreaseQueue
 		public int compare(Party p0, Int s0, Party p1, Int s1);
 	}
 
-	public static class NoInDecreasePossible extends Exception
+	public static class NoShiftPossible extends Exception
 	{
 		private static final long serialVersionUID = 1L;
 	}
