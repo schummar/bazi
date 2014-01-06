@@ -89,10 +89,18 @@ class DivisorMethodImpl
 		for (Input.Party party : parties)
 		{
 			Int s = r.round(party.getVotes().mul(ubm));
-			s = s.min(party.getMin()).max(party.getMax());
+			s = s.max(party.getMin()).min(party.getMax());
 			pseats.add(s);
 		}
 		return pseats;
+	}
+
+	private static Real getShiftValue(MonopropMethod.Input.Party p, Int s, RoundingFunction r)
+	{
+		Real border = r.getBorder(s);
+		if (border.sgn() <= 0)
+			return BMath.INF;
+		return p.getVotes().div(border);
 	}
 
 	private static class Comp implements ShiftQueue.Comp
@@ -106,8 +114,7 @@ class DivisorMethodImpl
 
 		@Override public int compare(MonopropMethod.Input.Party p0, Int s0, MonopropMethod.Input.Party p1, Int s1)
 		{
-			Real r0 = p0.getVotes().div(r.getBorder(s0));
-			Real r1 = p1.getVotes().div(r.getBorder(s1));
+			Real r0 = getShiftValue(p0, s0, r), r1 = getShiftValue(p1, s1, r);
 			return r0.compareTo(r1);
 		}
 	}
@@ -130,14 +137,14 @@ class DivisorMethodImpl
 			else if (s0.compareTo(p0.getMax()) > 0)
 				r0 = BMath.ZERO;
 			else
-				r0 = p0.getVotes().div(r.getBorder(s0));
+				r0 = getShiftValue(p0, s0, r);
 
 			if (s1.compareTo(p1.getMin()) < 0)
 				r1 = BMath.INF;
 			else if (s1.compareTo(p1.getMax()) > 0)
 				r1 = BMath.ZERO;
 			else
-				r1 = p1.getVotes().div(r.getBorder(s1));
+				r1 = getShiftValue(p1, s1, r);
 			return r0.compareTo(r1);
 		}
 	}

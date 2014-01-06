@@ -4,7 +4,9 @@ import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 
-class NaN implements Int
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
+
+@SerializeAsString class NaN implements Int
 {
 	public NaN()
 	{}

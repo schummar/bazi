@@ -1,0 +1,26 @@
+{
+  seats: 1,
+  parties: [
+    {
+      name: A,
+      votes: 1,
+      min: 0,
+      max: oo,
+      dir: 0
+    },
+    {
+      name: B,
+      votes: 1,
+      min: 0,
+      max: oo,
+      dir: 0
+    },
+    {
+      name: C,
+      votes: 1,
+      min: 0,
+      max: oo,
+      dir: 0
+    }
+  ]
+}

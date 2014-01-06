@@ -4,7 +4,9 @@ import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 
-class Infinity implements Int
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
+
+@SerializeAsString class Infinity implements Int
 {
 	private final int sgn;
 
