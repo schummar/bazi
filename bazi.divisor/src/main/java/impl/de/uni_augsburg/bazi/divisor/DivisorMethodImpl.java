@@ -26,7 +26,7 @@ class DivisorMethodImpl
 			List<Uniqueness> uniquenesses;
 			Real dmin, dmax;
 
-			ShiftQueue q = new ShiftQueue(parties, seats, new Comp(r));
+			ShiftQueue q = new ShiftQueue(parties, seats, (p0, s0, p1, s1) -> compare(p0, s0, p1, s1, r, false));
 			q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
 
 			boolean allOK = true;
@@ -46,7 +46,7 @@ class DivisorMethodImpl
 
 			if (!allOK)
 			{
-				q = new ShiftQueue(parties, seats, new CompStrict(r));
+				q = new ShiftQueue(parties, seats, (p0, s0, p1, s1) -> compare(p0, s0, p1, s1, r, true));
 				q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
 			}
 
@@ -95,57 +95,20 @@ class DivisorMethodImpl
 		return pseats;
 	}
 
-	private static Real getShiftValue(MonopropMethod.Input.Party p, Int s, RoundingFunction r)
+	private static Real getShiftValue(MonopropMethod.Input.Party p, Int s, RoundingFunction r, boolean mindConditions)
 	{
+		if (mindConditions && s.compareTo(p.getMin()) < 0)
+			return BMath.INF;
+		if (mindConditions && s.compareTo(p.getMax()) > 0)
+			return BMath.ZERO;
 		Real border = r.getBorder(s);
 		if (border.sgn() <= 0)
 			return BMath.INF;
 		return p.getVotes().div(border);
 	}
 
-	private static class Comp implements ShiftQueue.Comp
+	private static int compare(MonopropMethod.Input.Party p0, Int s0, MonopropMethod.Input.Party p1, Int s1, RoundingFunction r, boolean mindConditions)
 	{
-		private final RoundingFunction r;
-
-		public Comp(RoundingFunction r)
-		{
-			this.r = r;
-		}
-
-		@Override public int compare(MonopropMethod.Input.Party p0, Int s0, MonopropMethod.Input.Party p1, Int s1)
-		{
-			Real r0 = getShiftValue(p0, s0, r), r1 = getShiftValue(p1, s1, r);
-			return r0.compareTo(r1);
-		}
-	}
-
-	private static class CompStrict implements ShiftQueue.Comp
-	{
-		private final RoundingFunction r;
-
-		public CompStrict(RoundingFunction r)
-		{
-			this.r = r;
-		}
-
-		@Override public int compare(MonopropMethod.Input.Party p0, Int s0, MonopropMethod.Input.Party p1, Int s1)
-		{
-			Real r0, r1;
-
-			if (s0.compareTo(p0.getMin()) < 0)
-				r0 = BMath.INF;
-			else if (s0.compareTo(p0.getMax()) > 0)
-				r0 = BMath.ZERO;
-			else
-				r0 = getShiftValue(p0, s0, r);
-
-			if (s1.compareTo(p1.getMin()) < 0)
-				r1 = BMath.INF;
-			else if (s1.compareTo(p1.getMax()) > 0)
-				r1 = BMath.ZERO;
-			else
-				r1 = getShiftValue(p1, s1, r);
-			return r0.compareTo(r1);
-		}
+		return getShiftValue(p0, s0, r, mindConditions).compareTo(getShiftValue(p1, s1, r, mindConditions));
 	}
 }
