@@ -1,50 +1,204 @@
 package de.uni_augsburg.bazi.math;
 
-import de.uni_augsburg.bazi.common.Json.Deserialize;
+import org.apfloat.Apint;
+import org.apfloat.Aprational;
+import org.apfloat.AprationalMath;
 
-@Deserialize(BMath.RationalDeserializer.class) public interface Rational extends Real
+public class Rational extends Real
 {
-	public Int getNumerator();
-	public Int getDenominator();
+	private final Aprational delegate;
 
-	public Rational add(Rational that);
-	@Override public Rational add(String that);
-	@Override public Rational add(long that);
+	public Rational(Aprational delegate)
+	{
+		super(delegate);
+		this.delegate = delegate;
+	}
+	public Rational(String s)
+	{
+		this(BMath.parseString(s));
+	}
 
-	public Rational sub(Rational that);
-	@Override public Rational sub(String that);
-	@Override public Rational sub(long that);
 
-	public Rational mul(Rational that);
-	@Override public Rational mul(String that);
-	@Override public Rational mul(long that);
+	@Override public Rational add(long l)
+	{
+		return add(new Int(l));
+	}
+	@Override public Rational add(String s)
+	{
+		return add(new Rational(s));
+	}
+	@Override public Real add(Real that)
+	{
+		if (that instanceof Rational)
+			return add((Rational) that);
+		return that.add(this);
+	}
+	public Rational add(Rational that)
+	{
+		return new Rational(delegate.add(that.delegate));
+	}
 
-	public Rational div(Rational that);
-	@Override public Rational div(String that);
-	@Override public Rational div(long that);
 
-	public Rational pow(Int that);
-	@Override public Rational pow(long that);
+	@Override public Rational sub(long l)
+	{
+		return sub(new Int(l));
+	}
+	@Override public Rational sub(String s)
+	{
+		return sub(new Rational(s));
+	}
+	@Override public Real sub(Real that)
+	{
+		if (that instanceof Rational)
+			return sub((Rational) that);
+		return that.sub(this).neg();
+	}
+	public Rational sub(Rational that)
+	{
+		return new Rational(delegate.subtract(that.delegate));
+	}
 
-	public Rational min(Rational that);
-	@Override public Rational min(String that);
-	@Override public Rational min(long that);
 
-	public Rational max(Rational that);
-	@Override public Rational max(String that);
-	@Override public Rational max(long that);
+	@Override public Rational mul(long l)
+	{
+		return mul(new Int(l));
+	}
+	@Override public Rational mul(String s)
+	{
+		return mul(new Rational(s));
+	}
+	@Override public Real mul(Real that)
+	{
+		if (that instanceof Rational)
+			return mul((Rational) that);
+		return that.mul(this);
+	}
+	public Rational mul(Rational that)
+	{
+		return new Rational(delegate.multiply(that.delegate));
+	}
 
-	public boolean equals(Rational that);
-	@Override public boolean equals(String that);
-	@Override public boolean equals(long that);
 
-	public int compareTo(Rational that);
-	@Override public int compareTo(String that);
-	@Override public int compareTo(long that);
+	@Override public Rational div(long l)
+	{
+		return div(new Int(l));
+	}
+	@Override public Rational div(String s)
+	{
+		return div(new Rational(s));
+	}
+	@Override public Real div(Real that)
+	{
+		if (that instanceof Rational)
+			return div((Rational) that);
+		return that.div(this).inv();
+	}
+	public Rational div(Rational that)
+	{
+		return new Rational(delegate.divide(that.delegate));
+	}
 
-	@Override public Rational neg();
-	@Override public Rational inv();
-	@Override public int sgn();
 
-	@Override public Rational frac();
+	@Override public Rational pow(long l)
+	{
+		return new Rational(AprationalMath.pow(delegate, l));
+	}
+
+
+	@Override public Rational min(long l)
+	{
+		return min(new Int(l));
+	}
+	@Override public Rational min(String s)
+	{
+		return min(new Rational(s));
+	}
+	@Override public Real min(Real that)
+	{
+		if (that instanceof Rational)
+			return min((Rational) that);
+		return that.min(this);
+	}
+	public Rational min(Rational that)
+	{
+		return compareTo(that) <= 0 ? this : that;
+	}
+
+
+	@Override public Rational max(long l)
+	{
+		return max(new Int(l));
+	}
+	@Override public Rational max(String s)
+	{
+		return max(new Rational(s));
+	}
+	@Override public Real max(Real that)
+	{
+		if (that instanceof Rational)
+			return max((Rational) that);
+		return that.max(this);
+	}
+	public Rational max(Rational that)
+	{
+		return compareTo(that) >= 0 ? this : that;
+	}
+
+
+	@Override public boolean equals(long l)
+	{
+		return equals(new Int(l));
+	}
+	@Override public boolean equals(String s)
+	{
+		return equals(new Rational(s));
+	}
+	@Override public boolean equals(Real that)
+	{
+		if (that instanceof Rational)
+			return equals((Rational) that);
+		return that.equals(this);
+	}
+	public boolean equals(Rational that)
+	{
+		return delegate.equals(that.delegate);
+	}
+
+
+	@Override public int compareTo(long l)
+	{
+		return compareTo(new Int(l));
+	}
+	@Override public int compareTo(String s)
+	{
+		return compareTo(new Rational(s));
+	}
+	@Override public int compareTo(Real that)
+	{
+		if (that instanceof Rational)
+			return compareTo((Rational) that);
+		return -that.compareTo(this);
+	}
+	public int compareTo(Rational that)
+	{
+		return delegate.compareTo(that.delegate);
+	}
+
+
+	@Override public Rational neg()
+	{
+		return new Rational(delegate.negate());
+	}
+
+
+	@Override public Rational inv()
+	{
+		return new Rational(Apint.ONE.divide(delegate));
+	}
+
+
+	@Override public String toString()
+	{
+		return delegate.toString();
+	}
 }
