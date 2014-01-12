@@ -46,9 +46,16 @@ public class BMath
 		default:
 			Rational q = STRING_TO_RATIONAL_CACHE.get(s);
 			if (q == null)
-				STRING_TO_RATIONAL_CACHE.put(s, q = new Rational(s));
+				STRING_TO_RATIONAL_CACHE.put(s, q = fromApRational(parseString(s)));
 			return q;
 		}
+	}
+
+	static Rational fromApRational(Aprational apr)
+	{
+		if (apr instanceof Apint)
+			return new Int((Apint) apr);
+		return new Rational(apr);
 	}
 
 	static Aprational parseString(String s)

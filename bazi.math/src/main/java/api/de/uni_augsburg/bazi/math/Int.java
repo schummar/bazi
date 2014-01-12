@@ -8,6 +8,15 @@ import org.apfloat.Apint;
 
 public class Int extends Rational
 {
+	public static Int valueOf(String s)
+	{
+		Rational q = BMath.valueOf(s);
+		if (q instanceof Int)
+			return (Int) q;
+		throw new NumberFormatException();
+	}
+
+
 	private final Apint delegate;
 
 	Int(Apint delegate)
@@ -207,9 +216,15 @@ public class Int extends Rational
 	}
 
 
-	@Override public Rational neg()
+	@Override public Int neg()
 	{
 		return new Int(delegate.negate());
+	}
+
+
+	public int intValue()
+	{
+		return delegate.intValue();
 	}
 
 

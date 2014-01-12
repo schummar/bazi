@@ -101,11 +101,11 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	{
 		return this;
 	}
-	@Override public Real pow(Real that, int minPrecision)
+	@Override public Real pow(Real that)
 	{
 		return this;
 	}
-	@Override public Real pow(String that, int minPrecision)
+	@Override public Real pow(String that)
 	{
 		return this;
 	}

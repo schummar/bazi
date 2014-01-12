@@ -6,6 +6,12 @@ import org.apfloat.AprationalMath;
 
 public class Rational extends Real
 {
+	public static Rational valueOf(String s)
+	{
+		return BMath.valueOf(s);
+	}
+
+
 	private final Aprational delegate;
 
 	public Rational(Aprational delegate)
@@ -194,6 +200,12 @@ public class Rational extends Real
 	@Override public Rational inv()
 	{
 		return new Rational(Apint.ONE.divide(delegate));
+	}
+
+
+	@Override public Rational frac()
+	{
+		return sub(Int());
 	}
 
 

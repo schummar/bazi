@@ -11,14 +11,6 @@ public class Real implements Comparable<Real>
 		return BMath.valueOf(s);
 	}
 
-	public static Real min(Real... rs)
-	{
-		Real min = BMath.INF;
-		for (Real r : rs)
-			min = min.min(r);
-		return min;
-	}
-
 
 	private final Apfloat delegate;
 
@@ -93,11 +85,11 @@ public class Real implements Comparable<Real>
 	{
 		return new Real(ApfloatMath.pow(delegate, l));
 	}
-	public Real pow(String s, int minPrecision)
+	public Real pow(String s)
 	{
-		return pow(new Rational(s), minPrecision);
+		return pow(new Rational(s));
 	}
-	public Real pow(Real that, int minPrecision)
+	public Real pow(Real that)
 	{
 		return new Real(ApfloatMath.pow(delegate, that.delegate));
 	}

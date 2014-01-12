@@ -122,7 +122,7 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 			return this;
 		return BMath.ONE;
 	}
-	@Override public Real pow(Real that, int minPrecision)
+	@Override public Real pow(Real that)
 	{
 		if (that instanceof NaN)
 			return BMath.NAN;
@@ -134,9 +134,9 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 			return BMath.ONE;
 		return this;
 	}
-	@Override public Real pow(String that, int minPrecision)
+	@Override public Real pow(String that)
 	{
-		return pow(BMath.valueOf(that), minPrecision);
+		return pow(BMath.valueOf(that));
 	}
 
 

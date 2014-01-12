@@ -27,7 +27,7 @@ class DivisorMethodImpl
 			Real dmin, dmax;
 
 			ShiftQueue q = new ShiftQueue(parties, seats, new Comp(r));
-			q.shift(allSeats.sub(BMath.sumInt(seats)));
+			q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
 
 			boolean allOK = true;
 			for (int i = 0; i < parties.size(); i++)
@@ -47,7 +47,7 @@ class DivisorMethodImpl
 			if (!allOK)
 			{
 				q = new ShiftQueue(parties, seats, new CompStrict(r));
-				q.shift(allSeats.sub(BMath.sumInt(seats)));
+				q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
 			}
 
 			uniquenesses = q.getUniquenesses();
