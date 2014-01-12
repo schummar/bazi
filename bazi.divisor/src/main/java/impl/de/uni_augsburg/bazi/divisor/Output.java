@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
-import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod;
 import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
@@ -18,15 +17,15 @@ class Output implements DivisorMethod.Output
 {
 	public Int seats;
 	public List<? extends Party> parties;
-	public Real divisor;
+	public Divisor divisor;
 
 	public Output()
 	{
 		this.seats = BMath.ZERO;
 		this.parties = new ArrayList<>();
-		this.divisor = BMath.ZERO;
+		this.divisor = new Divisor(BMath.ZERO, BMath.INF);
 	}
-	public Output(Int seats, List<? extends Party> parties, Real divisor)
+	public Output(Int seats, List<? extends Party> parties, Divisor divisor)
 	{
 		this.seats = seats;
 		this.parties = parties;
@@ -40,7 +39,7 @@ class Output implements DivisorMethod.Output
 	{
 		return ImmutableList.copyOf(parties);
 	}
-	@Override public Real getDivisor()
+	@Override public Divisor getDivisor()
 	{
 		return divisor;
 	}

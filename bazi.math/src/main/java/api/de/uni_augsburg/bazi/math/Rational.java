@@ -4,7 +4,9 @@ import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.apfloat.AprationalMath;
 
-public class Rational extends Real
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
+
+@SerializeAsString public class Rational extends Real
 {
 	public static Rational valueOf(String s)
 	{

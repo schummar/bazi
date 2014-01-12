@@ -6,7 +6,9 @@ import java.util.function.UnaryOperator;
 
 import org.apfloat.Apint;
 
-public class Int extends Rational
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
+
+@SerializeAsString public class Int extends Rational
 {
 	public static Int valueOf(String s)
 	{
@@ -51,7 +53,7 @@ public class Int extends Rational
 	@Override public Rational add(Rational that)
 	{
 		if (that instanceof Int)
-			return add(that);
+			return add((Int) that);
 		return that.add(this);
 	}
 	public Int add(Int that)
@@ -77,7 +79,7 @@ public class Int extends Rational
 	@Override public Rational sub(Rational that)
 	{
 		if (that instanceof Int)
-			return sub(that);
+			return sub((Int) that);
 		return that.sub(this).neg();
 	}
 	public Int sub(Int that)
@@ -103,7 +105,7 @@ public class Int extends Rational
 	@Override public Rational mul(Rational that)
 	{
 		if (that instanceof Int)
-			return mul(that);
+			return mul((Int) that);
 		return that.mul(this);
 	}
 	public Int mul(Int that)
@@ -129,7 +131,7 @@ public class Int extends Rational
 	@Override public Rational min(Rational that)
 	{
 		if (that instanceof Int)
-			return min(that);
+			return min((Int) that);
 		return that.min(this);
 	}
 	public Int min(Int that)
@@ -155,7 +157,7 @@ public class Int extends Rational
 	@Override public Rational max(Rational that)
 	{
 		if (that instanceof Int)
-			return max(that);
+			return max((Int) that);
 		return that.max(this);
 	}
 	public Int max(Int that)
@@ -181,7 +183,7 @@ public class Int extends Rational
 	@Override public boolean equals(Rational that)
 	{
 		if (that instanceof Int)
-			return equals(that);
+			return equals((Int) that);
 		return that.equals(this);
 	}
 	public boolean equals(Int that)
@@ -207,7 +209,7 @@ public class Int extends Rational
 	@Override public int compareTo(Rational that)
 	{
 		if (that instanceof Int)
-			return compareTo(that);
+			return compareTo((Int) that);
 		return that.compareTo(this);
 	}
 	public int compareTo(Int that)

@@ -62,7 +62,7 @@ class DivisorMethodImpl
 				Input.Party p = parties.get(i);
 				outParties.add(new Output.Party(p.getName(), p.getVotes(), p.getMin(), p.getMax(), p.getDir(), null, seats.get(i), uniquenesses.get(i)));
 			}
-			return new Output(allSeats, outParties, dmin);
+			return new Output(allSeats, outParties, new Divisor(dmin, dmax));
 		}
 		catch (NoShiftPossible e)
 		{

@@ -56,7 +56,13 @@ public class Json
 			TypeAdapter<? extends T> adapterToDeserialize = deserializeAsClass != null ? gson.getAdapter(deserializeAsClass) : null;
 			Serializer<T> serializer = getSerializer(type);
 			Deserializer<T> deserializer = getDeserializer(type);
-			TypeAdapter<T> def = gson.getDelegateAdapter(TYPE_ADAPTER_FACTORY, type);
+			TypeAdapter<T> def = null;
+			try
+			{
+				def = gson.getDelegateAdapter(TYPE_ADAPTER_FACTORY, type);
+			}
+			catch (Exception e)
+			{}
 			TypeAdapter<T> ta = new Adapter<>(serializeAsString, adapterToDeserialize, serializer, deserializer, def).nullSafe();
 
 			adapters.put(type, ta);

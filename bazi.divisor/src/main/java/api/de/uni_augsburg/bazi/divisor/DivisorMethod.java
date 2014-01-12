@@ -1,6 +1,5 @@
 package de.uni_augsburg.bazi.divisor;
 
-import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod;
 
 
@@ -20,6 +19,6 @@ public class DivisorMethod implements MonopropMethod
 
 	public static interface Output extends MonopropMethod.Output
 	{
-		public Real getDivisor();
+		public Divisor getDivisor();
 	}
 }

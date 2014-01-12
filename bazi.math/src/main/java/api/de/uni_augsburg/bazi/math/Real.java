@@ -4,7 +4,9 @@ import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.apfloat.Apint;
 
-public class Real implements Comparable<Real>
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
+
+@SerializeAsString public class Real implements Comparable<Real>
 {
 	public static Real valueOf(String s)
 	{

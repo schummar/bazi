@@ -9,6 +9,11 @@ import org.apache.log4j.Logger;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 
 import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.common.Version;
@@ -29,7 +34,18 @@ public class DivisorMethodTest
 		String json = Resources.toString(Resources.getResource(DivisorMethodTest.class, "input_divisor.bazi"), Charsets.UTF_8);
 		log.debug("warnings: " + Json.checkJson(json, Input.class));
 
-		MonopropMethod.Input input = Json.fromJson(json, Input.class);
+		JsonDeserializer<Int> intDeserializer = (j, t, c) -> Int.valueOf(j.getAsString());
+		JsonDeserializer<Rational> rationalDeserializer = (j, t, c) -> Rational.valueOf(j.getAsString());
+		JsonSerializer<Int> intSerializer = (e, t, c) -> new JsonPrimitive(e.toString());
+		JsonSerializer<Rational> rationalSerializer = (e, t, c) -> new JsonPrimitive(e.toString());
+
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(Int.class, intDeserializer)
+				.registerTypeAdapter(Rational.class, rationalDeserializer)
+				.registerTypeAdapter(Int.class, intSerializer)
+				.registerTypeAdapter(Rational.class, rationalSerializer)
+				.create();
+		MonopropMethod.Input input = gson.fromJson(json, Input.class);
 		MonopropMethod qm = new DivisorMethod(RoundingFunction.DIV_STD);
 
 		log.debug("start calculation");
