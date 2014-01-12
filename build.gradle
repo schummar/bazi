@@ -22,8 +22,8 @@ allprojects {
 	repositories { mavenCentral() }
 
 	apply plugin: 'java'
-	sourceCompatibility = 1.7
-	targetCompatibility = 1.7
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
 	sourceSets{
 		main{
 			java{
@@ -50,7 +50,7 @@ dependencies { compile project(':bazi.cl') }
 buildscript {
 	repositories { mavenCentral() }
 
-	dependencies { classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1' }
+	dependencies { classpath 'eu.appsatori:gradle-fatjar-plugin:0.2' }
 }
 
 apply plugin: 'fatjar'
