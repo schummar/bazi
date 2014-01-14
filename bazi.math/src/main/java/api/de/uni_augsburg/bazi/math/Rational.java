@@ -4,9 +4,10 @@ import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.apfloat.AprationalMath;
 
+import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
 import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
-@SerializeAsString public class Rational extends Real
+@SerializeAsString @DeserializeFromString public class Rational extends Real
 {
 	public static Rational valueOf(String s)
 	{
@@ -43,6 +44,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Rational add(Rational that)
 	{
+		if (that.isSpecial())
+			return that.add(this);
 		return new Rational(delegate.add(that.delegate));
 	}
 
@@ -63,6 +66,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Rational sub(Rational that)
 	{
+		if (that.isSpecial())
+			return that.sub(this).neg();
 		return new Rational(delegate.subtract(that.delegate));
 	}
 
@@ -83,6 +88,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Rational mul(Rational that)
 	{
+		if (that.isSpecial())
+			return that.mul(this);
 		return new Rational(delegate.multiply(that.delegate));
 	}
 
@@ -103,6 +110,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Rational div(Rational that)
 	{
+		if (that.isSpecial())
+			return that.div(this).inv();
 		return new Rational(delegate.divide(that.delegate));
 	}
 
@@ -129,6 +138,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Rational min(Rational that)
 	{
+		if (that.isSpecial())
+			return that.min(this);
 		return compareTo(that) <= 0 ? this : that;
 	}
 
@@ -149,6 +160,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Rational max(Rational that)
 	{
+		if (that.isSpecial())
+			return that.max(this);
 		return compareTo(that) >= 0 ? this : that;
 	}
 
@@ -169,6 +182,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public boolean equals(Rational that)
 	{
+		if (that.isSpecial())
+			return that.equals(this);
 		return delegate.equals(that.delegate);
 	}
 
@@ -189,6 +204,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public int compareTo(Rational that)
 	{
+		if (that.isSpecial())
+			return -that.compareTo(this);
 		return delegate.compareTo(that.delegate);
 	}
 

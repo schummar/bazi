@@ -4,9 +4,10 @@ import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.apfloat.Apint;
 
+import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
 import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
-@SerializeAsString public class Real implements Comparable<Real>
+@SerializeAsString @DeserializeFromString public class Real implements Comparable<Real>
 {
 	public static Real valueOf(String s)
 	{
@@ -37,6 +38,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Real add(Real that)
 	{
+		if (that.isSpecial())
+			return that.add(this);
 		return new Real(delegate.add(that.delegate));
 	}
 
@@ -51,6 +54,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Real sub(Real that)
 	{
+		if (that.isSpecial())
+			return that.sub(this).neg();
 		return new Real(delegate.subtract(that.delegate));
 	}
 
@@ -65,6 +70,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Real mul(Real that)
 	{
+		if (that.isSpecial())
+			return that.mul(this);
 		return new Real(delegate.multiply(that.delegate));
 	}
 
@@ -79,6 +86,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Real div(Real that)
 	{
+		if (that.isSpecial())
+			return that.div(this).inv();
 		return new Real(delegate.divide(that.delegate));
 	}
 
@@ -93,6 +102,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Real pow(Real that)
 	{
+		if (that.isSpecial())
+			return BMath.NAN;
 		return new Real(ApfloatMath.pow(delegate, that.delegate));
 	}
 
@@ -107,6 +118,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Real min(Real that)
 	{
+		if (that.isSpecial())
+			return that.min(this);
 		return compareTo(that) <= 0 ? this : that;
 	}
 
@@ -121,6 +134,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Real max(Real that)
 	{
+		if (that.isSpecial())
+			return that.max(this);
 		return compareTo(that) >= 0 ? this : that;
 	}
 
@@ -135,6 +150,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public boolean equals(Real that)
 	{
+		if (that.isSpecial())
+			return that.equals(this);
 		return delegate.equals(that.delegate);
 	}
 
@@ -149,6 +166,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	@Override public int compareTo(Real that)
 	{
+		if (that.isSpecial())
+			return -that.compareTo(this);
 		return delegate.compareTo(that.delegate);
 	}
 

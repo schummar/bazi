@@ -6,9 +6,10 @@ import java.util.function.UnaryOperator;
 
 import org.apfloat.Apint;
 
+import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
 import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
-@SerializeAsString public class Int extends Rational
+@SerializeAsString @DeserializeFromString public class Int extends Rational
 {
 	public static Int valueOf(String s)
 	{
@@ -58,6 +59,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Int add(Int that)
 	{
+		if (that.isSpecial())
+			return that.add(this);
 		return new Int(delegate.add(that.delegate));
 	}
 
@@ -84,6 +87,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Int sub(Int that)
 	{
+		if (that.isSpecial())
+			return that.sub(this).neg();
 		return new Int(delegate.subtract(that.delegate));
 	}
 
@@ -110,6 +115,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Int mul(Int that)
 	{
+		if (that.isSpecial())
+			return that.mul(this);
 		return new Int(delegate.multiply(that.delegate));
 	}
 
@@ -136,6 +143,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Int min(Int that)
 	{
+		if (that.isSpecial())
+			return that.min(this);
 		return compareTo(that) <= 0 ? this : that;
 	}
 
@@ -162,6 +171,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public Int max(Int that)
 	{
+		if (that.isSpecial())
+			return that.max(this);
 		return compareTo(that) >= 0 ? this : that;
 	}
 
@@ -188,6 +199,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public boolean equals(Int that)
 	{
+		if (that.isSpecial())
+			return that.equals(this);
 		return delegate.equals(that.delegate);
 	}
 
@@ -204,16 +217,18 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	{
 		if (that instanceof Rational)
 			return compareTo((Rational) that);
-		return that.compareTo(this);
+		return -that.compareTo(this);
 	}
 	@Override public int compareTo(Rational that)
 	{
 		if (that instanceof Int)
 			return compareTo((Int) that);
-		return that.compareTo(this);
+		return -that.compareTo(this);
 	}
 	public int compareTo(Int that)
 	{
+		if (that.isSpecial())
+			return -that.compareTo(this);
 		return delegate.compareTo(that.delegate);
 	}
 

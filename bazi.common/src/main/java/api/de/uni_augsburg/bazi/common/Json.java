@@ -8,6 +8,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,6 +113,9 @@ public class Json
 	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface SerializeAsString
 	{}
 
+	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface DeserializeFromString
+	{}
+
 	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface DeserializeAsClass
 	{
 		Class<?> value();
@@ -167,6 +172,28 @@ public class Json
 
 	@SuppressWarnings("unchecked") public static <T> Deserializer<T> getDeserializer(TypeToken<T> type)
 	{
+		if (type.getRawType().isAnnotationPresent(SerializeAsString.class))
+		{
+			try
+			{
+				Method m = type.getRawType().getMethod("valueOf", String.class);
+				return json -> {
+					try
+					{
+						return (T) m.invoke(null, json.nextString());
+					}
+					catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | IOException e)
+					{}
+					return null;
+				};
+			}
+			catch (NoSuchMethodException | SecurityException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+
 		Deserialize s = type.getRawType().getAnnotation(Deserialize.class);
 		if (s == null)
 			return null;
@@ -179,7 +206,6 @@ public class Json
 		{}
 		return null;
 	}
-
 
 	// //////////////////////////////////////////////////////////////////////////
 

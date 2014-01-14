@@ -1,10 +1,10 @@
 {
-  seats: 1,
+  seats: 4,
   parties: [
     {
       name: A,
       votes: 1,
-      min: 0,
+      min: 2,
       max: oo,
       dir: 0
     },
