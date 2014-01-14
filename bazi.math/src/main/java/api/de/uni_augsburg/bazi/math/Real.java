@@ -184,6 +184,12 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
+	public Real abs()
+	{
+		return sgn() >= 0 ? this : this.neg();
+	}
+
+
 	public int sgn()
 	{
 		return delegate.signum();
@@ -223,5 +229,12 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	@Override public String toString()
 	{
 		return delegate.toString(true);
+	}
+
+	public String toString(int digits)
+	{
+		Rational x = BMath.TEN.pow(digits);
+		return BMath.pad(((Real) mul(x).round().div(x)).delegate.precision(digits + 1).toString(true), digits);
+
 	}
 }

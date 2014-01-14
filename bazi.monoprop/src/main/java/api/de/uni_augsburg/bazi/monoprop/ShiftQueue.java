@@ -2,26 +2,26 @@ package de.uni_augsburg.bazi.monoprop;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
+import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod.Input.Party;
 
 public class ShiftQueue
 {
 	private final List<? extends Party> parties;
 	private final List<Int> seats;
-	private final Comp comp;
+	private final ShiftFunction shiftFunction;
 
 	private final List<Integer> increase, decrease;
 
-	public ShiftQueue(List<? extends Party> parties, List<Int> seats, final Comp comp)
+	public ShiftQueue(List<? extends Party> parties, List<Int> seats, ShiftFunction shiftFunction)
 	{
 		this.parties = parties;
 		this.seats = seats;
-		this.comp = comp;
+		this.shiftFunction = shiftFunction;
 		this.increase = new ArrayList<>();
 		this.decrease = new ArrayList<>();
 		for (int i = 0; i < parties.size(); i++)
@@ -34,26 +34,16 @@ public class ShiftQueue
 
 	public void shift(Int n) throws NoShiftPossible
 	{
-		int sgn = n.sgn();
-		if (sgn > 0)
-		{
-			for (Int i = BMath.ZERO; i.compareTo(n) < 0; i = i.add(1))
-				increase();
-		}
-		else if (sgn < 0)
-		{
-			n = n.neg();
-			for (Int i = BMath.ZERO; i.compareTo(n) < 0; i = i.add(1))
-				decrease();
-		}
+		if (n.sgn() >= 0)
+			n.timesDo(this::increase);
+		else
+			n.timesDo(this::decrease);
 	}
 
 	public void increase() throws NoShiftPossible
 	{
-		int i = increase.get(0);
-		Int s = seats.get(i).add(1);
-
-		if (s.compareTo(parties.get(i).getMax()) > 0)
+		int i = nextIncrease();
+		if (nextIncreaseValue().equals(BMath.ZERO))
 			throw new NoShiftPossible();
 
 		seats.set(i, seats.get(i).add(1));
@@ -65,12 +55,16 @@ public class ShiftQueue
 		return increase.get(0);
 	}
 
+	public Real nextIncreaseValue()
+	{
+		int i = nextIncrease();
+		return shiftFunction.value(parties.get(i), seats.get(i));
+	}
+
 	public void decrease() throws NoShiftPossible
 	{
-		int i = decrease.get(0);
-		Int s = seats.get(i).sub(1);
-
-		if (s.compareTo(parties.get(i).getMin()) < 0)
+		int i = nextDecrease();
+		if (nextDecreaseValue().equals(BMath.INF))
 			throw new NoShiftPossible();
 
 		seats.set(i, seats.get(i).sub(1));
@@ -82,6 +76,12 @@ public class ShiftQueue
 		return decrease.get(0);
 	}
 
+	public Real nextDecreaseValue()
+	{
+		int i = nextDecrease();
+		return shiftFunction.value(parties.get(i), seats.get(i).sub(1));
+	}
+
 	public List<Uniqueness> getUniquenesses()
 	{
 		List<Uniqueness> uniquenesses = new ArrayList<>();
@@ -90,14 +90,14 @@ public class ShiftQueue
 
 		int lastIncrease = decrease.get(0);
 		for (int i : increase)
-			if (compare(parties.get(i), seats.get(i).add(1), parties.get(lastIncrease), seats.get(lastIncrease)) >= 0)
+			if (compare(parties.get(i), seats.get(i), parties.get(lastIncrease), seats.get(lastIncrease).sub(1)) >= 0)
 				uniquenesses.set(i, Uniqueness.CAN_BE_MORE);
 			else
 				break;
 
 		int lastDecrease = increase.get(0);
 		for (int i : decrease)
-			if (compare(parties.get(i), seats.get(i), parties.get(lastDecrease), seats.get(lastDecrease).add(1)) <= 0)
+			if (compare(parties.get(i), seats.get(i).sub(1), parties.get(lastDecrease), seats.get(lastDecrease)) <= 0)
 				uniquenesses.set(i, Uniqueness.CAN_BE_LESS);
 			else
 				break;
@@ -107,31 +107,23 @@ public class ShiftQueue
 
 	private void update()
 	{
-		Collections.sort(increase, new Comparator<Integer>()
-		{
-			@Override public int compare(Integer i0, Integer i1)
-			{
-				int comp = -ShiftQueue.this.compare(parties.get(i0), seats.get(i0).add(1), parties.get(i1), seats.get(i1).add(1));
-				if (comp == 0)
-					comp = i0.compareTo(i1);
-				return comp;
-			}
+		Collections.sort(increase, (x, y) -> {
+			int comp = -compare(parties.get(x), seats.get(x), parties.get(y), seats.get(y));
+			if (comp == 0)
+				comp = x.compareTo(y);
+			return comp;
 		});
-		Collections.sort(decrease, new Comparator<Integer>()
-		{
-			@Override public int compare(Integer i0, Integer i1)
-			{
-				int comp = ShiftQueue.this.compare(parties.get(i0), seats.get(i0).sub(1), parties.get(i1), seats.get(i1).sub(1));
-				if (comp == 0)
-					comp = -i0.compareTo(i1);
-				return comp;
-			}
+		Collections.sort(decrease, (x, y) -> {
+			int comp = compare(parties.get(x), seats.get(x).sub(1), parties.get(y), seats.get(y).sub(1));
+			if (comp == 0)
+				comp = -x.compareTo(y);
+			return comp;
 		});
 	}
 
 	private int compare(Party p0, Int s0, Party p1, Int s1)
 	{
-		int compare = comp.compare(p0, s0, p1, s1);
+		int compare = shiftFunction.value(p0, s0).compareTo(shiftFunction.value(p1, s1));
 		if (compare != 0)
 			return compare;
 		return bias(p0, s0) - bias(p1, s1);
@@ -146,12 +138,12 @@ public class ShiftQueue
 		return 0;
 	}
 
-	public static interface Comp
+	public static interface ShiftFunction
 	{
-		public int compare(Party p0, Int s0, Party p1, Int s1);
+		public Real value(Party p, Int s);
 	}
 
-	public static class NoShiftPossible extends Exception
+	public static class NoShiftPossible extends RuntimeException
 	{
 		private static final long serialVersionUID = 1L;
 	}

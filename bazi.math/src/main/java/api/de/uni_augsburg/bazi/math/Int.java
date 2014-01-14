@@ -11,6 +11,10 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 @SerializeAsString @DeserializeFromString public class Int extends Rational
 {
+	public static Int valueOf(long l)
+	{
+		return BMath.valueOf(l);
+	}
 	public static Int valueOf(String s)
 	{
 		Rational q = BMath.valueOf(s);
@@ -239,6 +243,12 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
+	@Override public Int abs()
+	{
+		return sgn() >= 0 ? this : this.neg();
+	}
+
+
 	public int intValue()
 	{
 		return delegate.intValue();
@@ -255,14 +265,14 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	{
 		return BMath.ZERO.countTo(this);
 	}
-	public List<Int> countTo(Int to)
+	public List<Int> countTo(Int that)
 	{
-		List<Int> res = new ArrayList<Int>();
-		for (Int i = this; i.compareTo(to) < 0; i = i.add(1))
+		List<Int> res = new ArrayList<Int>(sub(that).abs().intValue());
+		int incr = -compareTo(that);
+		for (Int i = this; !i.equals(that); i = i.add(incr))
 			res.add(i);
 		return res;
 	}
-
 
 	public void timesDo(Runnable r)
 	{

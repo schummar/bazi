@@ -13,6 +13,9 @@ public class BMath
 			ONE = new Int(1),
 			MINUS_ONE = new Int(-1),
 			TWO = new Int(2),
+			MINUS_TWO = new Int(-2),
+			TEN = new Int(10),
+			MINUS_TEN = new Int(-10),
 			INF = new Infinity(1),
 			INFN = new Infinity(-1),
 			NAN = new NaN();
@@ -83,5 +86,19 @@ public class BMath
 		{}
 
 		throw new NumberFormatException();
+	}
+
+	public static String pad(String s, int digits)
+	{
+		if (digits <= 0)
+			return s;
+
+		StringBuilder sb = new StringBuilder(s);
+		if (sb.indexOf(".") < 0)
+			sb.append(".");
+		int length = digits - sb.length() + sb.indexOf(".") + 1;
+		for (int i = 0; i < length; i++)
+			sb.append("0");
+		return sb.toString();
 	}
 }

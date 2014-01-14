@@ -1,26 +1,22 @@
 {
-  seats: 4,
-  parties: [
-    {
-      name: A,
-      votes: 1,
-      min: 2,
-      max: oo,
-      dir: 0
-    },
-    {
-      name: B,
-      votes: 1,
-      min: 0,
-      max: oo,
-      dir: 0
-    },
-    {
-      name: C,
-      votes: 1,
-      min: 0,
-      max: oo,
-      dir: 0
-    }
-  ]
+	seats : 3,
+	parties : [ {
+		name : A,
+		votes : 1,
+		min : 2,
+		max : oo,
+		dir : 0
+	}, {
+		name : B,
+		votes : 1,
+		min : 0,
+		max : oo,
+		dir : 0
+	}, {
+		name : C,
+		votes : 1,
+		min : 0,
+		max : oo,
+		dir : 0
+	} ]
 }

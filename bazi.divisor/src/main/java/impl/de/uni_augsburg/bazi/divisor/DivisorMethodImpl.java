@@ -26,29 +26,20 @@ class DivisorMethodImpl
 			List<Uniqueness> uniquenesses;
 			Real dmin, dmax;
 
-			ShiftQueue q = new ShiftQueue(parties, seats, (p0, s0, p1, s1) -> compare(p0, s0, p1, s1, r, false));
+			ShiftQueue q = new ShiftQueue(parties, seats, (p, s) -> shiftFunction(p, s, r, false));
 			q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
 
-			boolean allOK = true;
 			for (int i = 0; i < parties.size(); i++)
 			{
 				if (seats.get(i).compareTo(parties.get(i).getMin()) < 0)
-				{
-					allOK = false;
 					seats.set(i, parties.get(i).getMin());
-				}
 				if (seats.get(i).compareTo(parties.get(i).getMax()) > 0)
-				{
-					allOK = false;
 					seats.set(i, parties.get(i).getMax());
-				}
 			}
 
-			if (!allOK)
-			{
-				q = new ShiftQueue(parties, seats, (p0, s0, p1, s1) -> compare(p0, s0, p1, s1, r, true));
-				q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
-			}
+			q = new ShiftQueue(parties, seats, (p, s) -> shiftFunction(p, s, r, true));
+			q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
+
 
 			uniquenesses = q.getUniquenesses();
 
@@ -95,7 +86,7 @@ class DivisorMethodImpl
 		return pseats;
 	}
 
-	private static Real getShiftValue(MonopropMethod.Input.Party p, Int s, RoundingFunction r, boolean mindConditions)
+	private static Real shiftFunction(MonopropMethod.Input.Party p, Int s, RoundingFunction r, boolean mindConditions)
 	{
 		if (mindConditions && s.compareTo(p.getMin()) < 0)
 			return BMath.INF;
@@ -105,10 +96,5 @@ class DivisorMethodImpl
 		if (border.sgn() <= 0)
 			return BMath.INF;
 		return p.getVotes().div(border);
-	}
-
-	private static int compare(MonopropMethod.Input.Party p0, Int s0, MonopropMethod.Input.Party p1, Int s1, RoundingFunction r, boolean mindConditions)
-	{
-		return getShiftValue(p0, s0, r, mindConditions).compareTo(getShiftValue(p1, s1, r, mindConditions));
 	}
 }

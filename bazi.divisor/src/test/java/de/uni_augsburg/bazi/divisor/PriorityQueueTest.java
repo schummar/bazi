@@ -6,32 +6,12 @@ import java.util.List;
 import de.uni_augsburg.bazi.divisor.Output.Party;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.MonopropMethod;
 import de.uni_augsburg.bazi.monoprop.ShiftQueue;
 import de.uni_augsburg.bazi.monoprop.ShiftQueue.NoShiftPossible;
 import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
 public class PriorityQueueTest
 {
-	private static class Comp implements ShiftQueue.Comp
-	{
-		private final RoundingFunction r;
-
-		public Comp(RoundingFunction r)
-		{
-			this.r = r;
-		}
-
-		@Override public int compare(MonopropMethod.Input.Party p0, Int s0, MonopropMethod.Input.Party p1, Int s1)
-		{
-			Real r0 = p0.getVotes().div(r.getBorder(s0));
-			Real r1 = p1.getVotes().div(r.getBorder(s1));
-			return r0.compareTo(r1);
-		}
-	}
-
-
 	public static void main(String[] args) throws NoShiftPossible
 	{
 		Int allSeats = BMath.valueOf(4);
@@ -47,7 +27,7 @@ public class PriorityQueueTest
 				);
 		List<Int> seats = Arrays.asList(BMath.ZERO, BMath.ZERO, BMath.ZERO);
 
-		ShiftQueue q = new ShiftQueue(parties, seats, new Comp(r));
+		ShiftQueue q = new ShiftQueue(parties, seats, (p, s) -> p.getVotes().div(r.getBorder(s)));
 		q.shift(allSeats);
 		List<Uniqueness> uniquenesses = q.getUniquenesses();
 

@@ -222,6 +222,12 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
+	@Override public Rational abs()
+	{
+		return sgn() >= 0 ? this : this.neg();
+	}
+
+
 	@Override public Rational frac()
 	{
 		return sub(Int());
