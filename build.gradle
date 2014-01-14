@@ -17,6 +17,8 @@ def getVersionFromGit = {
 		return 'SNAPSHOT'
 }
 
+println("##teamcity[buildNumber '"+getVersionFromGit()+"']");
+
 allprojects {
 	version = getVersionFromGit()
 	repositories { mavenCentral() }
