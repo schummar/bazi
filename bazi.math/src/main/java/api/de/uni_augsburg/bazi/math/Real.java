@@ -9,9 +9,9 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 @SerializeAsString @DeserializeFromString public class Real implements Comparable<Real>
 {
-	public static Real valueOf(String s)
+	public static Real valueOf(String that)
 	{
-		return BMath.valueOf(s);
+		return BMath.valueOf(that);
 	}
 
 
@@ -28,13 +28,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 		return false;
 	}
 
-	public Real add(long l)
+	public Real add(long that)
 	{
-		return add(new Int(l));
+		return add(BMath.valueOf(that));
 	}
-	public Real add(String s)
+	public Real add(String that)
 	{
-		return add(new Rational(s));
+		return add(BMath.valueOf(that));
 	}
 	public Real add(Real that)
 	{
@@ -44,13 +44,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	public Real sub(long l)
+	public Real sub(long that)
 	{
-		return sub(new Int(l));
+		return sub(BMath.valueOf(that));
 	}
-	public Real sub(String s)
+	public Real sub(String that)
 	{
-		return sub(new Rational(s));
+		return sub(BMath.valueOf(that));
 	}
 	public Real sub(Real that)
 	{
@@ -60,13 +60,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	public Real mul(long l)
+	public Real mul(long that)
 	{
-		return mul(new Int(l));
+		return mul(BMath.valueOf(that));
 	}
-	public Real mul(String s)
+	public Real mul(String that)
 	{
-		return mul(new Rational(s));
+		return mul(BMath.valueOf(that));
 	}
 	public Real mul(Real that)
 	{
@@ -76,29 +76,31 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	public Real div(long l)
+	public Real div(long that)
 	{
-		return div(new Int(l));
+		return div(BMath.valueOf(that));
 	}
-	public Real div(String s)
+	public Real div(String that)
 	{
-		return div(new Rational(s));
+		return div(BMath.valueOf(that));
 	}
 	public Real div(Real that)
 	{
 		if (that.isSpecial())
 			return that.div(this).inv();
+		if (that.equals(BMath.ZERO))
+			return BMath.INF;
 		return new Real(delegate.divide(that.delegate));
 	}
 
 
-	public Real pow(long l)
+	public Real pow(long that)
 	{
-		return new Real(ApfloatMath.pow(delegate, l));
+		return new Real(ApfloatMath.pow(delegate, that));
 	}
-	public Real pow(String s)
+	public Real pow(String that)
 	{
-		return pow(new Rational(s));
+		return pow(BMath.valueOf(that));
 	}
 	public Real pow(Real that)
 	{
@@ -108,13 +110,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	public Real min(long l)
+	public Real min(long that)
 	{
-		return min(new Int(l));
+		return min(BMath.valueOf(that));
 	}
-	public Real min(String s)
+	public Real min(String that)
 	{
-		return min(new Rational(s));
+		return min(BMath.valueOf(that));
 	}
 	public Real min(Real that)
 	{
@@ -124,13 +126,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	public Real max(long l)
+	public Real max(long that)
 	{
-		return max(new Int(l));
+		return max(BMath.valueOf(that));
 	}
-	public Real max(String s)
+	public Real max(String that)
 	{
-		return max(new Rational(s));
+		return max(BMath.valueOf(that));
 	}
 	public Real max(Real that)
 	{
@@ -140,13 +142,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	public boolean equals(long l)
+	public boolean equals(long that)
 	{
-		return equals(new Int(l));
+		return equals(BMath.valueOf(that));
 	}
-	public boolean equals(String s)
+	public boolean equals(String that)
 	{
-		return equals(new Rational(s));
+		return equals(BMath.valueOf(that));
 	}
 	public boolean equals(Real that)
 	{
@@ -156,13 +158,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	public int compareTo(long l)
+	public int compareTo(long that)
 	{
-		return compareTo(new Int(l));
+		return compareTo(BMath.valueOf(that));
 	}
-	public int compareTo(String s)
+	public int compareTo(String that)
 	{
-		return compareTo(new Rational(s));
+		return compareTo(BMath.valueOf(that));
 	}
 	@Override public int compareTo(Real that)
 	{
@@ -180,7 +182,9 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 	public Real inv()
 	{
-		return new Real(Apint.ONE.divide(delegate));
+		if (equals(BMath.ZERO))
+			return BMath.INF;
+		return new Real(new Apint(1).divide(delegate));
 	}
 
 
@@ -225,6 +229,11 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 		return sub(Int());
 	}
 
+
+	public Real precision(int precision)
+	{
+		return new Real(delegate.precision(precision));
+	}
 
 	@Override public String toString()
 	{

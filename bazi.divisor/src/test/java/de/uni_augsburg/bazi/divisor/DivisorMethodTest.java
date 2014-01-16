@@ -30,7 +30,7 @@ public class DivisorMethodTest
 		log.debug("warnings: " + Json.checkJson(json, Input.class));
 
 		MonopropMethod.Input input = Json.fromJson(json, Input.class);
-		MonopropMethod qm = new DivisorMethod(RoundingFunction.DIV_STD);
+		MonopropMethod qm = new DivisorMethod(RoundingFunction.DIV_GEO, 10);
 
 		log.debug("start calculation");
 		long t = System.nanoTime();

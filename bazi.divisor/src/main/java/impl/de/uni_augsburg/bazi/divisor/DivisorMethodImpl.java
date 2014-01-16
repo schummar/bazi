@@ -15,18 +15,18 @@ import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
 class DivisorMethodImpl
 {
-	public static DivisorMethod.Output calculate(RoundingFunction r, MonopropMethod.Input input)
+	public static DivisorMethod.Output calculate(RoundingFunction r, MonopropMethod.Input input, int minPrecision)
 	{
 		try
 		{
 			List<? extends Input.Party> parties = input.getParties();
 			Int allSeats = input.getSeats();
 
-			List<Int> seats = getInitialSeats(input.getParties(), input.getSeats(), r);
+			List<Int> seats = getInitialSeats(input.getParties(), input.getSeats(), r, minPrecision);
 			List<Uniqueness> uniquenesses;
 			Real dmin, dmax;
 
-			ShiftQueue q = new ShiftQueue(parties, seats, (p, s) -> shiftFunction(p, s, r, false));
+			ShiftQueue q = new ShiftQueue(parties, seats, (p, s) -> shiftFunction(p, s, r, false, minPrecision));
 			q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
 
 			for (int i = 0; i < parties.size(); i++)
@@ -37,15 +37,15 @@ class DivisorMethodImpl
 					seats.set(i, parties.get(i).getMax());
 			}
 
-			q = new ShiftQueue(parties, seats, (p, s) -> shiftFunction(p, s, r, true));
+			q = new ShiftQueue(parties, seats, (p, s) -> shiftFunction(p, s, r, true, minPrecision));
 			q.shift(allSeats.sub(seats.stream().reduce((x, y) -> x.add(y)).get()));
 
 
 			uniquenesses = q.getUniquenesses();
 
 			int nextIncrease = q.nextIncrease(), nextDecrease = q.nextDecrease();
-			dmin = parties.get(nextIncrease).getVotes().div(r.getBorder(seats.get(nextIncrease)));
-			dmax = parties.get(nextDecrease).getVotes().div(r.getBorder(seats.get(nextDecrease).sub(1)));
+			dmin = parties.get(nextIncrease).getVotes().div(r.getBorder(seats.get(nextIncrease), minPrecision));
+			dmax = parties.get(nextDecrease).getVotes().div(r.getBorder(seats.get(nextDecrease).sub(1), minPrecision));
 
 			List<Output.Party> outParties = new ArrayList<>();
 			for (int i = 0; i < parties.size(); i++)
@@ -60,7 +60,7 @@ class DivisorMethodImpl
 			return null;
 		}
 	}
-	private static List<Int> getInitialSeats(List<? extends Input.Party> parties, Int seats, RoundingFunction r)
+	private static List<Int> getInitialSeats(List<? extends Input.Party> parties, Int seats, RoundingFunction r, int minPrecision)
 	{
 		/* Erste Zuteilung der Sitze gemaess der Min-Bedingung und der Zuteilung mit Hilfe des Unbiased Multipliers
 		 * Stationaere Methoden erlauben noch eine Verbesserung */
@@ -79,20 +79,20 @@ class DivisorMethodImpl
 		List<Int> pseats = new ArrayList<>();
 		for (Input.Party party : parties)
 		{
-			Int s = r.round(party.getVotes().mul(ubm));
+			Int s = r.round(party.getVotes().mul(ubm), minPrecision);
 			s = s.max(party.getMin()).min(party.getMax());
 			pseats.add(s);
 		}
 		return pseats;
 	}
 
-	private static Real shiftFunction(MonopropMethod.Input.Party p, Int s, RoundingFunction r, boolean mindConditions)
+	private static Real shiftFunction(MonopropMethod.Input.Party p, Int s, RoundingFunction r, boolean mindConditions, int minPrecision)
 	{
 		if (mindConditions && s.compareTo(p.getMin()) < 0)
 			return BMath.INF;
 		if (mindConditions && s.compareTo(p.getMax()) > 0)
 			return BMath.ZERO;
-		Real border = r.getBorder(s);
+		Real border = r.getBorder(s, minPrecision);
 		if (border.sgn() <= 0)
 			return BMath.INF;
 		return p.getVotes().div(border);

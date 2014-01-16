@@ -11,13 +11,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 @SerializeAsString @DeserializeFromString public class Int extends Rational
 {
-	public static Int valueOf(long l)
+	public static Int valueOf(long that)
 	{
-		return BMath.valueOf(l);
+		return BMath.valueOf(that);
 	}
-	public static Int valueOf(String s)
+	public static Int valueOf(String that)
 	{
-		Rational q = BMath.valueOf(s);
+		Rational q = BMath.valueOf(that);
 		if (q instanceof Int)
 			return (Int) q;
 		throw new NumberFormatException();
@@ -31,23 +31,23 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 		super(delegate);
 		this.delegate = delegate;
 	}
-	public Int(String s)
+	public Int(String that)
 	{
-		this(new Apint(s));
+		this(new Apint(that));
 	}
-	public Int(long l)
+	public Int(long that)
 	{
-		this(new Apint(l));
+		this(new Apint(that));
 	}
 
 
-	@Override public Int add(long l)
+	@Override public Int add(long that)
 	{
-		return add(new Int(l));
+		return add(BMath.valueOf(that));
 	}
-	@Override public Rational add(String s)
+	@Override public Rational add(String that)
 	{
-		return add(BMath.valueOf(s));
+		return add(BMath.valueOf(that));
 	}
 	@Override public Real add(Real that)
 	{
@@ -69,13 +69,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int sub(long l)
+	@Override public Int sub(long that)
 	{
-		return sub(new Int(l));
+		return sub(BMath.valueOf(that));
 	}
-	@Override public Rational sub(String s)
+	@Override public Rational sub(String that)
 	{
-		return sub(BMath.valueOf(s));
+		return sub(BMath.valueOf(that));
 	}
 	@Override public Real sub(Real that)
 	{
@@ -97,13 +97,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int mul(long l)
+	@Override public Int mul(long that)
 	{
-		return mul(new Int(l));
+		return mul(BMath.valueOf(that));
 	}
-	@Override public Rational mul(String s)
+	@Override public Rational mul(String that)
 	{
-		return mul(BMath.valueOf(s));
+		return mul(BMath.valueOf(that));
 	}
 	@Override public Real mul(Real that)
 	{
@@ -125,13 +125,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int min(long l)
+	@Override public Int min(long that)
 	{
-		return min(new Int(l));
+		return min(BMath.valueOf(that));
 	}
-	@Override public Rational min(String s)
+	@Override public Rational min(String that)
 	{
-		return min(BMath.valueOf(s));
+		return min(BMath.valueOf(that));
 	}
 	@Override public Real min(Real that)
 	{
@@ -153,13 +153,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int max(long l)
+	@Override public Int max(long that)
 	{
-		return max(new Int(l));
+		return max(BMath.valueOf(that));
 	}
-	@Override public Rational max(String s)
+	@Override public Rational max(String that)
 	{
-		return max(BMath.valueOf(s));
+		return max(BMath.valueOf(that));
 	}
 	@Override public Real max(Real that)
 	{
@@ -181,13 +181,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public boolean equals(long l)
+	@Override public boolean equals(long that)
 	{
-		return equals(new Int(l));
+		return equals(BMath.valueOf(that));
 	}
-	@Override public boolean equals(String s)
+	@Override public boolean equals(String that)
 	{
-		return equals(BMath.parseString(s));
+		return equals(BMath.valueOf(that));
 	}
 	@Override public boolean equals(Real that)
 	{
@@ -209,13 +209,13 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public int compareTo(long l)
+	@Override public int compareTo(long that)
 	{
-		return compareTo(new Int(l));
+		return compareTo(BMath.valueOf(that));
 	}
-	@Override public int compareTo(String s)
+	@Override public int compareTo(String that)
 	{
-		return compareTo(BMath.valueOf(s));
+		return compareTo(BMath.valueOf(that));
 	}
 	@Override public int compareTo(Real that)
 	{
