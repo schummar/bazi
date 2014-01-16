@@ -4,7 +4,7 @@ import de.uni_augsburg.bazi.divisor.RoundingFunction.ExactRoundingFunction;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod;
 
 
-public class DivisorMethod implements MonopropMethod
+public class DivisorMethod extends MonopropMethod<DivisorMethod.Output>
 {
 	private final RoundingFunction roundingFunction;
 	private final int minPrecision;
@@ -21,7 +21,7 @@ public class DivisorMethod implements MonopropMethod
 		this.minPrecision = 0;
 	}
 
-	@Override public Output calculate(Input input)
+	@Override public Output calculateImpl(Input input)
 	{
 		return DivisorMethodImpl.calculate(roundingFunction, input, minPrecision);
 	}

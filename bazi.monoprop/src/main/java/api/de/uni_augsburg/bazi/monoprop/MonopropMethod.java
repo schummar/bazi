@@ -2,12 +2,20 @@ package de.uni_augsburg.bazi.monoprop;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 
-public interface MonopropMethod
+public abstract class MonopropMethod<O extends MonopropMethod.Output>
 {
-	public Output calculate(Input input);
+	public final O calculate(Input input)
+	{
+		return ListCombinations.calculate(input,
+				x -> DirectSeats.calculate(x,
+						y -> calculateImpl(y)));
+	}
+
+	protected abstract O calculateImpl(Input input);
 
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -21,9 +29,18 @@ public interface MonopropMethod
 		{
 			public String getName();
 			public Rational getVotes();
-			public Int getMin();
-			public Int getMax();
-			public Int getDir();
+			public default Int getMin()
+			{
+				return BMath.ZERO;
+			};
+			public default Int getMax()
+			{
+				return BMath.INF;
+			};
+			public default Int getDir()
+			{
+				return BMath.ZERO;
+			};
 		}
 	}
 
