@@ -4,8 +4,8 @@ import java.util.function.Function;
 
 public class DirectSeats
 {
-	public static <O> O calculate(MonopropMethod.Input input, Function<MonopropMethod.Input, MonopropMethod.Output> method)
+	public static <Out> Out calculate(MonopropMethod.Input input, Function<MonopropMethod.Input, Out> method)
 	{
-		return null;
+		return method.apply(input);
 	}
 }
