@@ -5,87 +5,110 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.primitives.Primitives;
 
 
 /** Provides dynamic proxy factories for interfaces.
  * Once correctly defined they allow typesafe one-line instantiation of that interface.
  * 
  * <pre>
- * public static interface Data
- * {
- * 	public static final Model2&lt;Data, String, Integer&gt; MODEL = Model.New(Data.class)
- * 			.add(String.class, &quot;name&quot;)
- * 			.add(Integer.class, &quot;value&quot;)
- * 			.create();
- * 
- * 	public String name();
- * 	public int value();
- * }
- * 
  * public static void main(String[] args)
  * {
  * 	Data d = Data.MODEL.New(&quot;abc&quot;, 10);
  * 	System.out.println(d.name());
  * 	System.out.println(d.value());
  * }
+ * 
+ * public static interface Data
+ * {
+ * 	public static final Model2&lt;Data, String, Integer&gt; MODEL = Model.create(Data.class, &quot;name&quot;, &quot;value&quot;);
+ * 
+ * 	public String name();
+ * 	public int value();
+ * }
  * </pre> */
 public class Model extends ModelGenerated
 {
-	public static <T> Build0<T> New(Class<T> type)
+	public static void main(String[] args)
 	{
-		return new Impl<>(type, new ArrayList<Field<?>>());
+		Data d = Data.MODEL.New("abc", 10);
+		System.out.println(d.name());
+		System.out.println(d.value());
+	}
+
+	public static interface Data
+	{
+		public static final Model2<Data, String, Integer> MODEL = Model.create(Data.class)
+				.add("name", "value")
+				.build();
+
+		public String name();
+		public int value();
 	}
 
 
+	public static <T> ModelBuilder<T> create(Class<T> type)
+	{
+		return new Impl<>(type);
+	}
+
+	public static interface ModelBuilder<T>
+	{
+		/** Adds the methods of that interface to this model.
+		 * @see Model */
+		public ModelBuilder<T> extend(Model0<? super T> that);
+		/** Adds these methods to this model.
+		 * @see Model */
+		public ModelBuilder<T> add(String... fields);
+		/** Sets these default values for this model. (Same order as defined)
+		 * @see Model */
+		public ModelBuilder<T> defaults(Object... values);
+		/** Builds the final Model.
+		 * @see Model */
+		public <X extends Model0<T>> X build();
+	}
+
 	private static class Impl<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>
 			extends ImplGenerated<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>
+			implements ModelBuilder<T>
 	{
 		private final Class<T> type;
-		private List<Field<?>> fields = new ArrayList<>();
+		private final List<String> fields = new ArrayList<>();
+		private final List<String> declaredFields = new ArrayList<>();
+		private final Map<String, Object> defaultValues = new HashMap<>();
 
-		public Impl(Class<T> type, List<Field<?>> fields)
+		public Impl(Class<T> type)
 		{
 			this.type = type;
-			this.fields = fields;
 		}
 
-		@Override @SuppressWarnings("unchecked") protected T _New(Object... data)
+		@Override public List<String> getFields()
 		{
-			return (T) Proxy.newProxyInstance(Model.class.getClassLoader(), new Class<?>[] { type }, new Handler(data));
+			return fields;
 		}
 
-		@Override @SuppressWarnings({ "unchecked", "rawtypes" }) protected <X0, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19> Impl<T, X0, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19> _override(
-				Class<?>... types)
+		@Override public Map<String, Object> getDefaultValues()
 		{
-			List<Field<?>> fields = new ArrayList<>(types.length);
-			for (int i = 0; i < types.length; i++)
-				fields.add(Field(types[i], this.fields.get(i).name()));
-			return new Impl(type, fields);
+			return defaultValues;
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" }) @Override public <X> Impl add(Class<X> type, String name)
+		@SuppressWarnings({ "unchecked", "rawtypes" }) @Override public Impl build()
 		{
-			List<Field<?>> fields = new ArrayList<>(this.fields);
-			fields.add(Field(type, name));
-			return new Impl(this.type, fields);
+			return this;
 		}
 
-		@SuppressWarnings({ "rawtypes" }) @Override public Impl create()
+		@SuppressWarnings({ "unchecked", "rawtypes" }) @Override public Impl add(String... fields)
 		{
-			for (Field<?> field : fields)
+			for (String field : fields)
 			{
 				try
 				{
-					Method method = type.getMethod(field.name());
-					Class<?> returnType = Primitives.wrap(method.getReturnType());
+					Method method = type.getMethod(field);
 					if (Modifier.isStatic(method.getModifiers())
-							|| method.getParameterCount() > 0
-							|| !returnType.isAssignableFrom(field.type()))
+							|| method.getParameterCount() > 0)
 						throw new NoFittingMethod();
 				}
 				catch (NoSuchMethodException | SecurityException e)
@@ -93,62 +116,56 @@ public class Model extends ModelGenerated
 					throw new NoFittingMethod();
 				}
 			}
+			declaredFields.addAll(Arrays.asList(fields));
+			this.fields.addAll(Arrays.asList(fields));
 			return this;
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" }) @Override public <X> Impl extend(Class<X> type)
+		@SuppressWarnings({ "unchecked", "rawtypes" }) @Override public Impl defaults(Object... values)
 		{
-			return new Impl(type, fields);
+			for (int i = 0; i < values.length; i++)
+			{
+				if (declaredFields.size() <= i)
+					throw new TooMuchData();
+
+				defaultValues.put(declaredFields.get(i), values[i]);
+			}
+			return this;
 		}
 
+		@SuppressWarnings({ "unchecked", "rawtypes" }) @Override public Impl extend(Model0<? super T> that)
+		{
+			fields.addAll(that.getFields());
+			defaultValues.putAll(that.getDefaultValues());
+			return this;
+		}
+
+		@Override @SuppressWarnings("unchecked") protected T _New(Object... data)
+		{
+			return (T) Proxy.newProxyInstance(Model.class.getClassLoader(), new Class<?>[] { type }, new Handler(data));
+		}
 
 		private class Handler implements InvocationHandler
 		{
-			private final Map<String, Object> data = new HashMap<>();
+			private final Map<String, Object> data = new HashMap<>(defaultValues);
 
 			public Handler(Object... data)
 			{
 				for (int i = 0; i < data.length; i++)
 				{
+					if (fields.size() <= i)
+						throw new TooMuchData();
+
 					if (data[i] == null)
 						continue;
 
-					this.data.put(fields.get(i).name(), data[i]);
+					this.data.put(fields.get(i), data[i]);
 				}
 			}
 			@Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 			{
 				return data.get(method.getName());
 			}
-		}
-	}
-
-
-	/** Defines a getter of an interface by type and name. */
-	public static <T> Field<T> Field(Class<T> type, String name)
-	{
-		return new Field<T>(type, name);
-	}
-
-	/** Defines a getter of an interface by type and name. */
-	public static class Field<T>
-	{
-		private final Class<T> type;
-		private final String name;
-
-		/** Defines a getter of an interface by type and name. */
-		public Field(Class<T> type, String name)
-		{
-			this.type = type;
-			this.name = name;
-		}
-		public Class<T> type()
-		{
-			return type;
-		}
-		public String name()
-		{
-			return name;
 		}
 	}
 
@@ -162,7 +179,7 @@ public class Model extends ModelGenerated
 		private static final long serialVersionUID = 1L;
 	}
 
-	public static class WrongType extends RuntimeException
+	public static class IsAlreadyFinished extends RuntimeException
 	{
 		private static final long serialVersionUID = 1L;
 	}
