@@ -2,134 +2,168 @@ package de.uni_augsburg.bazi.common;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.common.primitives.Primitives;
 
-public interface Model
+
+/** Provides dynamic proxy factories for interfaces.
+ * Once correctly defined they allow typesafe one-line instantiation of that interface.
+ * 
+ * <pre>
+ * public static interface Data
+ * {
+ * 	public static final Model2&lt;Data, String, Integer&gt; MODEL = Model.New(Data.class)
+ * 			.add(String.class, &quot;name&quot;)
+ * 			.add(Integer.class, &quot;value&quot;)
+ * 			.create();
+ * 
+ * 	public String name();
+ * 	public int value();
+ * }
+ * 
+ * public static void main(String[] args)
+ * {
+ * 	Data d = Data.MODEL.New(&quot;abc&quot;, 10);
+ * 	System.out.println(d.name());
+ * 	System.out.println(d.value());
+ * }
+ * </pre> */
+public class Model extends ModelGenerated
 {
-	public static interface Definition extends toJsonMixin
+	public static <T> Build0<T> New(Class<T> type)
 	{
-		// public
+		return new Impl<>(type, new ArrayList<Field<?>>());
 	}
 
 
-	// public static interface Definition1<T0> extends Definition
-	// {
-	// public static void test()
-	// {}
-	// }
-	//
-	// public static interface Model1<T0, Def extends Definition1<T0>> extends Model
-	// {
-	// public Def fill(T0 t0);
-	// }
-	//
-	// @SuppressWarnings("unchecked") public static <T0, Def extends Definition1<T0>> Def create(Class<Def> definition, T0 t0)
-	// {
-	// return (Def) Proxy.newProxyInstance(Model.class.getClassLoader(), new Class<?>[] { definition }, new Handler(definition, t0));
-	// }
-	//
-	// public static interface Definition2<T0, T1> extends Definition
-	// {}
-	//
-	// public static interface Model2<T0, T1, Def extends Definition2<T0, T1>> extends Model
-	// {
-	// public Def fill(T0 t0, T1 t1);
-	// }
-	//
-	// // @SuppressWarnings("unchecked") public static <T0, T1, Def extends Definition2<T0, T1>> Model2<T0, T1, Def> of(Class<Def> definition)
-	// // {
-	// // return (t0, t1) -> (Def) Proxy.newProxyInstance(Model.class.getClassLoader(), new Class<?>[] { definition }, new Handler(definition, t0, t1));
-	// // }
-
-
-	public static class Handler implements InvocationHandler
+	private static class Impl<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>
+			extends ImplGenerated<T, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>
 	{
-		private final HashMap<String, Object> data;
+		private final Class<T> type;
+		private List<Field<?>> fields = new ArrayList<>();
 
-		public Handler(Class<?> clazz, Object... data)
+		public Impl(Class<T> type, List<Field<?>> fields)
 		{
-			this.data = new HashMap<>();
+			this.type = type;
+			this.fields = fields;
+		}
 
-			Method[] methods = clazz.getMethods();
-			if (methods.length != data.length)
-				throw new WrongData();
-			for (int i = 0; i < methods.length; i++)
+		@Override @SuppressWarnings("unchecked") protected T _New(Object... data)
+		{
+			return (T) Proxy.newProxyInstance(Model.class.getClassLoader(), new Class<?>[] { type }, new Handler(data));
+		}
+
+		@Override @SuppressWarnings({ "unchecked", "rawtypes" }) protected <X0, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19> Impl<T, X0, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19> _override(
+				Class<?>... types)
+		{
+			List<Field<?>> fields = new ArrayList<>(types.length);
+			for (int i = 0; i < types.length; i++)
+				fields.add(Field(types[i], this.fields.get(i).name()));
+			return new Impl(type, fields);
+		}
+
+		@SuppressWarnings({ "unchecked", "rawtypes" }) @Override public <X> Impl add(Class<X> type, String name)
+		{
+			List<Field<?>> fields = new ArrayList<>(this.fields);
+			fields.add(Field(type, name));
+			return new Impl(this.type, fields);
+		}
+
+		@SuppressWarnings({ "rawtypes" }) @Override public Impl create()
+		{
+			for (Field<?> field : fields)
 			{
-				Class<?> returnType = methods[i].getReturnType();
-				returnType = Primitives.wrap(returnType);
+				try
+				{
+					Method method = type.getMethod(field.name());
+					Class<?> returnType = Primitives.wrap(method.getReturnType());
+					if (Modifier.isStatic(method.getModifiers())
+							|| method.getParameterCount() > 0
+							|| !returnType.isAssignableFrom(field.type()))
+						throw new NoFittingMethod();
+				}
+				catch (NoSuchMethodException | SecurityException e)
+				{
+					throw new NoFittingMethod();
+				}
+			}
+			return this;
+		}
 
-				if (methods[i].getParameterCount() > 0
-						|| !returnType.isAssignableFrom(data[i].getClass()))
-					throw new WrongData();
+		@SuppressWarnings({ "unchecked", "rawtypes" }) @Override public <X> Impl extend(Class<X> type)
+		{
+			return new Impl(type, fields);
+		}
 
-				System.out.println(methods[i].getName() + " -> " + data[i]);
-				this.data.put(methods[i].getName(), data[i]);
+
+		private class Handler implements InvocationHandler
+		{
+			private final Map<String, Object> data = new HashMap<>();
+
+			public Handler(Object... data)
+			{
+				for (int i = 0; i < data.length; i++)
+				{
+					if (data[i] == null)
+						continue;
+
+					this.data.put(fields.get(i).name(), data[i]);
+				}
+			}
+			@Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+			{
+				return data.get(method.getName());
 			}
 		}
-
-		@Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
-		{
-			return data.get(method.getName());
-		}
-
-		public static class WrongData extends RuntimeException
-		{
-			private static final long serialVersionUID = 1L;
-		}
 	}
 
-	@SuppressWarnings("hiding") static interface M<X>
-	{}
 
-	// static interface ID<T>
-
-	static interface X
+	/** Defines a getter of an interface by type and name. */
+	public static <T> Field<T> Field(Class<T> type, String name)
 	{
-		public Object create();
+		return new Field<T>(type, name);
 	}
 
-	static interface A<T0> extends X
+	/** Defines a getter of an interface by type and name. */
+	public static class Field<T>
 	{
-		public default X with(T0 t)
+		private final Class<T> type;
+		private final String name;
+
+		/** Defines a getter of an interface by type and name. */
+		public Field(Class<T> type, String name)
 		{
-			return null;
+			this.type = type;
+			this.name = name;
 		}
-	}
-
-	static interface B<T0, T1> extends A<T0>
-	{
-		@SuppressWarnings("unchecked") @Override public default A<T1> with(T0 t)
+		public Class<T> type()
 		{
-			return (A<T1>) this;
+			return type;
+		}
+		public String name()
+		{
+			return name;
 		}
 	}
 
-	static interface C<T0, T1, T2> extends B<T0, T1>
+	public static class NoFittingMethod extends RuntimeException
 	{
-		@SuppressWarnings("unchecked") @Override public default B<T1, T2> with(T0 t)
-		{
-			return (B<T1, T2>) this;
-		}
+		private static final long serialVersionUID = 1L;
 	}
 
-	public class N<R, Y>
+	public static class TooMuchData extends RuntimeException
 	{
-
+		private static final long serialVersionUID = 1L;
 	}
 
-	public static <T extends X> T test(Class<T> c)
+	public static class WrongType extends RuntimeException
 	{
-		// return () -> null;
-		return null;
-	}
-
-	static interface D extends B<String, Integer>
-	{}
-
-	public static void main(String[] args)
-	{
-		test(D.class);
+		private static final long serialVersionUID = 1L;
 	}
 }
