@@ -17,8 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Primitives;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -208,6 +210,33 @@ public class Json
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
+
+
+	public static Map<String, Object> interfaceToMap(Object o)
+	{
+		Map<String, Object> data = new TreeMap<>();
+		for (Method method : o.getClass().getMethods())
+		{
+			if (Primitives.wrap(method.getReturnType()).equals(Void.class)
+					|| method.getParameterCount() > 0)
+				continue;
+			try
+			{
+				data.put(method.getName(), method.invoke(o));
+			}
+			catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return data;
+	}
+
+
+	public static String interfaceToJson(Object o)
+	{
+		return Json.toJson(o);
+	}
 
 
 	public static <T> ImmutableList<String> checkJson(String json, Class<T> type)
