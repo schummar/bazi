@@ -267,7 +267,7 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public List<Int> countTo(Int that)
 	{
-		List<Int> res = new ArrayList<Int>(sub(that).abs().intValue());
+		List<Int> res = new ArrayList<>(sub(that).abs().intValue());
 		int incr = -compareTo(that);
 		for (Int i = this; !i.equals(that); i = i.add(incr))
 			res.add(i);
@@ -280,6 +280,6 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 	public void timesDo(UnaryOperator<Int> op)
 	{
-		countTo().stream().forEach(x -> op.apply(x));
+		countTo().stream().forEach(op::apply);
 	}
 }

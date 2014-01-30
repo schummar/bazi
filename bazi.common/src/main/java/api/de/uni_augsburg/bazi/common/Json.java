@@ -1,5 +1,12 @@
 package de.uni_augsburg.bazi.common;
 
+import com.google.common.collect.ImmutableList;
+import com.google.gson.*;
+import com.google.gson.internal.GsonTypes;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -11,46 +18,27 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Primitives;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.internal.$Gson$Types;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 public class Json
 {
 	public static Gson createGson()
 	{
 		return new GsonBuilder()
-				.setPrettyPrinting()
-				.registerTypeAdapterFactory(TYPE_ADAPTER_FACTORY)
-				.create();
+			.setPrettyPrinting()
+			.registerTypeAdapterFactory(TYPE_ADAPTER_FACTORY)
+			.registerTypeHierarchyAdapter(DefinesSerializer.class, (JsonSerializer<DefinesSerializer>) (src, type, context) -> src.serialize(context))
+			.create();
 	}
 
 	private static final TypeAdapterFactory TYPE_ADAPTER_FACTORY = new TypeAdapterFactory()
 	{
 		private final Map<TypeToken<?>, TypeAdapter<?>> adapters = new HashMap<>();
 
-		@SuppressWarnings("unchecked") @Override public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
 		{
 			if (adapters.containsKey(type))
 				return (TypeAdapter<T>) adapters.get(type);
@@ -90,7 +78,9 @@ public class Json
 			this.deserializer = deserializer;
 			this.def = def;
 		}
-		@Override public void write(JsonWriter out, T value) throws IOException
+
+		@Override
+		public void write(JsonWriter out, T value) throws IOException
 		{
 			if (serializeAsString)
 				out.value(value.toString());
@@ -99,7 +89,9 @@ public class Json
 			else
 				def.write(out, value);
 		}
-		@Override public T read(JsonReader in) throws IOException
+
+		@Override
+		public T read(JsonReader in) throws IOException
 		{
 			if (adapterToDeserialize != null)
 				return adapterToDeserialize.read(in);
@@ -112,18 +104,31 @@ public class Json
 
 	// //////////////////////////////////////////////////////////////////////////
 
-	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface SerializeAsString
+	public static interface DefinesSerializer
+	{
+		public JsonElement serialize(JsonSerializationContext context);
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface SerializeAsString
 	{}
 
-	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface DeserializeFromString
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface DeserializeFromString
 	{}
 
-	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface DeserializeAsClass
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface DeserializeAsClass
 	{
 		Class<?> value();
 	}
 
-	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface Serialize
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface Serialize
 	{
 		Class<? extends Serializer<?>> value();
 	}
@@ -133,7 +138,9 @@ public class Json
 		public void serialize(JsonWriter out, T value) throws IOException;
 	}
 
-	@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public static @interface Deserialize
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface Deserialize
 	{
 		Class<? extends Deserializer<?>> value();
 	}
@@ -148,7 +155,8 @@ public class Json
 		return type.getRawType().isAnnotationPresent(SerializeAsString.class);
 	}
 
-	@SuppressWarnings("unchecked") public static <T> Class<? extends T> getDeserializeAsClass(TypeToken<T> type)
+	@SuppressWarnings("unchecked")
+	public static <T> Class<? extends T> getDeserializeAsClass(TypeToken<T> type)
 	{
 		DeserializeAsClass s = type.getRawType().getAnnotation(DeserializeAsClass.class);
 		if (s == null)
@@ -157,7 +165,8 @@ public class Json
 		return (Class<? extends T>) s.value();
 	}
 
-	@SuppressWarnings("unchecked") public static <T> Serializer<T> getSerializer(TypeToken<T> type)
+	@SuppressWarnings("unchecked")
+	public static <T> Serializer<T> getSerializer(TypeToken<T> type)
 	{
 		Serialize s = type.getRawType().getAnnotation(Serialize.class);
 		if (s == null)
@@ -172,7 +181,8 @@ public class Json
 		return null;
 	}
 
-	@SuppressWarnings("unchecked") public static <T> Deserializer<T> getDeserializer(TypeToken<T> type)
+	@SuppressWarnings("unchecked")
+	public static <T> Deserializer<T> getDeserializer(TypeToken<T> type)
 	{
 		if (type.getRawType().isAnnotationPresent(SerializeAsString.class))
 		{
@@ -212,36 +222,9 @@ public class Json
 	// //////////////////////////////////////////////////////////////////////////
 
 
-	public static Map<String, Object> interfaceToMap(Object o)
-	{
-		Map<String, Object> data = new TreeMap<>();
-		for (Method method : o.getClass().getMethods())
-		{
-			if (Primitives.wrap(method.getReturnType()).equals(Void.class)
-					|| method.getParameterCount() > 0)
-				continue;
-			try
-			{
-				data.put(method.getName(), method.invoke(o));
-			}
-			catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		return data;
-	}
-
-
-	public static String interfaceToJson(Object o)
-	{
-		return Json.toJson(o);
-	}
-
-
 	public static <T> ImmutableList<String> checkJson(String json, Class<T> type)
 	{
-		return checkJson(json, TypeToken.get(type));
+		return checkJson(json, TypeToken.<T>get(type));
 	}
 
 	public static <T> ImmutableList<String> checkJson(String json, TypeToken<T> type)
@@ -278,16 +261,15 @@ public class Json
 					warnings.add(Resources.get("json.primitive_to_object", currentType.getType(), currentElement.getAsString()));
 				}
 			}
-
 			else if (currentElement.isJsonArray())
 			{
 				JsonArray ja = currentElement.getAsJsonArray();
 
 				Type childType = null;
 				if (currentType.getRawType().isArray())
-					childType = $Gson$Types.getArrayComponentType(currentType.getType());
+					childType = GsonTypes.getArrayComponentType(currentType.getType());
 				else if (Collection.class.isAssignableFrom(currentType.getRawType()))
-					childType = $Gson$Types.getCollectionElementType(currentType.getType(), currentType.getRawType());
+					childType = GsonTypes.getCollectionElementType(currentType.getType(), currentType.getRawType());
 
 				if (childType == null)
 				{
@@ -308,7 +290,6 @@ public class Json
 						queue.add(Pair.of(entry, TypeToken.get(childType)));
 				}
 			}
-
 			else if (currentElement.isJsonObject())
 			{
 				if (getDeserializer(currentType) != null)

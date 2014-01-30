@@ -54,11 +54,11 @@ public class DivisorMethodTest
 			this.seats = seats;
 			this.parties = parties;
 		}
-		@Override public Int getSeats()
+		@Override public Int seats()
 		{
 			return seats;
 		}
-		@Override public ImmutableList<? extends Party> getParties()
+		@Override public ImmutableList<? extends Party> parties()
 		{
 			return ImmutableList.copyOf(parties);
 		}
@@ -79,23 +79,23 @@ public class DivisorMethodTest
 			this.max = max;
 			this.dir = dir;
 		}
-		@Override public String getName()
+		@Override public String name()
 		{
 			return name;
 		}
-		@Override public Rational getVotes()
+		@Override public Rational votes()
 		{
 			return votes;
 		}
-		@Override public Int getMin()
+		@Override public Int min()
 		{
 			return min;
 		}
-		@Override public Int getMax()
+		@Override public Int max()
 		{
 			return max;
 		}
-		@Override public Int getDir()
+		@Override public Int dir()
 		{
 			return dir;
 		}

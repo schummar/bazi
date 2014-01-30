@@ -27,7 +27,7 @@ public class PriorityQueueTest
 				);
 		List<Int> seats = Arrays.asList(BMath.ZERO, BMath.ZERO, BMath.ZERO);
 
-		ShiftQueue q = new ShiftQueue(parties, seats, (p, s) -> p.getVotes().div(r.getBorder(s)));
+		ShiftQueue q = new ShiftQueue(parties, seats, (p, s) -> p.votes().div(r.getBorder(s)));
 		q.shift(allSeats);
 		List<Uniqueness> uniquenesses = q.getUniquenesses();
 

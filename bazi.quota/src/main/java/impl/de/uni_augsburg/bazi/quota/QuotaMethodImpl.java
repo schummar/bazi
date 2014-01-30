@@ -17,16 +17,16 @@ class QuotaMethodImpl
 	public static QuotaMethod.Output calculate(QuotaFunction quotaFunction, ResidualHandler residualHandler, MonopropMethod.Input input)
 	{
 		Rational voteSum = BMath.ZERO;
-		for (MonopropMethod.Input.Party party : input.getParties())
-			voteSum = voteSum.add(party.getVotes());
+		for (MonopropMethod.Input.Party party : input.parties())
+			voteSum = voteSum.add(party.votes());
 
-		Rational quota = quotaFunction.getQuota(voteSum, input.getSeats());
+		Rational quota = quotaFunction.getQuota(voteSum, input.seats());
 
 		List<Rational> quotients = new ArrayList<>();
 		List<Pair<Int, Rational>> seatsAndRests = new ArrayList<>();
-		for (MonopropMethod.Input.Party party : input.getParties())
+		for (MonopropMethod.Input.Party party : input.parties())
 		{
-			Rational quotient = party.getVotes().div(quota);
+			Rational quotient = party.votes().div(quota);
 			quotients.add(quotient);
 			seatsAndRests.add(Pair.of(quotient.floor(), quotient.frac()));
 		}
@@ -35,20 +35,20 @@ class QuotaMethodImpl
 		for (Pair<Int, Rational> pair : seatsAndRests)
 			seatSum = seatSum.add(pair.getFirst());
 
-		int residual = input.getSeats().sub(seatSum).intValue();
+		int residual = input.seats().sub(seatSum).intValue();
 
 		ImmutableList<Pair<Integer, Uniqueness>> incrementAndUniqueness = residualHandler.getIncrementsAndUniqueness(ImmutableList.copyOf(seatsAndRests), residual);
 
 		List<Output.Party> outputParties = new ArrayList<>();
-		for (int i = 0; i < input.getParties().size(); i++)
+		for (int i = 0; i < input.parties().size(); i++)
 		{
-			MonopropMethod.Input.Party party = input.getParties().get(i);
+			MonopropMethod.Input.Party party = input.parties().get(i);
 			Rational quotient = quotients.get(i);
 			Int seats = seatsAndRests.get(i).getFirst().add(incrementAndUniqueness.get(i).getFirst());
 			Uniqueness uniqueness = incrementAndUniqueness.get(i).getSecond();
-			outputParties.add(new Output.Party(party.getName(), party.getVotes(), party.getMin(), party.getMax(), party.getDir(), quotient, seats, uniqueness));
+			outputParties.add(new Output.Party(party.name(), party.votes(), party.min(), party.max(), party.dir(), quotient, seats, uniqueness));
 		}
 
-		return new Output(input.getSeats(), ImmutableList.copyOf(outputParties), quota);
+		return new Output(input.seats(), ImmutableList.copyOf(outputParties), quota);
 	}
 }

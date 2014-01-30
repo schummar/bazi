@@ -1,13 +1,13 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropMethod.Input.Party;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ShiftQueue
 {
@@ -85,7 +85,7 @@ public class ShiftQueue
 	public List<Uniqueness> getUniquenesses()
 	{
 		List<Uniqueness> uniquenesses = new ArrayList<>();
-		for (int i = 0; i < parties.size(); i++)
+		for (Party party : parties)
 			uniquenesses.add(Uniqueness.UNIQUE);
 
 		int lastIncrease = decrease.get(0);
@@ -107,18 +107,22 @@ public class ShiftQueue
 
 	private void update()
 	{
-		Collections.sort(increase, (x, y) -> {
+		Collections.sort(
+			increase, (x, y) -> {
 			int comp = -compare(parties.get(x), seats.get(x), parties.get(y), seats.get(y));
 			if (comp == 0)
 				comp = x.compareTo(y);
 			return comp;
-		});
-		Collections.sort(decrease, (x, y) -> {
+		}
+		);
+		Collections.sort(
+			decrease, (x, y) -> {
 			int comp = compare(parties.get(x), seats.get(x).sub(1), parties.get(y), seats.get(y).sub(1));
 			if (comp == 0)
 				comp = -x.compareTo(y);
 			return comp;
-		});
+		}
+		);
 	}
 
 	private int compare(Party p0, Int s0, Party p1, Int s1)
@@ -131,9 +135,9 @@ public class ShiftQueue
 
 	private static int bias(MonopropMethod.Input.Party p, Int s)
 	{
-		if (s.sub(1).compareTo(p.getMin()) < 0)
+		if (s.sub(1).compareTo(p.min()) < 0)
 			return 1;
-		if (s.compareTo(p.getMax()) > 0)
+		if (s.compareTo(p.max()) > 0)
 			return -1;
 		return 0;
 	}

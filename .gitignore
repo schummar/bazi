@@ -5,3 +5,5 @@ bin/
 .classpath
 .gradle/
 archive/
+.idea/
+*.iml

@@ -30,11 +30,11 @@ class Output implements QuotaMethod.Output
 		this.parties = parties;
 		this.quota = quota;
 	}
-	@Override public Int getSeats()
+	@Override public Int seats()
 	{
 		return seats;
 	}
-	@Override public ImmutableList<? extends Party> getParties()
+	@Override public ImmutableList<? extends Party> parties()
 	{
 		return ImmutableList.copyOf(parties);
 	}
@@ -74,35 +74,35 @@ class Output implements QuotaMethod.Output
 			this.seats = seats;
 			this.uniqueness = uniqueness;
 		}
-		@Override public String getName()
+		@Override public String name()
 		{
 			return name;
 		}
-		@Override public Rational getVotes()
+		@Override public Rational votes()
 		{
 			return votes;
 		}
-		@Override public Int getMin()
+		@Override public Int min()
 		{
 			return min;
 		}
-		@Override public Int getMax()
+		@Override public Int max()
 		{
 			return max;
 		}
-		@Override public Int getDir()
+		@Override public Int dir()
 		{
 			return dir;
 		}
-		@Override public Rational getQuotient()
+		@Override public Rational quotient()
 		{
 			return quotient;
 		}
-		@Override public Int getSeats()
+		@Override public Int seats()
 		{
 			return seats;
 		}
-		@Override public Uniqueness getUniqueness()
+		@Override public Uniqueness uniqueness()
 		{
 			return uniqueness;
 		}
