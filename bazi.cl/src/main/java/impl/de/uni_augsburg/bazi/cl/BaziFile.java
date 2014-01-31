@@ -1,36 +1,56 @@
 package de.uni_augsburg.bazi.cl;
 
 import com.google.common.collect.ImmutableList;
+import de.uni_augsburg.bazi.common.Json;
+import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
-class Input implements MonopropInput
+class BaziFile
 {
-	boolean validate()
+	public static BaziFile load(Path path)
 	{
-		return true;
+		try
+		{
+			String content = new String(Files.readAllBytes(path));
+			return load(content);
+		}
+		catch (IOException e) {}
+
+		return null;
+	}
+
+	public static BaziFile load(String content)
+	{
+		return Json.fromJson(content, BaziFile.class);
 	}
 
 
-	private final Int seats;
-	private final List<? extends Party> parties;
+	private List<Method> methods = new ArrayList<>();
+	public List<String> seats = new ArrayList<>();
+	public List<? extends Party> parties = new ArrayList<>();
 
-	public Input(Int seats, List<? extends Party> parties)
+	public BaziFile() { }
+
+	public BaziFile(List<Method> methods, List<String> seats, List<? extends Party> parties)
 	{
+		this.methods = methods;
 		this.seats = seats;
 		this.parties = parties;
 	}
 
-	@Override
-	public Int seats()
+	public List<String> seats()
 	{
 		return seats;
 	}
 
-	@Override
 	public List<? extends Party> parties()
 	{
 		return ImmutableList.copyOf(parties);
@@ -39,10 +59,12 @@ class Input implements MonopropInput
 
 	public static class Party implements MonopropInput.Party
 	{
-		private final String name;
-		private final Rational votes;
-		private final Int min, max, dir;
-		private final List<Party> apparentment;
+		public String name = "";
+		public Rational votes = BMath.ZERO;
+		public Int min = BMath.ZERO, max = BMath.INF, dir = BMath.ZERO;
+		public List<Party> apparentment = new ArrayList<>();
+
+		public Party() { }
 
 		public Party(String name, Rational votes, Int min, Int max, Int dir, List<Party> apparentment)
 		{
@@ -54,37 +76,31 @@ class Input implements MonopropInput
 			this.apparentment = apparentment;
 		}
 
-		@Override
 		public String name()
 		{
 			return name;
 		}
 
-		@Override
 		public Rational votes()
 		{
 			return votes;
 		}
 
-		@Override
 		public Int min()
 		{
 			return min;
 		}
 
-		@Override
 		public Int max()
 		{
 			return max;
 		}
 
-		@Override
 		public Int dir()
 		{
 			return dir;
 		}
 
-		@Override
 		public List<? extends MonopropInput.Party> apparentment()
 		{
 			return null;

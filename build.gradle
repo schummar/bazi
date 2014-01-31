@@ -1,78 +1,81 @@
-import org.apache.tools.ant.filters.*
+import org.apache.tools.ant.filters.ReplaceTokens
 
 def getVersionFromGit = {
-	->
-	def standard = new ByteArrayOutputStream()
-	def error = new ByteArrayOutputStream()
-	exec {
-		commandLine 'git', 'describe', '--tags'
-		standardOutput = standard
-		errorOutput = error
-		ignoreExitValue = true
-	}
+    ->
+    def standard = new ByteArrayOutputStream()
+    def error = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = standard
+        errorOutput = error
+        ignoreExitValue = true
+    }
 
-	if (error.toString().isEmpty())
-		return standard.toString().trim()
-	else
-		return 'SNAPSHOT'
+    if (error.toString().isEmpty())
+        return standard.toString().trim()
+    else
+        return 'SNAPSHOT'
 }
 
-println("##teamcity[buildNumber '"+getVersionFromGit()+"']");
+println("##teamcity[buildNumber '" + getVersionFromGit() + "']");
 
 allprojects {
-	version = getVersionFromGit()
-	repositories { mavenCentral() }
+    version = getVersionFromGit()
+    repositories { mavenCentral() }
 
-	apply plugin: 'java'
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
-	sourceSets{
-		main{
-			java{
-				srcDirs = [
-					'src/main/java/api',
-					'src/main/java/impl'
-				]
-			}
-		}
-	}
+    apply plugin: 'java'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    sourceSets {
+        main {
+            java {
+                srcDirs = [
+                        'src/main/java/api',
+                        'src/main/java/impl'
+                ]
+            }
+        }
+    }
 
-	processResources {
-		filter ReplaceTokens, tokens: [
-			"version": getVersion()
-		]
-	}
+    processResources {
+        filter ReplaceTokens, tokens: [
+                "version": getVersion()
+        ]
+    }
 
-	dependencies { testCompile 'junit:junit:4.4' }
+    dependencies {
+        compile 'ch.qos.logback:logback-classic:1.1.0'
+        testCompile 'junit:junit:4.4'
+    }
 }
 
 dependencies { compile project(':bazi.cl') }
 
 
 buildscript {
-	repositories { mavenCentral() }
+    repositories { mavenCentral() }
 
-	dependencies { classpath 'eu.appsatori:gradle-fatjar-plugin:0.2' }
+    dependencies { classpath 'eu.appsatori:gradle-fatjar-plugin:0.2' }
 }
 
 apply plugin: 'fatjar'
 
 fatJar {
-	archiveName = 'bazi.jar'
-	manifest { attributes 'Main-Class': 'de.uni_augsburg.bazi.cl.BAZI' }
+    archiveName = 'bazi.jar'
+    manifest { attributes 'Main-Class': 'de.uni_augsburg.bazi.cl.BAZI' }
 }
 
 apply plugin: 'distribution'
 
 distributions {
-	main {
-		baseName = 'bazi'
-		contents {
-			from 'build/libs/bazi.jar'
-			filter ReplaceTokens, tokens: [
-				'version': getVersion(),
-				'year': Calendar.getInstance().get(Calendar.YEAR).toString()
-			]
-		}
-	}
+    main {
+        baseName = 'bazi'
+        contents {
+            from 'build/libs/bazi.jar'
+            filter ReplaceTokens, tokens: [
+                    'version': getVersion(),
+                    'year': Calendar.getInstance().get(Calendar.YEAR).toString()
+            ]
+        }
+    }
 }
