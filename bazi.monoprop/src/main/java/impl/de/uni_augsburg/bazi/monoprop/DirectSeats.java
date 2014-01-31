@@ -1,11 +1,11 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import java.util.function.Function;
-
-public class DirectSeats
+class DirectSeats
 {
-	public static <Out> Out calculate(MonopropMethod.Input input, Function<MonopropMethod.Input, Out> method)
+	public static <Output extends MonopropOutput> Output calculate(Output output)
 	{
-		return method.apply(input);
+		for (Output.Party party : output.parties)
+			party.seats = party.seats.max(party.dir);
+		return output;
 	}
 }

@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.divisor;
+package de.uni_augsburg.bazi.monoprop;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +14,6 @@ import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.common.Version;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
-import de.uni_augsburg.bazi.monoprop.MonopropMethod;
 
 public class DivisorMethodTest
 {

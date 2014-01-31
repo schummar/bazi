@@ -1,14 +1,12 @@
-package de.uni_augsburg.bazi.divisor;
+package de.uni_augsburg.bazi.monoprop;
 
 import java.util.Arrays;
 import java.util.List;
 
-import de.uni_augsburg.bazi.divisor.Output.Party;
+import de.uni_augsburg.bazi.monoprop.Output.Party;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.monoprop.ShiftQueue;
 import de.uni_augsburg.bazi.monoprop.ShiftQueue.NoShiftPossible;
-import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
 public class PriorityQueueTest
 {

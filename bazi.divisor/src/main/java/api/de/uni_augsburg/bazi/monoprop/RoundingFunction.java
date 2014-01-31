@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.divisor;
+package de.uni_augsburg.bazi.monoprop;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -12,6 +12,15 @@ public interface RoundingFunction
 	public Real getBorder(Int value, int minPrecision);
 	public Real[] getBorders(Real value, int minPrecision);
 	public Int round(Real value, int minPrecision);
+
+	public default ShiftQueue.ShiftFunction getShiftFunction(int minPrecision) {
+		return (party, seats) -> {
+			Real border = getBorder(seats, minPrecision);
+			if (border.sgn() <= 0)
+				return BMath.INF;
+			return party.votes().div(border);
+		};
+	}
 
 
 	public static final Stationary DIV_STD = new Stationary(BMath.valueOf("0.5"), null);

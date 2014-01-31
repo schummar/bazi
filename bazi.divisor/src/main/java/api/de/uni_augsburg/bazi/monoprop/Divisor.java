@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.divisor;
+package de.uni_augsburg.bazi.monoprop;
 
 import de.uni_augsburg.bazi.math.Real;
 
