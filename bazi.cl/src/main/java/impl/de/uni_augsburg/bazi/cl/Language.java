@@ -1,6 +1,6 @@
 package de.uni_augsburg.bazi.cl;
 
-public enum Language
+enum Language
 {
 	EN("english"), DE("deutsch"), IT("italiano"), ES("español");
 

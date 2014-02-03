@@ -1,6 +1,5 @@
 package de.uni_augsburg.bazi.cl;
 
-import com.google.common.collect.ImmutableList;
 import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
@@ -32,29 +31,10 @@ class BaziFile
 		return Json.fromJson(content, BaziFile.class);
 	}
 
-
-	private List<Method> methods = new ArrayList<>();
-	public List<String> seats = new ArrayList<>();
+	public Algorithm algorithm = null;
+	public List<Method> methods = new ArrayList<>();
+	public List<Interval> seats = new ArrayList<>();
 	public List<? extends Party> parties = new ArrayList<>();
-
-	public BaziFile() { }
-
-	public BaziFile(List<Method> methods, List<String> seats, List<? extends Party> parties)
-	{
-		this.methods = methods;
-		this.seats = seats;
-		this.parties = parties;
-	}
-
-	public List<String> seats()
-	{
-		return seats;
-	}
-
-	public List<? extends Party> parties()
-	{
-		return ImmutableList.copyOf(parties);
-	}
 
 
 	public static class Party implements MonopropInput.Party
@@ -64,46 +44,40 @@ class BaziFile
 		public Int min = BMath.ZERO, max = BMath.INF, dir = BMath.ZERO;
 		public List<Party> apparentment = new ArrayList<>();
 
-		public Party() { }
-
-		public Party(String name, Rational votes, Int min, Int max, Int dir, List<Party> apparentment)
-		{
-			this.name = name;
-			this.votes = votes;
-			this.min = min;
-			this.max = max;
-			this.dir = dir;
-			this.apparentment = apparentment;
-		}
-
+		@Override
 		public String name()
 		{
 			return name;
 		}
 
+		@Override
 		public Rational votes()
 		{
 			return votes;
 		}
 
+		@Override
 		public Int min()
 		{
 			return min;
 		}
 
+		@Override
 		public Int max()
 		{
-			return max;
+			return null;
 		}
 
+		@Override
 		public Int dir()
 		{
 			return dir;
 		}
 
+		@Override
 		public List<? extends MonopropInput.Party> apparentment()
 		{
-			return null;
+			return apparentment;
 		}
 	}
 }

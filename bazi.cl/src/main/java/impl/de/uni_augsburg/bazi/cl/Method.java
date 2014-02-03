@@ -9,7 +9,7 @@ import de.uni_augsburg.bazi.common.Json;
 import java.lang.reflect.Type;
 
 @Json.Deserialize(Method.Deserializer.class)
-public class Method
+class Method
 {
 	public static class Deserializer implements JsonDeserializer<Method>
 	{

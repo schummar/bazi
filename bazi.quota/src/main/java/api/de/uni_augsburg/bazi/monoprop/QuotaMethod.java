@@ -1,7 +1,9 @@
 package de.uni_augsburg.bazi.monoprop;
 
 
-public class QuotaMethod extends MonopropMethod<QuotaOutput>
+import java.util.List;
+
+public class QuotaMethod extends MonopropMethod
 {
 	private final QuotaFunction quotaFunction;
 	private final ResidualHandler residualHandler;
@@ -13,8 +15,15 @@ public class QuotaMethod extends MonopropMethod<QuotaOutput>
 	}
 
 	@Override
-	QuotaOutput calculateImpl(MonopropInput input)
+	public MonopropOutput calculate(MonopropInput input)
 	{
-		return QuotaMethodAlgorithm.calculate(input, quotaFunction, residualHandler);
+		QuotaOutput output = QuotaMethodAlgorithm.calculate(input, quotaFunction, residualHandler);
+		return calculateDirectSeats(output);
+	}
+
+	@Override
+	public List<? extends MonopropOutput> calculateAll(MonopropInput input)
+	{
+		return calculateApparenments(calculate(input));
 	}
 }

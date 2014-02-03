@@ -7,14 +7,14 @@ import java.util.List;
 
 class Apparentment
 {
-	public static <Output extends MonopropOutput, Method extends MonopropMethod<Output>> List<Output> calculate(Output output, Method method)
+	public static <Output extends MonopropOutput, Method extends MonopropMethod> List<Output> calculate(Output output, Method method)
 	{
 		List<Output> list = new ArrayList<>();
 		list.add(output);
 
 		for (Output.Party party : output.parties)
 		{
-			list.addAll(method.calculateAll(new Input(party.seats, party.apparentment)));
+			//list.addAll(method.calculateAll(new Input(party.seats, party.apparentment)));
 		}
 
 		return list;

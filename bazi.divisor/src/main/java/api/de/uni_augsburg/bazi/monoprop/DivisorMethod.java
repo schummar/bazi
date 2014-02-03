@@ -2,8 +2,10 @@ package de.uni_augsburg.bazi.monoprop;
 
 import de.uni_augsburg.bazi.monoprop.RoundingFunction.ExactRoundingFunction;
 
+import java.util.List;
 
-public class DivisorMethod extends MonopropMethod<DivisorOutput>
+
+public class DivisorMethod extends MonopropMethod
 {
 	private final RoundingFunction roundingFunction;
 	private final int minPrecision;
@@ -21,8 +23,15 @@ public class DivisorMethod extends MonopropMethod<DivisorOutput>
 	}
 
 	@Override
-	DivisorOutput calculateImpl(MonopropInput input)
+	public MonopropOutput calculate(MonopropInput input)
 	{
-		return DivisorMethodAlgorithm.calculate(input, roundingFunction, minPrecision);
+		DivisorOutput output = DivisorMethodAlgorithm.calculate(input, roundingFunction, minPrecision);
+		return calculateDirectSeats(output);
+	}
+
+	@Override
+	public List<? extends MonopropOutput> calculateAll(MonopropInput input)
+	{
+		return calculateApparenments(calculate(input));
 	}
 }
