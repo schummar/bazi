@@ -11,8 +11,9 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.List;
 
+@Json.SerializeAsString
 @Json.Deserialize(Interval.Deserialzer.class)
-public class Interval implements Iterable<Int>
+class Interval implements Iterable<Int>
 {
 	private final Int lo, hi;
 
@@ -33,13 +34,19 @@ public class Interval implements Iterable<Int>
 		return getValues().iterator();
 	}
 
+	@Override
+	public String toString()
+	{
+		return lo.equals(hi) ? lo.toString() : String.format("%s..%s", lo, hi);
+	}
+
 	public static class Deserialzer implements JsonDeserializer<Interval>
 	{
 		@Override
 		public Interval deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
 		{
 			String s = json.getAsString();
-			s = s.replaceAll("\\s","");
+			s = s.replaceAll("\\s", "");
 			try
 			{
 				String[] split = s.split("\\.\\.");
@@ -47,7 +54,7 @@ public class Interval implements Iterable<Int>
 				Int hi = Int.valueOf(split[1]);
 				return new Interval(lo, hi);
 			}
-			catch (Exception e){}
+			catch (Exception e) {}
 			try
 			{
 				Int i = Int.valueOf(s);

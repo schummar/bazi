@@ -58,15 +58,41 @@ public enum Json
 			JsonDeserializer<T> deserializer = getDeserializer(type);
 			if (serializer == null && deserializer == null) return gson.getDelegateAdapter(this, type);
 
+			System.out.println(type.getRawType() + " -> " + serializer + ", " + deserializer);
 			GsonBuilder temp = new GsonBuilder();
-			if (serializer != null)
-				temp.registerTypeAdapter(type.getType(), serializer);
-			if (deserializer != null)
+			if (serializer == null)
 				temp.registerTypeAdapter(type.getType(), deserializer);
+			if (deserializer == null)
+				temp.registerTypeAdapter(type.getType(), serializer);
+			else
+				temp.registerTypeAdapter(type.getType(), new Adapter<>(serializer, deserializer));
 			return temp.create().getAdapter(type);
 		}
 	};
 
+	private static class Adapter<T> implements JsonSerializer<T>, JsonDeserializer<T>
+	{
+		private final JsonSerializer<T> serializer;
+		private final JsonDeserializer<T> deserializer;
+
+		private Adapter(JsonSerializer<T> serializer, JsonDeserializer<T> deserializer)
+		{
+			this.serializer = serializer;
+			this.deserializer = deserializer;
+		}
+
+		@Override
+		public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+		{
+			return deserializer.deserialize(json, typeOfT, context);
+		}
+
+		@Override
+		public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context)
+		{
+			return serializer.serialize(src, typeOfSrc, context);
+		}
+	}
 
 	// //////////////////////////////////////////////////////////////////////////
 	// Annotations, Interfaces, Exctractors                                    //
