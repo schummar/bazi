@@ -9,11 +9,11 @@ public class Options
 
 	public enum DivisorFormat
 	{
-		CODED, CODED_LIST, LIST
+		DIV_QUO, DIV_INTERVAL, MULT, MULT_INTERVAL, QUOTIENT
 	}
 
 	public enum TieFormat
 	{
-		DIV_QUO, DIV_INTERVAL, MULT, MULT_INTERVAL, QUOTIENT
+		CODED, CODED_LIST, LIST
 	}
 }

@@ -2,7 +2,10 @@ package de.uni_augsburg.bazi.cl;
 
 import de.uni_augsburg.bazi.common.Tuple;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class StringTable
@@ -34,7 +37,7 @@ public class StringTable
 
 	public int colWidth(int col)
 	{
-		return col(col).toList().stream().mapToInt(field -> field.get().length()).max().getAsInt();
+		return col(col).getFilledFields().stream().mapToInt(field -> field.get().length()).max().getAsInt();
 	}
 
 	@Override
@@ -70,10 +73,11 @@ public class StringTable
 		return s.toString();
 	}
 
-	public StringTable add(StringTable that)
+	public StringTable append(StringTable that)
 	{
-		values.putAll(that.values);
-		width = Math.max(width, that.width);
+		for (Map.Entry<Pos, String> entry : that.values.entrySet())
+			values.put(new Pos(entry.getKey().x() + width, entry.getKey().y()), entry.getValue());
+		width += that.width;
 		height = Math.max(height, that.height);
 		return this;
 	}
@@ -86,6 +90,22 @@ public class StringTable
 		return that;
 	}
 
+	public String get(int col, int row)
+	{
+		return field(col, row).get();
+	}
+
+	public StringTable set(int col, int row, Object value)
+	{
+		field(col, row).set(value);
+		return this;
+	}
+
+	public StringTable remove(int col, int row)
+	{
+		field(col, row).remove();
+		return this;
+	}
 
 	public class Field
 	{
@@ -105,7 +125,7 @@ public class StringTable
 		{
 			if (value == null)
 			{
-				delete();
+				remove();
 				return;
 			}
 
@@ -114,7 +134,7 @@ public class StringTable
 			height = Math.max(height, pos.y() + 1);
 		}
 
-		public void delete()
+		public void remove()
 		{
 			values.remove(pos);
 			if (pos.x().equals(width - 1))
@@ -124,7 +144,7 @@ public class StringTable
 		}
 	}
 
-	public class Column implements Iterable<Field>
+	public class Column
 	{
 		private final int col;
 
@@ -138,18 +158,30 @@ public class StringTable
 			return StringTable.this.field(col, row);
 		}
 
-		public List<Field> toList()
+		public List<Field> getFilledFields()
 		{
 			List<Field> list = new ArrayList<>();
 			for (int row = 0; row < height; row++)
-				list.add(StringTable.this.field(col, row));
+				if (get(row) != null)
+					list.add(field(row));
 			return list;
 		}
 
-		@Override
-		public Iterator<Field> iterator()
+		public String get(int row)
 		{
-			return toList().iterator();
+			return field(row).get();
+		}
+
+		public Column set(int row, Object value)
+		{
+			field(row).set(value);
+			return this;
+		}
+
+		public Column remove(int row)
+		{
+			field(row).remove();
+			return this;
 		}
 	}
 
