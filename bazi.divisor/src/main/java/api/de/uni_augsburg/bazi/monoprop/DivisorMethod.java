@@ -23,14 +23,14 @@ public class DivisorMethod extends MonopropMethod
 	}
 
 	@Override
-	public MonopropOutput calculate(MonopropInput input)
+	public DivisorOutput calculate(MonopropInput input)
 	{
 		DivisorOutput output = DivisorMethodAlgorithm.calculate(input, roundingFunction, minPrecision);
 		return calculateDirectSeats(output);
 	}
 
 	@Override
-	public List<? extends MonopropOutput> calculateAll(MonopropInput input)
+	public List<? extends DivisorOutput> calculateAll(MonopropInput input)
 	{
 		return calculateApparenments(calculate(input));
 	}

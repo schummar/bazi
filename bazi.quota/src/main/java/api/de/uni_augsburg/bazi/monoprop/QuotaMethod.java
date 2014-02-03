@@ -15,14 +15,14 @@ public class QuotaMethod extends MonopropMethod
 	}
 
 	@Override
-	public MonopropOutput calculate(MonopropInput input)
+	public QuotaOutput calculate(MonopropInput input)
 	{
 		QuotaOutput output = QuotaMethodAlgorithm.calculate(input, quotaFunction, residualHandler);
 		return calculateDirectSeats(output);
 	}
 
 	@Override
-	public List<? extends MonopropOutput> calculateAll(MonopropInput input)
+	public List<? extends QuotaOutput> calculateAll(MonopropInput input)
 	{
 		return calculateApparenments(calculate(input));
 	}

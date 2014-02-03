@@ -65,7 +65,7 @@ class BaziFile
 		@Override
 		public Int max()
 		{
-			return null;
+			return max;
 		}
 
 		@Override

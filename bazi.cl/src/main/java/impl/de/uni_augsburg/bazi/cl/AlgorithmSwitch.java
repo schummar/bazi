@@ -17,16 +17,14 @@ class AlgorithmSwitch
 
 	public static void calculate(BaziFile baziFile)
 	{
-		LOG.info(Json.toJson(baziFile));
-
 		List<MonopropOutput> results = new ArrayList<>();
 		DivisorMethod method = new DivisorMethod(RoundingFunction.DIV_STD);
 
-		for (Interval interval: baziFile.seats)
-			for (Int seats: interval)
+		for (Interval interval : baziFile.seats)
+			for (Int seats : interval)
 				results.add(method.calculate(new Input(seats, baziFile.parties)));
-		//DivisorOutput output = method.calculate(baziFile);
 
-		//LOG.info(Json.toJson(output));
+		for (MonopropOutput output : results)
+			LOG.info(Json.toJson(output));
 	}
 }
