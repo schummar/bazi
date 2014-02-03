@@ -218,16 +218,16 @@ public enum Json
 
 	public static <T> List<String> checkJson(JsonElement element, TypeToken<T> type)
 	{
-		List<Pair<JsonElement, ? extends TypeToken<?>>> queue = new ArrayList<>();
-		queue.add(Pair.of(element, type));
+		List<Tuple<JsonElement, ? extends TypeToken<?>>> queue = new ArrayList<>();
+		queue.add(Tuple.of(element, type));
 
 		List<String> warnings = new ArrayList<>();
 
 		while (!queue.isEmpty())
 		{
-			Pair<JsonElement, ? extends TypeToken<?>> pair = queue.remove(0);
-			JsonElement currentElement = pair.getFirst();
-			TypeToken<?> currentType = pair.getSecond();
+			Tuple<JsonElement, ? extends TypeToken<?>> tuple = queue.remove(0);
+			JsonElement currentElement = tuple.x();
+			TypeToken<?> currentType = tuple.y();
 
 			if (currentElement.isJsonNull() || currentElement.isJsonPrimitive())
 			{
@@ -268,7 +268,7 @@ public enum Json
 				else
 				{
 					for (JsonElement entry : ja)
-						queue.add(Pair.of(entry, TypeToken.get(childType)));
+						queue.add(Tuple.of(entry, TypeToken.get(childType)));
 				}
 			}
 			else if (currentElement.isJsonObject())
@@ -289,7 +289,7 @@ public enum Json
 						if (field.getName().equals(key))
 						{
 							found = true;
-							queue.add(Pair.of(entry.getValue(), TypeToken.get(field.getGenericType())));
+							queue.add(Tuple.of(entry.getValue(), TypeToken.get(field.getGenericType())));
 							break;
 						}
 					if (!found)
