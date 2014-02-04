@@ -14,7 +14,7 @@ class DivisorMethodAlgorithm
 		try
 		{
 			DivisorOutput output = new DivisorOutput(input);
-			Supplier<Int> seatsOff = () -> output.seats.sub(output.parties.stream().map(p -> p.seats).reduce((x, y) -> x.add(y)).get());
+			Supplier<Int> seatsOff = () -> output.seats.sub(output.parties.stream().map(MonopropOutput.Party::seats).reduce(Int::add).orElse(BMath.ZERO));
 
 			calculateInitialSeats(output, r, minPrecision);
 
@@ -45,11 +45,11 @@ class DivisorMethodAlgorithm
 		Rational ubm = output.seats;
 		if (output.seats.compareTo(output.parties.size() / 2) > 0 && r instanceof RoundingFunction.Stationary)
 		{
-			Rational param = ((RoundingFunction.Stationary) r).getParam();
+			Rational param = r.getParam();
 			ubm = output.seats.add(param.sub(BMath.HALF).div(output.parties.size()));
 		}
 
-		Rational votes = output.parties.stream().map(p -> p.votes).reduce((a, b) -> a.add(b)).get();
+		Rational votes = output.parties.stream().map(MonopropOutput.Party::votes).reduce(Rational::add).orElse(BMath.ZERO);
 		ubm = ubm.div(votes);
 
 		for (DivisorOutput.Party party : output.parties)

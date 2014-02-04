@@ -2,11 +2,13 @@ package de.uni_augsburg.bazi.cl;
 
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.monoprop.DivisorMethod;
+import de.uni_augsburg.bazi.monoprop.MonopropInput;
 import de.uni_augsburg.bazi.monoprop.RoundingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class AlgorithmSwitch
@@ -18,9 +20,12 @@ class AlgorithmSwitch
 		List<BasicMethod.Output> results = new ArrayList<>();
 		BasicMethod method = new BasicMethod.Divisor(new DivisorMethod(RoundingFunction.DIV_STD, 20));
 
-		for (Interval interval : baziFile.seats)
-			for (Int seats : interval)
-				results.add(method.calculate(new Input(seats, baziFile.parties)));
+		List<BasicMethod> methods = Arrays.asList(method);
+		List<Int> seats = baziFile.seats.stream().map(Interval::values)
+			.reduce((x, y) -> {x.addAll(y); return x;}).get();
+
+
+		BasicMethods.calculate(methods, seats, baziFile.parties);
 
 
 		//LOG.info(BasicMethod.asStringTable(baziFile.parties, results, Options.Orientation.VERTICAL, Options.DivisorFormat.QUOTIENT, Options.TieFormat.CODED).toString());

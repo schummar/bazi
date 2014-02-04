@@ -23,7 +23,7 @@ class Interval implements Iterable<Int>
 		this.hi = hi;
 	}
 
-	public List<Int> getValues()
+	public List<Int> values()
 	{
 		return lo.countTo(hi.add(1));
 	}
@@ -31,7 +31,7 @@ class Interval implements Iterable<Int>
 	@Override
 	public Iterator<Int> iterator()
 	{
-		return getValues().iterator();
+		return values().iterator();
 	}
 
 	@Override

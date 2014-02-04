@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.math;
 
+import com.sun.istack.internal.NotNull;
 import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
 import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 import org.apfloat.Apfloat;
@@ -175,7 +176,7 @@ public class Real implements Comparable<Real>
 		return compareTo(BMath.valueOf(that));
 	}
 	@Override
-	public int compareTo(Real that)
+	public int compareTo(@NotNull Real that)
 	{
 		if (that.isSpecial())
 			return -that.compareTo(this);

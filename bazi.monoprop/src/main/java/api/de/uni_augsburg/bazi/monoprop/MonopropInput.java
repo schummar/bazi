@@ -15,11 +15,12 @@ public interface MonopropInput
 
 	public interface Party
 	{
+		public Object id();
 		public String name();
 		public Rational votes();
 		public default Int min() { return BMath.ZERO; }
 		public default Int max() { return BMath.INF; }
 		public default Int dir() { return BMath.ZERO; }
-		public default List<? extends Party> apparentment() { return new ArrayList<>(); }
+		public default List<? extends Party> parties() { return new ArrayList<>(); }
 	}
 }

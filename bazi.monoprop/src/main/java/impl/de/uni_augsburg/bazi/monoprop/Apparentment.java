@@ -1,48 +1,17 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import de.uni_augsburg.bazi.math.Int;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 class Apparentment
 {
-	public static <Output extends MonopropOutput, Method extends MonopropMethod> List<Output> calculate(Output output, Method method)
+	public static <Output extends MonopropOutput> Output apply(Output output, MonopropMethod<?>... methods)
 	{
-		List<Output> list = new ArrayList<>();
-		list.add(output);
+		MonopropMethod<?>[] subMethods = Arrays.copyOfRange(methods, 1, methods.length);
 
-		for (Output.Party party : output.parties)
-		{
-			//list.addAll(method.calculateAll(new Input(party.seats, party.apparentment)));
-		}
+		for (MonopropOutput.Party party : output.parties)
+			if (party.parties.size() > 0)
+				party.apparentment = methods[0].calculateDeep(party, subMethods);
 
-		return list;
-	}
-
-	private static class Input implements MonopropInput
-	{
-		Int seats;
-		List<? extends Party> parties;
-
-		public Input() { }
-
-		public Input(Int seats, List<? extends Party> parties)
-		{
-			this.seats = seats;
-			this.parties = parties;
-		}
-
-		@Override
-		public Int seats()
-		{
-			return seats;
-		}
-
-		@Override
-		public List<? extends Party> parties()
-		{
-			return parties;
-		}
+		return output;
 	}
 }

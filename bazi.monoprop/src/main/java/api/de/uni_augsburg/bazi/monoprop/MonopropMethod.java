@@ -1,19 +1,17 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import java.util.List;
-
-public abstract class MonopropMethod
+public abstract class MonopropMethod<Output extends MonopropOutput>
 {
-	protected  <Output extends MonopropOutput> Output calculateDirectSeats(Output output)
+	public Output calculate(MonopropInput input)
 	{
-		return DirectSeats.calculate(output);
+		return DirectSeats.apply(calculateImpl(input));
 	}
 
-	protected <Output extends MonopropOutput> List<Output> calculateApparenments(Output output)
+	public Output calculateDeep(MonopropInput input, MonopropMethod<?>... subMethods)
 	{
-		return Apparentment.calculate(output, this);
+		if (subMethods.length == 0) subMethods = new MonopropMethod[]{this};
+		return Apparentment.apply(calculate(input), subMethods);
 	}
 
-	public abstract MonopropOutput calculate(MonopropInput input);
-	public abstract List<? extends MonopropOutput> calculateAll(MonopropInput input);
+	protected abstract Output calculateImpl(MonopropInput input);
 }

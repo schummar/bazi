@@ -7,3 +7,4 @@ bin/
 archive/
 .idea/
 *.iml
+Thumbs.db

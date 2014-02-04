@@ -6,23 +6,63 @@ import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
 
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BasicMethods
 {
-	public static OutputPackage calculate(List<BasicMethod> methods, List<Int> seats, MonopropInput input)
+	public static OutputPackage calculate(List<BasicMethod> methods, List<Int> seats, List<? extends MonopropInput.Party> parties)
 	{
-		return null;
+		OutputPackage op = new OutputPackage();
+		for (BasicMethod method : methods)
+			for (Int seat : seats)
+				op.outputs.put(Tuple.of(method, seat), method.calculate(new Input(seat, parties)));
+
+		return op;
 	}
 
 	public static class OutputPackage
 	{
+		private final List<MonopropInput.Party> parties;
 		private final SortedMap<Tuple<BasicMethod, Int>, BasicMethod.Output> outputs = new TreeMap<>();
 
+		public OutputPackage(List<MonopropInput.Party> parties)
+		{
+			this.parties = parties;
+		}
 
-		public StringTable asStringTable(List<? extends MonopropInput.Party> parties, List<BasicMethod.Output> outputs, Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
+		public BasicMethod.Output get(BasicMethod method, Int seats) { return outputs.get(Tuple.of(method, seats)); }
+
+		public List<StringTable> asStringTables(Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
+		{
+			List<StringTable> stringTables = new ArrayList<>();
+			stringTables.add(asStringTable(orientation, divisorFormat, tieFormat));
+
+			Queue<Tuple<MonopropInput.Party, Collection<BasicMethod.Output>>> q = new LinkedList<>();
+			q.addAll(parties.stream()
+				.filter(p -> !p.parties().isEmpty())
+				.map(p -> Tuple.of(p, outputs.values()))
+				.collect(Collectors.toList()));
+
+			while (!q.isEmpty())
+			{
+				Tuple<MonopropInput.Party, Collection<BasicMethod.Output>> current = q.remove();
+
+				Queue<Tuple<MonopropInput.Party, Collection<BasicMethod.Output>>> newQ = new LinkedList<>();
+				newQ.addAll(parties.stream()
+					.filter(p -> !p.parties().isEmpty())
+					.map(p -> Tuple.of(p, outputs.values()))
+					.collect(Collectors.toList()));
+				List<BasicMethod.Output> newOutputs = current.y().stream().map(o->o.get(current.x().parties()))
+			}
+		}
+
+		public StringTable asStringTable(Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
+		{
+			return asStringTable(outputs.values(), orientation, divisorFormat, tieFormat);
+		}
+
+		private StringTable asStringTable(Collection<BasicMethod.Output> outputs, Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
 		{
 			StringTable st = new StringTable();
 			StringTable.Column names = st.col(0), votes = st.col(1), conditions = st.col(2);

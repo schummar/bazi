@@ -24,14 +24,14 @@ interface BasicMethod
 		}
 	}
 
-	public Output calculate(MonopropInput input, boolean deep);
-	public default Output calculate(MonopropInput input) { return calculate(input, false); }
+	public Output calculate(MonopropInput input);
 
 
 	public interface Output
 	{
 		public BasicMethod method();
 		public MonopropOutput output();
+		public MonopropOutput.Party get(MonopropInput.Party party);
 
 		public StringTable quotientColumn(Options.DivisorFormat divisorFormat);
 		public String divquo(Options.DivisorFormat divisorFormat);
@@ -78,12 +78,17 @@ interface BasicMethod
 		public Divisor(DivisorMethod method)
 		{
 			this.method = method;
+
 		}
 
-		public Output calculate(MonopropInput input, boolean deep)
+		public Output calculate(MonopropInput input)
 		{
+			return new Output(method.calculateDeep(input));
+		}
 
-			return new Output(method.calculate(input));
+		public Output outputFor(DivisorOutput output)
+		{
+			return new Output(output);
 		}
 
 		public class Output implements BasicMethod.Output
@@ -105,6 +110,11 @@ interface BasicMethod
 			public BasicMethod method()
 			{
 				return Divisor.this;
+			}
+
+			public MonopropOutput.Party get(MonopropInput.Party party)
+			{
+				return output.parties().stream().filter(party::equals).findAny().get();
 			}
 
 			@Override
@@ -163,6 +173,16 @@ interface BasicMethod
 		}
 	}
 
-	public class Quota
-	{}
+	public static class Quota
+	{
+		public static class Output
+		{
+			private final QuotaOutput output;
+
+			public Output(QuotaOutput output)
+			{
+				this.output = output;
+			}
+		}
+	}
 }

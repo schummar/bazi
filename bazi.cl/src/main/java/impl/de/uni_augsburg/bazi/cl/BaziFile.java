@@ -75,7 +75,7 @@ class BaziFile
 		}
 
 		@Override
-		public List<? extends MonopropInput.Party> apparentment()
+		public List<? extends MonopropInput.Party> parties()
 		{
 			return apparentment;
 		}
