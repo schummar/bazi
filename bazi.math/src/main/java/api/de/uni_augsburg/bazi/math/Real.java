@@ -1,13 +1,14 @@
 package de.uni_augsburg.bazi.math;
 
+import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.apfloat.Apint;
 
-import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
-import de.uni_augsburg.bazi.common.Json.SerializeAsString;
-
-@SerializeAsString @DeserializeFromString public class Real implements Comparable<Real>
+@SerializeAsString
+@DeserializeFromString
+public class Real implements Comparable<Real>
 {
 	public static Real valueOf(String that)
 	{
@@ -27,6 +28,7 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	{
 		return false;
 	}
+
 
 	public Real add(long that)
 	{
@@ -142,6 +144,12 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
+	@Override
+	public boolean equals(Object that)
+	{
+		return (this == that)
+					 || (that != null && getClass().isInstance(that) && equals((Real) that));
+	}
 	public boolean equals(long that)
 	{
 		return equals(BMath.valueOf(that));
@@ -166,7 +174,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	{
 		return compareTo(BMath.valueOf(that));
 	}
-	@Override public int compareTo(Real that)
+	@Override
+	public int compareTo(Real that)
 	{
 		if (that.isSpecial())
 			return -that.compareTo(this);
@@ -230,20 +239,31 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	public Real precision(int precision)
+	public long scale()
 	{
-		return new Real(delegate.precision(precision));
+		return delegate.scale();
 	}
 
-	@Override public String toString()
+
+	public long precision()
+	{
+		if (delegate.precision() == Long.MAX_VALUE)
+			return Long.MAX_VALUE;
+		return delegate.precision() - delegate.scale();
+	}
+
+
+	public Real precision(long precision)
+	{
+		Rational x = BMath.TEN.pow(precision);
+		Real rounded = mul(x).round().div(x);
+		if (rounded.delegate.equals(Apint.ZERO)) return BMath.ZERO;
+		return new Real(rounded.delegate.precision(precision + rounded.delegate.scale()));
+	}
+
+	@Override
+	public String toString()
 	{
 		return delegate.toString(true);
-	}
-
-	public String toString(int digits)
-	{
-		Rational x = BMath.TEN.pow(digits);
-		return BMath.pad(((Real) mul(x).round().div(x)).delegate.precision(digits + 1).toString(true), digits);
-
 	}
 }

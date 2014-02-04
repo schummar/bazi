@@ -1,15 +1,16 @@
 package de.uni_augsburg.bazi.math;
 
+import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
+import de.uni_augsburg.bazi.common.Json.SerializeAsString;
+import org.apfloat.Apint;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-import org.apfloat.Apint;
-
-import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
-import de.uni_augsburg.bazi.common.Json.SerializeAsString;
-
-@SerializeAsString @DeserializeFromString public class Int extends Rational
+@SerializeAsString
+@DeserializeFromString
+public class Int extends Rational
 {
 	public static Int valueOf(long that)
 	{
@@ -41,21 +42,25 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int add(long that)
+	@Override
+	public Int add(long that)
 	{
 		return add(BMath.valueOf(that));
 	}
-	@Override public Rational add(String that)
+	@Override
+	public Rational add(String that)
 	{
 		return add(BMath.valueOf(that));
 	}
-	@Override public Real add(Real that)
+	@Override
+	public Real add(Real that)
 	{
 		if (that instanceof Rational)
 			return add((Rational) that);
 		return that.add(this);
 	}
-	@Override public Rational add(Rational that)
+	@Override
+	public Rational add(Rational that)
 	{
 		if (that instanceof Int)
 			return add((Int) that);
@@ -69,21 +74,25 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int sub(long that)
+	@Override
+	public Int sub(long that)
 	{
 		return sub(BMath.valueOf(that));
 	}
-	@Override public Rational sub(String that)
+	@Override
+	public Rational sub(String that)
 	{
 		return sub(BMath.valueOf(that));
 	}
-	@Override public Real sub(Real that)
+	@Override
+	public Real sub(Real that)
 	{
 		if (that instanceof Rational)
 			return sub((Rational) that);
 		return that.sub(this).neg();
 	}
-	@Override public Rational sub(Rational that)
+	@Override
+	public Rational sub(Rational that)
 	{
 		if (that instanceof Int)
 			return sub((Int) that);
@@ -97,21 +106,25 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int mul(long that)
+	@Override
+	public Int mul(long that)
 	{
 		return mul(BMath.valueOf(that));
 	}
-	@Override public Rational mul(String that)
+	@Override
+	public Rational mul(String that)
 	{
 		return mul(BMath.valueOf(that));
 	}
-	@Override public Real mul(Real that)
+	@Override
+	public Real mul(Real that)
 	{
 		if (that instanceof Rational)
 			return mul((Rational) that);
 		return that.mul(this);
 	}
-	@Override public Rational mul(Rational that)
+	@Override
+	public Rational mul(Rational that)
 	{
 		if (that instanceof Int)
 			return mul((Int) that);
@@ -125,21 +138,25 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int min(long that)
+	@Override
+	public Int min(long that)
 	{
 		return min(BMath.valueOf(that));
 	}
-	@Override public Rational min(String that)
+	@Override
+	public Rational min(String that)
 	{
 		return min(BMath.valueOf(that));
 	}
-	@Override public Real min(Real that)
+	@Override
+	public Real min(Real that)
 	{
 		if (that instanceof Rational)
 			return min((Rational) that);
 		return that.min(this);
 	}
-	@Override public Rational min(Rational that)
+	@Override
+	public Rational min(Rational that)
 	{
 		if (that instanceof Int)
 			return min((Int) that);
@@ -153,21 +170,25 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int max(long that)
+	@Override
+	public Int max(long that)
 	{
 		return max(BMath.valueOf(that));
 	}
-	@Override public Rational max(String that)
+	@Override
+	public Rational max(String that)
 	{
 		return max(BMath.valueOf(that));
 	}
-	@Override public Real max(Real that)
+	@Override
+	public Real max(Real that)
 	{
 		if (that instanceof Rational)
 			return max((Rational) that);
 		return that.max(this);
 	}
-	@Override public Rational max(Rational that)
+	@Override
+	public Rational max(Rational that)
 	{
 		if (that instanceof Int)
 			return max((Int) that);
@@ -181,21 +202,31 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public boolean equals(long that)
+	@Override
+	public boolean equals(Object that)
+	{
+		return (this == that)
+					 || (that != null && getClass().isInstance(that) && equals((Int) that));
+	}
+	@Override
+	public boolean equals(long that)
 	{
 		return equals(BMath.valueOf(that));
 	}
-	@Override public boolean equals(String that)
+	@Override
+	public boolean equals(String that)
 	{
 		return equals(BMath.valueOf(that));
 	}
-	@Override public boolean equals(Real that)
+	@Override
+	public boolean equals(Real that)
 	{
 		if (that instanceof Rational)
 			return equals((Rational) that);
 		return that.equals(this);
 	}
-	@Override public boolean equals(Rational that)
+	@Override
+	public boolean equals(Rational that)
 	{
 		if (that instanceof Int)
 			return equals((Int) that);
@@ -209,21 +240,25 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public int compareTo(long that)
+	@Override
+	public int compareTo(long that)
 	{
 		return compareTo(BMath.valueOf(that));
 	}
-	@Override public int compareTo(String that)
+	@Override
+	public int compareTo(String that)
 	{
 		return compareTo(BMath.valueOf(that));
 	}
-	@Override public int compareTo(Real that)
+	@Override
+	public int compareTo(Real that)
 	{
 		if (that instanceof Rational)
 			return compareTo((Rational) that);
 		return -that.compareTo(this);
 	}
-	@Override public int compareTo(Rational that)
+	@Override
+	public int compareTo(Rational that)
 	{
 		if (that instanceof Int)
 			return compareTo((Int) that);
@@ -237,13 +272,15 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public Int neg()
+	@Override
+	public Int neg()
 	{
 		return new Int(delegate.negate());
 	}
 
 
-	@Override public Int abs()
+	@Override
+	public Int abs()
 	{
 		return sgn() >= 0 ? this : this.neg();
 	}
@@ -255,7 +292,8 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	}
 
 
-	@Override public String toString()
+	@Override
+	public String toString()
 	{
 		return delegate.toString();
 	}
