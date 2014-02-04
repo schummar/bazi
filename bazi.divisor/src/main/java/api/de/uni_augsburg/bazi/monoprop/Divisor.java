@@ -13,18 +13,7 @@ public class Divisor
 		this.nice = min.add(max).div(2);
 	}
 
-	public Real getMin()
-	{
-		return min;
-	}
-
-	public Real getNice()
-	{
-		return nice;
-	}
-
-	public Real getMax()
-	{
-		return max;
-	}
+	public Real min() { return min; }
+	public Real nice() { return nice; }
+	public Real max() { return max; }
 }

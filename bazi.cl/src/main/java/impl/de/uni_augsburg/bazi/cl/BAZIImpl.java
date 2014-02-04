@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -19,7 +20,7 @@ class BAZIImpl
 		LOG.info("BAZI under development...");
 		LOG.info("The current Version is: {}", Version.getCurrentVersionName());
 
-		Optional<Language> language = Optional.empty();
+		Optional<Locale> locale = Optional.empty();
 		Optional<Path> in = Optional.empty(), out = Optional.empty();
 		Optional<String> content = Optional.empty();
 
@@ -34,7 +35,7 @@ class BAZIImpl
 			{
 				case "-l":
 					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
-					else language = readLanguage(args[i]);
+					else locale = readLocale(args[i]);
 					break;
 
 				case "-in":
@@ -49,25 +50,19 @@ class BAZIImpl
 			}
 		}
 
-		if (language.isPresent()) LOG.info("Language: {}", language.get().getName());
-		in.ifPresent(path -> LOG.info("Input file: {}", path));
-		out.ifPresent(path -> LOG.info("Output file: {}", path));
+		LOG.info("Language: {}", locale.orElse(Locale.getDefault()));
+		Resources.setLocale(locale.orElse(Locale.getDefault()));
+		in.ifPresent(x -> LOG.info("Input file: {}", x));
+		out.ifPresent(x -> LOG.info("Output file: {}", x));
 
 		BaziFile baziFile = BaziFile.load(in.get());
 		AlgorithmSwitch.calculate(baziFile);
 	}
 
-	private static Optional<Language> readLanguage(String s)
+	private static Optional<Locale> readLocale(String s)
 	{
-		try
-		{
-			Language language = Language.valueOf(s.trim().toUpperCase());
-			return Optional.of(language);
-		}
-		catch (IllegalArgumentException e)
-		{
-			return Optional.empty();
-		}
+		Locale locale = Locale.forLanguageTag(s);
+		return Optional.of(locale);
 	}
 
 	private static Optional<Path> readIn(String s)

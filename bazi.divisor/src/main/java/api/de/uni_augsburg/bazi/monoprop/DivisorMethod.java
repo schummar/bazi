@@ -22,6 +22,9 @@ public class DivisorMethod extends MonopropMethod
 		this.minPrecision = 0;
 	}
 
+	public RoundingFunction roundingFunction() { return roundingFunction; }
+	public int minPrecision() { return minPrecision; }
+
 	@Override
 	public DivisorOutput calculate(MonopropInput input)
 	{

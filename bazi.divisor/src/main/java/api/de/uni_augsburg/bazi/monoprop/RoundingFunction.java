@@ -1,7 +1,6 @@
 package de.uni_augsburg.bazi.monoprop;
 
 import com.google.common.collect.ImmutableMap;
-
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
@@ -12,8 +11,10 @@ public interface RoundingFunction
 	public Real getBorder(Int value, int minPrecision);
 	public Real[] getBorders(Real value, int minPrecision);
 	public Int round(Real value, int minPrecision);
+	public Rational getParam();
 
-	public default ShiftQueue.ShiftFunction getShiftFunction(int minPrecision) {
+	public default ShiftQueue.ShiftFunction getShiftFunction(int minPrecision)
+	{
 		return (party, seats) -> {
 			Real border = getBorder(seats, minPrecision);
 			if (border.sgn() <= 0)
@@ -34,22 +35,26 @@ public interface RoundingFunction
 
 	public static interface ExactRoundingFunction extends RoundingFunction
 	{
-		@Override public default Rational getBorder(Int value, int minPrecision)
+		@Override
+		public default Rational getBorder(Int value, int minPrecision)
 		{
 			return getBorder(value);
 		}
 		public Rational getBorder(Int value);
-		@Override public default Rational[] getBorders(Real value, int minPrecision)
+		@Override
+		public default Rational[] getBorders(Real value, int minPrecision)
 		{
 			return getBorders(value);
 		}
 		public Rational[] getBorders(Real value);
-		@Override public default Int round(Real value, int minPrecision)
+		@Override
+		public default Int round(Real value, int minPrecision)
 		{
 			return round(value);
 		}
 		public Int round(Real value);
 	}
+
 
 	public static class Stationary implements ExactRoundingFunction
 	{
@@ -59,10 +64,11 @@ public interface RoundingFunction
 		public Stationary(Rational r, ImmutableMap<Int, Rational> specialCases)
 		{
 			this.r = r;
-			this.specialCases = specialCases != null ? specialCases : ImmutableMap.<Int, Rational> of();
+			this.specialCases = specialCases != null ? specialCases : ImmutableMap.<Int, Rational>of();
 		}
 
-		@Override public Rational getBorder(Int value)
+		@Override
+		public Rational getBorder(Int value)
 		{
 			Rational r = specialCases.get(value);
 			if (r == null)
@@ -70,22 +76,25 @@ public interface RoundingFunction
 			return value.add(r);
 		}
 
-		@Override public Rational[] getBorders(Real value)
+		@Override
+		public Rational[] getBorders(Real value)
 		{
 			Rational hi = getBorder(value.floor());
 			Rational lo = hi;
 			if (!value.equals(hi))
 				lo = getBorder(value.floor().sub(1));
-			return new Rational[] { lo, hi };
+			return new Rational[]{lo, hi};
 		}
 
-		@Override public Int round(Real value)
+		@Override
+		public Int round(Real value)
 		{
 			if (value.compareTo(getBorder(value.floor())) > 0)
 				return value.ceil();
 			return value.floor();
 		}
 
+		@Override
 		public Rational getParam()
 		{
 			return r;
@@ -103,10 +112,11 @@ public interface RoundingFunction
 		public Power(Rational p, ImmutableMap<Int, Rational> specialCases)
 		{
 			this.p = p;
-			this.specialCases = specialCases != null ? specialCases : ImmutableMap.<Int, Rational> of();
+			this.specialCases = specialCases != null ? specialCases : ImmutableMap.<Int, Rational>of();
 		}
 
-		@Override public Real getBorder(Int value, int minPrecision)
+		@Override
+		public Real getBorder(Int value, int minPrecision)
 		{
 			Rational p = specialCases.get(value);
 			if (p == null)
@@ -115,20 +125,28 @@ public interface RoundingFunction
 			return approx.pow(p).add(approx.add(1).pow(p)).div(2).pow(p.neg());
 		}
 
-		@Override public Real[] getBorders(Real value, int minPrecision)
+		@Override
+		public Real[] getBorders(Real value, int minPrecision)
 		{
 			Real hi = getBorder(value.floor(), minPrecision);
 			Real lo = hi;
 			if (!value.equals(hi))
 				lo = getBorder(value.floor().sub(1), minPrecision);
-			return new Real[] { lo, hi };
+			return new Real[]{lo, hi};
 		}
 
-		@Override public Int round(Real value, int minPrecision)
+		@Override
+		public Int round(Real value, int minPrecision)
 		{
 			if (value.compareTo(getBorder(value.floor(), minPrecision)) > 0)
 				return value.ceil();
 			return value.floor();
+		}
+
+		@Override
+		public Rational getParam()
+		{
+			return p;
 		}
 	}
 
@@ -136,23 +154,31 @@ public interface RoundingFunction
 	// //////////////////////////////////////////////////////////////////////////
 
 
-	public static class Geometric implements RoundingFunction
+	public static class Geometric extends Power
 	{
-		@Override public Real getBorder(Int value, int minPrecision)
+		public Geometric()
+		{
+			super(BMath.ZERO, null);
+		}
+
+		@Override
+		public Real getBorder(Int value, int minPrecision)
 		{
 			return value.mul(value.add(1)).precision(minPrecision).pow(BMath.HALF);
 		}
 
-		@Override public Real[] getBorders(Real value, int minPrecision)
+		@Override
+		public Real[] getBorders(Real value, int minPrecision)
 		{
 			Real hi = getBorder(value.floor(), minPrecision);
 			Real lo = hi;
 			if (!value.equals(hi))
 				lo = getBorder(value.floor().sub(1), minPrecision);
-			return new Real[] { lo, hi };
+			return new Real[]{lo, hi};
 		}
 
-		@Override public Int round(Real value, int minPrecision)
+		@Override
+		public Int round(Real value, int minPrecision)
 		{
 			if (value.compareTo(getBorder(value.floor(), minPrecision)) > 0)
 				return value.ceil();
@@ -164,23 +190,47 @@ public interface RoundingFunction
 	// //////////////////////////////////////////////////////////////////////////
 
 
-	public static class Harmonic implements ExactRoundingFunction
+	public static class Harmonic extends Power implements ExactRoundingFunction
 	{
-		@Override public Rational getBorder(Int value)
+		public Harmonic()
+		{
+			super(BMath.MINUS_ONE, null);
+		}
+
+		@Override
+		public Rational getBorder(Int value, int minPrecision)
+		{
+			return getBorder(value);
+		}
+		@Override
+		public Rational[] getBorders(Real value, int minPrecision)
+		{
+			return getBorders(value);
+		}
+		@Override
+		public Int round(Real value, int minPrecision)
+		{
+			return round(value);
+		}
+
+		@Override
+		public Rational getBorder(Int value)
 		{
 			return value.inv().add(value.add(1).inv()).div(2).inv();
 		}
 
-		@Override public Rational[] getBorders(Real value)
+		@Override
+		public Rational[] getBorders(Real value)
 		{
 			Rational hi = getBorder(value.floor());
 			Rational lo = hi;
 			if (!value.equals(hi))
 				lo = getBorder(value.floor().sub(1));
-			return new Rational[] { lo, hi };
+			return new Rational[]{lo, hi};
 		}
 
-		@Override public Int round(Real value)
+		@Override
+		public Int round(Real value)
 		{
 			if (value.compareTo(getBorder(value.floor())) > 0)
 				return value.ceil();

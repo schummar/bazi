@@ -158,6 +158,12 @@ public class StringTable
 			return StringTable.this.field(col, row);
 		}
 
+		public Field last()
+		{
+			int last = values.keySet().stream().mapToInt(Pos::y).max().getAsInt();
+			return field(last);
+		}
+
 		public List<Field> getFilledFields()
 		{
 			List<Field> list = new ArrayList<>();
@@ -181,6 +187,13 @@ public class StringTable
 		public Column remove(int row)
 		{
 			field(row).remove();
+			return this;
+		}
+
+		public Column append(Object value)
+		{
+			int last = values.keySet().stream().filter(pos -> pos.x() == col).mapToInt(Pos::y).max().orElse(0);
+			set(last + 1, value);
 			return this;
 		}
 	}
