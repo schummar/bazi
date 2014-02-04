@@ -41,6 +41,7 @@ public class MonopropOutput implements MonopropInput
 		List<? extends MonopropInput.Party> apparentment;
 		Uniqueness uniqueness = Uniqueness.UNIQUE;
 
+
 		public Party() { }
 
 		public Party(MonopropInput.Party party)

@@ -15,14 +15,14 @@ class AlgorithmSwitch
 
 	public static void calculate(BaziFile baziFile)
 	{
-		List<Method.Output> results = new ArrayList<>();
-		Method method = new Method.Divisor(new DivisorMethod(RoundingFunction.DIV_STD, 20));
+		List<BasicMethod.Output> results = new ArrayList<>();
+		BasicMethod method = new BasicMethod.Divisor(new DivisorMethod(RoundingFunction.DIV_STD, 20));
 
 		for (Interval interval : baziFile.seats)
 			for (Int seats : interval)
 				results.add(method.calculate(new Input(seats, baziFile.parties)));
 
 
-		LOG.info(Method.asStringTable(baziFile.parties, results, Options.Orientation.VERTICAL, Options.DivisorFormat.QUOTIENT, Options.TieFormat.CODED).toString());
+		//LOG.info(BasicMethod.asStringTable(baziFile.parties, results, Options.Orientation.VERTICAL, Options.DivisorFormat.QUOTIENT, Options.TieFormat.CODED).toString());
 	}
 }

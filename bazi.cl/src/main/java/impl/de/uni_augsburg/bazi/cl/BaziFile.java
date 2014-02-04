@@ -32,7 +32,7 @@ class BaziFile
 	}
 
 	public Algorithm algorithm = null;
-	public List<Method> methods = new ArrayList<>();
+	public List<BasicMethod> methods = new ArrayList<>();
 	public List<Interval> seats = new ArrayList<>();
 	public List<? extends Party> parties = new ArrayList<>();
 

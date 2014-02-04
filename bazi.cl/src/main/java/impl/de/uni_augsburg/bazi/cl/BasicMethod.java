@@ -7,73 +7,30 @@ import com.google.gson.JsonParseException;
 import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.monoprop.*;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
-@Json.Deserialize(Method.Deserializer.class)
-interface Method
+@Json.Deserialize(BasicMethod.Deserializer.class)
+interface BasicMethod
 {
-	public static class Deserializer implements JsonDeserializer<Method>
+	public static class Deserializer implements JsonDeserializer<BasicMethod>
 	{
 		@Override
-		public Method deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+		public BasicMethod deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
 		{
 			return null;
 		}
 	}
 
-	public Output calculate(MonopropInput input);
-
-	public static StringTable asStringTable(List<? extends MonopropInput.Party> parties, List<Output> outputs, Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
-	{
-		StringTable st = new StringTable();
-		StringTable.Column names = st.col(0), votes = st.col(1), conditions = st.col(2);
-
-		names.append(Resources.get("output.names"));
-		votes.append(Resources.get("output.votes"));
-		conditions.append(Resources.get("output.conditions"));
-
-		for (MonopropInput.Party party : parties)
-		{
-			names.append(party.name());
-			votes.append(party.votes());
-			conditions.append(String.format("%s|%s..%s", party.dir(), party.min(), party.max()));
-		}
-
-		boolean divisor = outputs.stream().map(Output::method).anyMatch(Divisor.class::isInstance);
-		boolean quota = outputs.stream().map(Output::method).anyMatch(Quota.class::isInstance);
-		String label = divisor && quota ? "div_quo" : (divisor ? "div" : "quo");
-		if (divisorFormat == Options.DivisorFormat.QUOTIENT)
-		{
-			names.append(String.format("%s (%s)", Resources.get("output.sum"), Resources.get("output.div_quo." + label)));
-		}
-		else
-		{
-			names.append(Resources.get("output.sum"));
-			names.append(Resources.get("output." + divisorFormat.name().toLowerCase() + "." + label));
-		}
-
-		Rational sum = parties.stream().map(MonopropInput.Party::votes).reduce(Rational::add).get();
-		Rational dirSum = parties.stream().map(MonopropInput.Party::dir).reduce(Int::add).get();
-		Rational minSum = parties.stream().map(MonopropInput.Party::min).reduce(Int::add).get();
-		Rational maxSum = parties.stream().map(MonopropInput.Party::max).reduce(Int::add).get();
-		votes.append(sum);
-		conditions.append(String.format("%s|%s..%s", dirSum, minSum, maxSum));
-
-		for (Output output : outputs)
-			st.append(output.asStringTable(divisorFormat, tieFormat));
-
-		return orientation == Options.Orientation.VERTICAL ? st : st.transposed();
-	}
+	public Output calculate(MonopropInput input, boolean deep);
+	public default Output calculate(MonopropInput input) { return calculate(input, false); }
 
 
 	public interface Output
 	{
-		public Method method();
+		public BasicMethod method();
 		public MonopropOutput output();
 
 		public StringTable quotientColumn(Options.DivisorFormat divisorFormat);
@@ -114,7 +71,7 @@ interface Method
 	}
 
 
-	public static class Divisor implements Method
+	public static class Divisor implements BasicMethod
 	{
 		private final DivisorMethod method;
 
@@ -123,13 +80,13 @@ interface Method
 			this.method = method;
 		}
 
-		public Output calculate(MonopropInput input)
+		public Output calculate(MonopropInput input, boolean deep)
 		{
+
 			return new Output(method.calculate(input));
 		}
 
-
-		public class Output implements Method.Output
+		public class Output implements BasicMethod.Output
 		{
 			private final DivisorOutput output;
 
@@ -145,7 +102,7 @@ interface Method
 			}
 
 			@Override
-			public Method method()
+			public BasicMethod method()
 			{
 				return Divisor.this;
 			}
