@@ -12,11 +12,8 @@ import java.util.ResourceBundle;
 public class Resources
 {
 	private static final Logger LOG = LoggerFactory.getLogger(Resources.class);
-	private static final String RESOURCE_NAME = "de.uni_augsburg.bazi.common.strings";
-
-	public static final ResourceBundle DEFAULT_RESOURCES = ResourceBundle.getBundle(RESOURCE_NAME, Locale.ENGLISH);
-	private static ResourceBundle resources = DEFAULT_RESOURCES;
-
+	private static final String RESOURCE_NAME = "de.uni_augsburg.bazi.common.messages";
+	private static ResourceBundle resources = ResourceBundle.getBundle(RESOURCE_NAME);
 
 	public static void setLocale(Locale locale)
 	{
@@ -30,13 +27,9 @@ public class Resources
 		{
 			return MessageFormat.format(resources.getString(key), args);
 		}
-		catch (MissingResourceException e) {}
-		try
+		catch (MissingResourceException e)
 		{
-			return MessageFormat.format(DEFAULT_RESOURCES.getString(key), args);
+			return MessageFormat.format("{0} {1}", key, Arrays.toString(args));
 		}
-		catch (MissingResourceException e) {}
-
-		return MessageFormat.format("{0} {1}", key, Arrays.toString(args));
 	}
 }
