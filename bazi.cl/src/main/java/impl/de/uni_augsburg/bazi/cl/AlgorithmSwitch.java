@@ -26,7 +26,7 @@ class AlgorithmSwitch
 
 		BasicMethods.OutputPackage op = BasicMethods.calculate(methods, seats, baziFile.parties);
 
-		op.asStringTables(Options.Orientation.VERTICAL, Options.DivisorFormat.QUOTIENT, Options.TieFormat.CODED).stream()
+		op.asStringTables(Options.Orientation.VERTICAL, Options.DivisorFormat.DIV_INTERVAL, Options.TieFormat.CODED).stream()
 			.map(Object::toString)
 			.forEach(LOG::info);
 	}

@@ -11,9 +11,9 @@ class DivisorMethodAlgorithm
 {
 	public static DivisorOutput calculate(MonopropInput input, RoundingFunction r, int minPrecision)
 	{
+		DivisorOutput output = new DivisorOutput(input);
 		try
 		{
-			DivisorOutput output = new DivisorOutput(input);
 			Supplier<Int> seatsOff = () -> output.seats.sub(output.parties.stream().map(MonopropOutput.Party::seats).reduce(Int::add).orElse(BMath.ZERO));
 
 			calculateInitialSeats(output, r, minPrecision);
@@ -34,7 +34,8 @@ class DivisorMethodAlgorithm
 		}
 		catch (NoShiftPossible e)
 		{
-			return null;
+			output.parties.forEach(p -> p.seats = BMath.NAN);
+			return output;
 		}
 	}
 

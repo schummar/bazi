@@ -1,9 +1,9 @@
 {
-	seats : [4],
+	seats : [1..10],
 	parties : [ {
 		name : A,
 		votes : 1,
-		min : 0,
+		min : 2,
 		max : oo,
 		dir : 0
 	}, {

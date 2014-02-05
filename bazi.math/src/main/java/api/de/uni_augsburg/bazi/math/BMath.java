@@ -1,28 +1,28 @@
 package de.uni_augsburg.bazi.math;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.apfloat.AprationalMath;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BMath
 {
 	public static final Int ZERO = new Int(0),
-			ONE = new Int(1),
-			MINUS_ONE = new Int(-1),
-			TWO = new Int(2),
-			MINUS_TWO = new Int(-2),
-			TEN = new Int(10),
-			MINUS_TEN = new Int(-10),
-			INF = new Infinity(1),
-			INFN = new Infinity(-1),
-			NAN = new NaN();
+		ONE = new Int(1),
+		MINUS_ONE = new Int(-1),
+		TWO = new Int(2),
+		MINUS_TWO = new Int(-2),
+		TEN = new Int(10),
+		MINUS_TEN = new Int(-10),
+		INF = new Infinity(1),
+		INFN = new Infinity(-1),
+		NAN = new NaN();
 
 	public static final Rational HALF = new Rational("0.5");
 
-	public static final String INF_STRING = "oo", INFN_STRING = "-oo", NAN_STRING = "nan";
+	public static final String INF_STRING = "oo", INFN_STRING = "-oo", NAN_STRING = "NaN", NAN_STRING_LOW = "nan";
 
 	private static final Map<Long, Int> LONG_TO_INT_CACHE = new HashMap<>();
 	private static final Map<String, Rational> STRING_TO_RATIONAL_CACHE = new HashMap<>();
@@ -40,17 +40,17 @@ public class BMath
 	{
 		switch (s.toLowerCase())
 		{
-		case INF_STRING:
-			return INF;
-		case INFN_STRING:
-			return INFN;
-		case NAN_STRING:
-			return NAN;
-		default:
-			Rational q = STRING_TO_RATIONAL_CACHE.get(s);
-			if (q == null)
-				STRING_TO_RATIONAL_CACHE.put(s, q = fromApRational(parseString(s)));
-			return q;
+			case INF_STRING:
+				return INF;
+			case INFN_STRING:
+				return INFN;
+			case NAN_STRING_LOW:
+				return NAN;
+			default:
+				Rational q = STRING_TO_RATIONAL_CACHE.get(s);
+				if (q == null)
+					STRING_TO_RATIONAL_CACHE.put(s, q = fromApRational(parseString(s)));
+				return q;
 		}
 	}
 

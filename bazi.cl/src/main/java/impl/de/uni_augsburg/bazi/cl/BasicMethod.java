@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.math.BMath;
+import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.monoprop.*;
 
@@ -64,6 +65,8 @@ interface BasicMethod
 				col.append(s);
 			}
 
+			Int sum = output().parties().stream().map(MonopropOutput.Party::seats).reduce(Int::add).get();
+			col.append(sum);
 			if (divisorFormat != Options.DivisorFormat.QUOTIENT)
 				col.append(divquo(divisorFormat));
 
@@ -129,7 +132,8 @@ interface BasicMethod
 				for (MonopropOutput.Party party : output.parties())
 					col.append(RoundingHelper.round(party.votes().div(output.divisor().nice()), 3, 100, method.roundingFunction()));
 
-				col.append(divquo(divisorFormat));
+				if (divisorFormat == Options.DivisorFormat.QUOTIENT)
+					col.append(String.format("(%s)", divquo(divisorFormat)));
 
 				return st;
 			}

@@ -37,6 +37,6 @@ public class Resources
 		}
 		catch (MissingResourceException e) {}
 
-		return MessageFormat.format("{} {}", key, Arrays.toString(args));
+		return MessageFormat.format("{0} {1}", key, Arrays.toString(args));
 	}
 }
