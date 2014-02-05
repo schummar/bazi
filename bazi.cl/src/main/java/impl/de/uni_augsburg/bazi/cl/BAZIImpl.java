@@ -23,6 +23,7 @@ class BAZIImpl
 		Optional<Locale> locale = Optional.empty();
 		Optional<Path> in = Optional.empty(), out = Optional.empty();
 		Optional<String> content = Optional.empty();
+		Optional<Format> format = Optional.empty();
 
 		for (int i = 0; i < args.length; i++)
 		{
@@ -47,6 +48,11 @@ class BAZIImpl
 					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
 					out = readOut(args[i]);
 					break;
+
+				case "-f":
+					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
+					format = readFormat(args[i]);
+					break;
 			}
 		}
 
@@ -56,7 +62,7 @@ class BAZIImpl
 		out.ifPresent(x -> LOG.info("Output file: {}", x));
 
 		BaziFile baziFile = BaziFile.load(in.get());
-		AlgorithmSwitch.calculate(baziFile);
+		AlgorithmSwitch.calculate(baziFile, format.orElse(Format.JSON));
 	}
 
 	private static Optional<Locale> readLocale(String s)
@@ -93,5 +99,18 @@ class BAZIImpl
 			LOG.warn(Resources.get("params.invalid_path: {}"), s);
 			return Optional.empty();
 		}
+	}
+
+	public static Optional<Format> readFormat(String s)
+	{
+		try
+		{
+			return Optional.of(Format.valueOf(s.toUpperCase()));
+		}
+		catch (Exception e)
+		{
+			LOG.warn(Resources.get("params.invalid_format"), s);
+		}
+		return Optional.empty();
 	}
 }

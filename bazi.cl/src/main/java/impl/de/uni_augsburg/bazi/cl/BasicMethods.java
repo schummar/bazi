@@ -32,6 +32,11 @@ public class BasicMethods
 			this.parties = parties;
 		}
 
+		public List<BasicMethod.Output> getAll()
+		{
+			return new ArrayList<>(outputs.values());
+		}
+
 		public BasicMethod.Output get(BasicMethod method, Int seats) { return outputs.get(Tuple.of(method, seats)); }
 
 		public List<StringTable> asStringTables(Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)

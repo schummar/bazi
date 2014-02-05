@@ -58,7 +58,6 @@ public enum Json
 			JsonDeserializer<T> deserializer = getDeserializer(type);
 			if (serializer == null && deserializer == null) return gson.getDelegateAdapter(this, type);
 
-			System.out.println(type.getRawType() + " -> " + serializer + ", " + deserializer);
 			GsonBuilder temp = new GsonBuilder();
 			if (serializer == null)
 				temp.registerTypeAdapter(type.getType(), deserializer);
