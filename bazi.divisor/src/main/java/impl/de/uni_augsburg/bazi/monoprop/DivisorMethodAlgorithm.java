@@ -35,6 +35,7 @@ class DivisorMethodAlgorithm
 		catch (NoShiftPossible e)
 		{
 			output.parties.forEach(p -> p.seats = BMath.NAN);
+			output.divisor = new Divisor(BMath.NAN, BMath.NAN);
 			return output;
 		}
 	}

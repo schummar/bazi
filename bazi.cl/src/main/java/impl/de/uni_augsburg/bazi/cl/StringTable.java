@@ -13,6 +13,7 @@ public class StringTable
 	public static final int DEFAULT_MARGIN = 2;
 
 	private final Map<Pos, String> values = new HashMap<>();
+	private final Map<Integer, Alignment> alignments = new HashMap<>();
 	private int width = 0, height = 0;
 
 	public Field field(int col, int row)
@@ -52,12 +53,8 @@ public class StringTable
 		for (int col = 0; col < width; col++)
 		{
 			int colWidth = colWidth(col) + (col < width - 1 ? margin : 0);
-			paddings.add(
-				s -> {
-					while (s.length() < colWidth) s += " ";
-					return s;
-				}
-			);
+			Alignment colAlignment = alignments.getOrDefault(col, col == 0 ? Alignment.LEFT : Alignment.RIGHT);
+			paddings.add(s -> colAlignment.pad(s, colWidth));
 		}
 
 		StringBuilder s = new StringBuilder();
@@ -192,9 +189,18 @@ public class StringTable
 
 		public Column append(Object value)
 		{
-			int last = values.keySet().stream().filter(pos -> pos.x() == col).mapToInt(Pos::y).max().orElse(0);
+			int last = values.keySet().stream()
+				.filter(pos -> pos.x() == col)
+				.mapToInt(Pos::y)
+				.max()
+				.orElse(-1);
 			set(last + 1, value);
 			return this;
+		}
+
+		public void setAligment(Alignment aligment)
+		{
+			alignments.put(col, aligment);
 		}
 	}
 
@@ -215,5 +221,28 @@ public class StringTable
 
 		@Override
 		public Integer y() { return super.y(); }
+	}
+
+	public enum Alignment
+	{
+		LEFT
+			{
+				@Override
+				public String pad(String s, int to)
+				{
+					while (s.length() < to) s += " ";
+					return s;
+				}
+			},
+		RIGHT
+			{
+				@Override
+				public String pad(String s, int to)
+				{
+					while (s.length() < to) s = " " + s;
+					return s;
+				}
+			};
+		public abstract String pad(String s, int to);
 	}
 }

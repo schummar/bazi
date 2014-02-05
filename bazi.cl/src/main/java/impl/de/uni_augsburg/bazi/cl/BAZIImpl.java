@@ -1,10 +1,14 @@
 package de.uni_augsburg.bazi.cl;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -20,16 +24,16 @@ class BAZIImpl
 		LOG.info("BAZI under development...");
 		LOG.info("The current Version is: {}", Version.getCurrentVersionName());
 
+
 		Optional<Locale> locale = Optional.empty();
 		Optional<Path> in = Optional.empty(), out = Optional.empty();
-		Optional<String> content = Optional.empty();
-		Optional<Format> format = Optional.empty();
-
+		String content = "";
+		Optional<Format> inFormat = Optional.empty(), outFormat = Optional.empty();
 		for (int i = 0; i < args.length; i++)
 		{
 			if (i == args.length - 1 && !args[i].startsWith("-"))
 			{
-				content = Optional.of(args[i]);
+				content = args[i].trim();
 				break;
 			}
 			switch (args[i])
@@ -39,36 +43,61 @@ class BAZIImpl
 					else locale = readLocale(args[i]);
 					break;
 
-				case "-in":
+				case "-i":
 					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
 					in = readIn(args[i]);
 					break;
 
-				case "-out":
+				case "-o":
 					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
 					out = readOut(args[i]);
 					break;
 
-				case "-f":
+				case "-if":
 					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
-					format = readFormat(args[i]);
+					inFormat = readFormat(args[i]);
+					break;
+
+				case "-of":
+					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
+					outFormat = readFormat(args[i]);
 					break;
 			}
 		}
-
 		locale.ifPresent(Resources::setLocale);
 		in.ifPresent(x -> LOG.info("Input file: {}", x));
 		out.ifPresent(x -> LOG.info("Output file: {}", x));
 
-		BaziFile baziFile = BaziFile.load(in.get());
-		AlgorithmSwitch.calculate(baziFile, format.orElse(Format.JSON));
+
+		BaziFile baziFile = in.isPresent()
+			? BaziFile.load(in.get(), inFormat.orElse(Format.JSON))
+			: BaziFile.load(content, inFormat.orElse(Format.JSON));
+
+
+		String result = AlgorithmSwitch.calculate(baziFile, outFormat.orElse(Format.PLAIN));
+		if (out.isPresent())
+		{
+			File file = out.get().toFile();
+			try
+			{
+				Files.write(result, file, Charsets.UTF_8);
+			}
+			catch (IOException e)
+			{
+				LOG.error("Could not write to {}", file.getPath());
+			}
+		}
+		else
+			System.out.println(result);
 	}
+
 
 	private static Optional<Locale> readLocale(String s)
 	{
 		Locale locale = Locale.forLanguageTag(s);
 		return Optional.of(locale);
 	}
+
 
 	private static Optional<Path> readIn(String s)
 	{
@@ -86,6 +115,7 @@ class BAZIImpl
 		return Optional.empty();
 	}
 
+
 	private static Optional<Path> readOut(String s)
 	{
 		try
@@ -99,6 +129,7 @@ class BAZIImpl
 			return Optional.empty();
 		}
 	}
+
 
 	public static Optional<Format> readFormat(String s)
 	{

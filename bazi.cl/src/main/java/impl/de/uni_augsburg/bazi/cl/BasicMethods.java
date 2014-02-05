@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.cl;
 
 import com.google.common.collect.Lists;
+import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Tuple;
 import de.uni_augsburg.bazi.math.Int;
@@ -12,9 +13,9 @@ import java.util.stream.Collectors;
 
 public class BasicMethods
 {
-	public static OutputPackage calculate(List<BasicMethod> methods, List<Int> seats, List<? extends MonopropInput.Party> parties)
+	public static OutputPackage calculate(List<BasicMethod> methods, List<Int> seats, List<? extends MonopropInput.Party> parties, Options options)
 	{
-		OutputPackage op = new OutputPackage(parties);
+		OutputPackage op = new OutputPackage(parties, options);
 		for (BasicMethod method : methods)
 			for (Int seat : seats)
 				op.outputs.put(Tuple.of(method, seat), method.calculate(new Input(seat, parties)));
@@ -22,24 +23,42 @@ public class BasicMethods
 		return op;
 	}
 
-	public static class OutputPackage
+	public static class OutputPackage implements Format.Formatter
 	{
 		private final List<? extends MonopropInput.Party> parties;
+		private final Options options;
 		private final Map<Tuple<BasicMethod, Int>, BasicMethod.Output> outputs = new LinkedHashMap<>();
 
-		public OutputPackage(List<? extends MonopropInput.Party> parties)
+		private OutputPackage(List<? extends MonopropInput.Party> parties, Options options)
 		{
 			this.parties = parties;
+			this.options = options;
 		}
 
-		public List<BasicMethod.Output> getAll()
-		{
-			return new ArrayList<>(outputs.values());
-		}
-
+		public List<BasicMethod.Output> getAll() { return new ArrayList<>(outputs.values()); }
 		public BasicMethod.Output get(BasicMethod method, Int seats) { return outputs.get(Tuple.of(method, seats)); }
 
-		public List<StringTable> asStringTables(Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
+
+		@Override
+		public String plain()
+		{
+			return asStringTables().stream()
+				.map(StringTable::toString)
+				.collect(Collectors.joining());
+		}
+
+		@Override
+		public String json()
+		{
+			return Json.toJson(
+				getAll().stream()
+					.map(BasicMethod.Output::output)
+					.collect(Collectors.toList())
+			);
+		}
+
+
+		public List<StringTable> asStringTables()
 		{
 			List<StringTable> stringTables = new ArrayList<>();
 
@@ -50,7 +69,7 @@ public class BasicMethods
 			{
 				List<? extends MonopropInput.Party> parties = q.peekFirst().x();
 				List<? extends BasicMethod.Output> outputs = q.removeFirst().y();
-				stringTables.add(asStringTable(parties, outputs, orientation, divisorFormat, tieFormat));
+				stringTables.add(asStringTable(parties, outputs));
 
 				Lists.reverse(parties).stream()
 					.filter(p -> !p.parties().isEmpty())
@@ -66,12 +85,12 @@ public class BasicMethods
 			return stringTables;
 		}
 
-		public StringTable asStringTable(Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
+		public StringTable asStringTable()
 		{
-			return asStringTable(parties, outputs.values(), orientation, divisorFormat, tieFormat);
+			return asStringTable(parties, outputs.values());
 		}
 
-		private StringTable asStringTable(List<? extends MonopropInput.Party> parties, Collection<? extends BasicMethod.Output> outputs, Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
+		private StringTable asStringTable(List<? extends MonopropInput.Party> parties, Collection<? extends BasicMethod.Output> outputs)
 		{
 			StringTable st = new StringTable();
 			StringTable.Column names = st.col(0), votes = st.col(1), conditions = st.col(2);
@@ -90,14 +109,14 @@ public class BasicMethods
 			boolean divisor = outputs.stream().map(BasicMethod.Output::method).anyMatch(BasicMethod.Divisor.class::isInstance);
 			boolean quota = outputs.stream().map(BasicMethod.Output::method).anyMatch(BasicMethod.Quota.class::isInstance);
 			String label = divisor && quota ? "div_quo" : (divisor ? "div" : "quo");
-			if (divisorFormat == Options.DivisorFormat.QUOTIENT)
+			if (options.divisorFormat == Options.DivisorFormat.QUOTIENT)
 			{
 				names.append(String.format("%s (%s)", Resources.get("output.sum"), Resources.get("output.div_quo." + label)));
 			}
 			else
 			{
 				names.append(Resources.get("output.sum"));
-				names.append(Resources.get("output." + divisorFormat.name().toLowerCase() + "." + label));
+				names.append(Resources.get("output." + options.divisorFormat.name().toLowerCase() + "." + label));
 			}
 
 			Rational sum = parties.stream().map(MonopropInput.Party::votes).reduce(Rational::add).get();
@@ -108,9 +127,9 @@ public class BasicMethods
 			conditions.append(String.format("%s|%s..%s", dirSum, minSum, maxSum));
 
 			for (BasicMethod.Output output : outputs)
-				st.append(output.asStringTable(divisorFormat, tieFormat));
+				st.append(output.asStringTable(options.divisorFormat, options.tieFormat));
 
-			return orientation == Options.Orientation.VERTICAL ? st : st.transposed();
+			return options.orientation == Options.Orientation.VERTICAL ? st : st.transposed();
 		}
 	}
 }

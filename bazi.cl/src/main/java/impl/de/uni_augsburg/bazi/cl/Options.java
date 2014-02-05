@@ -2,6 +2,18 @@ package de.uni_augsburg.bazi.cl;
 
 public class Options
 {
+	public final Orientation orientation;
+	public final DivisorFormat divisorFormat;
+	public final TieFormat tieFormat;
+
+	public Options(Orientation orientation, DivisorFormat divisorFormat, TieFormat tieFormat)
+	{
+		this.orientation = orientation;
+		this.divisorFormat = divisorFormat;
+		this.tieFormat = tieFormat;
+	}
+
+
 	public enum Orientation
 	{
 		HORIZONTAL, VERTICAL, HORVERT, VERTHOR

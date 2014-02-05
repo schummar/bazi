@@ -1,6 +1,5 @@
 package de.uni_augsburg.bazi.cl;
 
-import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
@@ -14,21 +13,21 @@ import java.util.List;
 
 class BaziFile
 {
-	public static BaziFile load(Path path)
+	public static BaziFile load(Path path, Format format)
 	{
 		try
 		{
 			String content = new String(Files.readAllBytes(path));
-			return load(content);
+			return load(content, format);
 		}
 		catch (IOException e) {}
 
 		return null;
 	}
 
-	public static BaziFile load(String content)
+	public static BaziFile load(String content, Format format)
 	{
-		return Json.fromJson(content, BaziFile.class);
+		return format.deserialize(content, BaziFile.class);
 	}
 
 	public Algorithm algorithm = null;
