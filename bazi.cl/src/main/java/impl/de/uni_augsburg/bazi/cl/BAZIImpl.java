@@ -56,8 +56,7 @@ class BAZIImpl
 			}
 		}
 
-		LOG.info("Language: {}", locale.orElse(Locale.getDefault()));
-		Resources.setLocale(locale.orElse(Locale.getDefault()));
+		locale.ifPresent(Resources::setLocale);
 		in.ifPresent(x -> LOG.info("Input file: {}", x));
 		out.ifPresent(x -> LOG.info("Output file: {}", x));
 

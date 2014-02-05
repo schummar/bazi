@@ -44,7 +44,7 @@ allprojects {
     }
 
     dependencies {
-        compile 'ch.qos.logback:logback-classic:1.1.0'
+        compile 'org.slf4j:slf4j-simple:1.7.5'
         testCompile 'junit:junit:4.4'
     }
 }

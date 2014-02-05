@@ -18,6 +18,7 @@ public class Resources
 	public static void setLocale(Locale locale)
 	{
 		resources = ResourceBundle.getBundle(RESOURCE_NAME, locale);
+		LOG.info("Set locale: {}", locale);
 	}
 
 
@@ -29,6 +30,7 @@ public class Resources
 		}
 		catch (MissingResourceException e)
 		{
+			LOG.warn("Missing Resource Key: {}", key);
 			return MessageFormat.format("{0} {1}", key, Arrays.toString(args));
 		}
 	}
