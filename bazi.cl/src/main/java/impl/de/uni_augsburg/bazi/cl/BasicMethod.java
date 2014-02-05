@@ -31,7 +31,8 @@ interface BasicMethod
 	{
 		public BasicMethod method();
 		public MonopropOutput output();
-		public MonopropOutput.Party get(MonopropInput.Party party);
+		public MonopropOutput.Party findParty(MonopropInput.Party party);
+		public Output outputFor(MonopropInput.Party party);
 
 		public StringTable quotientColumn(Options.DivisorFormat divisorFormat);
 		public String divquo(Options.DivisorFormat divisorFormat);
@@ -86,11 +87,6 @@ interface BasicMethod
 			return new Output(method.calculateDeep(input));
 		}
 
-		public Output outputFor(DivisorOutput output)
-		{
-			return new Output(output);
-		}
-
 		public class Output implements BasicMethod.Output
 		{
 			private final DivisorOutput output;
@@ -112,9 +108,14 @@ interface BasicMethod
 				return Divisor.this;
 			}
 
-			public MonopropOutput.Party get(MonopropInput.Party party)
+			public MonopropOutput.Party findParty(MonopropInput.Party party)
 			{
-				return output.parties().stream().filter(party::equals).findAny().get();
+				return output.find(party);
+			}
+
+			public Output outputFor(MonopropInput.Party party)
+			{
+				return new Output((DivisorOutput) findParty(party).apparentment());
 			}
 
 			@Override

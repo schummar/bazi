@@ -33,6 +33,11 @@ public class MonopropOutput implements MonopropInput
 		return parties;
 	}
 
+	public Party find(MonopropInput.Party party)
+	{
+		return parties().stream().filter(p -> p.equals(party)).findAny().orElse(null);
+	}
+
 	public static class Party implements MonopropInput.Party, MonopropInput
 	{
 		Object id = this;

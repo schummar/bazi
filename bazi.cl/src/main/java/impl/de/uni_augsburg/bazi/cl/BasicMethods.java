@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.cl;
 
+import com.google.common.collect.Lists;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Tuple;
 import de.uni_augsburg.bazi.math.Int;
@@ -13,7 +14,7 @@ public class BasicMethods
 {
 	public static OutputPackage calculate(List<BasicMethod> methods, List<Int> seats, List<? extends MonopropInput.Party> parties)
 	{
-		OutputPackage op = new OutputPackage();
+		OutputPackage op = new OutputPackage(parties);
 		for (BasicMethod method : methods)
 			for (Int seat : seats)
 				op.outputs.put(Tuple.of(method, seat), method.calculate(new Input(seat, parties)));
@@ -23,10 +24,10 @@ public class BasicMethods
 
 	public static class OutputPackage
 	{
-		private final List<MonopropInput.Party> parties;
-		private final SortedMap<Tuple<BasicMethod, Int>, BasicMethod.Output> outputs = new TreeMap<>();
+		private final List<? extends MonopropInput.Party> parties;
+		private final Map<Tuple<BasicMethod, Int>, BasicMethod.Output> outputs = new LinkedHashMap<>();
 
-		public OutputPackage(List<MonopropInput.Party> parties)
+		public OutputPackage(List<? extends MonopropInput.Party> parties)
 		{
 			this.parties = parties;
 		}
@@ -36,33 +37,36 @@ public class BasicMethods
 		public List<StringTable> asStringTables(Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
 		{
 			List<StringTable> stringTables = new ArrayList<>();
-			stringTables.add(asStringTable(orientation, divisorFormat, tieFormat));
 
-			Queue<Tuple<MonopropInput.Party, Collection<BasicMethod.Output>>> q = new LinkedList<>();
-			q.addAll(parties.stream()
-				.filter(p -> !p.parties().isEmpty())
-				.map(p -> Tuple.of(p, outputs.values()))
-				.collect(Collectors.toList()));
+			Deque<Tuple<List<? extends MonopropInput.Party>, List<? extends BasicMethod.Output>>> q = new LinkedList<>();
+			q.add(Tuple.of(parties, new ArrayList<>(outputs.values())));
 
 			while (!q.isEmpty())
 			{
-				Tuple<MonopropInput.Party, Collection<BasicMethod.Output>> current = q.remove();
+				List<? extends MonopropInput.Party> parties = q.peekFirst().x();
+				List<? extends BasicMethod.Output> outputs = q.removeFirst().y();
+				stringTables.add(asStringTable(parties, outputs, orientation, divisorFormat, tieFormat));
 
-				Queue<Tuple<MonopropInput.Party, Collection<BasicMethod.Output>>> newQ = new LinkedList<>();
-				newQ.addAll(parties.stream()
+				Lists.reverse(parties).stream()
 					.filter(p -> !p.parties().isEmpty())
-					.map(p -> Tuple.of(p, outputs.values()))
-					.collect(Collectors.toList()));
-				List<BasicMethod.Output> newOutputs = current.y().stream().map(o->o.get(current.x().parties()))
+					.forEach(
+						p -> q.addFirst(
+							Tuple.of(
+								p.parties(),
+								outputs.stream().map(o -> o.outputFor(p)).collect(Collectors.toList())
+							)
+						)
+					);
 			}
+			return stringTables;
 		}
 
 		public StringTable asStringTable(Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
 		{
-			return asStringTable(outputs.values(), orientation, divisorFormat, tieFormat);
+			return asStringTable(parties, outputs.values(), orientation, divisorFormat, tieFormat);
 		}
 
-		private StringTable asStringTable(Collection<BasicMethod.Output> outputs, Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
+		private StringTable asStringTable(List<? extends MonopropInput.Party> parties, Collection<? extends BasicMethod.Output> outputs, Options.Orientation orientation, Options.DivisorFormat divisorFormat, Options.TieFormat tieFormat)
 		{
 			StringTable st = new StringTable();
 			StringTable.Column names = st.col(0), votes = st.col(1), conditions = st.col(2);

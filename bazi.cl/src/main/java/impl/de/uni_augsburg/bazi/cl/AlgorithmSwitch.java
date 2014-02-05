@@ -2,7 +2,6 @@ package de.uni_augsburg.bazi.cl;
 
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.monoprop.DivisorMethod;
-import de.uni_augsburg.bazi.monoprop.MonopropInput;
 import de.uni_augsburg.bazi.monoprop.RoundingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +24,10 @@ class AlgorithmSwitch
 			.reduce((x, y) -> {x.addAll(y); return x;}).get();
 
 
-		BasicMethods.calculate(methods, seats, baziFile.parties);
+		BasicMethods.OutputPackage op = BasicMethods.calculate(methods, seats, baziFile.parties);
 
-
-		//LOG.info(BasicMethod.asStringTable(baziFile.parties, results, Options.Orientation.VERTICAL, Options.DivisorFormat.QUOTIENT, Options.TieFormat.CODED).toString());
+		op.asStringTables(Options.Orientation.VERTICAL, Options.DivisorFormat.QUOTIENT, Options.TieFormat.CODED).stream()
+			.map(Object::toString)
+			.forEach(LOG::info);
 	}
 }
