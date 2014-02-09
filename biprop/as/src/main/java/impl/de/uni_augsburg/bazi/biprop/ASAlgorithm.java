@@ -1,20 +1,21 @@
 package de.uni_augsburg.bazi.biprop;
 
+import de.uni_augsburg.bazi.common.UserCanceledException;
 import de.uni_augsburg.bazi.math.*;
 import de.uni_augsburg.bazi.monoprop.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ASAlgorithm
+class ASAlgorithm
 {
-	public static BipropOutput calculate(
+	public static BipropResult calculate(
 		Matrix<BipropOutput.Party> matrix,
 		List<Int> rowSeats,
 		List<Int> colSeats,
 		DivisorUpdateFunction divisorUpdateFunction,
 		DivisorMethod divisorMethod
-	) throws InterruptedException
+	)
 	{
 		return new ASAlgorithm(matrix, divisorUpdateFunction, divisorMethod, rowSeats, colSeats).calculate();
 	}
@@ -39,16 +40,17 @@ public class ASAlgorithm
 		this.colSeats = colSeats;
 	}
 
-	private BipropOutput calculate() throws InterruptedException
+
+	private BipropResult calculate()
 	{
 		boolean isRowStep = true;
-		List<Int> flaws = rows.stream().map(r -> BMath.ZERO).collect(Collectors.toList());
-		Int flawCount = BMath.ONE;
+		List<Int> faults = rows.stream().map(r -> BMath.ZERO).collect(Collectors.toList());
+		Int faultCount = BMath.ONE;
 
-		while (!flawCount.equals(0))
+		while (!faultCount.equals(0))
 		{
 			if (Thread.interrupted())
-				throw new InterruptedException();
+				throw new UserCanceledException();
 
 			// scale votes
 			for (int row : rows)
@@ -59,6 +61,7 @@ public class ASAlgorithm
 				}
 
 			// calculate one apportionment per row (or column)
+			List<Int> currentFaults = faults;
 			rows.parallelStream().forEach(
 				row -> {
 					DivisorOutput output = divisorMethod.calculate(new Input(rowSeats.get(row), matrix.row(row)));
@@ -67,26 +70,22 @@ public class ASAlgorithm
 						matrix.get(row, col).seats = output.parties().get(col).seats();
 						matrix.get(row, col).uniqueness = output.parties().get(col).uniqueness();
 					}
-					rowDivisors.set(row, divisorUpdateFunction.update(rowDivisors.get(row), output.divisor(), null));
+					rowDivisors.set(row, divisorUpdateFunction.update(rowDivisors.get(row), output.divisor(), currentFaults.get(row)));
 				}
 			);
 
 			transfer();
 
-			if (!isRowStep) matrix.transpose();
-			System.out.println(matrix.toString(p -> p.seats().toString()+p.uniqueness().toString()));
-			if (!isRowStep) matrix.transpose();
-
-			// update flaws
-			flaws = cols.stream()
+			// update faults
+			faults = cols.stream()
 				.map(
 					col -> matrix.col(col).stream()
 						.map(BipropOutput.Party::seats)
 						.reduce(Int::add).get().sub(colSeats.get(col))
 				)
 				.collect(Collectors.toList());
-			System.out.println(flaws);
-			flawCount = flaws.stream()
+			System.out.println(faults);
+			faultCount = faults.stream()
 				.map(flaw -> flaw.max(0))
 				.reduce(Int::add).get();
 
@@ -100,8 +99,9 @@ public class ASAlgorithm
 
 		System.out.println(matrix);
 
-		return null;
+		return new BipropResult(rowDivisors, colDivisors);
 	}
+
 
 	private void transfer()
 	{

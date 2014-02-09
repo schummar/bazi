@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class Matrix<T>
+class Matrix<T>
 {
 	private List<List<T>> rows;
 	private List<List<T>> cols;
