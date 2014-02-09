@@ -1,12 +1,7 @@
 import de.uni_augsburg.bazi.math.*;
-import de.uni_augsburg.bazi.monoprop.DivisorMethod;
-import de.uni_augsburg.bazi.monoprop.DivisorOutput;
-import de.uni_augsburg.bazi.monoprop.MonopropInput;
-import de.uni_augsburg.bazi.monoprop.RoundingFunction;
+import de.uni_augsburg.bazi.monoprop.*;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ASAlgorithm
@@ -66,12 +61,19 @@ public class ASAlgorithm
 				row -> {
 					DivisorOutput output = divisorMethod.calculate(new Input(rowSeats.get(row), matrix.row(row)));
 					for (int col : cols)
+					{
 						matrix.get(row, col).seats = output.parties().get(col).seats();
+						matrix.get(row, col).uniqueness = output.parties().get(col).uniqueness();
+					}
 					rowDivisors.set(row, divisorUpdateFunction.update(rowDivisors.get(row), output.divisor(), null));
 				}
 			);
 
-			System.out.println(matrix.toString(p -> p.seats().toString()));
+			transfer();
+
+			if (!isRowStep) matrix.transpose();
+			System.out.println(matrix.toString(p -> p.seats().toString()+p.uniqueness().toString()));
+			if (!isRowStep) matrix.transpose();
 
 			// update flaws
 			flaws = cols.stream()
@@ -99,6 +101,80 @@ public class ASAlgorithm
 		return null;
 	}
 
+	private void transfer()
+	{
+		Set<Integer> Iminus = new HashSet<>(), Iplus = new HashSet<>();
+
+		for (int col : cols)
+		{
+			Int sum = matrix.col(col).stream()
+				.map(BipropOutput.Party::seats)
+				.reduce(Int::add)
+				.orElse(BMath.ZERO);
+			int comp = sum.compareTo(colSeats.get(col));
+			if (comp < 0) Iminus.add(col);
+			if (comp > 0) Iplus.add(col);
+		}
+
+		Set<Integer> L = new HashSet<>(Iminus);
+		Queue<Integer> Q = new LinkedList<>(L);
+		int[] pre = new int[matrix.rows() + matrix.cols()];
+		int colCount = matrix.cols();
+
+		while (!Q.isEmpty())
+		{
+			int u = Q.poll();
+			if (u < colCount)
+			{
+				int col = u;
+				for (int row : rows)
+					if (!L.contains(row + colCount)
+						&& matrix.get(row, col).votes.compareTo(0) > 0
+						&& matrix.get(row, col).uniqueness == Uniqueness.CAN_BE_MORE)
+					{
+						Q.add(row + colCount);
+						L.add(row + colCount);
+						pre[row + colCount] = col;
+					}
+			}
+			else
+			{
+				int row = u - colCount;
+				for (int col : cols)
+					if (!L.contains(col)
+						&& matrix.get(row, col).votes.compareTo(0) > 0
+						&& matrix.get(row, col).uniqueness == Uniqueness.CAN_BE_LESS)
+					{
+						Q.add(col);
+						L.add(col);
+						pre[col] = row + colCount;
+					}
+			}
+		}
+
+		List<Integer> L_Iplus = new ArrayList<>(L);
+		L_Iplus.retainAll(Iplus);
+
+		if (!L_Iplus.isEmpty())
+		{
+			int col = L_Iplus.get(0);
+			do
+			{
+				int row = pre[col] - colCount;
+				BipropOutput.Party p = matrix.get(row, col);
+				p.seats = p.seats.sub(1);
+				p.uniqueness = Uniqueness.CAN_BE_MORE;
+
+				col = pre[row + colCount];
+				p = matrix.get(row, col);
+				p.seats = p.seats.add(1);
+				p.uniqueness = Uniqueness.CAN_BE_LESS;
+			} while (!Iminus.contains(col));
+			transfer();
+		}
+	}
+
+
 	private void transpose()
 	{
 		matrix.transpose();
@@ -107,11 +183,12 @@ public class ASAlgorithm
 		cols = tempRows;
 		List<Int> tempRowSeats = rowSeats;
 		rowSeats = colSeats;
-		colSeats = rowSeats;
+		colSeats = tempRowSeats;
 		List<Real> tempRowDivisors = rowDivisors;
 		rowDivisors = colDivisors;
 		colDivisors = tempRowDivisors;
 	}
+
 
 	private static class Input implements MonopropInput
 	{
@@ -131,11 +208,12 @@ public class ASAlgorithm
 
 	public static void main(String[] args) throws InterruptedException
 	{
-		Rational[][] votes = {{BMath.ONE, BMath.HALF}, {BMath.HALF, BMath.ONE}};
+		Rational[][] votes = {{BMath.TWO, BMath.ONE}, {BMath.TWO, BMath.ONE}};
 		Matrix<BipropOutput.Party> matrix = new Matrix<>(2, 2, (r, c) -> new BipropOutput.Party(votes[r][c]));
-		List<Int> rowSeats = Arrays.asList(BMath.TWO, BMath.ONE);
+		List<Int> rowSeats = Arrays.asList(BMath.valueOf(5), BMath.valueOf(5));
+		List<Int> colSeats = Arrays.asList(BMath.valueOf(7), BMath.valueOf(3));
 		DivisorMethod method = new DivisorMethod(RoundingFunction.DIV_STD);
 
-		calculate(matrix, rowSeats, rowSeats, DivisorUpdateFunction.MIDPOINT, method);
+		calculate(matrix, rowSeats, colSeats, DivisorUpdateFunction.MIDPOINT, method);
 	}
 }

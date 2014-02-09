@@ -1,11 +1,11 @@
 package de.uni_augsburg.bazi.monoprop;
 
 import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.math.Real;
 
 public interface QuotaFunction
 {
-	public Rational getQuota(Rational votes, Int seats);
+	public Real getQuota(Real votes, Int seats);
 
 
 	public static final QuotaFunction

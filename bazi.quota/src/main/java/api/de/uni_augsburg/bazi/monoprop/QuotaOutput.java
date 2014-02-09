@@ -1,10 +1,10 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.math.Real;
 
 public class QuotaOutput extends MonopropOutput
 {
-	Rational quota;
+	Real quota;
 
 	public QuotaOutput() { }
 
@@ -13,5 +13,5 @@ public class QuotaOutput extends MonopropOutput
 		super(input);
 	}
 
-	public Rational quota() { return quota; }
+	public Real quota() { return quota; }
 }

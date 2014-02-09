@@ -2,6 +2,7 @@ package de.uni_augsburg.bazi.monoprop;
 
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.math.Real;
 
 import java.util.function.Supplier;
 
@@ -12,12 +13,12 @@ class QuotaMethodAlgorithm
 		QuotaOutput output = new QuotaOutput(input);
 		Supplier<Int> seatsOff = () -> output.seats.sub(output.parties.stream().map(p -> p.seats).reduce((x, y) -> x.add(y)).get());
 
-		Rational votes = output.parties.stream().map(p -> p.votes).reduce((x, y) -> x.add(y)).get();
+		Real votes = output.parties.stream().map(p -> p.votes).reduce((x, y) -> x.add(y)).get();
 		output.quota = quotaFunction.getQuota(votes, output.seats);
 
 		for (QuotaOutput.Party party : output.parties)
 		{
-			Rational quotient = party.votes().div(output.quota);
+			Real quotient = party.votes().div(output.quota);
 			party.seats = quotient.floor();
 		}
 

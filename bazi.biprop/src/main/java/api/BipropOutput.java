@@ -2,6 +2,7 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
+import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
 public class BipropOutput
 {
@@ -11,6 +12,7 @@ public class BipropOutput
 		String name;
 		Real votes;
 		Int min, max, dir, seats;
+		Uniqueness uniqueness;
 
 		public Party(MonopropInput.Party party)
 		{
@@ -44,5 +46,6 @@ public class BipropOutput
 		@Override
 		public Int dir() { return dir; }
 		public Int seats() { return seats; }
+		public Uniqueness uniqueness() { return uniqueness; }
 	}
 }

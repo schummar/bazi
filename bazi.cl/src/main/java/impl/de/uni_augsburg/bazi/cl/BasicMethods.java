@@ -6,6 +6,7 @@ import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Tuple;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
 
 import java.util.*;
@@ -119,7 +120,7 @@ public class BasicMethods
 				names.append(Resources.get("output." + options.divisorFormat.name().toLowerCase() + "." + label));
 			}
 
-			Rational sum = parties.stream().map(MonopropInput.Party::votes).reduce(Rational::add).get();
+			Real sum = parties.stream().map(MonopropInput.Party::votes).reduce(Real::add).get();
 			Rational dirSum = parties.stream().map(MonopropInput.Party::dir).reduce(Int::add).get();
 			Rational minSum = parties.stream().map(MonopropInput.Party::min).reduce(Int::add).get();
 			Rational maxSum = parties.stream().map(MonopropInput.Party::max).reduce(Int::add).get();
