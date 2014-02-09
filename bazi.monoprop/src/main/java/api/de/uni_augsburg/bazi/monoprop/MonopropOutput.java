@@ -2,7 +2,7 @@ package de.uni_augsburg.bazi.monoprop;
 
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.math.Real;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class MonopropOutput implements MonopropInput
 	{
 		Object id = this;
 		String name = "";
-		Rational votes = BMath.ZERO;
+		Real votes = BMath.ZERO;
 		Int min = BMath.ZERO, max = BMath.INF, dir = BMath.ZERO, seats = BMath.ZERO;
 		List<? extends MonopropInput.Party> parties = new ArrayList<>();
 		Uniqueness uniqueness = Uniqueness.UNIQUE;
@@ -67,7 +67,7 @@ public class MonopropOutput implements MonopropInput
 		@Override
 		public String name() { return name; }
 		@Override
-		public Rational votes() { return votes; }
+		public Real votes() { return votes; }
 		@Override
 		public Int min() { return min; }
 		@Override

@@ -1,3 +1,4 @@
+import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
@@ -22,6 +23,14 @@ public class BipropOutput
 			this.seats = party.dir();
 		}
 
+		public Party(Real votes)
+		{
+			this.votes = votes;
+			id = this;
+			name = "";
+			min = dir = BMath.ZERO;
+			max = BMath.INF;
+		}
 		@Override
 		public Object id() { return id; }
 		@Override

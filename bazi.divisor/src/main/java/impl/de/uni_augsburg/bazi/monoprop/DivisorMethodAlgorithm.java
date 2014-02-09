@@ -3,6 +3,7 @@ package de.uni_augsburg.bazi.monoprop;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.ShiftQueue.NoShiftPossible;
 
 import java.util.function.Supplier;
@@ -44,14 +45,14 @@ class DivisorMethodAlgorithm
 	{
 		/* Erste Zuteilung der Sitze gemaess der Min-Bedingung und der Zuteilung mit Hilfe des Unbiased Multipliers
 		 * Stationaere Methoden erlauben noch eine Verbesserung */
-		Rational ubm = output.seats;
+		Real ubm = output.seats;
 		if (output.seats.compareTo(output.parties.size() / 2) > 0 && r instanceof RoundingFunction.Stationary)
 		{
 			Rational param = r.getParam();
 			ubm = output.seats.add(param.sub(BMath.HALF).div(output.parties.size()));
 		}
 
-		Rational votes = output.parties.stream().map(MonopropOutput.Party::votes).reduce(Rational::add).orElse(BMath.ZERO);
+		Real votes = output.parties.stream().map(MonopropOutput.Party::votes).reduce(Real::add).orElse(BMath.ZERO);
 		ubm = ubm.div(votes);
 
 		for (DivisorOutput.Party party : output.parties)

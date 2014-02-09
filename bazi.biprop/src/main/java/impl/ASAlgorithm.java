@@ -1,46 +1,57 @@
-import com.google.common.collect.Sets;
-import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Interval;
-import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.*;
+import de.uni_augsburg.bazi.math.*;
+import de.uni_augsburg.bazi.monoprop.DivisorMethod;
+import de.uni_augsburg.bazi.monoprop.DivisorOutput;
+import de.uni_augsburg.bazi.monoprop.MonopropInput;
+import de.uni_augsburg.bazi.monoprop.RoundingFunction;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class ASAlgorithm
 {
-	public static Object calculate(
+	public static BipropOutput calculate(
 		Matrix<BipropOutput.Party> matrix,
 		List<Int> rowSeats,
 		List<Int> colSeats,
 		DivisorUpdateFunction divisorUpdateFunction,
-		DivisorMethod method
+		DivisorMethod divisorMethod
 	) throws InterruptedException
 	{
-		Set<Integer> rows = Interval.zeroTo(matrix.rows());
-		Set<Integer> cols = Interval.zeroTo(matrix.cols());
+		return new ASAlgorithm(matrix, divisorUpdateFunction, divisorMethod, rowSeats, colSeats).calculate();
+	}
 
+
+	private final Matrix<BipropOutput.Party> matrix;
+	private Set<Integer> rows, cols;
+	private List<Int> rowSeats, colSeats;
+	private List<Real> rowDivisors, colDivisors;
+	private final DivisorUpdateFunction divisorUpdateFunction;
+	private final DivisorMethod divisorMethod;
+	private ASAlgorithm(Matrix<BipropOutput.Party> matrix, DivisorUpdateFunction divisorUpdateFunction, DivisorMethod divisorMethod, List<Int> rowSeats, List<Int> colSeats)
+	{
+		this.matrix = matrix;
+		this.rows = Interval.zeroTo(matrix.rows());
+		this.cols = Interval.zeroTo(matrix.cols());
+		this.rowDivisors = rows.stream().map(r -> BMath.ONE).collect(Collectors.toList());
+		this.colDivisors = cols.stream().map(c -> BMath.ONE).collect(Collectors.toList());
+		this.divisorUpdateFunction = divisorUpdateFunction;
+		this.divisorMethod = divisorMethod;
+		this.rowSeats = rowSeats;
+		this.colSeats = colSeats;
+	}
+
+	private BipropOutput calculate() throws InterruptedException
+	{
 		boolean isRowStep = true;
-		List<Real> rowDivisors = new ArrayList<>();
-		rows.forEach(r -> rowDivisors.add(BMath.ONE));
-		List<Real> colDivisors = new ArrayList<>();
-		cols.forEach(c -> colDivisors.add(BMath.ONE));
+		List<Int> flaws = rows.stream().map(r -> BMath.ZERO).collect(Collectors.toList());
+		Int flawCount = BMath.ONE;
 
-		Supplier<Set<Integer>> curRows = () -> isRowStep?rows:cols;
-
-		List<Int> seats = rowSeats;
-		List<Real> divisors = rowDivisors;
-
-		while (true)
+		while (!flawCount.equals(0))
 		{
 			if (Thread.interrupted())
 				throw new InterruptedException();
-
-			// current flaws
-
 
 			// scale votes
 			for (int row : rows)
@@ -51,23 +62,55 @@ public class ASAlgorithm
 				}
 
 			// calculate one apportionment per row (or column)
-			for (int row : rows)
-			{
-				DivisorOutput output = method.calculate(new Input(rowSeats.get(row), matrix.row(row)));
-				for (int col : cols)
-					matrix.get(row, col).seats = output.parties().get(col).seats();
-				divisors.set(row, divisorUpdateFunction.update(divisors.get(row), output.divisor(), null));
-			}
+			rows.parallelStream().forEach(
+				row -> {
+					DivisorOutput output = divisorMethod.calculate(new Input(rowSeats.get(row), matrix.row(row)));
+					for (int col : cols)
+						matrix.get(row, col).seats = output.parties().get(col).seats();
+					rowDivisors.set(row, divisorUpdateFunction.update(rowDivisors.get(row), output.divisor(), null));
+				}
+			);
+
+			System.out.println(matrix.toString(p -> p.seats().toString()));
+
+			// update flaws
+			flaws = cols.stream()
+				.map(
+					col -> matrix.col(col).stream()
+						.map(BipropOutput.Party::seats)
+						.reduce(Int::add).get().sub(colSeats.get(col))
+				)
+				.collect(Collectors.toList());
+			System.out.println(flaws);
+			flawCount = flaws.stream()
+				.map(flaw -> flaw.max(0))
+				.reduce(Int::add).get();
 
 			// flip rows / cols
 			isRowStep = !isRowStep;
-			matrix.transpose();
-			seats = isRowStep ? rowSeats : colSeats;
-			divisors = isRowStep ? rowDivisors : colDivisors;
+			transpose();
 		}
 
+		if (!isRowStep)
+			transpose();
+
+		System.out.println(matrix);
 
 		return null;
+	}
+
+	private void transpose()
+	{
+		matrix.transpose();
+		Set<Integer> tempRows = rows;
+		rows = cols;
+		cols = tempRows;
+		List<Int> tempRowSeats = rowSeats;
+		rowSeats = colSeats;
+		colSeats = rowSeats;
+		List<Real> tempRowDivisors = rowDivisors;
+		rowDivisors = colDivisors;
+		colDivisors = tempRowDivisors;
 	}
 
 	private static class Input implements MonopropInput
@@ -83,5 +126,16 @@ public class ASAlgorithm
 		public Int seats() { return seats; }
 		@Override
 		public List<? extends Party> parties() { return parties; }
+	}
+
+
+	public static void main(String[] args) throws InterruptedException
+	{
+		Rational[][] votes = {{BMath.ONE, BMath.HALF}, {BMath.HALF, BMath.ONE}};
+		Matrix<BipropOutput.Party> matrix = new Matrix<>(2, 2, (r, c) -> new BipropOutput.Party(votes[r][c]));
+		List<Int> rowSeats = Arrays.asList(BMath.TWO, BMath.ONE);
+		DivisorMethod method = new DivisorMethod(RoundingFunction.DIV_STD);
+
+		calculate(matrix, rowSeats, rowSeats, DivisorUpdateFunction.MIDPOINT, method);
 	}
 }
