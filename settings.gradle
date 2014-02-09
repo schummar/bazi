@@ -1,4 +1,5 @@
 include 'biprop',
+	'biprop:as',
 	'bmm',
 	'bmm_pow',
 	'cl',

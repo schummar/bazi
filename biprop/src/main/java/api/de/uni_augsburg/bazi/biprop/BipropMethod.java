@@ -1,3 +1,4 @@
+package de.uni_augsburg.bazi.biprop;
 
 public class BipropMethod
 {

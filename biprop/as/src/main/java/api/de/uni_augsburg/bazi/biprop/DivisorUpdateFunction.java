@@ -1,3 +1,5 @@
+package de.uni_augsburg.bazi.biprop;
+
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;

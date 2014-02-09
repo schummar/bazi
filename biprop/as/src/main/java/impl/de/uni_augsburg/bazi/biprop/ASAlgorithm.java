@@ -1,3 +1,5 @@
+package de.uni_augsburg.bazi.biprop;
+
 import de.uni_augsburg.bazi.math.*;
 import de.uni_augsburg.bazi.monoprop.*;
 

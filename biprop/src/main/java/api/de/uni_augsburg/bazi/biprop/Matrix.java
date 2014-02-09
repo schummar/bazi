@@ -1,3 +1,5 @@
+package de.uni_augsburg.bazi.biprop;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
