@@ -17,8 +17,8 @@ sourceSets {
 
 repositories { mavenCentral() }
 dependencies {
-    compile project(':bazi.common')
-    compile project(':bazi.monoprop')
-    compile project(':bazi.divisor')
-    compile project(':bazi.quota')
+    compile project(':common')
+    compile project(':monoprop')
+    compile project(':divisor')
+    compile project(':quota')
 }

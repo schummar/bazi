@@ -17,5 +17,5 @@ sourceSets {
 
 repositories { mavenCentral() }
 dependencies {
-	compile project(':bazi.divisor')
+	compile project(':divisor')
 }

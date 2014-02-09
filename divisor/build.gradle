@@ -17,8 +17,8 @@ sourceSets {
 
 repositories { mavenCentral() }
 dependencies {
-    compile project(':bazi.common')
-    compile project(':bazi.math')
-    compile project(':bazi.monoprop')
+    compile project(':common')
+    compile project(':math')
+    compile project(':monoprop')
     compile 'com.google.guava:guava:16.0.1'
 }
