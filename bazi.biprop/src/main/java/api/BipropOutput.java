@@ -1,5 +1,5 @@
 import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Rational;
+import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
 
 public class BipropOutput
@@ -8,7 +8,7 @@ public class BipropOutput
 	{
 		Object id;
 		String name;
-		Rational votes;
+		Real votes;
 		Int min, max, dir, seats;
 
 		public Party(MonopropInput.Party party)
@@ -27,7 +27,7 @@ public class BipropOutput
 		@Override
 		public String name() { return name; }
 		@Override
-		public Rational votes() { return votes; }
+		public Real votes() { return votes; }
 		@Override
 		public Int min() { return min; }
 		@Override

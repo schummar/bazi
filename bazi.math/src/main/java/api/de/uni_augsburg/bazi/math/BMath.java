@@ -1,11 +1,13 @@
 package de.uni_augsburg.bazi.math;
 
+import org.apfloat.Apfloat;
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.apfloat.AprationalMath;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class BMath
 {
@@ -26,6 +28,7 @@ public class BMath
 
 	private static final Map<Long, Int> LONG_TO_INT_CACHE = new HashMap<>();
 	private static final Map<String, Rational> STRING_TO_RATIONAL_CACHE = new HashMap<>();
+	private static final Random RANDOM = new Random();
 
 
 	public static Int valueOf(long l)
@@ -52,6 +55,11 @@ public class BMath
 					STRING_TO_RATIONAL_CACHE.put(s, q = fromApRational(parseString(s)));
 				return q;
 		}
+	}
+
+	public static Rational valueOf(double d)
+	{
+		return valueOf(new Apfloat(d).toString(true));
 	}
 
 	static Rational fromApRational(Aprational apr)
@@ -100,5 +108,10 @@ public class BMath
 		for (int i = 0; i < length; i++)
 			sb.append("0");
 		return sb.toString();
+	}
+
+	public static Rational random()
+	{
+		return valueOf(RANDOM.nextDouble());
 	}
 }

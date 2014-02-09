@@ -237,7 +237,7 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 	@Override public int compareTo(Real that)
 	{
 		if (that instanceof NaN)
-			throw new RuntimeException("cant compare to NaN");
+			throw new RuntimeException("cant compare zeroTo NaN");
 		if (that instanceof Infinity)
 			return sgn() - that.sgn();
 		return sgn;
@@ -291,7 +291,7 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 	@Override public List<Int> countTo()
 	{
-		throw new RuntimeException("cannot count to infinity");
+		throw new RuntimeException("cannot count zeroTo infinity");
 	}
 	@Override public List<Int> countTo(Int to)
 	{
@@ -307,12 +307,12 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 	@Override public void timesDo(Runnable r)
 	{
-		throw new RuntimeException("cannot count to infinity");
+		throw new RuntimeException("cannot count zeroTo infinity");
 	}
 
 	@Override public void timesDo(UnaryOperator<de.uni_augsburg.bazi.math.Int> op)
 	{
-		throw new RuntimeException("cannot count to infinity");
+		throw new RuntimeException("cannot count zeroTo infinity");
 	}
 
 

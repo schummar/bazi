@@ -179,23 +179,23 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 	@Override public int compareTo(Int that)
 	{
-		throw new RuntimeException("cant compare to NaN");
+		throw new RuntimeException("cant compare zeroTo NaN");
 	}
 	@Override public int compareTo(long that)
 	{
-		throw new RuntimeException("cant compare to NaN");
+		throw new RuntimeException("cant compare zeroTo NaN");
 	}
 	@Override public int compareTo(Rational that)
 	{
-		throw new RuntimeException("cant compare to NaN");
+		throw new RuntimeException("cant compare zeroTo NaN");
 	}
 	@Override public int compareTo(Real that)
 	{
-		throw new RuntimeException("cant compare to NaN");
+		throw new RuntimeException("cant compare zeroTo NaN");
 	}
 	@Override public int compareTo(String that)
 	{
-		throw new RuntimeException("cant compare to NaN");
+		throw new RuntimeException("cant compare zeroTo NaN");
 	}
 
 
@@ -255,7 +255,7 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 	@Override public List<Int> countTo()
 	{
-		throw new RuntimeException("cannot count to NaN");
+		throw new RuntimeException("cannot count zeroTo NaN");
 	}
 	@Override public List<Int> countTo(Int to)
 	{
@@ -265,11 +265,11 @@ import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 
 	@Override public void timesDo(Runnable r)
 	{
-		throw new RuntimeException("cannot count to NaN");
+		throw new RuntimeException("cannot count zeroTo NaN");
 	}
 	@Override public void timesDo(UnaryOperator<de.uni_augsburg.bazi.math.Int> op)
 	{
-		throw new RuntimeException("cannot count to NaN");
+		throw new RuntimeException("cannot count zeroTo NaN");
 	}
 
 
