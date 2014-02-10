@@ -6,10 +6,7 @@ import de.uni_augsburg.bazi.common.UserCanceledException;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.DivisorMethod;
-import de.uni_augsburg.bazi.monoprop.DivisorOutput;
-import de.uni_augsburg.bazi.monoprop.MonopropInput;
-import de.uni_augsburg.bazi.monoprop.Uniqueness;
+import de.uni_augsburg.bazi.monoprop.*;
 
 import java.util.*;
 import java.util.function.Function;
@@ -17,7 +14,7 @@ import java.util.stream.Collectors;
 
 class ASAlgorithm
 {
-	public static BipropResult calculate(
+	public static Map<Object, Divisor> calculate(
 		Table<BipropInput.District, String, BipropOutput.Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
@@ -50,7 +47,7 @@ class ASAlgorithm
 	}
 
 
-	private BipropResult calculate()
+	private Map<Object, Divisor> calculate()
 	{
 		Set<Object> allKeys = Sets.union(table.rowKeySet(), table.columnKeySet());
 		Function<Object, Object> ID = o -> o;

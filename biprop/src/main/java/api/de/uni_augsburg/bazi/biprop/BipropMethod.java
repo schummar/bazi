@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
+import de.uni_augsburg.bazi.monoprop.Divisor;
 import de.uni_augsburg.bazi.monoprop.DivisorMethod;
 import de.uni_augsburg.bazi.monoprop.DivisorOutput;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
@@ -29,9 +30,9 @@ public abstract class BipropMethod
 		DivisorOutput superApportionment = calculateSuperApportionment(table, seats.values());
 		superApportionment.parties().forEach(party -> seats.put(party.name(), party.seats()));
 
+		Map<Object, Divisor> divisors = calculate(table, seats);
 
-		BipropResult result = calculate(table, seats);
-		return null;
+		return new BipropOutput(superApportionment, table, seats, divisors);
 	}
 
 
@@ -85,7 +86,13 @@ public abstract class BipropMethod
 	}
 
 
+	private Map<Object,Divisor> calculateDivisors(Table<BipropInput.District, String, BipropOutput.Party> table)
+	{
+
+	}
+
+
 	protected abstract DivisorMethod divisorMethod();
 
-	protected abstract BipropResult calculate(Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats);
+	protected abstract Map<Object, Divisor> calculate(Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats);
 }
