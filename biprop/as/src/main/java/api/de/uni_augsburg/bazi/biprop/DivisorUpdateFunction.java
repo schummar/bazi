@@ -7,22 +7,20 @@ import de.uni_augsburg.bazi.monoprop.Divisor;
 
 public interface DivisorUpdateFunction
 {
-	public Real update(Real divisor, Divisor newDivisor, Int fault);
+	public Real apply(Divisor divisor, Int fault);
 
 	public static DivisorUpdateFunction
-		MIDPOINT = (d, nd, f) -> d.mul(nd.nice()),
+		MIDPOINT = (d, f) -> d.nice(),
 
-	RANDOM = (d, nd, f) -> d.mul(
-		nd.max().equals(BMath.INF)
-			? nd.min().add(nd.nice().sub(nd.min()).mul(BMath.random()))
-			: nd.min().add(nd.max().sub(nd.min()).mul(BMath.random()))
-	),
+	RANDOM = (d, f) -> d.max().equals(BMath.INF)
+		? d.min().add(d.nice().sub(d.min()).mul(BMath.random()))
+		: d.min().add(d.max().sub(d.min()).mul(BMath.random())),
 
-	EXTREME = (d, nd, f) -> {
-		if (f.compareTo(0) > 0 && !nd.max().equals(BMath.INF))
-			return d.mul(nd.max());
+	EXTREME = (d, f) -> {
+		if (f.compareTo(0) > 0 && !d.max().equals(BMath.INF))
+			return d.max();
 		if (f.compareTo(0) < 0)
-			return d.mul(nd.min());
-		return d.mul(nd.nice());
+			return d.min();
+		return d.nice();
 	};
 }

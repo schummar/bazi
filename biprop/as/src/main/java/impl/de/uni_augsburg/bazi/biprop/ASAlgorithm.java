@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 class ASAlgorithm
 {
-	public static Map<Object, Divisor> calculate(
+	public static Map<Object, Real> calculate(
 		Table<BipropInput.District, String, BipropOutput.Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
@@ -47,81 +47,78 @@ class ASAlgorithm
 	}
 
 
-	private Map<Object, Divisor> calculate()
+	private Map<Object, Real> calculate()
 	{
+		Map<BipropOutput.Party, Real> votes = table.values().stream().collect(
+			Collectors.toMap(Function.identity(), BipropOutput.Party::votes)
+		);
 		Set<Object> allKeys = Sets.union(table.rowKeySet(), table.columnKeySet());
-		Function<Object, Object> ID = o -> o;
-		Map<Object, Int> faults = allKeys.stream().collect(Collectors.toMap(ID, key -> BMath.ZERO));
-		Map<Object, Real> divisors = allKeys.stream().collect(Collectors.toMap(ID, key -> BMath.ONE));
-		Int faultCount = BMath.ONE;
+		Map<Object, Real> divisors = allKeys.stream()
+			.collect(Collectors.toMap(Function.identity(), key -> BMath.ONE));
 
-		while (!faultCount.equals(0))
+		while (true)
 		{
 			if (Thread.interrupted())
 				throw new UserCanceledException();
 
-			// scale votes
-			table.cellSet().forEach(
-				(cell) -> {
-					Real scale = divisors.get(cell.getRowKey())
-						.mul(divisors.get(cell.getColumnKey()));
-					cell.getValue().votes = cell.getValue().votes.div(scale);
-				}
+			// update faults
+			Map<Object, Int> faults = rows.entrySet().stream().collect(
+				Collectors.toMap(
+					row -> row.getKey(),
+					row -> row.getValue().values().stream()
+						.map(BipropOutput.Party::seats)
+						.reduce(Int::add).orElse(BMath.ZERO)
+						.sub(seats.get(row.getKey()))
+				)
 			);
+			if (!faults.values().stream().allMatch(BMath.ZERO::equals))
+				break;
 
-			// calculate one apportionment per row (or column)
+			// for each row (or column when transposed)
 			rows.entrySet().parallelStream().forEach(
 				row -> {
-					DivisorOutput output = divisorMethod.calculate(
-						MonopropInput.create(
-							seats.get(row.getKey()),
-							row.getValue().values()
-						)
+
+					// scale each votes with the respective column divisor
+					row.getValue().forEach(
+						(colKey, party) -> party.votes = party.votes.div(divisors.get(colKey))
 					);
 
-					divisorMethod.calculate(
+					// calculate an apportionment => the row sum will be correct
+					DivisorOutput output = divisorMethod.calculate(
 						new MonopropInput()
 						{
 							@Override
-							public Int seats() { return null; }
+							public Int seats() { return seats.get(row.getKey()); }
 							@Override
-							public Collection<? extends Party> parties() { return null; }
+							public Collection<? extends Party> parties() { return row.getValue().values(); }
 						}
 					);
 
+					// apply the calculated seats to the table and reset votes
 					row.getValue().values().forEach(
 						party -> {
+							party.votes = votes.get(party);
 							party.seats = output.parties().find(party).seats();
 							party.uniqueness = output.parties().find(party).uniqueness();
 						}
 					);
 
-					divisors.compute(row.getKey(), (key, divisor) -> divisorUpdateFunction.update(divisor, output.divisor(), faults.get(key)));
+					// set the calculated divisor as row divisor
+					divisors.compute(
+						row.getKey(),
+						(key, value) -> divisorUpdateFunction.apply(output.divisor(), faults.get(key))
+					);
 				}
 			);
 
 			// transer ties to minimize faults
 			transfer();
 
-			// update faults
-			cols.forEach(
-				(colKey, col) -> faults.put(
-					colKey, col.values().stream()
-					.map(BipropOutput.Party::seats)
-					.reduce(Int::add).orElse(BMath.ZERO)
-					.sub(seats.get(colKey))
-				)
-			);
-
-			faultCount = faults.values().stream()
-				.map(BMath.ZERO::max)
-				.reduce(Int::add).orElse(BMath.ZERO);
-
 			// flip rows / cols
 			transpose();
 		}
 
-		return null;
+		return divisors;
 	}
 
 

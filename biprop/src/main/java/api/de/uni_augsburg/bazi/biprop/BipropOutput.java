@@ -4,7 +4,6 @@ import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.Divisor;
 import de.uni_augsburg.bazi.monoprop.DivisorOutput;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
 import de.uni_augsburg.bazi.monoprop.Uniqueness;
@@ -18,9 +17,9 @@ public class BipropOutput
 	DivisorOutput superApportionment;
 	Table<BipropInput.District, String, Party> table;
 	Map<Object, Int> seats;
-	Map<Object, Divisor> divisors;
+	Map<Object, Real> divisors;
 
-	public BipropOutput(DivisorOutput superApportionment, Table<BipropInput.District, String, Party> table, Map<Object, Int> seats, Map<Object, Divisor> divisors)
+	public BipropOutput(DivisorOutput superApportionment, Table<BipropInput.District, String, Party> table, Map<Object, Int> seats, Map<Object, Real> divisors)
 	{
 		this.superApportionment = superApportionment;
 		this.table = table;
@@ -30,7 +29,7 @@ public class BipropOutput
 
 	public Table<BipropInput.District, String, Party> table() { return table; }
 	public Map<Object, Int> seats() { return seats; }
-	public Map<Object, Divisor> divisors() { return divisors; }
+	public Map<Object, Real> divisors() { return divisors; }
 
 
 	public static class Party implements MonopropInput.Party
