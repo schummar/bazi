@@ -6,21 +6,32 @@ import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 public interface MonopropInput
 {
+	public static MonopropInput create(Int seats, Collection<? extends Party> parties)
+	{
+		return new MonopropInput()
+		{
+			@Override
+			public Int seats() { return seats; }
+			@Override
+			public Collection<? extends Party> parties() { return parties; }
+		};
+	}
+
+
 	public Int seats();
-	public List<? extends Party> parties();
+	public Collection<? extends Party> parties();
 
 	public interface Party
 	{
-		public Object id();
 		public String name();
 		public Real votes();
 		public default Int min() { return BMath.ZERO; }
 		public default Int max() { return BMath.INF; }
 		public default Int dir() { return BMath.ZERO; }
-		public default List<? extends Party> parties() { return new ArrayList<>(); }
+		public default Collection<? extends Party> parties() { return new ArrayList<>(); }
 	}
 }

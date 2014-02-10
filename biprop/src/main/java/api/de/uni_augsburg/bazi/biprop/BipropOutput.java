@@ -6,37 +6,34 @@ import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
 import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class BipropOutput
 {
 	public static class Party implements MonopropInput.Party
 	{
-		Object id;
-		String name;
-		Real votes;
-		Int min, max, dir, seats;
-		Uniqueness uniqueness;
+		String name = "";
+		Real votes = BMath.ZERO;
+		Int min = BMath.ZERO, max = BMath.INF, dir = BMath.ZERO, seats = BMath.ZERO;
+		Uniqueness uniqueness = Uniqueness.UNIQUE;
+		Collection<? extends MonopropInput.Party> parties = new ArrayList<>();
 
 		public Party(MonopropInput.Party party)
 		{
-			this.id = party.id();
 			this.name = party.name();
 			this.votes = party.votes();
 			this.min = party.min();
 			this.max = party.max();
 			this.dir = party.dir();
-			this.seats = party.dir();
+			this.parties = party.parties();
 		}
 
-		public Party(Real votes)
+		public Party(String name)
 		{
-			this.votes = votes;
-			id = this;
-			name = "";
-			min = dir = BMath.ZERO;
-			max = BMath.INF;
+			this.name = name;
 		}
-		@Override
-		public Object id() { return id; }
+
 		@Override
 		public String name() { return name; }
 		@Override
@@ -49,5 +46,7 @@ public class BipropOutput
 		public Int dir() { return dir; }
 		public Int seats() { return seats; }
 		public Uniqueness uniqueness() { return uniqueness; }
+		@Override
+		public Collection<? extends MonopropInput.Party> parties() { return parties; }
 	}
 }

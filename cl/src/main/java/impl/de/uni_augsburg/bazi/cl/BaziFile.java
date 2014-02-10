@@ -78,11 +78,5 @@ class BaziFile
 		{
 			return apparentment;
 		}
-
-		@Override
-		public Object id()
-		{
-			return this;
-		}
 	}
 }

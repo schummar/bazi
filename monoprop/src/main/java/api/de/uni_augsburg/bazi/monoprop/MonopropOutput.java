@@ -1,16 +1,17 @@
 package de.uni_augsburg.bazi.monoprop;
 
+import de.uni_augsburg.bazi.common.MList;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 public class MonopropOutput implements MonopropInput
 {
 	Int seats = BMath.ZERO;
-	List<Party> parties = new ArrayList<>();
+	MList<Party> parties = new MList<>(p -> p.name);
 
 	public MonopropOutput() { }
 
@@ -28,23 +29,17 @@ public class MonopropOutput implements MonopropInput
 	}
 
 	@Override
-	public List<? extends Party> parties()
+	public MList<? extends Party> parties()
 	{
 		return parties;
 	}
 
-	public Party find(MonopropInput.Party party)
-	{
-		return parties().stream().filter(p -> p.equals(party)).findAny().orElse(null);
-	}
-
 	public static class Party implements MonopropInput.Party, MonopropInput
 	{
-		Object id = this;
 		String name = "";
 		Real votes = BMath.ZERO;
 		Int min = BMath.ZERO, max = BMath.INF, dir = BMath.ZERO, seats = BMath.ZERO;
-		List<? extends MonopropInput.Party> parties = new ArrayList<>();
+		Collection<? extends Party> parties = new ArrayList<>();
 		Uniqueness uniqueness = Uniqueness.UNIQUE;
 		MonopropOutput apparentment;
 
@@ -53,7 +48,6 @@ public class MonopropOutput implements MonopropInput
 
 		public Party(MonopropInput.Party party)
 		{
-			this.id = party.id();
 			this.name = party.name();
 			this.votes = party.votes();
 			this.min = party.min();
@@ -62,8 +56,6 @@ public class MonopropOutput implements MonopropInput
 			this.parties = party.parties();
 		}
 
-		@Override
-		public Object id() { return id; }
 		@Override
 		public String name() { return name; }
 		@Override
@@ -75,27 +67,10 @@ public class MonopropOutput implements MonopropInput
 		@Override
 		public Int dir() { return dir; }
 		@Override
-		public List<? extends MonopropInput.Party> parties() { return parties; }
+		public Collection<? extends MonopropInput.Party> parties() { return parties; }
 		@Override
 		public Int seats() {return seats;}
 		public Uniqueness uniqueness() {return uniqueness;}
 		public MonopropOutput apparentment() { return apparentment; }
-
-		@Override
-		public boolean equals(Object that)
-		{
-			return this == that
-						 || (
-				that != null
-				&& that instanceof MonopropInput.Party
-				&& id().equals(((MonopropInput.Party) that).id())
-			);
-		}
-
-		@Override
-		public int hashCode()
-		{
-			return System.identityHashCode(id);
-		}
 	}
 }

@@ -1,9 +1,10 @@
 package de.uni_augsburg.bazi.biprop;
 
+import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.monoprop.DivisorMethod;
 
-import java.util.List;
+import java.util.Map;
 
 public class ASMethod extends BipropMethod
 {
@@ -17,8 +18,14 @@ public class ASMethod extends BipropMethod
 	}
 
 	@Override
-	protected BipropResult calculate(Matrix<BipropOutput.Party> matrix, List<Int> rowSeats, List<Int> colSeats)
+	protected BipropResult calculate(Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats)
 	{
-		return ASAlgorithm.calculate(matrix, rowSeats, colSeats, divisorUpdateFunction, divisorMethod);
+		return ASAlgorithm.calculate(table, seats, divisorUpdateFunction, divisorMethod);
+	}
+
+	@Override
+	protected DivisorMethod divisorMethod()
+	{
+		return divisorMethod;
 	}
 }

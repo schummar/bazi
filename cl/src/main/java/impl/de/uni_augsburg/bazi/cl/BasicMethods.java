@@ -63,16 +63,16 @@ public class BasicMethods
 		{
 			List<StringTable> stringTables = new ArrayList<>();
 
-			Deque<Tuple<List<? extends MonopropInput.Party>, List<? extends BasicMethod.Output>>> q = new LinkedList<>();
-			q.add(Tuple.of(parties, new ArrayList<>(outputs.values())));
+			Deque<Tuple<Collection<? extends MonopropInput.Party>, Collection<? extends BasicMethod.Output>>> q = new LinkedList<>();
+			q.add(Tuple.of(parties, outputs.values()));
 
 			while (!q.isEmpty())
 			{
-				List<? extends MonopropInput.Party> parties = q.peekFirst().x();
-				List<? extends BasicMethod.Output> outputs = q.removeFirst().y();
+				Collection<? extends MonopropInput.Party> parties = q.peekFirst().x();
+				Collection<? extends BasicMethod.Output> outputs = q.removeFirst().y();
 				stringTables.add(asStringTable(parties, outputs));
 
-				Lists.reverse(parties).stream()
+				Lists.reverse(new ArrayList<>(parties)).stream()
 					.filter(p -> !p.parties().isEmpty())
 					.forEach(
 						p -> q.addFirst(
@@ -91,7 +91,7 @@ public class BasicMethods
 			return asStringTable(parties, outputs.values());
 		}
 
-		private StringTable asStringTable(List<? extends MonopropInput.Party> parties, Collection<? extends BasicMethod.Output> outputs)
+		private StringTable asStringTable(Collection<? extends MonopropInput.Party> parties, Collection<? extends BasicMethod.Output> outputs)
 		{
 			StringTable st = new StringTable();
 			StringTable.Column names = st.col(0), votes = st.col(1), conditions = st.col(2);

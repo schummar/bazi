@@ -113,7 +113,7 @@ interface BasicMethod
 
 			public MonopropOutput.Party findParty(MonopropInput.Party party)
 			{
-				return output.find(party);
+				return output.parties().find(party.name());
 			}
 
 			public Output outputFor(MonopropInput.Party party)

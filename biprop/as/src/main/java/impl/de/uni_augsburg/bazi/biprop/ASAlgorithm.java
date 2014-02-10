@@ -3,12 +3,16 @@ package de.uni_augsburg.bazi.biprop;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.common.UserCanceledException;
-import de.uni_augsburg.bazi.math.*;
-import de.uni_augsburg.bazi.monoprop.*;
+import de.uni_augsburg.bazi.math.BMath;
+import de.uni_augsburg.bazi.math.Int;
+import de.uni_augsburg.bazi.math.Real;
+import de.uni_augsburg.bazi.monoprop.DivisorMethod;
+import de.uni_augsburg.bazi.monoprop.DivisorOutput;
+import de.uni_augsburg.bazi.monoprop.MonopropInput;
+import de.uni_augsburg.bazi.monoprop.Uniqueness;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 class ASAlgorithm
@@ -20,12 +24,12 @@ class ASAlgorithm
 		DivisorMethod divisorMethod
 	)
 	{
-		return new ASAlgorithm(matrix, divisorUpdateFunction, divisorMethod, rowSeats, colSeats).calculate();
+		return new ASAlgorithm(divisorUpdateFunction, divisorMethod, table, seats).calculate();
 	}
 
 
 	Table<BipropInput.District, String, BipropOutput.Party> table;
-	Map<? extends Object, ? extends Map<? extends Object, BipropOutput.Party>> rows, cols;
+	Map<?, ? extends Map<?, BipropOutput.Party>> rows, cols, rowsAndCols;
 	Map<Object, Int> seats;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 	private final DivisorMethod divisorMethod;
@@ -38,6 +42,11 @@ class ASAlgorithm
 		this.seats = seats;
 		rows = table.rowMap();
 		cols = table.columnMap();
+
+		Map<Object, Map<?, BipropOutput.Party>> rowsAndCols = new HashMap<>();
+		rowsAndCols.putAll(rows);
+		rowsAndCols.putAll(cols);
+		this.rowsAndCols = rowsAndCols;
 	}
 
 
@@ -66,173 +75,127 @@ class ASAlgorithm
 			// calculate one apportionment per row (or column)
 			rows.entrySet().parallelStream().forEach(
 				row -> {
-					Int s = seats.get(row.getKey());
-					List<? extends MonopropInput.Party> p = new ArrayList<>(row.getValue().values());
-					DivisorOutput output = divisorMethod.calculate(new Input(s, p));
-					row.getValue().entrySet().stream().map(e -> e.getValue()).forEach(
-						party -> {
-							party.seats = null;table.rowMap().ge
-							party.uniqueness = null;
+					DivisorOutput output = divisorMethod.calculate(
+						MonopropInput.create(
+							seats.get(row.getKey()),
+							row.getValue().values()
+						)
+					);
+
+					divisorMethod.calculate(
+						new MonopropInput()
+						{
+							@Override
+							public Int seats() { return null; }
+							@Override
+							public Collection<? extends Party> parties() { return null; }
 						}
 					);
+
+					row.getValue().values().forEach(
+						party -> {
+							party.seats = output.parties().find(party).seats();
+							party.uniqueness = output.parties().find(party).uniqueness();
+						}
+					);
+
+					divisors.compute(row.getKey(), (key, divisor) -> divisorUpdateFunction.update(divisor, output.divisor(), faults.get(key)));
 				}
 			);
 
-			List<Int> currentFaults = faults;
-			rows.parallelStream().forEach(
-				row -> {
-					DivisorOutput output = divisorMethod.calculate(new Input(rowSeats.get(row), matrix.row(row)));
-					for (int col : cols)
-					{
-						matrix.get(row, col).seats = output.parties().get(col).seats();
-						matrix.get(row, col).uniqueness = output.parties().get(col).uniqueness();
-					}
-					rowDivisors.set(row, divisorUpdateFunction.update(rowDivisors.get(row), output.divisor(), currentFaults.get(row)));
-				}
-			);
-
+			// transer ties to minimize faults
 			transfer();
 
 			// update faults
-			faults = cols.stream()
-				.map(
-					col -> matrix.col(col).stream()
-						.map(BipropOutput.Party::seats)
-						.reduce(Int::add).get().sub(colSeats.get(col))
+			cols.forEach(
+				(colKey, col) -> faults.put(
+					colKey, col.values().stream()
+					.map(BipropOutput.Party::seats)
+					.reduce(Int::add).orElse(BMath.ZERO)
+					.sub(seats.get(colKey))
 				)
-				.collect(Collectors.toList());
-			System.out.println(faults);
-			faultCount = faults.stream()
-				.map(flaw -> flaw.max(0))
-				.reduce(Int::add).get();
+			);
+
+			faultCount = faults.values().stream()
+				.map(BMath.ZERO::max)
+				.reduce(Int::add).orElse(BMath.ZERO);
 
 			// flip rows / cols
-			isRowStep = !isRowStep;
 			transpose();
 		}
 
-		if (!isRowStep)
-			transpose();
-
-		System.out.println(matrix);
-
-		return new BipropResult(rowDivisors, colDivisors);
+		return null;
 	}
 
 
 	private void transfer()
 	{
-		Set<Integer> Iminus = new HashSet<>(), Iplus = new HashSet<>();
-
-		for (int col : cols)
+		while (true)
 		{
-			Int sum = matrix.col(col).stream()
-				.map(BipropOutput.Party::seats)
-				.reduce(Int::add)
-				.orElse(BMath.ZERO);
-			int comp = sum.compareTo(colSeats.get(col));
-			if (comp < 0) Iminus.add(col);
-			if (comp > 0) Iplus.add(col);
-		}
+			Set<Object> Iminus = new HashSet<>(), Iplus = new HashSet<>();
 
-		Set<Integer> L = new HashSet<>(Iminus);
-		Queue<Integer> Q = new LinkedList<>(L);
-		int[] pre = new int[matrix.rows() + matrix.cols()];
-		int colCount = matrix.cols();
+			cols.forEach(
+				(colKey, col) -> {
+					Int sum = col.values().stream()
+						.map(BipropOutput.Party::seats)
+						.reduce(Int::add).orElse(BMath.ZERO);
+					int comp = sum.compareTo(seats.get(colKey));
+					if (comp < 0) Iminus.add(colKey);
+					if (comp > 0) Iplus.add(colKey);
+				}
+			);
 
-		while (!Q.isEmpty())
-		{
-			int u = Q.poll();
-			if (u < colCount)
+			Set<Object> L = new HashSet<>(Iminus);
+			Queue<Object> Q = new LinkedList<>(L);
+			Map<Object, Object> pre = new HashMap<>();
+
+			while (!Q.isEmpty())
 			{
-				int col = u;
-				for (int row : rows)
-					if (!L.contains(row + colCount)
-						&& matrix.get(row, col).votes.compareTo(0) > 0
-						&& matrix.get(row, col).uniqueness == Uniqueness.CAN_BE_MORE)
-					{
-						Q.add(row + colCount);
-						L.add(row + colCount);
-						pre[row + colCount] = col;
-					}
-			}
-			else
-			{
-				int row = u - colCount;
-				for (int col : cols)
-					if (!L.contains(col)
-						&& matrix.get(row, col).votes.compareTo(0) > 0
-						&& matrix.get(row, col).uniqueness == Uniqueness.CAN_BE_LESS)
-					{
-						Q.add(col);
-						L.add(col);
-						pre[col] = row + colCount;
-					}
-			}
-		}
+				Object u = Q.poll();
+				Uniqueness uniqueness = cols.containsKey(u)
+					? Uniqueness.CAN_BE_MORE
+					: Uniqueness.CAN_BE_LESS;
 
-		List<Integer> L_Iplus = new ArrayList<>(L);
-		L_Iplus.retainAll(Iplus);
+				rowsAndCols.get(u).forEach(
+					(key, party) -> {
+						if (!L.contains(key)
+							&& party.votes.compareTo(0) > 0
+							&& party.uniqueness == uniqueness)
+						{
+							Q.add(key);
+							L.add(key);
+							pre.put(key, u);
+						}
+					}
+				);
+			}
 
-		if (!L_Iplus.isEmpty())
-		{
-			int col = L_Iplus.get(0);
+			List<Object> L_Iplus = new ArrayList<>(L);
+			L_Iplus.retainAll(Iplus);
+
+			if (L_Iplus.isEmpty()) return;
+
+			Object colKey = L_Iplus.get(0);
 			do
 			{
-				int row = pre[col] - colCount;
-				BipropOutput.Party p = matrix.get(row, col);
-				p.seats = p.seats.sub(1);
-				p.uniqueness = Uniqueness.CAN_BE_MORE;
+				Object rowKey = pre.get(colKey);
+				BipropOutput.Party party = cols.get(colKey).get(rowKey);
+				party.seats = party.seats.sub(1);
+				party.uniqueness = Uniqueness.CAN_BE_MORE;
 
-				col = pre[row + colCount];
-				p = matrix.get(row, col);
-				p.seats = p.seats.add(1);
-				p.uniqueness = Uniqueness.CAN_BE_LESS;
-			} while (!Iminus.contains(col));
-			transfer();
+				colKey = pre.get(rowKey);
+				party = cols.get(colKey).get(rowKey);
+				party.seats = party.seats.add(1);
+				party.uniqueness = Uniqueness.CAN_BE_LESS;
+			} while (!Iminus.contains(colKey));
 		}
 	}
 
 
 	private void transpose()
 	{
-		matrix.transpose();
-		Set<Integer> tempRows = rows;
+		Map<?, ? extends Map<?, BipropOutput.Party>> temp = rows;
 		rows = cols;
-		cols = tempRows;
-		List<Int> tempRowSeats = rowSeats;
-		rowSeats = colSeats;
-		colSeats = tempRowSeats;
-		List<Real> tempRowDivisors = rowDivisors;
-		rowDivisors = colDivisors;
-		colDivisors = tempRowDivisors;
-	}
-
-
-	private static class Input implements MonopropInput
-	{
-		private final Int seats;
-		private final List<? extends Party> parties;
-		private Input(Int seats, List<? extends Party> parties)
-		{
-			this.seats = seats;
-			this.parties = parties;
-		}
-		@Override
-		public Int seats() { return seats; }
-		@Override
-		public List<? extends Party> parties() { return parties; }
-	}
-
-
-	public static void main(String[] args) throws InterruptedException
-	{
-		Rational[][] votes = {{BMath.TWO, BMath.ONE}, {BMath.TWO, BMath.ONE}};
-		Matrix<BipropOutput.Party> matrix = new Matrix<>(2, 2, (r, c) -> new BipropOutput.Party(votes[r][c]));
-		List<Int> rowSeats = Arrays.asList(BMath.valueOf(5), BMath.valueOf(5));
-		List<Int> colSeats = Arrays.asList(BMath.valueOf(7), BMath.valueOf(3));
-		DivisorMethod method = new DivisorMethod(RoundingFunction.DIV_STD);
-
-		calculate(matrix, rowSeats, colSeats, DivisorUpdateFunction.MIDPOINT, method);
+		cols = temp;
 	}
 }
