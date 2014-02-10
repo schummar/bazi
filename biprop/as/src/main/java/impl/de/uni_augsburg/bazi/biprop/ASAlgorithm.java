@@ -1,18 +1,21 @@
 package de.uni_augsburg.bazi.biprop;
 
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.common.UserCanceledException;
 import de.uni_augsburg.bazi.math.*;
 import de.uni_augsburg.bazi.monoprop.*;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 class ASAlgorithm
 {
 	public static BipropResult calculate(
-		Matrix<BipropOutput.Party> matrix,
-		List<Int> rowSeats,
-		List<Int> colSeats,
+		Table<BipropInput.District, String, BipropOutput.Party> table,
+		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
 		DivisorMethod divisorMethod
 	)
@@ -21,30 +24,29 @@ class ASAlgorithm
 	}
 
 
-	private final Matrix<BipropOutput.Party> matrix;
-	private Set<Integer> rows, cols;
-	private List<Int> rowSeats, colSeats;
-	private List<Real> rowDivisors, colDivisors;
+	Table<BipropInput.District, String, BipropOutput.Party> table;
+	Map<? extends Object, ? extends Map<? extends Object, BipropOutput.Party>> rows, cols;
+	Map<Object, Int> seats;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 	private final DivisorMethod divisorMethod;
-	private ASAlgorithm(Matrix<BipropOutput.Party> matrix, DivisorUpdateFunction divisorUpdateFunction, DivisorMethod divisorMethod, List<Int> rowSeats, List<Int> colSeats)
+
+	ASAlgorithm(DivisorUpdateFunction divisorUpdateFunction, DivisorMethod divisorMethod, Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats)
 	{
-		this.matrix = matrix;
-		this.rows = Interval.zeroTo(matrix.rows());
-		this.cols = Interval.zeroTo(matrix.cols());
-		this.rowDivisors = rows.stream().map(r -> BMath.ONE).collect(Collectors.toList());
-		this.colDivisors = cols.stream().map(c -> BMath.ONE).collect(Collectors.toList());
 		this.divisorUpdateFunction = divisorUpdateFunction;
 		this.divisorMethod = divisorMethod;
-		this.rowSeats = rowSeats;
-		this.colSeats = colSeats;
+		this.table = table;
+		this.seats = seats;
+		rows = table.rowMap();
+		cols = table.columnMap();
 	}
 
 
 	private BipropResult calculate()
 	{
-		boolean isRowStep = true;
-		List<Int> faults = rows.stream().map(r -> BMath.ZERO).collect(Collectors.toList());
+		Set<Object> allKeys = Sets.union(table.rowKeySet(), table.columnKeySet());
+		Function<Object, Object> ID = o -> o;
+		Map<Object, Int> faults = allKeys.stream().collect(Collectors.toMap(ID, key -> BMath.ZERO));
+		Map<Object, Real> divisors = allKeys.stream().collect(Collectors.toMap(ID, key -> BMath.ONE));
 		Int faultCount = BMath.ONE;
 
 		while (!faultCount.equals(0))
@@ -53,14 +55,29 @@ class ASAlgorithm
 				throw new UserCanceledException();
 
 			// scale votes
-			for (int row : rows)
-				for (int col : cols)
-				{
-					BipropOutput.Party party = matrix.get(row, col);
-					party.votes = party.votes.div(rowDivisors.get(row).mul(colDivisors.get(col)));
+			table.cellSet().forEach(
+				(cell) -> {
+					Real scale = divisors.get(cell.getRowKey())
+						.mul(divisors.get(cell.getColumnKey()));
+					cell.getValue().votes = cell.getValue().votes.div(scale);
 				}
+			);
 
 			// calculate one apportionment per row (or column)
+			rows.entrySet().parallelStream().forEach(
+				row -> {
+					Int s = seats.get(row.getKey());
+					List<? extends MonopropInput.Party> p = new ArrayList<>(row.getValue().values());
+					DivisorOutput output = divisorMethod.calculate(new Input(s, p));
+					row.getValue().entrySet().stream().map(e -> e.getValue()).forEach(
+						party -> {
+							party.seats = null;table.rowMap().ge
+							party.uniqueness = null;
+						}
+					);
+				}
+			);
+
 			List<Int> currentFaults = faults;
 			rows.parallelStream().forEach(
 				row -> {
