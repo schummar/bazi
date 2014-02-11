@@ -1,22 +1,69 @@
 {
-	seats : [1..10],
-	parties : [ {
-		name : A,
-		votes : 1,
-		min : 2,
-		max : oo,
-		dir : 0
-	}, {
-		name : B,
-		votes : 1,
-		min : 0,
-		max : oo,
-		dir : 0
-	}, {
-		name : C,
-		votes : 1,
-		min : 0,
-		max : oo,
-		dir : 0
-	} ]
+	seats: [1..10],
+	parties: [
+		{
+			name: A,
+			votes: 1,
+			min: 2,
+			max: oo,
+			dir: 0
+		},
+		{
+			name: B,
+			votes: 1,
+			min: 0,
+			max: oo,
+			dir: 0
+		},
+		{
+			name: C,
+			votes: 1,
+			min: 0,
+			max: oo,
+			dir: 0
+		}
+	],
+
+	districts: [
+		{
+			name: "D0",
+			seats: 10,
+			parties: [
+				{
+					name: A,
+					votes: 1,
+					min: 0,
+					max: oo,
+					dir: 0
+				},
+				{
+					name: B,
+					votes: 1,
+					min: 0,
+					max: oo,
+					dir: 0
+				}
+			]
+		},
+		{
+			name: "D1",
+			seats: 10,
+			parties: [
+				{
+					name: C,
+					votes: 1,
+					min: 0,
+					max: oo,
+					dir: 0
+				},
+				{
+					name: D,
+					votes: 1,
+					min: 0,
+					max: oo,
+					dir: 0
+				}
+			]
+		}
+	]
 }

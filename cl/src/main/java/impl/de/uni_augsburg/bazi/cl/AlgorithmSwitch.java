@@ -1,13 +1,14 @@
 package de.uni_augsburg.bazi.cl;
 
-import de.uni_augsburg.bazi.math.Int;
+import de.uni_augsburg.bazi.biprop.ASMethod;
+import de.uni_augsburg.bazi.biprop.BipropMethod;
+import de.uni_augsburg.bazi.biprop.BipropOutput;
+import de.uni_augsburg.bazi.biprop.DivisorUpdateFunction;
+import de.uni_augsburg.bazi.common.Json;
 import de.uni_augsburg.bazi.monoprop.DivisorMethod;
 import de.uni_augsburg.bazi.monoprop.RoundingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.List;
 
 class AlgorithmSwitch
 {
@@ -15,18 +16,14 @@ class AlgorithmSwitch
 
 	public static String calculate(BaziFile baziFile, Format format)
 	{
-		BasicMethod method = new BasicMethod.Divisor(new DivisorMethod(RoundingFunction.DIV_STD, 20));
+		/*BasicMethod method = new BasicMethod.Divisor(new DivisorMethod(RoundingFunction.DIV_STD, 20));
+		baziFile.methods = Arrays.asList(method);
+		BasicMethods.OutputPackage op = BasicMethods.calculate(baziFile);
+		return format.serialize(op);*/
 
-		List<BasicMethod> methods = Arrays.asList(method);
-		List<Int> seats = baziFile.seats.stream().map(Interval::values)
-			.reduce((x, y) -> {x.addAll(y); return x;}).get();
-
-		BasicMethods.OutputPackage op = BasicMethods.calculate(
-			methods,
-			seats,
-			baziFile.parties,
-			new Options(Options.Orientation.VERTICAL, Options.DivisorFormat.DIV_INTERVAL, Options.TieFormat.CODED)
-		);
-		return format.serialize(op);
+		DivisorMethod divisorMethod = new DivisorMethod(RoundingFunction.DIV_STD);
+		BipropMethod method = new ASMethod(divisorMethod, DivisorUpdateFunction.MIDPOINT);
+		BipropOutput output = method.calculate(baziFile);
+		return Json.toJson(output);
 	}
 }

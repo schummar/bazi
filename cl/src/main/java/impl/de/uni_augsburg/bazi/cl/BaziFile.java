@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.cl;
 
+import de.uni_augsburg.bazi.biprop.BipropInput;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
@@ -9,9 +10,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-class BaziFile
+class BaziFile implements BipropInput
 {
 	public static BaziFile load(Path path, Format format)
 	{
@@ -32,8 +34,12 @@ class BaziFile
 
 	public Algorithm algorithm = null;
 	public List<BasicMethod> methods = new ArrayList<>();
+
 	public List<Interval> seats = new ArrayList<>();
-	public List<? extends Party> parties = new ArrayList<>();
+	public List<Party> parties = new ArrayList<>();
+	public List<District> districts = new ArrayList<>();
+
+	@Override public List<? extends District> districts() { return districts; }
 
 
 	public static class Party implements MonopropInput.Party
@@ -43,40 +49,23 @@ class BaziFile
 		public Int min = BMath.ZERO, max = BMath.INF, dir = BMath.ZERO;
 		public List<Party> apparentment = new ArrayList<>();
 
-		@Override
-		public String name()
-		{
-			return name;
-		}
+		@Override public String name() { return name; }
+		@Override public Rational votes() { return votes; }
+		@Override public Int min() { return min; }
+		@Override public Int max() { return max; }
+		@Override public Int dir() { return dir; }
+		@Override public List<? extends MonopropInput.Party> parties() { return apparentment; }
+	}
 
-		@Override
-		public Rational votes()
-		{
-			return votes;
-		}
 
-		@Override
-		public Int min()
-		{
-			return min;
-		}
+	public static class District implements BipropInput.District
+	{
+		public String name = "";
+		public Int seats = BMath.ZERO;
+		public List<BaziFile.Party> parties = new ArrayList<>();
 
-		@Override
-		public Int max()
-		{
-			return max;
-		}
-
-		@Override
-		public Int dir()
-		{
-			return dir;
-		}
-
-		@Override
-		public List<? extends MonopropInput.Party> parties()
-		{
-			return apparentment;
-		}
+		@Override public String name() { return name; }
+		@Override public Int seats() { return seats; }
+		@Override public Collection<? extends Party> parties() { return parties; }
 	}
 }

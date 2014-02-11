@@ -98,8 +98,8 @@ class ASAlgorithm
 					row.getValue().values().forEach(
 						party -> {
 							party.votes = votes.get(party);
-							party.seats = output.parties().find(party).seats();
-							party.uniqueness = output.parties().find(party).uniqueness();
+							party.seats = output.parties().find(party.name).seats();
+							party.uniqueness = output.parties().find(party.name).uniqueness();
 						}
 					);
 

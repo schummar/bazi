@@ -14,12 +14,15 @@ import java.util.stream.Collectors;
 
 public class BasicMethods
 {
-	public static OutputPackage calculate(List<BasicMethod> methods, List<Int> seats, List<? extends MonopropInput.Party> parties, Options options)
+	public static OutputPackage calculate(BaziFile baziFile)
 	{
-		OutputPackage op = new OutputPackage(parties, options);
-		for (BasicMethod method : methods)
-			for (Int seat : seats)
-				op.outputs.put(Tuple.of(method, seat), method.calculate(new Input(seat, parties)));
+		OutputPackage op = new OutputPackage(
+			baziFile.parties,
+			new Options(Options.Orientation.VERTICAL, Options.DivisorFormat.DIV_INTERVAL, Options.TieFormat.CODED)
+		);
+		for (BasicMethod method : baziFile.methods)
+			for (Input input : Input.create(baziFile))
+				op.outputs.put(Tuple.of(method, input.seats()), method.calculate(input));
 
 		return op;
 	}
