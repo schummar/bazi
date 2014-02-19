@@ -11,7 +11,7 @@ import java.util.Collection;
 public class MonopropOutput implements MonopropInput
 {
 	Int seats = BMath.ZERO;
-	MList<Party> parties = new MList<>(p -> p.name);
+	MList<Party> parties = new MList<>();
 
 	public MonopropOutput() { }
 

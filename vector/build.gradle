@@ -17,6 +17,5 @@ sourceSets {
 
 repositories { mavenCentral() }
 dependencies {
-    compile project(':vector')
-    compile 'com.google.guava:guava:16.0.1'
+	compile project(':math')
 }

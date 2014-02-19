@@ -1,75 +1,48 @@
 package de.uni_augsburg.bazi.common;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.*;
+import java.util.stream.Collector;
 
-public class MList<V> extends AbstractList<V> implements List<V>
+public class MList<V> extends ArrayList<V>
 {
-	private final List<V> list = new ArrayList<>();
-	private final Map<Object, V> map = new HashMap<>();
-	private final Function<V, ? extends Object> keyFunction;
-
+	public MList(int initialCapacity)
+	{
+		super(initialCapacity);
+	}
 	public MList()
 	{
-		this.keyFunction = Function.identity();
+		super();
 	}
-
-	public MList(Function<V, ? extends Object> keyFunction)
-	{
-		this.keyFunction = keyFunction;
-	}
-
 	public MList(Collection<? extends V> c)
 	{
-		this.keyFunction = Function.identity();
-		addAll(c);
+		super(c);
 	}
 
-	public MList(Function<V, Object> keyFunction, Collection<? extends V> c)
+	public V find(Predicate<V> predicate)
 	{
-		this.keyFunction = keyFunction;
-		addAll(c);
+		return stream().filter(predicate).findAny().orElse(null);
 	}
 
-
-	@Override
-	public V get(int index)
+	public MList<V> findAll(Predicate<V> predicate)
 	{
-		return list.get(index);
+		return stream().filter(predicate).collect(collector());
 	}
 
-	@Override
-	public int size()
+	public static <V> Collector<V, MList<V>, MList<V>> collector()
 	{
-		return list.size();
+		return Collector.of(
+			MList::new,
+			MList::add,
+			(a, b) -> {
+				a.addAll(b);
+				return a;
+			}
+		);
 	}
 
-	@Override
-	public V set(int index, V element)
+	public static <V> MList<V> of(V... vs)
 	{
-		V old = list.set(index, element);
-		map.remove(keyFunction.apply(old));
-		map.put(keyFunction.apply(element), element);
-		return old;
-	}
-
-	@Override
-	public void add(int index, V element)
-	{
-		list.add(index, element);
-		map.put(keyFunction.apply(element), element);
-	}
-
-	@Override
-	public V remove(int index)
-	{
-		V old = list.remove(index);
-		map.remove(keyFunction.apply(old));
-		return old;
-	}
-
-	public V find(Object key)
-	{
-		return map.get(key);
+		return new MList<>(Arrays.asList(vs));
 	}
 }

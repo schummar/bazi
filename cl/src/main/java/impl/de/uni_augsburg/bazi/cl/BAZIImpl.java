@@ -2,8 +2,10 @@ package de.uni_augsburg.bazi.cl;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Version;
+import de.uni_augsburg.bazi.monoprop.DivisorPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +25,10 @@ class BAZIImpl
 	{
 		LOG.info("BAZI under development...");
 		LOG.info("The current Version is: {}", Version.getCurrentVersionName());
+
+		PluginManager pluginManager = new PluginManager();
+		pluginManager.load();
+		System.out.println(pluginManager.find(DivisorPlugin.class, p -> true));
 
 
 		Optional<Locale> locale = Optional.empty();

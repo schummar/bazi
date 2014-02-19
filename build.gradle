@@ -25,7 +25,8 @@ allprojects {
 
 	processResources {
 		filter ReplaceTokens, tokens: [
-			"version": getVersion()
+			'version': getVersion(),
+			'year'   : Calendar.getInstance().get(Calendar.YEAR).toString()
 		]
 	}
 }
@@ -45,19 +46,4 @@ apply plugin: 'fatjar'
 fatJar {
 	archiveName = 'bazi.jar'
 	manifest { attributes 'Main-Class': 'de.uni_augsburg.bazi.cl.BAZI' }
-}
-
-apply plugin: 'distribution'
-
-distributions {
-	main {
-		baseName = 'bazi'
-		contents {
-			from 'build/libs/bazi.jar'
-			filter ReplaceTokens, tokens: [
-				'version': getVersion(),
-				'year': Calendar.getInstance().get(Calendar.YEAR).toString()
-			]
-		}
-	}
 }

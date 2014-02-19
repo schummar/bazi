@@ -5,14 +5,18 @@ targetCompatibility = 1.8
 
 
 sourceSets {
-    main {
-        java {
-            srcDirs = [
-                    'src/main/java/api',
-                    'src/main/java/impl'
-            ]
-        }
-    }
+	main {
+		java {
+			srcDirs = [
+				'src/main/java/api',
+				'src/main/java/impl'
+			]
+		}
+	}
 }
 
 repositories { mavenCentral() }
+
+dependencies {
+	compile project(':common')
+}

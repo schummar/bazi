@@ -6,7 +6,9 @@ include 'biprop',
 	'common',
 	'divisor',
 	'gui',
+	'list',
 	'math',
 	'monoprop',
 	'quota',
-	'separate'
+	'separate',
+	'vector'
