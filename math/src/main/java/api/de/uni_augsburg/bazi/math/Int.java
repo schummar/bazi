@@ -1,15 +1,11 @@
 package de.uni_augsburg.bazi.math;
 
-import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
-import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 import org.apfloat.Apint;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-@SerializeAsString
-@DeserializeFromString
 public class Int extends Rational
 {
 	public static Int valueOf(long that)

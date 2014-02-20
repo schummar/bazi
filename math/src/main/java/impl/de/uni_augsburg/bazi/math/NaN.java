@@ -3,9 +3,7 @@ package de.uni_augsburg.bazi.math;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-import de.uni_augsburg.bazi.common.Json.SerializeAsString;
-
-@SerializeAsString class NaN extends Int
+class NaN extends Int
 {
 	public NaN()
 	{

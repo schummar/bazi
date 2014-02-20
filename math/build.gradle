@@ -19,4 +19,5 @@ repositories { mavenCentral() }
 dependencies {
 	compile 'org.apfloat:apfloat:1.8.0'
 	testCompile 'junit:junit:4.11'
+	compile 'com.google.guava:guava:16.0.1'
 }

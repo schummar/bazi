@@ -1,13 +1,9 @@
 package de.uni_augsburg.bazi.math;
 
-import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
-import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.apfloat.Apint;
 
-@SerializeAsString
-@DeserializeFromString
 public class Real implements Comparable<Real>
 {
 	public static Real valueOf(String that)

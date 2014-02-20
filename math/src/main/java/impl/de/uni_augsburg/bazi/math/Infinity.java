@@ -3,9 +3,7 @@ package de.uni_augsburg.bazi.math;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-import de.uni_augsburg.bazi.common.Json.SerializeAsString;
-
-@SerializeAsString class Infinity extends Int
+class Infinity extends Int
 {
 	private final int sgn;
 

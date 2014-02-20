@@ -1,12 +1,8 @@
 package de.uni_augsburg.bazi.math;
 
-import de.uni_augsburg.bazi.common.Json.DeserializeFromString;
-import de.uni_augsburg.bazi.common.Json.SerializeAsString;
 import org.apfloat.Aprational;
 import org.apfloat.AprationalMath;
 
-@SerializeAsString
-@DeserializeFromString
 public class Rational extends Real
 {
 	public static Rational valueOf(String that)
