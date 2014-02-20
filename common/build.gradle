@@ -21,4 +21,5 @@ dependencies {
 	compile 'com.google.guava:guava:16.0.1'
 	compile 'com.google.code.gson:gson:2.2.4'
 	compile 'org.reflections:reflections:0.9.9-RC1'
+	compile project(':math')
 }

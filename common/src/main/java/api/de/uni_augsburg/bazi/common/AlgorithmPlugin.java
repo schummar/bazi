@@ -1,15 +1,22 @@
 package de.uni_augsburg.bazi.common;
 
-public interface AlgorithmPlugin<I extends Data, O extends Data> extends PluginManager.Plugin
-{
-	public Algorithm<I, O> getConstantAlgorithm(String name);
-	public boolean isAlgorithm(String name);
-	public Class<? extends Algorithm<I, O>> getAlgorithmClass();
+import java.util.List;
+import java.util.function.Supplier;
 
+public interface AlgorithmPlugin<P extends Data, I extends Data, O extends AlgorithmPlugin.Output> extends PluginManager.Plugin
+{
+	public Class<P> getParamsInterface();
+	public Algorithm<I, O> createAlgoritm(String name, P params);
 
 	public interface Algorithm<I, O>
 	{
-		public Class<? extends I> getInputInterface();
+		public List<Class<? extends I>> getInputInterface();
 		public O apply(I in);
+	}
+
+	public interface Output extends Data
+	{
+		public Supplier<String> plain();
+		public void supplier(Supplier<String> supplier);
 	}
 }

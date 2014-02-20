@@ -1,7 +1,6 @@
 package de.uni_augsburg.bazi.monoprop;
 
 import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.vector.VectorOutput;
 
 public interface DivisorOutput extends VectorOutput
 {

@@ -5,19 +5,18 @@ targetCompatibility = 1.8
 
 
 sourceSets {
-    main {
-        java {
-            srcDirs = [
-                    'src/main/java/api',
-                    'src/main/java/impl'
-            ]
-        }
-    }
+	main {
+		java {
+			srcDirs = [
+				'src/main/java/api',
+				'src/main/java/impl'
+			]
+		}
+	}
 }
 
 repositories { mavenCentral() }
 dependencies {
-	compile project(':common')
 	compile 'org.apfloat:apfloat:1.8.0'
-    testCompile 'junit:junit:4.11'
+	testCompile 'junit:junit:4.11'
 }

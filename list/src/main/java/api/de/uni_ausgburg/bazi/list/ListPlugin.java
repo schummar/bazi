@@ -1,13 +1,11 @@
 package de.uni_ausgburg.bazi.list;
 
 import de.uni_augsburg.bazi.common.MList;
-import de.uni_augsburg.bazi.vector.VectorInput;
-import de.uni_augsburg.bazi.vector.VectorOutput;
-import de.uni_augsburg.bazi.vector.VectorPlugin;
+import de.uni_augsburg.bazi.common.VectorPlugin;
 
 public class ListPlugin implements VectorPlugin
 {
-	@Override public ListAlgo getConstantAlgorithm(String name)
+	@Override public ListAlgo algorithmForName(String name)
 	{
 		return null;
 	}

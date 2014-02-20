@@ -1,12 +1,10 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import de.uni_augsburg.bazi.vector.VectorInput;
-import de.uni_augsburg.bazi.vector.VectorOutput;
-import de.uni_augsburg.bazi.vector.VectorPlugin;
+import de.uni_augsburg.bazi.common.VectorPlugin;
 
 public class DivisorPlugin implements VectorPlugin
 {
-	@Override public DivisorAlgorithm getConstantAlgorithm(String name)
+	@Override public DivisorAlgorithm algorithmForName(String name)
 	{
 		return null;
 	}
