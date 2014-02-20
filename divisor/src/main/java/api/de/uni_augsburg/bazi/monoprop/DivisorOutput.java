@@ -1,8 +1,9 @@
 package de.uni_augsburg.bazi.monoprop;
 
 import de.uni_augsburg.bazi.math.BMath;
+import de.uni_augsburg.bazi.vector.VectorOutput;
 
-public class DivisorOutput extends MonopropOutput
+public interface DivisorOutput extends VectorOutput
 {
 	Divisor divisor = new Divisor(BMath.INF, BMath.INF);
 

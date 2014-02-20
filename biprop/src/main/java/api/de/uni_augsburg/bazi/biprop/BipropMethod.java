@@ -5,7 +5,7 @@ import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.DivisorMethod;
+import de.uni_augsburg.bazi.monoprop.DivisorAlgorithm;
 import de.uni_augsburg.bazi.monoprop.DivisorOutput;
 import de.uni_augsburg.bazi.monoprop.MonopropInput;
 
@@ -86,7 +86,7 @@ public abstract class BipropMethod
 	}
 
 
-	protected abstract DivisorMethod divisorMethod();
+	protected abstract DivisorAlgorithm divisorMethod();
 
 	protected abstract Map<Object, Real> calculate(Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats);
 }

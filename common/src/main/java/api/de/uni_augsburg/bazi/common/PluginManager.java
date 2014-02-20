@@ -24,8 +24,14 @@ public class PluginManager
 			Reflections reflections = new Reflections();
 			for (Class<? extends Plugin> c : reflections.getSubTypesOf(Plugin.class))
 			{
-				System.out.println(c);
-				plugins.add(c.newInstance());
+				try
+				{
+					plugins.add(c.getConstructor().newInstance());
+				}
+				catch (NoSuchMethodException | SecurityException e)
+				{
+					LOGGER.error(e.getMessage());
+				}
 			}
 		}
 		catch (Exception e) {e.printStackTrace();}

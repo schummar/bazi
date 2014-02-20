@@ -1,17 +1,19 @@
 package de.uni_ausgburg.bazi.list;
 
 import de.uni_augsburg.bazi.common.MList;
+import de.uni_augsburg.bazi.vector.VectorInput;
+import de.uni_augsburg.bazi.vector.VectorOutput;
 import de.uni_augsburg.bazi.vector.VectorPlugin;
 
 public class ListPlugin implements VectorPlugin
 {
 	@Override public ListAlgo getConstantAlgorithm(String name)
 	{
-		return new ListAlgo();
+		return null;
 	}
 	@Override public boolean isAlgorithm(String name)
 	{
-		return false;
+		return name.equals("list");
 	}
 	@Override public Class<ListAlgo> getAlgorithmClass()
 	{
@@ -20,15 +22,15 @@ public class ListPlugin implements VectorPlugin
 
 	public class ListAlgo implements VectorAlgorithm
 	{
-		public VectorAlgorithm mainAlgorithm;
-		public VectorAlgorithm subAlgorithm;
+		public VectorAlgorithm main;
+		public VectorAlgorithm sub;
 
 		public ListAlgo() { }
 
-		public ListAlgo(VectorAlgorithm mainAlgorithm, VectorAlgorithm subAlgorithm)
+		public ListAlgo(VectorAlgorithm main, VectorAlgorithm sub)
 		{
-			this.mainAlgorithm = mainAlgorithm;
-			this.subAlgorithm = subAlgorithm;
+			this.main = main;
+			this.sub = sub;
 		}
 
 
@@ -39,7 +41,7 @@ public class ListPlugin implements VectorPlugin
 
 		@Override public Out apply(VectorInput in)
 		{
-			VectorOutput mainOut = mainAlgorithm.apply(in);
+			VectorOutput mainOut = main.apply(in);
 
 			MList<VectorOutput> subOuts = new MList<>();
 			in.cast(In.class).parties().parallelStream().forEach(
@@ -48,9 +50,9 @@ public class ListPlugin implements VectorPlugin
 
 					PartyInput subIn = mainOut.parties().find(p.name()::equals).cast(PartyInput.class);
 					subIn.parties(p.parties());
-					VectorOutput subOut = subAlgorithm == null
-						? mainAlgorithm.apply(subIn)
-						: subAlgorithm.apply(subIn);
+					VectorOutput subOut = sub == null
+						? main.apply(subIn)
+						: sub.apply(subIn);
 
 					synchronized (subOuts)
 					{

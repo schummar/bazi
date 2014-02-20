@@ -2,18 +2,28 @@ package de.uni_augsburg.bazi.common;
 
 public interface Data
 {
+	public default boolean isMutable() {return true;}
+
 	public default <T extends Data> T cast(Class<T> type)
 	{
-		System.out.println("Data::cast");
 		if (type.isInstance(this))
 			return type.cast(this);
 
-		return new GenericData(this).cast(type);
+		return MapData.fromDataInterface(this).cast(type);
 	}
 
-	public default <T> T copy(Class<T> type)
+	public default Data copy()
 	{
-		System.out.println("Data::copy");
-		return null;
+		return MapData.fromDataInterface(this);
+	}
+
+	public default Data immutable()
+	{
+		return MapData.fromDataInterface(this).immutable();
+	}
+
+	public default MapData asMap()
+	{
+		return MapData.fromDataInterface(this);
 	}
 }

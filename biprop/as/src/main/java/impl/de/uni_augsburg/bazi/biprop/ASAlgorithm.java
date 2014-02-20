@@ -18,10 +18,10 @@ class ASAlgorithm
 		Table<BipropInput.District, String, BipropOutput.Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
-		DivisorMethod divisorMethod
+		DivisorAlgorithm divisorAlgorithm
 	)
 	{
-		return new ASAlgorithm(divisorUpdateFunction, divisorMethod, table, seats).calculate();
+		return new ASAlgorithm(divisorUpdateFunction, divisorAlgorithm, table, seats).calculate();
 	}
 
 
@@ -29,12 +29,12 @@ class ASAlgorithm
 	Map<?, ? extends Map<?, BipropOutput.Party>> rows, cols, rowsAndCols;
 	Map<Object, Int> seats;
 	private final DivisorUpdateFunction divisorUpdateFunction;
-	private final DivisorMethod divisorMethod;
+	private final DivisorAlgorithm divisorAlgorithm;
 
-	ASAlgorithm(DivisorUpdateFunction divisorUpdateFunction, DivisorMethod divisorMethod, Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats)
+	ASAlgorithm(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats)
 	{
 		this.divisorUpdateFunction = divisorUpdateFunction;
-		this.divisorMethod = divisorMethod;
+		this.divisorAlgorithm = divisorAlgorithm;
 		this.table = table;
 		this.seats = seats;
 		rows = table.rowMap();
@@ -84,7 +84,7 @@ class ASAlgorithm
 					);
 
 					// calculate an apportionment => the row sum will be correct
-					DivisorOutput output = divisorMethod.calculate(
+					DivisorOutput output = divisorAlgorithm.calculate(
 						new MonopropInput()
 						{
 							@Override

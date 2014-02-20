@@ -5,12 +5,13 @@ import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.ShiftQueue.NoShiftPossible;
+import de.uni_augsburg.bazi.vector.VectorInput;
 
 import java.util.function.Supplier;
 
 class DivisorMethodAlgorithm
 {
-	public static DivisorOutput calculate(MonopropInput input, RoundingFunction r, int minPrecision)
+	public static DivisorOutput calculate(VectorInput input, RoundingFunction r, int minPrecision)
 	{
 		DivisorOutput output = new DivisorOutput(input);
 		try

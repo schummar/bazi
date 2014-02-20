@@ -77,9 +77,9 @@ interface BasicMethod
 
 	public static class Divisor implements BasicMethod
 	{
-		private final DivisorMethod method;
+		private final DivisorAlgorithm method;
 
-		public Divisor(DivisorMethod method)
+		public Divisor(DivisorAlgorithm method)
 		{
 			this.method = method;
 
