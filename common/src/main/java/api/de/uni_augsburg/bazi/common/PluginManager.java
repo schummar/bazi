@@ -1,11 +1,13 @@
 package de.uni_augsburg.bazi.common;
 
+import de.uni_augsburg.bazi.common.util.MList;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class PluginManager
@@ -40,26 +42,22 @@ public class PluginManager
 
 	public <T extends Plugin> List<T> findAll(Class<T> type)
 	{
-		List<T> list = new ArrayList<>();
-
-		for (Plugin plugin : plugins)
-			if (type.isAssignableFrom(plugin.getClass()))
-				list.add(type.cast(plugin));
-
-		return list;
+		return plugins.stream()
+			.filter(type::isInstance)
+			.map(type::cast)
+			.collect(MList.collector());
 	}
 
-
-	public <T extends Plugin> T find(Class<T> type, Predicate<T> predicate)
+	public <T extends Plugin, R> R create(Class<T> pluginType, Function<T, R> creator)
 	{
-		for (Plugin plugin : plugins)
-			if (type.isAssignableFrom(plugin.getClass()))
-			{
-				T t = type.cast(plugin);
-				if (predicate.test(t)) return t;
-			}
-		throw new NoSuchPluginException();
+		for (T plugin : findAll(pluginType))
+		{
+			R r = creator.apply(plugin);
+			if (r != null) return r;
+		}
+		return null;
 	}
 
-	public class NoSuchPluginException extends RuntimeException {}
+	public class NoSuchPluginException extends RuntimeException
+	{}
 }

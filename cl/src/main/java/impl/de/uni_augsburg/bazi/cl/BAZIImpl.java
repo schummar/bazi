@@ -1,153 +1,133 @@
 package de.uni_augsburg.bazi.cl;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import de.uni_augsburg.bazi.common.format.FileFormat;
+import de.uni_augsburg.bazi.common.MapData;
 import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Version;
-import de.uni_augsburg.bazi.monoprop.DivisorPlugin;
+import de.uni_augsburg.bazi.common.format.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 
 class BAZIImpl
 {
-	private static final Logger LOG = LoggerFactory.getLogger(BAZIImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BAZIImpl.class);
+
 
 	public static void main(String[] args)
 	{
-		LOG.info("BAZI under development...");
-		LOG.info("The current Version is: {}", Version.getCurrentVersionName());
+		LOGGER.info("BAZI under development...");
+		LOGGER.info("The current Version is: {}", Version.getCurrentVersionName());
 
 		PluginManager pluginManager = new PluginManager();
 		pluginManager.load();
-		System.out.println(pluginManager.find(DivisorPlugin.class, p -> true));
 
+		Optional<Locale> locale = readValue(args, "-l", Locale::forLanguageTag);
+		Optional<Path> in = readValue(args, "-i", BAZIImpl::readIn);
+		Optional<Path> out = readValue(args, "-o", BAZIImpl::readOut);
+		Optional<Format> inFormat = readValue(args, "-if", s -> Format.create(s, pluginManager));
+		Optional<Format> outFormat = readValue(args, "-of", s -> Format.create(s, pluginManager));
 
-		Optional<Locale> locale = Optional.empty();
-		Optional<Path> in = Optional.empty(), out = Optional.empty();
-		String content = "";
-		Optional<FileFormat> inFormat = Optional.empty(), outFormat = Optional.empty();
-		for (int i = 0; i < args.length; i++)
-		{
-			if (i == args.length - 1 && !args[i].startsWith("-"))
-			{
-				content = args[i].trim();
-				break;
-			}
-			switch (args[i])
-			{
-				case "-l":
-					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
-					else locale = readLocale(args[i]);
-					break;
-
-				case "-i":
-					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
-					in = readIn(args[i]);
-					break;
-
-				case "-o":
-					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
-					out = readOut(args[i]);
-					break;
-
-				case "-if":
-					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
-					inFormat = readFormat(args[i]);
-					break;
-
-				case "-of":
-					if (++i >= args.length) LOG.warn(Resources.get("params.missing_value"));
-					outFormat = readFormat(args[i]);
-					break;
-			}
-		}
 		locale.ifPresent(Resources::setLocale);
-		in.ifPresent(x -> LOG.info("Input file: {}", x));
-		out.ifPresent(x -> LOG.info("Output file: {}", x));
+		in.ifPresent(x -> LOGGER.info("Input file: {}", x));
+		out.ifPresent(x -> LOGGER.info("Output file: {}", x));
 
-
-		BaziFile baziFile = in.isPresent()
-			? BaziFile.load(in.get(), inFormat.orElse(Format.JSON))
-			: BaziFile.load(content, inFormat.orElse(Format.JSON));
-
-
-		String result = AlgorithmSwitch.calculate(baziFile, outFormat.orElse(Format.PLAIN));
-		if (out.isPresent())
+		if (!inFormat.isPresent() && in.isPresent())
 		{
-			File file = out.get().toFile();
-			try
+			String name = Files.getFileExtension(in.get().toString());
+			inFormat = Optional.ofNullable(Format.create(name, pluginManager));
+		}
+		if (!outFormat.isPresent() && out.isPresent())
+		{
+			String name = Files.getFileExtension(out.get().toString());
+			outFormat = Optional.ofNullable(Format.create(name, pluginManager));
+		}
+
+		MapData data;
+		if (in.isPresent())
+			try (InputStream stream = new FileInputStream(in.get().toFile()))
 			{
-				Files.write(result, file, Charsets.UTF_8);
+				data = new MapData(inFormat.get().deserialize(stream));
 			}
 			catch (IOException e)
 			{
-				LOG.error("Could not write to {}", file.getPath());
+				LOGGER.error(e.getMessage());
+				return;
 			}
-		}
+		else if (args.length > 0 || !args[args.length - 1].startsWith("-"))
+			try (InputStream stream = new ByteArrayInputStream(args[args.length].getBytes(StandardCharsets.UTF_8)))
+			{
+				data = new MapData(inFormat.get().deserialize(stream));
+			}
+			catch (IOException e)
+			{
+				LOGGER.error(e.getMessage());
+				return;
+			}
 		else
-			System.out.println(result);
+		{
+			LOGGER.error(Resources.get("params.noinput"));
+			return;
+		}
+
+		System.out.println(data);
 	}
 
 
-	private static Optional<Locale> readLocale(String s)
+	private static <T> Optional<T> readValue(String[] args, String key, Function<String, T> converter)
 	{
-		Locale locale = Locale.forLanguageTag(s);
-		return Optional.of(locale);
-	}
+		int i = 0;
+		while (i < args.length && !args[i].equals(key))
+			i++;
 
-
-	private static Optional<Path> readIn(String s)
-	{
-		try
+		if (++i >= args.length || args[i].startsWith("-"))
 		{
-			Path path = FileSystems.getDefault().getPath(s);
-			if (path.toFile().exists()) return Optional.of(path);
-
-			LOG.warn(Resources.get("params.file_doesnt_exist: {}"), s);
-		}
-		catch (Exception e)
-		{
-			LOG.warn(Resources.get("params.invalid_path: {}"), s);
-		}
-		return Optional.empty();
-	}
-
-
-	private static Optional<Path> readOut(String s)
-	{
-		try
-		{
-			Path path = FileSystems.getDefault().getPath(s);
-			return Optional.of(path);
-		}
-		catch (Exception e)
-		{
-			LOG.warn(Resources.get("params.invalid_path: {}"), s);
+			LOGGER.warn(Resources.get("params.missing_value"));
 			return Optional.empty();
 		}
+
+		return Optional.ofNullable(converter.apply(args[i]));
 	}
 
 
-	public static Optional<Format> readFormat(String s)
+	private static Path readIn(String s)
 	{
 		try
 		{
-			return Optional.of(Format.valueOf(s.toUpperCase()));
+			Path path = FileSystems.getDefault().getPath(s);
+			if (path.toFile().exists()) return path;
+			LOGGER.warn(Resources.get("params.file_doesnt_exist: {}"), s);
 		}
 		catch (Exception e)
 		{
-			LOG.warn(Resources.get("params.invalid_format"), s);
+			LOGGER.warn(Resources.get("params.invalid_path: {}"), s);
 		}
-		return Optional.empty();
+		return null;
+	}
+
+
+	private static Path readOut(String s)
+	{
+		try
+		{
+			return FileSystems.getDefault().getPath(s);
+		}
+		catch (Exception e)
+		{
+			LOGGER.warn(Resources.get("params.invalid_path: {}"), s);
+			return null;
+		}
 	}
 }

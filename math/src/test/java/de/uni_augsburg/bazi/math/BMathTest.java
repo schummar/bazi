@@ -1,12 +1,11 @@
 package de.uni_augsburg.bazi.math;
 
-import java.io.IOException;
-
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
+import java.io.IOException;
 
 public class BMathTest
 {
@@ -21,7 +20,7 @@ public class BMathTest
 	@Test public void test() throws IOException
 	{
 		String json = Resources.toString(Resources.getResource(getClass(), "numbers.txt"), Charsets.UTF_8);
-		Data data = Json.fromJson(json, Data.class);
+		Data data = null;//Json.fromJson(json, Data.class);
 
 		for (int i = 0; i < data.intadd.length; i += 3)
 		{
