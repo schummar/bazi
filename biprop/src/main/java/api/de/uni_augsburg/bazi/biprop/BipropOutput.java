@@ -1,20 +1,8 @@
 package de.uni_augsburg.bazi.biprop;
 
-import com.google.common.collect.Table;
-import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.DivisorOutput;
-import de.uni_augsburg.bazi.monoprop.MonopropInput;
-import de.uni_augsburg.bazi.monoprop.Uniqueness;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-
 public class BipropOutput
 {
-	DivisorOutput superApportionment;
+	/*DivisorOutput superApportionment;
 	Table<BipropInput.District, String, Party> table;
 	Map<Object, Int> seats;
 	Map<Object, Real> divisors;
@@ -69,5 +57,5 @@ public class BipropOutput
 		public Uniqueness uniqueness() { return uniqueness; }
 		@Override
 		public Collection<? extends MonopropInput.Party> parties() { return parties; }
-	}
+	}*/
 }

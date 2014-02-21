@@ -32,7 +32,9 @@ allprojects {
 }
 
 repositories { mavenCentral() }
-dependencies { compile project(':cl') }
+dependencies {
+	compile project(':cl')
+}
 
 
 buildscript {

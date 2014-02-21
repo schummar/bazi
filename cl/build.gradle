@@ -16,10 +16,8 @@ sourceSets {
 repositories { mavenCentral() }
 dependencies {
 	compile project(':common')
-	compile project(':monoprop')
-	compile project(':divisor')
-	compile project(':quota')
-	compile project(':biprop')
-	compile project(':biprop:as')
-	runtime project(':bmm')
+	runtime project(':divisor')
+	runtime project(':list')
+	runtime project(':quota')
+	runtime project(':json')
 }

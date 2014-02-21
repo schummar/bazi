@@ -50,7 +50,7 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 	Map<String, Object> delegateMap = new HashMap<>();
 
 	public MapData() {}
-	public MapData(Map<? extends String, ?> m) { putAll(m); }
+	public MapData(Map<?, ?> m) { m.forEach((k, v) -> put(k.toString(), v)); }
 
 	@Override protected Map<String, Object> delegate()
 	{
@@ -116,6 +116,13 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 
 		if (type.isInstance(value)) return type.cast(value);
 
+		if (Data.class.isAssignableFrom(type))
+		{
+			if (value instanceof Data)
+				return (T) ((Data) value).cast((Class<? extends Data>) type);
+			if (value instanceof Map<?, ?>)
+				return (T) new MapData((Map<?, ?>) value).cast((Class<? extends Data>) type);
+		}
 		if (Data.class.isInstance(value)
 			&& Data.class.isAssignableFrom(type))
 		{
@@ -131,22 +138,22 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 	@SuppressWarnings("unchecked")
 	@Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
-		if (equals(method, getClass().getMethod("cast", Class.class)))
+		if (overriddenBy(method, getClass().getMethod("cast", Class.class)))
 			return cast((Class<? extends Data>) args[0]);
 
-		if (equals(method, getClass().getMethod("copy")))
+		if (overriddenBy(method, getClass().getMethod("copy")))
 			return copy();
 
-		if (equals(method, getClass().getMethod("immutable")))
+		if (overriddenBy(method, getClass().getMethod("immutable")))
 			return immutable();
 
-		if (equals(method, getClass().getMethod("isMutable")))
+		if (overriddenBy(method, getClass().getMethod("isMutable")))
 			return isMutable();
 
-		if (equals(method, getClass().getMethod("asMap")))
+		if (overriddenBy(method, getClass().getMethod("asMap")))
 			return asMap();
 
-		if (equals(method, Object.class.getMethod("toString")))
+		if (overriddenBy(method, Object.class.getMethod("toString")))
 			return toString();
 
 		String key = asGetter(method);
@@ -166,11 +173,17 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 	}
 
 
-	private static boolean equals(Method m0, Method m1)
+	private static boolean overriddenBy(Method m0, Method m1)
 	{
-		return m0.getName().equals(m1.getName())
-			&& m0.getReturnType().equals(m1.getReturnType())
-			&& Arrays.equals(m0.getParameterTypes(), m1.getParameterTypes());
+		if (!m0.getName().equals(m1.getName())
+			|| !m0.getReturnType().isAssignableFrom(m1.getReturnType())
+			|| m0.getParameterCount() != m1.getParameterCount())
+			return false;
+
+		for (int i = 0; i < m0.getParameterCount(); i++)
+			if (!m1.getParameterTypes()[i].isAssignableFrom(m0.getParameterTypes()[i]))
+				return false;
+		return true;
 	}
 
 

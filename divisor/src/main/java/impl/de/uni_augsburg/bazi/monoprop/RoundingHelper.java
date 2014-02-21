@@ -1,8 +1,7 @@
-package de.uni_augsburg.bazi.cl;
+package de.uni_augsburg.bazi.monoprop;
 
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.RoundingFunction;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,10 +1,8 @@
 package de.uni_augsburg.bazi.cl;
 
 import com.google.common.io.Files;
-import de.uni_augsburg.bazi.common.MapData;
-import de.uni_augsburg.bazi.common.PluginManager;
-import de.uni_augsburg.bazi.common.Resources;
-import de.uni_augsburg.bazi.common.Version;
+import de.uni_augsburg.bazi.common.*;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.format.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +31,7 @@ class BAZIImpl
 
 		PluginManager pluginManager = new PluginManager();
 		pluginManager.load();
+		System.out.println(0);
 
 		Optional<Locale> locale = readValue(args, "-l", Locale::forLanguageTag);
 		Optional<Path> in = readValue(args, "-i", BAZIImpl::readIn);
@@ -83,6 +82,20 @@ class BAZIImpl
 		}
 
 		System.out.println(data);
+
+		BaziFile baziFile = data.cast(BaziFile.class);
+		Algorithm<?, ?> algorithm = Algorithm.create(baziFile.algorithm().name(), baziFile.algorithm(), pluginManager);
+		Data result = algorithm.applyCast(baziFile);
+		System.out.println(result);
+	}
+
+	public interface BaziFile extends Data
+	{
+		public Algorithm algorithm();
+		public interface Algorithm extends Data
+		{
+			public String name();
+		}
 	}
 
 

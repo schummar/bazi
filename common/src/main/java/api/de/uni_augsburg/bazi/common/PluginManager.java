@@ -5,6 +5,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -26,9 +27,12 @@ public class PluginManager
 			Reflections reflections = new Reflections();
 			for (Class<? extends Plugin> c : reflections.getSubTypesOf(Plugin.class))
 			{
+				if (c.isInterface() || Modifier.isAbstract(c.getModifiers())) continue;
 				try
 				{
-					plugins.add(c.getConstructor().newInstance());
+					Plugin plugin = c.getConstructor().newInstance();
+					plugins.add(plugin);
+					LOGGER.info("loaded " + plugin);
 				}
 				catch (NoSuchMethodException | SecurityException e)
 				{

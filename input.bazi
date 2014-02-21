@@ -1,5 +1,8 @@
 {
-	seats: [1..10],
+	algorithm: {
+		name: divstd
+	},
+	seats: 10,
 	parties: [
 		{
 			name: A,

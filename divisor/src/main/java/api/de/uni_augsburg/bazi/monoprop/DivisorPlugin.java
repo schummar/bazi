@@ -1,31 +1,24 @@
 package de.uni_augsburg.bazi.monoprop;
 
+
+import de.uni_augsburg.bazi.common.Data;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorPlugin;
 
-public class DivisorPlugin implements VectorPlugin
+public class DivisorPlugin implements VectorPlugin<DivisorPlugin.Params, VectorInput, DivisorOutput>
 {
-	@Override public DivisorAlgorithm algorithmForName(String name)
+	@Override public Class<Params> getParamsInterface() { return Params.class; }
+
+	@Override public Algorithm<VectorInput, DivisorOutput> createAlgoritm(String name, Params params)
 	{
-		return null;
-	}
-	@Override public boolean isAlgorithm(String name)
-	{
-		return false;
-	}
-	@Override public Class<? extends DivisorAlgorithm> getAlgorithmClass()
-	{
-		return null;
+		return new DivisorAlgorithm(params.roundingFunction(), params.minPrecision());
 	}
 
-	public static class DivisorAlgorithm implements VectorAlgorithm
+
+	public interface Params extends Data
 	{
-		@Override public Class<VectorInput> getInputInterface()
-		{
-			return null;
-		}
-		@Override public VectorOutput apply(VectorInput in)
-		{
-			return null;
-		}
+		public RoundingFunction roundingFunction();
+		public int minPrecision();
 	}
 }

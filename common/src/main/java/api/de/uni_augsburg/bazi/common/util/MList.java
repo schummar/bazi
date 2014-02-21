@@ -32,8 +32,8 @@ public class MList<V> extends ArrayList<V>
 	public static <V> Collector<V, MList<V>, MList<V>> collector()
 	{
 		return Collector.of(
-			MList::new,
-			MList::add,
+			MList<V>::new,
+			MList<V>::add,
 			(a, b) -> {
 				a.addAll(b);
 				return a;
@@ -41,7 +41,7 @@ public class MList<V> extends ArrayList<V>
 		);
 	}
 
-	public static <V> MList<V> of(V... vs)
+	@SafeVarargs public static <V> MList<V> of(V... vs)
 	{
 		return new MList<>(Arrays.asList(vs));
 	}

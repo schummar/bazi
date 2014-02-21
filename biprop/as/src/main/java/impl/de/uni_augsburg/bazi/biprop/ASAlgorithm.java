@@ -1,20 +1,8 @@
 package de.uni_augsburg.bazi.biprop;
 
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
-import de.uni_augsburg.bazi.common.UserCanceledException;
-import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.*;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 class ASAlgorithm
 {
-	public static Map<Object, Real> calculate(
+	/*public static Map<Object, Real> calculate(
 		Table<BipropInput.District, String, BipropOutput.Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
@@ -191,5 +179,5 @@ class ASAlgorithm
 		Map<?, ? extends Map<?, BipropOutput.Party>> temp = rows;
 		rows = cols;
 		cols = temp;
-	}
+	}*/
 }

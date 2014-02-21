@@ -11,5 +11,4 @@ include 'biprop',
 	'math',
 	'monoprop',
 	'quota',
-	'separate',
-	'vector'
+	'separate'

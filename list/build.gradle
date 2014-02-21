@@ -17,5 +17,5 @@ sourceSets {
 
 repositories { mavenCentral() }
 dependencies {
-	compile project(':vector')
+	compile project(':common')
 }

@@ -1,15 +1,8 @@
 package de.uni_augsburg.bazi.biprop;
 
-import com.google.common.collect.Table;
-import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.DivisorAlgorithm;
-
-import java.util.Map;
-
 public class ASMethod extends BipropMethod
 {
-	private final DivisorAlgorithm divisorAlgorithm;
+	/*private final DivisorAlgorithm divisorAlgorithm;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 
 	public ASMethod(DivisorAlgorithm divisorAlgorithm, DivisorUpdateFunction divisorUpdateFunction)
@@ -28,5 +21,5 @@ public class ASMethod extends BipropMethod
 	protected DivisorAlgorithm divisorMethod()
 	{
 		return divisorAlgorithm;
-	}
+	}*/
 }

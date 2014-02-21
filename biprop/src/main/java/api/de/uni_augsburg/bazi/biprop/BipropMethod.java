@@ -1,21 +1,8 @@
 package de.uni_augsburg.bazi.biprop;
 
-import com.google.common.collect.ArrayTable;
-import com.google.common.collect.Table;
-import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.DivisorAlgorithm;
-import de.uni_augsburg.bazi.monoprop.DivisorOutput;
-import de.uni_augsburg.bazi.monoprop.MonopropInput;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 public abstract class BipropMethod
 {
-	public BipropOutput calculate(BipropInput input)
+	/*public BipropOutput calculate(BipropInput input)
 	{
 		Table<BipropInput.District, String, BipropOutput.Party> table = generateTable(input);
 
@@ -88,5 +75,5 @@ public abstract class BipropMethod
 
 	protected abstract DivisorAlgorithm divisorMethod();
 
-	protected abstract Map<Object, Real> calculate(Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats);
+	protected abstract Map<Object, Real> calculate(Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats);*/
 }
