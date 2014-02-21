@@ -1,44 +1,20 @@
-package de.uni_augsburg.bazi.common;
+package de.uni_augsburg.bazi.common.format;
 
+import de.uni_augsburg.bazi.common.util.MList;
+import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Converters
 {
 	static final Logger LOGGER = LoggerFactory.getLogger(Converters.class);
-
-
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface Converter
-	{
-		Class<? extends ObjectConverter<?>> value();
-	}
-
-
-	public interface ObjectConverter<T>
-	{
-		public Object serialize(T value);
-		public T deserialize(Object value);
-	}
-
-	public interface StringConverter<T> extends ObjectConverter<T>
-	{
-		@Override public default String serialize(T value) { return value.toString(); }
-		@Override public default T deserialize(Object value) { return deserialize(value.toString()); }
-		public T deserialize(String value);
-	}
-
-
 	static final Map<Class<?>, ObjectConverter<?>> ADAPTERS = new HashMap<>();
-
 
 	static
 	{

@@ -1,6 +1,6 @@
 package de.uni_augsburg.bazi.cl;
 
-import de.uni_augsburg.bazi.common.Tuple;
+import de.uni_augsburg.bazi.common.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;

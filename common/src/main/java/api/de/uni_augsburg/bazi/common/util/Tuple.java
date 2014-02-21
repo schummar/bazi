@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.common;
+package de.uni_augsburg.bazi.common.util;
 
 public class Tuple<X, Y>
 {

@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.common;
+package de.uni_augsburg.bazi.common.util;
 
 import java.util.*;
 import java.util.function.*;

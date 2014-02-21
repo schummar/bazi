@@ -1,6 +1,6 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import de.uni_augsburg.bazi.common.VectorPlugin;
+import de.uni_augsburg.bazi.common.algorithm.VectorPlugin;
 
 public class DivisorPlugin implements VectorPlugin
 {

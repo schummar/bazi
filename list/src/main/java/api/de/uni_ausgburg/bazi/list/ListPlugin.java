@@ -1,7 +1,7 @@
 package de.uni_ausgburg.bazi.list;
 
-import de.uni_augsburg.bazi.common.MList;
-import de.uni_augsburg.bazi.common.VectorPlugin;
+import de.uni_augsburg.bazi.common.util.MList;
+import de.uni_augsburg.bazi.common.algorithm.VectorPlugin;
 
 public class ListPlugin implements VectorPlugin
 {

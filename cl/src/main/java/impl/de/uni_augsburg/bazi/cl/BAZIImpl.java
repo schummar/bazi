@@ -2,6 +2,7 @@ package de.uni_augsburg.bazi.cl;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import de.uni_augsburg.bazi.common.format.FileFormat;
 import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Version;
@@ -34,7 +35,7 @@ class BAZIImpl
 		Optional<Locale> locale = Optional.empty();
 		Optional<Path> in = Optional.empty(), out = Optional.empty();
 		String content = "";
-		Optional<Format> inFormat = Optional.empty(), outFormat = Optional.empty();
+		Optional<FileFormat> inFormat = Optional.empty(), outFormat = Optional.empty();
 		for (int i = 0; i < args.length; i++)
 		{
 			if (i == args.length - 1 && !args[i].startsWith("-"))

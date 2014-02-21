@@ -3,7 +3,8 @@ package de.uni_augsburg.bazi.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import de.uni_augsburg.bazi.common.FileFormatPlugin;
+import de.uni_augsburg.bazi.common.format.FileFormat;
+import de.uni_augsburg.bazi.common.format.FileFormatPlugin;
 
 import java.io.*;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import de.uni_augsburg.bazi.common.MList;
+import de.uni_augsburg.bazi.common.util.MList;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;

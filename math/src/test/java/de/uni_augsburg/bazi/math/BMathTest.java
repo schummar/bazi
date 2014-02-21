@@ -8,8 +8,6 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import de.uni_augsburg.bazi.common.Json;
-
 public class BMathTest
 {
 	private class Data
