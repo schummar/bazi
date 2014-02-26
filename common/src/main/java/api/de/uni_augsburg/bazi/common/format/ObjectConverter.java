@@ -5,6 +5,6 @@ package de.uni_augsburg.bazi.common.format;
 */
 public interface ObjectConverter<T>
 {
-	public Object serialize(T value);
-	public T deserialize(Object value);
+	Object serialize(T value);
+	T deserialize(Object value);
 }

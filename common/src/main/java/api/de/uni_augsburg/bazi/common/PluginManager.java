@@ -6,19 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.Optional;
 
 public class PluginManager
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
 
 
-	public interface Plugin {}
-
-	private final List<Plugin> plugins = new ArrayList<>();
+	private final MList<Plugin<?>> plugins = new MList<>();
 
 	public void load()
 	{
@@ -30,7 +25,7 @@ public class PluginManager
 				if (c.isInterface() || Modifier.isAbstract(c.getModifiers())) continue;
 				try
 				{
-					Plugin plugin = c.getConstructor().newInstance();
+					Plugin<?> plugin = c.getConstructor().newInstance();
 					plugins.add(plugin);
 					LOGGER.info("loaded " + plugin);
 				}
@@ -44,22 +39,27 @@ public class PluginManager
 	}
 
 
-	public <T extends Plugin> List<T> findAll(Class<T> type)
+	public <T> MList<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
 	{
-		return plugins.stream()
-			.filter(type::isInstance)
-			.map(type::cast)
-			.collect(MList.collector());
+		MList<Plugin<? extends T>> list = new MList<>();
+		for (Plugin<?> plugin : plugins)
+			if (type.isAssignableFrom(plugin.getInstanceType()))
+			{
+				@SuppressWarnings("unchecked")
+				Plugin<? extends T> cast = (Plugin<? extends T>) plugin;
+				list.add(cast);
+			}
+		return list;
 	}
 
-	public <T extends Plugin, R> R create(Class<T> pluginType, Function<T, R> creator)
+	public <T> Optional<T> tryInstantiate(Class<T> type, Plugin.Params params)
 	{
-		for (T plugin : findAll(pluginType))
+		for (Plugin<? extends T> plugin : getPluginsOfInstanceType(type))
 		{
-			R r = creator.apply(plugin);
-			if (r != null) return r;
+			Optional<? extends T> t = plugin.tryInstantiate(params);
+			if (t.isPresent()) return Optional.ofNullable(t.get());
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	public class NoSuchPluginException extends RuntimeException

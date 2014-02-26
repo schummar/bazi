@@ -7,10 +7,7 @@ import de.uni_augsburg.bazi.common.format.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -23,79 +20,90 @@ class BAZIImpl
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BAZIImpl.class);
 
-
 	public static void main(String[] args)
+	{
+		try {start(args);}
+		catch (Exception e) {LOGGER.error(e.getMessage());}
+	}
+
+	public static void start(String[] args)
 	{
 		LOGGER.info("BAZI under development...");
 		LOGGER.info("The current Version is: {}", Version.getCurrentVersionName());
 
 		PluginManager pluginManager = new PluginManager();
 		pluginManager.load();
-		System.out.println(0);
 
+
+		// read args
 		Optional<Locale> locale = readValue(args, "-l", Locale::forLanguageTag);
 		Optional<Path> in = readValue(args, "-i", BAZIImpl::readIn);
 		Optional<Path> out = readValue(args, "-o", BAZIImpl::readOut);
-		Optional<Format> inFormat = readValue(args, "-if", s -> Format.create(s, pluginManager));
-		Optional<Format> outFormat = readValue(args, "-of", s -> Format.create(s, pluginManager));
+		Optional<Format> inFormat = readValue(args, "-if", s -> pluginManager.tryInstantiate(Format.class, () -> s).get());
+		Optional<Format> outFormat = readValue(args, "-of", s -> pluginManager.tryInstantiate(Format.class, () -> s).get());
 
-		locale.ifPresent(Resources::setLocale);
-		in.ifPresent(x -> LOGGER.info("Input file: {}", x));
-		out.ifPresent(x -> LOGGER.info("Output file: {}", x));
 
-		if (!inFormat.isPresent() && in.isPresent())
+		// backup plans
+		if (!inFormat.isPresent())
 		{
-			String name = Files.getFileExtension(in.get().toString());
-			inFormat = Optional.ofNullable(Format.create(name, pluginManager));
+			String name = in.isPresent()
+				? Files.getFileExtension(in.get().toString())
+				: "json";
+			inFormat = pluginManager.tryInstantiate(Format.class, () -> name);
 		}
-		if (!outFormat.isPresent() && out.isPresent())
+		if (!outFormat.isPresent())
 		{
-			String name = Files.getFileExtension(out.get().toString());
-			outFormat = Optional.ofNullable(Format.create(name, pluginManager));
+			String name = out.isPresent()
+				? Files.getFileExtension(out.get().toString())
+				: "json";
+			outFormat = pluginManager.tryInstantiate(Format.class, () -> name);
 		}
 
-		MapData data;
-		if (in.isPresent())
-			try (InputStream stream = new FileInputStream(in.get().toFile()))
-			{
-				data = new MapData(inFormat.get().deserialize(stream));
-			}
-			catch (IOException e)
-			{
-				LOGGER.error(e.getMessage());
-				return;
-			}
+
+		// anything missing?
+		if (!inFormat.isPresent()) throw new RuntimeException(Resources.get("params.missing_in_format"));
+		if (!outFormat.isPresent()) throw new RuntimeException(Resources.get("params.missing_out_format"));
+
+
+		// input from file or args
+		String inputString;
+		if (in.isPresent()) try
+		{
+			inputString = Files.toString(in.get().toFile(), StandardCharsets.UTF_8);
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(Resources.get("params.file_read", in.get()));
+		}
 		else if (args.length > 0 || !args[args.length - 1].startsWith("-"))
-			try (InputStream stream = new ByteArrayInputStream(args[args.length].getBytes(StandardCharsets.UTF_8)))
-			{
-				data = new MapData(inFormat.get().deserialize(stream));
-			}
-			catch (IOException e)
-			{
-				LOGGER.error(e.getMessage());
-				return;
-			}
-		else
 		{
-			LOGGER.error(Resources.get("params.noinput"));
-			return;
+			inputString = args[args.length - 1];
 		}
+		else throw new RuntimeException(Resources.get("params.noinput"));
 
-		System.out.println(data);
 
-		BaziFile baziFile = data.cast(BaziFile.class);
-		Algorithm<?, ?> algorithm = Algorithm.create(baziFile.algorithm().name(), baziFile.algorithm(), pluginManager);
-		Data result = algorithm.applyCast(baziFile);
+		// infos
+		locale.ifPresent(Resources::setLocale);
+		in.ifPresent(x -> LOGGER.info("input file: {}", x));
+		inFormat.ifPresent(x -> LOGGER.info("input format: {}", x));
+		out.ifPresent(x -> LOGGER.info("output file: {}", x));
+		outFormat.ifPresent(x -> LOGGER.info("output format: {}", x));
+
+
+		// now the actual work begins
+		BaziFile baziFile = new MapData(inFormat.get().deserialize(inputString)).cast(BaziFile.class);
+		System.out.println(baziFile);
+
+		Optional<Algorithm> algorithm = pluginManager.tryInstantiate(Algorithm.class, baziFile.algorithm());
+		if (!algorithm.isPresent()) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
+
+		Data result = algorithm.get().apply(baziFile);
 		System.out.println(result);
 	}
 
 	public interface BaziFile extends Data
 	{
-		public Algorithm algorithm();
-		public interface Algorithm extends Data
-		{
-			public String name();
-		}
+		public Plugin.Params algorithm();
 	}
 
 

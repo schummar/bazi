@@ -5,7 +5,7 @@ package de.uni_augsburg.bazi.common.format;
 */
 public interface StringConverter<T> extends ObjectConverter<T>
 {
-	@Override public default String serialize(T value) { return value.toString(); }
-	@Override public default T deserialize(Object value) { return deserialize(value.toString()); }
-	public T deserialize(String value);
+	@Override default String serialize(T value) { return value.toString(); }
+	@Override default T deserialize(Object value) { return deserialize(value.toString()); }
+	T deserialize(String value);
 }

@@ -9,22 +9,22 @@ import de.uni_augsburg.bazi.math.Real;
  */
 public interface VectorOutput extends VectorInput, AlgorithmOutput
 {
-	public MList<? extends Party> parties();
+	MList<? extends Party> parties();
 
-	public void name(String name);
-	public void seats(Int seats);
-	public void parties(MList<? extends Party> parties);
+	void name(String name);
+	void seats(Int seats);
+	void parties(MList<? extends Party> parties);
 
 	public interface Party extends VectorInput.Party
 	{
-		public Int seats();
-		public Uniqueness uniqueness();
+		Int seats();
+		Uniqueness uniqueness();
 
-		public void name(String name);
-		public void votes(Real votes);
-		public void min(Int min);
-		public void max(Int max);
-		public void seats(Int seats);
-		public void uniqueness(Uniqueness uniqueness);
+		void name(String name);
+		void votes(Real votes);
+		void min(Int min);
+		void max(Int max);
+		void seats(Int seats);
+		void uniqueness(Uniqueness uniqueness);
 	}
 }

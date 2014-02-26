@@ -1,10 +1,12 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import com.google.common.collect.ImmutableMap;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public interface RoundingFunction
 {
@@ -25,7 +27,7 @@ public interface RoundingFunction
 
 
 	public static final Stationary DIV_STD = new Stationary(BMath.valueOf("0.5"), null);
-	public static final Stationary DIV_DWD = new Stationary(BMath.valueOf(1), null);
+	public static final Stationary DIV_DWN = new Stationary(BMath.valueOf(1), null);
 	public static final Stationary DIV_UPW = new Stationary(BMath.valueOf(0), null);
 	public static final Geometric DIV_GEO = new Geometric();
 	public static final Harmonic DIV_HAR = new Harmonic();
@@ -59,12 +61,12 @@ public interface RoundingFunction
 	public static class Stationary implements ExactRoundingFunction
 	{
 		private final Rational r;
-		private final ImmutableMap<Int, Rational> specialCases;
+		private final Map<Int, Rational> specialCases;
 
-		public Stationary(Rational r, ImmutableMap<Int, Rational> specialCases)
+		public Stationary(Rational r, Map<Int, Rational> specialCases)
 		{
 			this.r = r;
-			this.specialCases = specialCases != null ? specialCases : ImmutableMap.<Int, Rational>of();
+			this.specialCases = specialCases != null ? new HashMap<>(specialCases) : new HashMap<>();
 		}
 
 		@Override
@@ -107,12 +109,12 @@ public interface RoundingFunction
 	public static class Power implements RoundingFunction
 	{
 		private final Rational p;
-		private final ImmutableMap<Int, Rational> specialCases;
+		private final Map<Int, Rational> specialCases;
 
-		public Power(Rational p, ImmutableMap<Int, Rational> specialCases)
+		public Power(Rational p, Map<Int, Rational> specialCases)
 		{
 			this.p = p;
-			this.specialCases = specialCases != null ? specialCases : ImmutableMap.<Int, Rational>of();
+			this.specialCases = specialCases != null ? new HashMap<>(specialCases) : new HashMap<>();
 		}
 
 		@Override
@@ -121,9 +123,27 @@ public interface RoundingFunction
 			Rational p = specialCases.get(value);
 			if (p == null)
 				p = this.p;
-			Real approx = value.precision(minPrecision);
-			return approx.pow(p).add(approx.add(1).pow(p)).div(2).pow(p.neg());
+
+			if (p.equals(BMath.ZERO)) return calcGeometric(value, minPrecision);
+			if (p.equals(BMath.MINUS_ONE)) return calcHarmonic(value);
+			return calc(value, p, minPrecision);
 		}
+
+		protected Real calc(Int value, Rational p, int minPrecision)
+		{
+			int precision = minPrecision;
+			while (true)
+			{
+				Real x = value.precision(precision);
+				Real res = x.pow(p).add(x.add(1).pow(p)).div(2).pow(p.neg());
+				if (res.precision() >= minPrecision) return res;
+				precision *= 2;
+			}
+		}
+
+		protected Real calcGeometric(Int value, int minPrecision) { return BMath.pow(value.mul(value.add(1)), BMath.HALF, minPrecision); }
+		protected Rational calcHarmonic(Int value) { return value.inv().add(value.add(1).inv()).div(2).inv(); }
+
 
 		@Override
 		public Real[] getBorders(Real value, int minPrecision)
@@ -156,34 +176,7 @@ public interface RoundingFunction
 
 	public static class Geometric extends Power
 	{
-		public Geometric()
-		{
-			super(BMath.ZERO, null);
-		}
-
-		@Override
-		public Real getBorder(Int value, int minPrecision)
-		{
-			return value.mul(value.add(1)).precision(minPrecision).pow(BMath.HALF);
-		}
-
-		@Override
-		public Real[] getBorders(Real value, int minPrecision)
-		{
-			Real hi = getBorder(value.floor(), minPrecision);
-			Real lo = hi;
-			if (!value.equals(hi))
-				lo = getBorder(value.floor().sub(1), minPrecision);
-			return new Real[]{lo, hi};
-		}
-
-		@Override
-		public Int round(Real value, int minPrecision)
-		{
-			if (value.compareTo(getBorder(value.floor(), minPrecision)) > 0)
-				return value.ceil();
-			return value.floor();
-		}
+		public Geometric() { super(BMath.ZERO, null); }
 	}
 
 

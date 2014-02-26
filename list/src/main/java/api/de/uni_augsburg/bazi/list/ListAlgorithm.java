@@ -1,42 +1,34 @@
 package de.uni_augsburg.bazi.list;
 
-import de.uni_augsburg.bazi.common.Data;
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.common.util.MList;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by Marco on 21.02.14.
  */
-public class ListAlgorithm implements VectorAlgorithm<ListInput, ListOutput>
+public class ListAlgorithm implements VectorAlgorithm
 {
-	public VectorAlgorithm<?, ?> main;
-	public VectorAlgorithm<?, ?> sub;
+	public VectorAlgorithm main;
+	public VectorAlgorithm sub;
 
-	public ListAlgorithm() { }
-
-	public ListAlgorithm(VectorAlgorithm<?, ?> main, VectorAlgorithm<?, ?> sub)
+	public ListAlgorithm(VectorAlgorithm main, VectorAlgorithm sub)
 	{
 		this.main = main;
 		this.sub = sub;
 	}
 
-	@Override public Class<ListInput> getInputInterface() { return ListInput.class; }
-	@Override public List<Class<? extends Data>> getAllInputInterfaces()
-	{
-		List<Class<? extends Data>> interfaces = Arrays.asList(getInputInterface());
-		interfaces.addAll(main.getAllInputInterfaces());
-		interfaces.addAll(sub.getAllInputInterfaces());
-		return interfaces;
-	}
+	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
+	@Override public ListOutput apply(VectorInput in) { return apply(in.cast(ListInput.class)); }
 
-	@Override public ListOutput apply(ListInput in)
+	public ListOutput apply(ListInput in)
 	{
-		VectorOutput mainOut = main.applyCast(in);
+
+		VectorOutput mainOut = main.apply(in);
 
 		MList<VectorOutput> subOuts = new MList<>();
 		in.cast(ListInput.class).parties().parallelStream().forEach(
@@ -46,8 +38,8 @@ public class ListAlgorithm implements VectorAlgorithm<ListInput, ListOutput>
 				PartyInput subIn = mainOut.parties().find(p.name()::equals).cast(PartyInput.class);
 				subIn.parties(p.parties());
 				VectorOutput subOut = sub == null
-					? main.applyCast(subIn)
-					: sub.applyCast(subIn);
+					? main.apply(subIn)
+					: sub.apply(subIn);
 
 				synchronized (subOuts)
 				{

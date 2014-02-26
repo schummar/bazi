@@ -9,6 +9,6 @@ import java.util.function.Supplier;
 */
 public interface AlgorithmOutput extends Data
 {
-	public Supplier<String> plain();
-	public void supplier(Supplier<String> supplier);
+	Supplier<String> plain();
+	void plain(Supplier<String> plain);
 }

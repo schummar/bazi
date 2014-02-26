@@ -10,15 +10,15 @@ import de.uni_augsburg.bazi.math.Real;
 */
 public interface VectorInput extends Data
 {
-	public String name();
-	public Int seats();
-	public MList<? extends Party> parties();
+	String name();
+	Int seats();
+	MList<? extends Party> parties();
 
 	public interface Party extends Data
 	{
-		public String name();
-		public Real votes();
-		public Int min();
-		public Int max();
+		String name();
+		Real votes();
+		Int min();
+		Int max();
 	}
 }

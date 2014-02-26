@@ -114,4 +114,14 @@ public class BMath
 	{
 		return valueOf(RANDOM.nextDouble());
 	}
+
+	public static Real pow(Real x, Real y, int minPrecision)
+	{
+		int precision = minPrecision;
+		while (true)
+		{
+			Real res = x.precision(precision).pow(y);
+			if (res.precision() >= minPrecision) return res;
+		}
+	}
 }
