@@ -2,11 +2,9 @@ package de.uni_augsburg.bazi.common;
 
 import com.google.common.base.Defaults;
 import com.google.common.collect.ForwardingMap;
+import de.uni_augsburg.bazi.common.format.Converters;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class MapData extends ForwardingMap<String, Object> implements InvocationHandler, Data
@@ -108,14 +106,24 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 
 
 	@SuppressWarnings("unchecked")
-	public <T> T get(String key, Class<T> type)
+	public Object cast(Object value, Type genType)
 	{
-		if (!containsKey(key)) return Defaults.defaultValue(type);
+		Class<?> type;
+		Type gen = null;
+		if (genType instanceof Class)
+		{
+			type = (Class<?>) genType;
+		}
+		else
+		{
+			type = (Class<?>) ((ParameterizedType) genType).getRawType();
+			gen = ((ParameterizedType) genType).getActualTypeArguments()[0];
+		}
 
-		Object value = get(key);
-
+		// already correct type
 		if (type.isInstance(value)) return type.cast(value);
 
+		// Data instance
 		if (Data.class.isAssignableFrom(type))
 		{
 			if (value instanceof Data)
@@ -123,13 +131,13 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 			if (value instanceof Map<?, ?>)
 				return (T) new MapData((Map<?, ?>) value).cast((Class<? extends Data>) type);
 		}
-		if (Data.class.isInstance(value)
-			&& Data.class.isAssignableFrom(type))
-		{
-			Data data = (Data) value;
-			Class<? extends Data> dataType = (Class<? extends Data>) type;
-			return (T) data.cast(dataType);
-		}
+
+		// Array
+		// List
+		// Map
+
+		value = Converters.deserialize(value, type);
+		if (type.isInstance(value)) return type.cast(value);
 
 		throw new IncompatibleTypesException(String.format("cannot cast %s to %s", value.getClass(), type));
 	}
@@ -159,7 +167,8 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 		String key = asGetter(method);
 		if (key != null)
 		{
-			return get(key, method.getReturnType());
+			if (!containsKey(key)) return Defaults.defaultValue(method.getReturnType());
+			return cast(get(key), method.getGenericReturnType());
 		}
 
 		key = asSetter(method);

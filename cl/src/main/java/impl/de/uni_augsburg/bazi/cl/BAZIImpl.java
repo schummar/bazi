@@ -23,7 +23,11 @@ class BAZIImpl
 	public static void main(String[] args)
 	{
 		try {start(args);}
-		catch (Exception e) {LOGGER.error(e.getMessage());}
+		catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	public static void start(String[] args)

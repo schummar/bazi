@@ -37,6 +37,7 @@ public class Converters
 	public static <T> T deserialize(Object value, Class<T> type, Converter attributeConverter)
 	{
 		if (!ADAPTERS.containsKey(type)) buildAdapter(type, attributeConverter);
+		if (!ADAPTERS.containsKey(type)) throw new RuntimeException("no adapter for type " + type);
 		@SuppressWarnings("unchecked")
 		T t = (T) ADAPTERS.get(type).deserialize(value);
 		return t;
@@ -71,20 +72,18 @@ public class Converters
 		}
 
 		MList<Class<?>> candidates = new MList<>(ADAPTERS.keySet());
+		candidates.removeIf(t -> !type.isAssignableFrom(t));
+		candidates.sort(
+			(a, b) -> {
+				if (a.isAssignableFrom(b)) return -1;
+				if (b.isAssignableFrom(a)) return 1;
+				return 0;
+			}
+		);
 		if (candidates.size() > 0)
 		{
-			candidates.removeIf(t -> !type.isAssignableFrom(t));
-			candidates.sort(
-				(a, b) -> {
-					if (a.isAssignableFrom(b)) return -1;
-					if (b.isAssignableFrom(a)) return 1;
-					return 0;
-				}
-			);
 			ADAPTERS.put(type, ADAPTERS.get(candidates.get(0)));
 			return;
 		}
-
-		ADAPTERS.put(type, (StringConverter<?>) s -> null);
 	}
 }
