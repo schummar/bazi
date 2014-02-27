@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.common.format;
 
+import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.util.MList;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.math.Int;
@@ -14,20 +15,21 @@ import java.util.Map;
 public class Converters
 {
 	static final Logger LOGGER = LoggerFactory.getLogger(Converters.class);
-	static final Map<Class<?>, ObjectConverter<?>> ADAPTERS = new HashMap<>();
+	static final Map<Class<?>, ObjectConverter<?>> SERIALIZERS = new HashMap<>(), DESERIALIZERS = new HashMap<>();
 
 	static
 	{
-		ADAPTERS.put(Real.class, (StringConverter<Real>) Real::valueOf);
-		ADAPTERS.put(Rational.class, (StringConverter<Rational>) Rational::valueOf);
-		ADAPTERS.put(Int.class, (StringConverter<Int>) Int::valueOf);
+		registerAdapter(Real.class, (StringConverter<Real>) Real::valueOf);
+		registerAdapter(Rational.class, (StringConverter<Rational>) Rational::valueOf);
+		registerAdapter(Int.class, (StringConverter<Int>) Int::valueOf);
 	}
-
 
 	public static <T> void registerAdapter(Class<T> type, ObjectConverter<? super T> adapter)
 	{
-		ADAPTERS.put(type, adapter);
+		SERIALIZERS.put(type, adapter);
+		DESERIALIZERS.put(type, adapter);
 	}
+
 
 	public static <T> T deserialize(Object value, Class<T> type)
 	{
@@ -36,20 +38,35 @@ public class Converters
 
 	public static <T> T deserialize(Object value, Class<T> type, Converter attributeConverter)
 	{
-		if (!ADAPTERS.containsKey(type)) buildAdapter(type, attributeConverter);
-		if (!ADAPTERS.containsKey(type)) throw new RuntimeException("no adapter for type " + type);
+		if (!DESERIALIZERS.containsKey(type))
+			DESERIALIZERS.put(type, buildAdapter(type, attributeConverter, true));
+
 		@SuppressWarnings("unchecked")
-		T t = (T) ADAPTERS.get(type).deserialize(value);
+		T t = (T) DESERIALIZERS.get(type).deserialize(value);
 		return t;
 	}
 
-	static void buildAdapter(Class<?> type, Converter attributeConverter)
+
+	public static <T> Object serialize(T value) { return serialize(value, null); }
+
+	public static <T> Object serialize(T value, Converter attributeConverter)
+	{
+		if (value == null) return null;
+		if (!SERIALIZERS.containsKey(value.getClass()))
+			SERIALIZERS.put(value.getClass(), buildAdapter(value.getClass(), attributeConverter, false));
+
+		@SuppressWarnings("unchecked")
+		ObjectConverter<T> converter = ((ObjectConverter<T>) SERIALIZERS.get(value.getClass()));
+		return converter.serialize(value);
+	}
+
+	static ObjectConverter<?> buildAdapter(Class<?> type, Converter attributeConverter, boolean isDeserializer)
 	{
 		if (attributeConverter != null)
 		{
 			try
 			{
-				ADAPTERS.put(type, attributeConverter.value().newInstance());
+				return attributeConverter.value().newInstance();
 			}
 			catch (InstantiationException | IllegalAccessException e)
 			{
@@ -62,8 +79,7 @@ public class Converters
 		{
 			try
 			{
-				ADAPTERS.put(type, classConverter.value().newInstance());
-				return;
+				return classConverter.value().newInstance();
 			}
 			catch (InstantiationException | IllegalAccessException e)
 			{
@@ -71,19 +87,57 @@ public class Converters
 			}
 		}
 
-		MList<Class<?>> candidates = new MList<>(ADAPTERS.keySet());
-		candidates.removeIf(t -> !type.isAssignableFrom(t));
-		candidates.sort(
-			(a, b) -> {
-				if (a.isAssignableFrom(b)) return -1;
-				if (b.isAssignableFrom(a)) return 1;
-				return 0;
-			}
-		);
+		if (PluginManager.INSTANCE.getPluginsOfInstanceType(type).size() > 0)
+		{
+			return new PluginConverter<>(type);
+		}
+
+
+		MList<Class<?>> candidates;
+		if (isDeserializer)
+		{
+			candidates = new MList<>(DESERIALIZERS.keySet());
+			candidates.removeIf(t -> !type.isAssignableFrom(t));
+			candidates.sort(
+				(a, b) -> {
+					if (a.isAssignableFrom(b)) return -1;
+					if (b.isAssignableFrom(a)) return 1;
+					if (SERIALIZERS.get(a) instanceof SimpleConverter<?>) return 1;
+					if (SERIALIZERS.get(b) instanceof SimpleConverter<?>) return -1;
+					return 0;
+				}
+			);
+		}
+		else
+		{
+			candidates = new MList<>(SERIALIZERS.keySet());
+			candidates.removeIf(t -> !t.isAssignableFrom(type));
+			candidates.sort(
+				(a, b) -> {
+					if (a.isAssignableFrom(b)) return 1;
+					if (b.isAssignableFrom(a)) return -1;
+					if (SERIALIZERS.get(a) instanceof SimpleConverter<?>) return 1;
+					if (SERIALIZERS.get(b) instanceof SimpleConverter<?>) return -1;
+					return 0;
+				}
+			);
+		}
 		if (candidates.size() > 0)
 		{
-			ADAPTERS.put(type, ADAPTERS.get(candidates.get(0)));
-			return;
+			return isDeserializer
+				? DESERIALIZERS.get(candidates.get(0))
+				: SERIALIZERS.get(candidates.get(0));
 		}
+
+		if (!isDeserializer && !type.equals(Object.class))
+		{
+			if (type.getSuperclass() != null)
+				SERIALIZERS.put(type.getSuperclass(), buildAdapter(type.getSuperclass(), null, false));
+			for (Class<?> si : type.getInterfaces())
+				SERIALIZERS.put(si, buildAdapter(si, null, false));
+			return buildAdapter(type, null, false);
+		}
+
+		return new SimpleConverter<>();
 	}
 }

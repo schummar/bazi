@@ -1,10 +1,15 @@
 package de.uni_augsburg.bazi.json;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import de.uni_augsburg.bazi.common.Resources;
+import de.uni_augsburg.bazi.common.format.Converters;
 import de.uni_augsburg.bazi.common.format.Format;
 import de.uni_augsburg.bazi.common.util.MList;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +20,9 @@ public class JsonFormat implements Format
 {
 	private final Gson gson = new GsonBuilder()
 		.setPrettyPrinting()
+		.registerTypeAdapterFactory(TYPE_ADAPTER_FACTORY)
 		.create();
+
 
 	@Override public Map<String, Object> deserialize(String s)
 	{
@@ -50,6 +57,34 @@ public class JsonFormat implements Format
 
 	@Override public String serialize(Map<String, Object> map)
 	{
-		return gson.toJson(serialize(map));
+		return gson.toJson(map);
+	}
+
+	private static final TypeAdapterFactory TYPE_ADAPTER_FACTORY = new TypeAdapterFactory()
+	{
+		@Override public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
+		{
+			TypeAdapterFactory that = this;
+			return new TypeAdapter<T>()
+			{
+				@Override public void write(JsonWriter out, T value) throws IOException
+				{
+					Object converted = Converters.serialize(value);
+					if (converted == value)
+						delegateHelper(gson, that, converted.getClass(), out, converted);
+					else
+						gson.toJson(Converters.serialize(value), value.getClass(), out);
+				}
+				@Override public T read(JsonReader in) throws IOException
+				{
+					return null;
+				}
+			}.nullSafe();
+		}
+	};
+
+	private static <T> void delegateHelper(Gson gson, TypeAdapterFactory factory, Class<T> type, JsonWriter out, Object instance) throws IOException
+	{
+		gson.getDelegateAdapter(factory, TypeToken.get(type)).write(out, type.cast(instance));
 	}
 }

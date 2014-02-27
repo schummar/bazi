@@ -25,7 +25,6 @@ class BAZIImpl
 		try {start(args);}
 		catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -35,16 +34,13 @@ class BAZIImpl
 		LOGGER.info("BAZI under development...");
 		LOGGER.info("The current Version is: {}", Version.getCurrentVersionName());
 
-		PluginManager pluginManager = new PluginManager();
-		pluginManager.load();
-
 
 		// read args
 		Optional<Locale> locale = readValue(args, "-l", Locale::forLanguageTag);
 		Optional<Path> in = readValue(args, "-i", BAZIImpl::readIn);
 		Optional<Path> out = readValue(args, "-o", BAZIImpl::readOut);
-		Optional<Format> inFormat = readValue(args, "-if", s -> pluginManager.tryInstantiate(Format.class, () -> s).get());
-		Optional<Format> outFormat = readValue(args, "-of", s -> pluginManager.tryInstantiate(Format.class, () -> s).get());
+		Optional<Format> inFormat = readValue(args, "-if", s -> PluginManager.INSTANCE.tryInstantiate(Format.class, () -> s).get());
+		Optional<Format> outFormat = readValue(args, "-of", s -> PluginManager.INSTANCE.tryInstantiate(Format.class, () -> s).get());
 
 
 		// backup plans
@@ -53,14 +49,14 @@ class BAZIImpl
 			String name = in.isPresent()
 				? Files.getFileExtension(in.get().toString())
 				: "json";
-			inFormat = pluginManager.tryInstantiate(Format.class, () -> name);
+			inFormat = PluginManager.INSTANCE.tryInstantiate(Format.class, () -> name);
 		}
 		if (!outFormat.isPresent())
 		{
 			String name = out.isPresent()
 				? Files.getFileExtension(out.get().toString())
 				: "json";
-			outFormat = pluginManager.tryInstantiate(Format.class, () -> name);
+			outFormat = PluginManager.INSTANCE.tryInstantiate(Format.class, () -> name);
 		}
 
 
@@ -98,16 +94,17 @@ class BAZIImpl
 		BaziFile baziFile = new MapData(inFormat.get().deserialize(inputString)).cast(BaziFile.class);
 		//System.out.println(baziFile);
 
-		Optional<Algorithm> algorithm = pluginManager.tryInstantiate(Algorithm.class, baziFile.algorithm());
-		if (!algorithm.isPresent()) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
+		Algorithm algorithm = baziFile.algorithm();
+		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
 
-		Data result = algorithm.get().apply(baziFile);
+		Data result = algorithm.apply(baziFile);
 		System.out.println(result);
+		System.out.println(outFormat.get().serialize(result.serialize()));
 	}
 
 	public interface BaziFile extends Data
 	{
-		public Plugin.Params algorithm();
+		public Algorithm algorithm();
 	}
 
 
@@ -116,10 +113,13 @@ class BAZIImpl
 		int i = 0;
 		while (i < args.length && !args[i].equals(key))
 			i++;
+		i++;
 
-		if (++i >= args.length || args[i].startsWith("-"))
+		if (i > args.length) return Optional.empty();
+
+		if (i >= args.length || args[i].startsWith("-"))
 		{
-			LOGGER.warn(Resources.get("params.missing_value"));
+			LOGGER.warn(Resources.get("params.missing_value", key));
 			return Optional.empty();
 		}
 

@@ -8,18 +8,20 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Modifier;
 import java.util.Optional;
 
-public class PluginManager
+public enum PluginManager
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
+	INSTANCE;
 
+	private final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
 
 	private final MList<Plugin<?>> plugins = new MList<>();
 
-	public void load()
+
+	private PluginManager()
 	{
 		try
 		{
-			Reflections reflections = new Reflections();
+			Reflections reflections = new Reflections("de.uni_augsburg.bazi");
 			for (Class<? extends Plugin> c : reflections.getSubTypesOf(Plugin.class))
 			{
 				if (c.isInterface() || Modifier.isAbstract(c.getModifiers())) continue;
@@ -27,7 +29,7 @@ public class PluginManager
 				{
 					Plugin<?> plugin = c.getConstructor().newInstance();
 					plugins.add(plugin);
-					LOGGER.info("loaded " + plugin);
+					LOGGER.info("loaded " + c);
 				}
 				catch (NoSuchMethodException | SecurityException e)
 				{

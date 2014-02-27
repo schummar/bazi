@@ -40,7 +40,9 @@ public class MList<V> extends ArrayList<V>
 	{
 		if (stream().anyMatch(
 			v ->
-				v instanceof Data || v instanceof List || v instanceof Map
+				(v instanceof Data && ((Data) v).serialize().size() > 0)
+					|| (v instanceof List<?> && ((List<?>) v).size() > 0)
+					|| (v instanceof Map<?, ?> && ((Map<?, ?>) v).size() > 0)
 		))
 			return "[\n  " + stream().map(Object::toString).collect(Collectors.joining(",\n")).replaceAll("\n", "\n  ") + "\n]";
 		return super.toString();

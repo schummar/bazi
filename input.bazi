@@ -1,6 +1,7 @@
 {
 	algorithm: {
-		name: divstd
+		name: list,
+		main: divstd
 	},
 	seats: 10,
 	parties: [
@@ -9,7 +10,23 @@
 			votes: 1,
 			min: 2,
 			max: oo,
-			dir: 0
+			dir: 0,
+			parties: [
+				{
+					name: A1,
+					votes: 1,
+					min: 0,
+					max: oo,
+					dir: 0
+				},
+				{
+					name: A2,
+					votes: 1,
+					min: 0,
+					max: oo,
+					dir: 0
+				}
+			]
 		},
 		{
 			name: B,

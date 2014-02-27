@@ -1,7 +1,6 @@
 package de.uni_augsburg.bazi.common;
 
 import com.google.common.base.Defaults;
-import com.google.common.collect.ForwardingMap;
 import de.uni_augsburg.bazi.common.format.Converters;
 import de.uni_augsburg.bazi.common.util.MList;
 
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MapData extends ForwardingMap<String, Object> implements InvocationHandler, Data
+public class MapData extends HashMap<String, Object> implements InvocationHandler, Data
 {
 	public static MapData fromDataInterface(Data obj)
 	{
@@ -19,12 +18,14 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 		for (Method method : obj.getClass().getMethods())
 		{
 			if (!Data.class.isAssignableFrom(method.getDeclaringClass())
-				|| method.getDeclaringClass().equals(Data.class)) continue;
+				|| method.getDeclaringClass().equals(Data.class)
+				|| !Modifier.isPublic(method.getModifiers())) continue;
 
 			String key = asGetter(method);
 			if (key != null && !data.containsKey(key))
 				try
 				{
+					method.setAccessible(true); // else cannot access methods defined in lambdas!?
 					data.put(key, method.invoke(obj));
 				}
 				catch (IllegalAccessException | InvocationTargetException e)
@@ -54,25 +55,8 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 	public MapData() {}
 	public MapData(Map<?, ?> m) { m.forEach((k, v) -> put(k.toString(), v)); }
 
-	@Override protected Map<String, Object> delegate()
-	{
-		return delegateMap;
-	}
-	@Override public Object put(String key, Object value)
-	{
-		if (value instanceof Data) value = ((Data) value).asMap();
-		return super.put(key, value);
-	}
-	@Override public void putAll(Map<? extends String, ?> map)
-	{
-		map.forEach(this::put);
-	}
 
-
-	@Override public boolean isMutable()
-	{
-		return mutable;
-	}
+	@Override public boolean isMutable() { return mutable; }
 
 	@Override public <T extends Data> T cast(Class<T> type)
 	{
@@ -93,16 +77,49 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 		return t;
 	}
 
+
 	@Override public MapData copy()
 	{
-		return new MapData(this);
+		MapData copy = new MapData();
+		forEach((k, v) -> copy.put(k, copy(v)));
+		return copy;
 	}
+
+	@SuppressWarnings("unchecked")
+	private static Object copy(Object v)
+	{
+		if (v instanceof Data) return ((Data) v).copy();
+		if (v.getClass().isArray())
+		{
+			Object[] array = (Object[]) v;
+			Object[] newArray = (Object[]) Array.newInstance(v.getClass().getComponentType(), array.length);
+			for (int i = 0; i < array.length; i++)
+				newArray[i] = copy(array[i]);
+			return newArray;
+		}
+		if (v instanceof List<?>)
+		{
+			return ((List) v).stream().map(MapData::copy).collect(MList.collector());
+		}
+		if (v instanceof Map<?, ?>)
+		{
+			Map<?, ?> map = (Map<?, ?>) v;
+			Map<Object, Object> newMap = new HashMap<>();
+			map.forEach((k, w) -> newMap.put(k, copy(w)));
+			return map;
+		}
+		return v;
+	}
+
+
 	@Override public MapData immutable()
 	{
 		mutable = false;
 		return this;
 	}
-	@Override public MapData asMap()
+
+
+	@Override public Map<String, Object> serialize()
 	{
 		return this;
 	}
@@ -135,7 +152,7 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 		}
 
 		// List
-		if (List.class.isAssignableFrom(type) && value instanceof List)
+		if (List.class.isAssignableFrom(type) && value instanceof List<?>)
 		{
 			List<Object> list = (List<Object>) value;
 			List<Object> newList = new MList<>();
@@ -144,7 +161,7 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 		}
 
 		// Map
-		if (Map.class.isAssignableFrom(type) && value instanceof Map)
+		if (Map.class.isAssignableFrom(type) && value instanceof Map<?, ?>)
 		{
 			Map<?, Object> map = (Map<?, Object>) value;
 			Map<Object, Object> newMap = new HashMap<>();
@@ -157,9 +174,10 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 		{
 			return Converters.deserialize(value, type);
 		}
-		catch (Exception e) {}
-
-		throw new IncompatibleTypesException(String.format("cannot cast %s to %s", value.getClass(), type));
+		catch (Exception e)
+		{
+			throw new IncompatibleTypesException(String.format("cannot cast %s to %s", value.getClass(), type));
+		}
 	}
 
 	private static Class<?> getRaw(Type type)
@@ -192,8 +210,8 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 		if (overriddenBy(method, getClass().getMethod("isMutable")))
 			return isMutable();
 
-		if (overriddenBy(method, getClass().getMethod("asMap")))
-			return asMap();
+		if (overriddenBy(method, getClass().getMethod("serialize")))
+			return serialize();
 
 		if (overriddenBy(method, Object.class.getMethod("toString")))
 			return toString();
@@ -266,7 +284,7 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 			v ->
 				v instanceof Data || v instanceof List || v instanceof Map
 		))
-			return entrySet().stream().map(Object::toString).collect(Collectors.joining("\n"));
+			return "{\n  " + entrySet().stream().map(Object::toString).collect(Collectors.joining(",\n")).replaceAll("\n", "\n  ") + "\n}";
 		return super.toString();
 	}
 

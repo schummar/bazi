@@ -8,9 +8,11 @@ import de.uni_augsburg.bazi.common.util.MList;
 */
 public interface ListInput extends VectorInput
 {
-	public MList<? extends Party> parties();
+	MList<? extends Party> parties();
+
+
 	public interface Party extends VectorInput.Party
 	{
-		public MList<VectorInput.Party> parties();
+		public MList<ListInput.Party> parties();
 	}
 }
