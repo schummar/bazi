@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.common.util;
 
+import de.uni_augsburg.bazi.common.Data;
 import de.uni_augsburg.bazi.common.format.Converter;
 import de.uni_augsburg.bazi.common.format.ListConverter;
 import de.uni_augsburg.bazi.common.format.ObjectConverter;
@@ -7,6 +8,7 @@ import de.uni_augsburg.bazi.common.format.ObjectConverter;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Converter(MList.Converter.class)
 public class MList<V> extends ArrayList<V>
@@ -32,6 +34,16 @@ public class MList<V> extends ArrayList<V>
 	public MList<V> findAll(Predicate<V> predicate)
 	{
 		return stream().filter(predicate).collect(collector());
+	}
+
+	@Override public String toString()
+	{
+		if (stream().anyMatch(
+			v ->
+				v instanceof Data || v instanceof List || v instanceof Map
+		))
+			return "[\n  " + stream().map(Object::toString).collect(Collectors.joining(",\n")).replaceAll("\n", "\n  ") + "\n]";
+		return super.toString();
 	}
 
 	public static <V> Collector<V, MList<V>, MList<V>> collector()

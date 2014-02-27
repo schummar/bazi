@@ -96,7 +96,7 @@ class BAZIImpl
 
 		// now the actual work begins
 		BaziFile baziFile = new MapData(inFormat.get().deserialize(inputString)).cast(BaziFile.class);
-		System.out.println(baziFile);
+		//System.out.println(baziFile);
 
 		Optional<Algorithm> algorithm = pluginManager.tryInstantiate(Algorithm.class, baziFile.algorithm());
 		if (!algorithm.isPresent()) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));

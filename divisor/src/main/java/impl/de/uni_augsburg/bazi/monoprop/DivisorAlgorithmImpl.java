@@ -13,8 +13,6 @@ class DivisorAlgorithmImpl
 {
 	public static DivisorOutput calculate(VectorInput input, RoundingFunction r, int minPrecision)
 	{
-		System.out.println(input);
-		System.out.println(input.copy());
 		DivisorOutput output = input.copy().cast(DivisorOutput.class);
 		try
 		{

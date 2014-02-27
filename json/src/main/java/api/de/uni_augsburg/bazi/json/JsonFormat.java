@@ -3,10 +3,9 @@ package de.uni_augsburg.bazi.json;
 import com.google.gson.*;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.format.Format;
+import de.uni_augsburg.bazi.common.util.MList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,9 +32,9 @@ public class JsonFormat implements Format
 		return map;
 	}
 
-	private List<Object> deserialize(JsonArray array)
+	private MList<Object> deserialize(JsonArray array)
 	{
-		List<Object> list = new ArrayList<>();
+		MList<Object> list = new MList<>();
 		for (JsonElement element : array)
 			list.add(deserialize(element));
 		return list;

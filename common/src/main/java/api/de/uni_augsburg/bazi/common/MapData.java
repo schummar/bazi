@@ -3,9 +3,13 @@ package de.uni_augsburg.bazi.common;
 import com.google.common.base.Defaults;
 import com.google.common.collect.ForwardingMap;
 import de.uni_augsburg.bazi.common.format.Converters;
+import de.uni_augsburg.bazi.common.util.MList;
 
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MapData extends ForwardingMap<String, Object> implements InvocationHandler, Data
 {
@@ -56,7 +60,6 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 	}
 	@Override public Object put(String key, Object value)
 	{
-		System.out.println(key + " -> " + value);
 		if (value instanceof Data) value = ((Data) value).asMap();
 		return super.put(key, value);
 	}
@@ -106,40 +109,71 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 
 
 	@SuppressWarnings("unchecked")
-	public Object cast(Object value, Type genType)
+	public static Object cast(Object value, Type genType)
 	{
-		Class<?> type;
-		Type gen = null;
-		if (genType instanceof Class)
-		{
-			type = (Class<?>) genType;
-		}
-		else
-		{
-			type = (Class<?>) ((ParameterizedType) genType).getRawType();
-			gen = ((ParameterizedType) genType).getActualTypeArguments()[0];
-		}
-
-		// already correct type
-		if (type.isInstance(value)) return type.cast(value);
+		Class<?> type = getRaw(genType);
 
 		// Data instance
 		if (Data.class.isAssignableFrom(type))
 		{
+			if (type.isInstance(value)) return value;
 			if (value instanceof Data)
-				return (T) ((Data) value).cast((Class<? extends Data>) type);
+				return ((Data) value).cast((Class<? extends Data>) type);
 			if (value instanceof Map<?, ?>)
-				return (T) new MapData((Map<?, ?>) value).cast((Class<? extends Data>) type);
+				return new MapData((Map<?, ?>) value).cast((Class<? extends Data>) type);
 		}
 
 		// Array
-		// List
-		// Map
+		else if (type.isArray() && value.getClass().isArray())
+		{
+			if (type.isInstance(value) && type.getComponentType().equals(value.getClass().getComponentType())) return value;
+			Object[] array = (Object[]) value;
+			Object[] newArray = (Object[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+			for (int i = 0; i < array.length; i++)
+				newArray[i] = cast(array[i], array.getClass().getComponentType());
+			return newArray;
+		}
 
-		value = Converters.deserialize(value, type);
-		if (type.isInstance(value)) return type.cast(value);
+		// List
+		if (List.class.isAssignableFrom(type) && value instanceof List)
+		{
+			List<Object> list = (List<Object>) value;
+			List<Object> newList = new MList<>();
+			list.forEach(o -> newList.add(cast(o, getGenParam(genType, 0))));
+			return newList;
+		}
+
+		// Map
+		if (Map.class.isAssignableFrom(type) && value instanceof Map)
+		{
+			Map<?, Object> map = (Map<?, Object>) value;
+			Map<Object, Object> newMap = new HashMap<>();
+			map.forEach((k, v) -> newMap.put(k, cast(v, getGenParam(genType, 1))));
+			return newMap;
+		}
+
+		if (type.isInstance(value)) return value;
+		try
+		{
+			return Converters.deserialize(value, type);
+		}
+		catch (Exception e) {}
 
 		throw new IncompatibleTypesException(String.format("cannot cast %s to %s", value.getClass(), type));
+	}
+
+	private static Class<?> getRaw(Type type)
+	{
+		if (type instanceof Class<?>) return (Class<?>) type;
+		if (type instanceof ParameterizedType) return (Class<?>) ((ParameterizedType) type).getRawType();
+		if (type instanceof WildcardType && ((WildcardType) type).getUpperBounds().length > 0)
+			return (Class<?>) ((WildcardType) type).getUpperBounds()[0];
+		return Object.class;
+	}
+
+	private static Type getGenParam(Type type, int index)
+	{
+		return ((ParameterizedType) type).getActualTypeArguments()[index];
 	}
 
 
@@ -168,7 +202,9 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 		if (key != null)
 		{
 			if (!containsKey(key)) return Defaults.defaultValue(method.getReturnType());
-			return cast(get(key), method.getGenericReturnType());
+			Object value = cast(get(key), method.getGenericReturnType());
+			put(key, value);
+			return value;
 		}
 
 		key = asSetter(method);
@@ -224,7 +260,18 @@ public class MapData extends ForwardingMap<String, Object> implements Invocation
 	}
 
 
-	public class IncompatibleTypesException extends RuntimeException
+	@Override public String toString()
+	{
+		if (values().stream().anyMatch(
+			v ->
+				v instanceof Data || v instanceof List || v instanceof Map
+		))
+			return entrySet().stream().map(Object::toString).collect(Collectors.joining("\n"));
+		return super.toString();
+	}
+
+
+	public static class IncompatibleTypesException extends RuntimeException
 	{
 		public IncompatibleTypesException()
 		{

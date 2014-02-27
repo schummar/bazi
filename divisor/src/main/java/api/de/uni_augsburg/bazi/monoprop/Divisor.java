@@ -16,4 +16,9 @@ public class Divisor
 	public Real min() { return min; }
 	public Real nice() { return nice; }
 	public Real max() { return max; }
+
+	@Override public String toString()
+	{
+		return String.format("[%s,%s] -> %s]", min, max, nice);
+	}
 }
