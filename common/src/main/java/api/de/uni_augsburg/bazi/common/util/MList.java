@@ -3,7 +3,6 @@ package de.uni_augsburg.bazi.common.util;
 import de.uni_augsburg.bazi.common.Data;
 import de.uni_augsburg.bazi.common.format.Converter;
 import de.uni_augsburg.bazi.common.format.ListConverter;
-import de.uni_augsburg.bazi.common.format.ObjectConverter;
 
 import java.util.*;
 import java.util.function.*;
@@ -50,9 +49,9 @@ public class MList<V> extends ArrayList<V>
 
 	public static <V> Collector<V, MList<V>, MList<V>> collector()
 	{
-		return Collector.of(
-			MList<V>::new,
-			MList<V>::add,
+		return Collector.<V, MList<V>>of(
+			MList::new,
+			MList::add,
 			(a, b) -> {
 				a.addAll(b);
 				return a;

@@ -98,7 +98,6 @@ class BAZIImpl
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
 
 		Data result = algorithm.apply(baziFile);
-		System.out.println(result);
 		System.out.println(outFormat.get().serialize(result.serialize()));
 	}
 
