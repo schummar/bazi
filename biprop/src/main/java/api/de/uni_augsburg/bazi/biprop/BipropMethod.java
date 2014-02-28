@@ -1,8 +1,21 @@
 package de.uni_augsburg.bazi.biprop;
 
+import com.google.common.collect.ArrayTable;
+import de.uni_augsburg.bazi.math.BMath;
+import de.uni_augsburg.bazi.math.Int;
+import de.uni_augsburg.bazi.math.Real;
+import de.uni_augsburg.bazi.monoprop.DivisorAlgorithm;
+import de.uni_augsburg.bazi.monoprop.DivisorOutput;
+
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 public abstract class BipropMethod
 {
-	/*public BipropOutput calculate(BipropInput input)
+	public BipropOutput calculate(BipropInput input)
 	{
 		Table<BipropInput.District, String, BipropOutput.Party> table = generateTable(input);
 

@@ -32,6 +32,7 @@ class ListAlgorithmImpl
 				VectorOutput subOut = sub == null
 					? main.apply(p)
 					: sub.apply(p);
+				p.merge(subOut);
 
 				synchronized (subOuts)
 				{

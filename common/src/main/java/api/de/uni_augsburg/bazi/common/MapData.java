@@ -12,8 +12,17 @@ import java.util.stream.Collectors;
 
 public class MapData extends HashMap<String, Object> implements InvocationHandler, Data
 {
+	public interface ProxyData
+	{
+		MapData delegate();
+	}
+
+
 	public static MapData fromDataInterface(Data obj)
 	{
+		if (obj instanceof MapData) return (MapData) obj;
+		if (obj instanceof ProxyData) return ((ProxyData) obj).delegate();
+
 		MapData data = new MapData();
 		for (Method method : obj.getClass().getMethods())
 		{
@@ -58,7 +67,7 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 
 	@Override public boolean isMutable() { return mutable; }
 
-	@Override public <T extends Data> T cast(Class<T> type)
+	@Override public <T extends Data> T cast(Class<? extends T> type)
 	{
 		if (!type.isInterface()) throw new RuntimeException("no interface!");
 
@@ -125,6 +134,68 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 	}
 
 
+	@Override public <T extends Data> T merge(T value)
+	{
+		MapData asMap = fromDataInterface(value);
+		replaceAll((k, v) -> merge(v, asMap.get(k)));
+		asMap.forEach(this::putIfAbsent);
+		@SuppressWarnings("unchecked")
+		Class<? extends T> c = (Class<? extends T>) value.getClass();
+		return cast(c);
+	}
+	private static Object merge(Object v1, Object v2)
+	{
+		if (v1 == null) return v2;
+		if (v2 == null) return v1;
+
+
+		// Data instance
+		if (v1 instanceof Data || v2 instanceof Data)
+		{
+			if (v1 instanceof Map<?, ?>) v1 = new MapData((Map<?, ?>) v1);
+			if (v2 instanceof Map<?, ?>) v2 = new MapData((Map<?, ?>) v2);
+			if (v1 instanceof Data && v2 instanceof Data) return ((Data) v1).merge((Data) v2);
+			return v2;
+		}
+
+		// Array
+		else if (v1.getClass().isArray() && v2.getClass().isArray())
+		{
+			Object[] a1 = (Object[]) v1, a2 = (Object[]) v2;
+			Object[] newArray = (Object[]) Array.newInstance(a2.getClass().getComponentType(), Math.max(a1.length, a2.length));
+			for (int i = 0; i < newArray.length; i++)
+				if (i >= a1.length) newArray[i] = a2[i];
+				else if (i >= a2.length) newArray[i] = cast(a1[i], a2.getClass().getComponentType());
+				else newArray[i] = merge(a1[i], a2[i]);
+			return newArray;
+		}
+
+		// List
+		if (v1 instanceof List<?> && v2 instanceof List<?>)
+		{
+			List<?> l1 = (List<?>) v1, l2 = (List<?>) v2;
+			List<Object> newList = new MList<>(l2);
+			for (int i = 0; i < Math.max(l1.size(), l2.size()); i++)
+				if (i >= l1.size()) newList.add(l2.get(i));
+				else if (i >= l2.size()) newList.add(l1.get(i));
+				else newList.add(merge(l1.get(i), l2.get(i)));
+			return newList;
+		}
+
+		// Map
+		if (v1 instanceof Map<?, ?> && v2 instanceof Map<?, ?>)
+		{
+			Map<?, ?> m1 = (Map<?, ?>) v1, m2 = (Map<?, ?>) v2;
+			Map<Object, Object> newMap = new HashMap<>(m2);
+			newMap.replaceAll((k, v) -> merge(m1.get(k), v));
+			m1.forEach(newMap::putIfAbsent);
+			return newMap;
+		}
+
+		return v2;
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public static Object cast(Object value, Type genType)
 	{
@@ -161,12 +232,16 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 		}
 
 		// Map
-		if (Map.class.isAssignableFrom(type) && value instanceof Map<?, ?>)
+		if (Map.class.isAssignableFrom(type))
 		{
-			Map<?, Object> map = (Map<?, Object>) value;
-			Map<Object, Object> newMap = new HashMap<>();
-			map.forEach((k, v) -> newMap.put(k, cast(v, getGenParam(genType, 1))));
-			return newMap;
+			if (value instanceof Data) value = fromDataInterface((Data) value);
+			if (value instanceof Map<?, ?>)
+			{
+				Map<?, Object> map = (Map<?, Object>) value;
+				Map<Object, Object> newMap = new HashMap<>();
+				map.forEach((k, v) -> newMap.put(k, cast(v, getGenParam(genType, 1))));
+				return newMap;
+			}
 		}
 
 		if (type.isInstance(value)) return value;
@@ -179,6 +254,7 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 			throw new IncompatibleTypesException(String.format("cannot cast %s to %s", value.getClass(), type));
 		}
 	}
+
 
 	private static Class<?> getRaw(Type type)
 	{
@@ -200,6 +276,9 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 	{
 		if (overriddenBy(method, getClass().getMethod("cast", Class.class)))
 			return cast((Class<? extends Data>) args[0]);
+
+		if (overriddenBy(method, getClass().getMethod("merge", Data.class)))
+			return merge((Data) args[0]);
 
 		if (overriddenBy(method, getClass().getMethod("copy")))
 			return copy();

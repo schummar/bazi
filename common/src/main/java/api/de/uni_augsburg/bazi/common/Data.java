@@ -8,28 +8,17 @@ import java.util.Map;
 @Converter(Data.Converter.class)
 public interface Data
 {
+	default <T extends Data> T cast(Class<? extends T> type) { return MapData.fromDataInterface(this).cast(type); }
+	default <T extends Data> T merge(T value) { return MapData.fromDataInterface(this).merge(value); }
+
 	default boolean isMutable() {return true;}
-
-	default <T extends Data> T cast(Class<T> type)
-	{
-		if (type.isInstance(this))
-			return type.cast(this);
-
-		return MapData.fromDataInterface(this).cast(type);
-	}
+	default Data immutable() { return MapData.fromDataInterface(this).immutable(); }
 
 	default Data copy()
 	{
 		return MapData.fromDataInterface(this);
 	}
-
-	default Data immutable()
-	{
-		return MapData.fromDataInterface(this).immutable();
-	}
-
 	default Map<String, Object> serialize() { return MapData.fromDataInterface(this).serialize(); }
-
 
 	public static class Converter implements ObjectConverter<Data>
 	{
