@@ -10,7 +10,7 @@ import de.uni_augsburg.bazi.common.format.Format;
 import de.uni_augsburg.bazi.common.util.MList;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ public class JsonFormat implements Format
 
 	private Map<String, Object> deserialize(JsonObject object)
 	{
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new LinkedHashMap<>();
 		for (Map.Entry<String, JsonElement> e : object.entrySet())
 			map.put(e.getKey(), deserialize(e.getValue()));
 		return map;

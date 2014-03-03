@@ -2,7 +2,6 @@ package de.uni_augsburg.bazi.list;
 
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
-import de.uni_augsburg.bazi.common.util.MList;
 import de.uni_augsburg.bazi.math.BMath;
 
 /**
@@ -24,7 +23,6 @@ class ListAlgorithmImpl
 		VectorOutput mainOut = main.apply(in);
 		ListOutput out = mainOut.cast(ListOutput.class);
 
-		MList<VectorOutput> subOuts = new MList<>();
 		out.parties().parallelStream().forEach(
 			p -> {
 				if (p.parties() == null || p.parties().isEmpty()) return;
@@ -33,15 +31,9 @@ class ListAlgorithmImpl
 					? main.apply(p)
 					: sub.apply(p);
 				p.merge(subOut);
-
-				synchronized (subOuts)
-				{
-					subOuts.add(subOut);
-				}
 			}
 		);
 
-		out.subApportionments(subOuts);
 		return out;
 	}
 

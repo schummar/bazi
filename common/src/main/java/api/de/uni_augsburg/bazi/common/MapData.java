@@ -6,11 +6,12 @@ import de.uni_augsburg.bazi.common.util.MList;
 
 import java.lang.reflect.*;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MapData extends HashMap<String, Object> implements InvocationHandler, Data
+public class MapData extends LinkedHashMap<String, Object> implements InvocationHandler, Data
 {
 	public interface ProxyData
 	{
@@ -27,6 +28,7 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 		for (Method method : obj.getClass().getMethods())
 		{
 			if (!Data.class.isAssignableFrom(method.getDeclaringClass())
+				|| !method.getDeclaringClass().isInterface()
 				|| method.getDeclaringClass().equals(Data.class)
 				|| !Modifier.isPublic(method.getModifiers())) continue;
 
@@ -35,6 +37,7 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 				try
 				{
 					method.setAccessible(true); // else cannot access methods defined in lambdas!?
+					System.out.println(method.getName() + " (" + method.getDeclaringClass() + ") -> " + method.invoke(obj));
 					data.put(key, method.invoke(obj));
 				}
 				catch (IllegalAccessException | InvocationTargetException e)
@@ -58,14 +61,10 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 
 
 	private final Map<Class<?>, Data> proxies = new HashMap<>();
-	private boolean mutable = true;
-	Map<String, Object> delegateMap = new HashMap<>();
 
 	public MapData() {}
 	public MapData(Map<?, ?> m) { m.forEach((k, v) -> put(k.toString(), v)); }
 
-
-	@Override public boolean isMutable() { return mutable; }
 
 	@Override public <T extends Data> T cast(Class<? extends T> type)
 	{
@@ -75,7 +74,7 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 		if (proxy == null)
 			proxy = Proxy.newProxyInstance(
 				MapData.class.getClassLoader(),
-				new Class<?>[]{type},
+				new Class<?>[]{ProxyData.class, type},
 				this
 			);
 
@@ -84,115 +83,6 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 
 		proxies.put(type, t);
 		return t;
-	}
-
-
-	@Override public MapData copy()
-	{
-		MapData copy = new MapData();
-		forEach((k, v) -> copy.put(k, copy(v)));
-		return copy;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static Object copy(Object v)
-	{
-		if (v instanceof Data) return ((Data) v).copy();
-		if (v.getClass().isArray())
-		{
-			Object[] array = (Object[]) v;
-			Object[] newArray = (Object[]) Array.newInstance(v.getClass().getComponentType(), array.length);
-			for (int i = 0; i < array.length; i++)
-				newArray[i] = copy(array[i]);
-			return newArray;
-		}
-		if (v instanceof List<?>)
-		{
-			return ((List) v).stream().map(MapData::copy).collect(MList.collector());
-		}
-		if (v instanceof Map<?, ?>)
-		{
-			Map<?, ?> map = (Map<?, ?>) v;
-			Map<Object, Object> newMap = new HashMap<>();
-			map.forEach((k, w) -> newMap.put(k, copy(w)));
-			return map;
-		}
-		return v;
-	}
-
-
-	@Override public MapData immutable()
-	{
-		mutable = false;
-		return this;
-	}
-
-
-	@Override public Map<String, Object> serialize()
-	{
-		return this;
-	}
-
-
-	@Override public <T extends Data> T merge(T value)
-	{
-		MapData asMap = fromDataInterface(value);
-		replaceAll((k, v) -> merge(v, asMap.get(k)));
-		asMap.forEach(this::putIfAbsent);
-		@SuppressWarnings("unchecked")
-		Class<? extends T> c = (Class<? extends T>) value.getClass();
-		return cast(c);
-	}
-	private static Object merge(Object v1, Object v2)
-	{
-		if (v1 == null) return v2;
-		if (v2 == null) return v1;
-
-
-		// Data instance
-		if (v1 instanceof Data || v2 instanceof Data)
-		{
-			if (v1 instanceof Map<?, ?>) v1 = new MapData((Map<?, ?>) v1);
-			if (v2 instanceof Map<?, ?>) v2 = new MapData((Map<?, ?>) v2);
-			if (v1 instanceof Data && v2 instanceof Data) return ((Data) v1).merge((Data) v2);
-			return v2;
-		}
-
-		// Array
-		else if (v1.getClass().isArray() && v2.getClass().isArray())
-		{
-			Object[] a1 = (Object[]) v1, a2 = (Object[]) v2;
-			Object[] newArray = (Object[]) Array.newInstance(a2.getClass().getComponentType(), Math.max(a1.length, a2.length));
-			for (int i = 0; i < newArray.length; i++)
-				if (i >= a1.length) newArray[i] = a2[i];
-				else if (i >= a2.length) newArray[i] = cast(a1[i], a2.getClass().getComponentType());
-				else newArray[i] = merge(a1[i], a2[i]);
-			return newArray;
-		}
-
-		// List
-		if (v1 instanceof List<?> && v2 instanceof List<?>)
-		{
-			List<?> l1 = (List<?>) v1, l2 = (List<?>) v2;
-			List<Object> newList = new MList<>(l2);
-			for (int i = 0; i < Math.max(l1.size(), l2.size()); i++)
-				if (i >= l1.size()) newList.add(l2.get(i));
-				else if (i >= l2.size()) newList.add(l1.get(i));
-				else newList.add(merge(l1.get(i), l2.get(i)));
-			return newList;
-		}
-
-		// Map
-		if (v1 instanceof Map<?, ?> && v2 instanceof Map<?, ?>)
-		{
-			Map<?, ?> m1 = (Map<?, ?>) v1, m2 = (Map<?, ?>) v2;
-			Map<Object, Object> newMap = new HashMap<>(m2);
-			newMap.replaceAll((k, v) -> merge(m1.get(k), v));
-			m1.forEach(newMap::putIfAbsent);
-			return newMap;
-		}
-
-		return v2;
 	}
 
 
@@ -238,7 +128,7 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 			if (value instanceof Map<?, ?>)
 			{
 				Map<?, Object> map = (Map<?, Object>) value;
-				Map<Object, Object> newMap = new HashMap<>();
+				Map<Object, Object> newMap = new LinkedHashMap<>();
 				map.forEach((k, v) -> newMap.put(k, cast(v, getGenParam(genType, 1))));
 				return newMap;
 			}
@@ -271,6 +161,106 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 	}
 
 
+	@Override public MapData copy()
+	{
+		MapData copy = new MapData();
+		forEach((k, v) -> copy.put(k, copy(v)));
+		return copy;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Object copy(Object v)
+	{
+		if (v instanceof Data) return ((Data) v).copy();
+		if (v.getClass().isArray())
+		{
+			Object[] array = (Object[]) v;
+			Object[] newArray = (Object[]) Array.newInstance(v.getClass().getComponentType(), array.length);
+			for (int i = 0; i < array.length; i++)
+				newArray[i] = copy(array[i]);
+			return newArray;
+		}
+		if (v instanceof List<?>)
+		{
+			return ((List) v).stream().map(MapData::copy).collect(MList.collector());
+		}
+		if (v instanceof Map<?, ?>)
+		{
+			Map<?, ?> map = (Map<?, ?>) v;
+			Map<Object, Object> newMap = new LinkedHashMap<>();
+			map.forEach((k, w) -> newMap.put(k, copy(w)));
+			return map;
+		}
+		return v;
+	}
+
+
+	@Override public Map<String, Object> serialize()
+	{
+		return this;
+	}
+
+
+	@Override public Data merge(Data value)
+	{
+		MapData asMap = fromDataInterface(value);
+		replaceAll((k, v) -> merge(v, asMap.get(k)));
+		asMap.forEach(this::putIfAbsent);
+		return this;
+	}
+	private static Object merge(Object v1, Object v2)
+	{
+		if (v1 == null) return v2;
+		if (v2 == null) return v1;
+
+
+		// Data instance
+		if (v1 instanceof Data || v2 instanceof Data)
+		{
+			if (v1 instanceof Map<?, ?>) v1 = new MapData((Map<?, ?>) v1);
+			if (v2 instanceof Map<?, ?>) v2 = new MapData((Map<?, ?>) v2);
+			if (v1 instanceof Data && v2 instanceof Data) return ((Data) v1).merge((Data) v2);
+			return v2;
+		}
+
+		// Array
+		else if (v1.getClass().isArray() && v2.getClass().isArray())
+		{
+			Object[] a1 = (Object[]) v1, a2 = (Object[]) v2;
+			Object[] newArray = (Object[]) Array.newInstance(a2.getClass().getComponentType(), Math.max(a1.length, a2.length));
+			for (int i = 0; i < newArray.length; i++)
+				if (i >= a1.length) newArray[i] = a2[i];
+				else if (i >= a2.length) newArray[i] = cast(a1[i], a2.getClass().getComponentType());
+				else newArray[i] = merge(a1[i], a2[i]);
+			return newArray;
+		}
+
+		// List
+		if (v1 instanceof List<?> && v2 instanceof List<?>)
+		{
+			List<?> l1 = (List<?>) v1, l2 = (List<?>) v2;
+			List<Object> newList = new MList<>();
+			for (int i = 0; i < Math.max(l1.size(), l2.size()); i++)
+				if (i >= l1.size()) newList.add(l2.get(i));
+				else if (i >= l2.size()) newList.add(l1.get(i));
+				else newList.add(merge(l1.get(i), l2.get(i)));
+			return newList;
+		}
+
+		// Map
+		if (v1 instanceof Map<?, ?> && v2 instanceof Map<?, ?>)
+		{
+			Map<?, ?> m1 = (Map<?, ?>) v1, m2 = (Map<?, ?>) v2;
+			Map<Object, Object> newMap = new LinkedHashMap<>(m2);
+			newMap.replaceAll((k, v) -> merge(m1.get(k), v));
+			m1.forEach(newMap::putIfAbsent);
+			return newMap;
+		}
+
+		return v2;
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
@@ -283,17 +273,14 @@ public class MapData extends HashMap<String, Object> implements InvocationHandle
 		if (overriddenBy(method, getClass().getMethod("copy")))
 			return copy();
 
-		if (overriddenBy(method, getClass().getMethod("immutable")))
-			return immutable();
-
-		if (overriddenBy(method, getClass().getMethod("isMutable")))
-			return isMutable();
-
 		if (overriddenBy(method, getClass().getMethod("serialize")))
 			return serialize();
 
 		if (overriddenBy(method, Object.class.getMethod("toString")))
 			return toString();
+
+		if (overriddenBy(method, ProxyData.class.getMethod("delegate")))
+			return this;
 
 		String key = asGetter(method);
 		if (key != null)

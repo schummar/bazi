@@ -8,9 +8,6 @@ import de.uni_augsburg.bazi.common.util.MList;
  */
 public interface ListOutput extends VectorOutput
 {
-	MList<VectorOutput> subApportionments();
-	void subApportionments(MList<VectorOutput> subApportionments);
-
 	MList<? extends Party> parties();
 
 	public interface Party extends VectorOutput.Party, VectorOutput {}
