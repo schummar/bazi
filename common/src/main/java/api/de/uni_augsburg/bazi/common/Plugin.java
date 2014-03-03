@@ -1,5 +1,7 @@
 package de.uni_augsburg.bazi.common;
 
+import de.uni_augsburg.bazi.common.data.Data;
+
 import java.util.List;
 import java.util.Optional;
 

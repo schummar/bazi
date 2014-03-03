@@ -1,7 +1,7 @@
 package de.uni_augsburg.bazi.common.format;
 
-import de.uni_augsburg.bazi.common.Data;
-import de.uni_augsburg.bazi.common.MapData;
+import de.uni_augsburg.bazi.common.data.Data;
+import de.uni_augsburg.bazi.common.data.MapData;
 import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.PluginManager;
 

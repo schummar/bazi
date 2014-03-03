@@ -2,14 +2,15 @@ package de.uni_augsburg.bazi.common.format;
 
 import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.Resources;
-import de.uni_augsburg.bazi.common.util.MList;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Converters
@@ -139,7 +140,7 @@ public class Converters
 
 		if (!SERIALIZERS.containsKey(type))
 		{
-			MList<Class<?>> candidates = new MList<>(SERIALIZERS.keySet());
+			List<Class<?>> candidates = new ArrayList<>(SERIALIZERS.keySet());
 			candidates.removeIf(t -> !t.isAssignableFrom(type));
 			candidates.sort(
 				(a, b) -> {
@@ -157,7 +158,7 @@ public class Converters
 
 		if (!DESERIALIZERS.containsKey(type))
 		{
-			MList<Class<?>> candidates = new MList<>(DESERIALIZERS.keySet());
+			List<Class<?>> candidates = new ArrayList<>(DESERIALIZERS.keySet());
 			candidates.removeIf(t -> !type.isAssignableFrom(t));
 			candidates.sort(
 				(a, b) -> {

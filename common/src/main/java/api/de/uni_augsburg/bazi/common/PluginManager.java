@@ -1,11 +1,12 @@
 package de.uni_augsburg.bazi.common;
 
-import de.uni_augsburg.bazi.common.util.MList;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public enum PluginManager
@@ -14,7 +15,7 @@ public enum PluginManager
 
 	private final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
 
-	private final MList<Plugin<?>> plugins = new MList<>();
+	private final List<Plugin<?>> plugins = new ArrayList<>();
 
 
 	private PluginManager()
@@ -41,9 +42,9 @@ public enum PluginManager
 	}
 
 
-	public <T> MList<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
+	public <T> List<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
 	{
-		MList<Plugin<? extends T>> list = new MList<>();
+		List<Plugin<? extends T>> list = new ArrayList<>();
 		for (Plugin<?> plugin : plugins)
 			if (type.isAssignableFrom(plugin.getInstanceType()))
 			{

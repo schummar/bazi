@@ -3,6 +3,8 @@ package de.uni_augsburg.bazi.cl;
 import com.google.common.io.Files;
 import de.uni_augsburg.bazi.common.*;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.data.Data;
+import de.uni_augsburg.bazi.common.data.MapData;
 import de.uni_augsburg.bazi.common.format.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

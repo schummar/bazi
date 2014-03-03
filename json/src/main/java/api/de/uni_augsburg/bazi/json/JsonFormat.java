@@ -7,10 +7,11 @@ import com.google.gson.stream.JsonWriter;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.format.Converters;
 import de.uni_augsburg.bazi.common.format.Format;
-import de.uni_augsburg.bazi.common.util.MList;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,9 +40,9 @@ public class JsonFormat implements Format
 		return map;
 	}
 
-	private MList<Object> deserialize(JsonArray array)
+	private List<Object> deserialize(JsonArray array)
 	{
-		MList<Object> list = new MList<>();
+		List<Object> list = new ArrayList<>();
 		for (JsonElement element : array)
 			list.add(deserialize(element));
 		return list;
