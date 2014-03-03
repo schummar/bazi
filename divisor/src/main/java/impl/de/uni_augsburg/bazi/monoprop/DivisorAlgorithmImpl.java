@@ -13,7 +13,7 @@ class DivisorAlgorithmImpl
 {
 	public static DivisorOutput calculate(VectorInput input, RoundingFunction r, int minPrecision)
 	{
-		DivisorOutput output = input.copy().cast(DivisorOutput.class);
+		DivisorOutput output = input.copy(DivisorOutput.class);
 		try
 		{
 			Supplier<Int> seatsOff = () -> output.seats().sub(output.parties().stream().map(VectorOutput.Party::seats).reduce(Int::add).orElse(BMath.ZERO));

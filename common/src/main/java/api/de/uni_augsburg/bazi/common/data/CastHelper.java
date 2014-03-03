@@ -69,7 +69,8 @@ public class CastHelper
 
 	public static Type param(Type type, int index)
 	{
-		return ((ParameterizedType) type).getActualTypeArguments()[index];
+		if (type instanceof ParameterizedType) return ((ParameterizedType) type).getActualTypeArguments()[index];
+		return null;
 	}
 
 
