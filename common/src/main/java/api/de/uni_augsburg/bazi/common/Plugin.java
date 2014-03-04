@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * Created by Marco on 26.02.14.
  */
-public interface Plugin<T>
+public interface Plugin<T extends Plugin.Instance>
 {
 	Class<? extends T> getInstanceType();
 	List<Object> getParamAttributes();
@@ -18,4 +18,6 @@ public interface Plugin<T>
 	{
 		String name();
 	}
+
+	public interface Instance{}
 }

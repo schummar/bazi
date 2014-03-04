@@ -74,7 +74,7 @@ public class JsonFormat implements Format
 					if (converted == value)
 						delegateHelper(gson, that, converted.getClass(), out, converted);
 					else
-						gson.toJson(Converters.serialize(value), value.getClass(), out);
+						gson.toJson(converted, converted.getClass(), out);
 				}
 				@Override public T read(JsonReader in) throws IOException
 				{

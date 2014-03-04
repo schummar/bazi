@@ -21,7 +21,8 @@ class ListAlgorithmImpl
 		in.parties().forEach(ListAlgorithmImpl::sumSubParties);
 
 		VectorOutput mainOut = main.apply(in);
-		ListOutput out = mainOut.cast(ListOutput.class);
+		ListOutput out = in.copy(ListOutput.class);
+		out.merge(mainOut);
 
 		out.parties().parallelStream().forEach(
 			p -> {

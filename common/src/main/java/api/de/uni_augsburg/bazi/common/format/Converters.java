@@ -1,6 +1,6 @@
 package de.uni_augsburg.bazi.common.format;
 
-import de.uni_augsburg.bazi.common.PluginManager;
+import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
@@ -100,7 +100,7 @@ public class Converters
 	}
 
 
-	private static void refreshAdapters(Class<?> type)
+	private static synchronized void refreshAdapters(Class<?> type)
 	{
 		if (SERIALIZERS.containsKey(type) && DESERIALIZERS.containsKey(type)) return;
 
@@ -120,9 +120,9 @@ public class Converters
 			}
 		}
 
-		if (PluginManager.INSTANCE.getPluginsOfInstanceType(type).size() > 0)
+		if (Plugin.Instance.class.isAssignableFrom(type))
 		{
-			PluginConverter<?> adapter = new PluginConverter<>(type);
+			PluginConverter<?> adapter = new PluginConverter<>((Class<? extends Plugin.Instance>) type);
 			SERIALIZERS.putIfAbsent(type, adapter);
 			DESERIALIZERS.putIfAbsent(type, adapter);
 			return;
@@ -146,8 +146,8 @@ public class Converters
 				(a, b) -> {
 					if (a.isAssignableFrom(b)) return 1;
 					if (b.isAssignableFrom(a)) return -1;
-					if (SERIALIZERS.get(a) == null) return 1;
-					if (SERIALIZERS.get(b) == null) return -1;
+					if (SERIALIZERS.get(a) == null && SERIALIZERS.get(b) != null) return 1;
+					if (SERIALIZERS.get(b) == null && SERIALIZERS.get(a) != null) return -1;
 					return 0;
 				}
 			);

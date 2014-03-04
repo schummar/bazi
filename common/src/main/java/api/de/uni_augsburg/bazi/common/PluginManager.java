@@ -42,7 +42,7 @@ public enum PluginManager
 	}
 
 
-	public <T> List<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
+	public <T extends Plugin.Instance> List<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
 	{
 		List<Plugin<? extends T>> list = new ArrayList<>();
 		for (Plugin<?> plugin : plugins)
@@ -55,7 +55,7 @@ public enum PluginManager
 		return list;
 	}
 
-	public <T> Optional<T> tryInstantiate(Class<T> type, Plugin.Params params)
+	public <T extends Plugin.Instance> Optional<T> tryInstantiate(Class<T> type, Plugin.Params params)
 	{
 		for (Plugin<? extends T> plugin : getPluginsOfInstanceType(type))
 		{
