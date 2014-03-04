@@ -31,6 +31,14 @@ allprojects {
 	}
 }
 
+dependencies {
+	runtime project(':divisor')
+	runtime project(':list')
+	runtime project(':quota')
+	runtime project(':json')
+	runtime project(':as')
+}
+
 repositories { mavenCentral() }
 dependencies {
 	compile project(':cl')

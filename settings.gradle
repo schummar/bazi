@@ -1,5 +1,5 @@
-include 'biprop',
-	'biprop:as',
+include 'as',
+	'biprop',
 	'bmm',
 	'bmm_pow',
 	'cl',

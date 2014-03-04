@@ -46,6 +46,7 @@ class ListAlgorithmImpl
 		if (!party.votes().equals(0))
 		{
 			Party copy = party.copy().cast(Party.class);
+			copy.parties().clear();
 			party.parties().add(0, copy);
 			party.votes(BMath.ZERO);
 			party.min(BMath.ZERO);

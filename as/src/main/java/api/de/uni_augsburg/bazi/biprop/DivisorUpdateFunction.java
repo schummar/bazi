@@ -1,10 +1,13 @@
 package de.uni_augsburg.bazi.biprop;
 
+import de.uni_augsburg.bazi.common.format.Converter;
+import de.uni_augsburg.bazi.common.format.ObjectConverter;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.monoprop.Divisor;
 
+@Converter(DivisorUpdateFunction.Converter.class)
 public interface DivisorUpdateFunction
 {
 	public Real apply(Divisor divisor, Int fault);
@@ -23,4 +26,17 @@ public interface DivisorUpdateFunction
 			return d.min();
 		return d.nice();
 	};
+
+
+	public static class Converter implements ObjectConverter<DivisorUpdateFunction>
+	{
+		@Override public Object serialize(DivisorUpdateFunction value)
+		{
+			return "mid";
+		}
+		@Override public DivisorUpdateFunction deserialize(Object value)
+		{
+			return MIDPOINT;
+		}
+	}
 }

@@ -1,25 +1,46 @@
 package de.uni_augsburg.bazi.biprop;
 
-class ASAlgorithm
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
+import de.uni_augsburg.bazi.common.UserCanceledException;
+import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
+import de.uni_augsburg.bazi.common.algorithm.VectorInput;
+import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.math.BMath;
+import de.uni_augsburg.bazi.math.Int;
+import de.uni_augsburg.bazi.math.Real;
+import de.uni_augsburg.bazi.monoprop.DivisorAlgorithm;
+import de.uni_augsburg.bazi.monoprop.DivisorOutput;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static de.uni_augsburg.bazi.biprop.BipropOutput.District;
+import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
+import static de.uni_augsburg.bazi.common.util.CollectionHelper.find;
+
+class ASAlgorithmImpl
 {
-	/*public static Map<Object, Real> calculate(
-		Table<BipropInput.District, String, BipropOutput.Party> table,
+	public static Map<Object, Real> calculate(
+		Table<District, String, Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
 		DivisorAlgorithm divisorAlgorithm
 	)
 	{
-		return new ASAlgorithm(divisorUpdateFunction, divisorAlgorithm, table, seats).calculate();
+		return new ASAlgorithmImpl(divisorUpdateFunction, divisorAlgorithm, table, seats).calculate();
 	}
 
 
-	Table<BipropInput.District, String, BipropOutput.Party> table;
-	Map<?, ? extends Map<?, BipropOutput.Party>> rows, cols, rowsAndCols;
+	Table<District, String, Party> table;
+	Map<?, ? extends Map<?, Party>> rows, cols, rowsAndCols;
 	Map<Object, Int> seats;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 	private final DivisorAlgorithm divisorAlgorithm;
 
-	ASAlgorithm(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<BipropInput.District, String, BipropOutput.Party> table, Map<Object, Int> seats)
+	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<District, String, Party> table, Map<Object, Int> seats)
 	{
 		this.divisorUpdateFunction = divisorUpdateFunction;
 		this.divisorAlgorithm = divisorAlgorithm;
@@ -28,7 +49,7 @@ class ASAlgorithm
 		rows = table.rowMap();
 		cols = table.columnMap();
 
-		Map<Object, Map<?, BipropOutput.Party>> rowsAndCols = new HashMap<>();
+		Map<Object, Map<?, Party>> rowsAndCols = new HashMap<>();
 		rowsAndCols.putAll(rows);
 		rowsAndCols.putAll(cols);
 		this.rowsAndCols = rowsAndCols;
@@ -37,8 +58,8 @@ class ASAlgorithm
 
 	private Map<Object, Real> calculate()
 	{
-		Map<BipropOutput.Party, Real> votes = table.values().stream().collect(
-			Collectors.toMap(Function.identity(), BipropOutput.Party::votes)
+		Map<Party, Real> votes = table.values().stream().collect(
+			Collectors.toMap(Function.identity(), Party::votes)
 		);
 		Set<Object> allKeys = Sets.union(table.rowKeySet(), table.columnKeySet());
 		Map<Object, Real> divisors = allKeys.stream()
@@ -54,7 +75,7 @@ class ASAlgorithm
 				Collectors.toMap(
 					row -> row.getKey(),
 					row -> row.getValue().values().stream()
-						.map(BipropOutput.Party::seats)
+						.map(Party::seats)
 						.reduce(Int::add).orElse(BMath.ZERO)
 						.sub(seats.get(row.getKey()))
 				)
@@ -68,26 +89,26 @@ class ASAlgorithm
 
 					// scale each votes with the respective column divisor
 					row.getValue().forEach(
-						(colKey, party) -> party.votes = party.votes.div(divisors.get(colKey))
+						(colKey, party) -> party.votes(party.votes().div(divisors.get(colKey)))
 					);
 
 					// calculate an apportionment => the row sum will be correct
-					DivisorOutput output = divisorAlgorithm.calculate(
-						new MonopropInput()
+					DivisorOutput output = divisorAlgorithm.apply(
+						new VectorInput()
 						{
-							@Override
-							public Int seats() { return seats.get(row.getKey()); }
-							@Override
-							public Collection<? extends Party> parties() { return row.getValue().values(); }
+							@Override public String name() { return ""; }
+							@Override public Int seats() { return seats.get(row.getKey()); }
+							@Override public List<? extends Party> parties() { return Lists.newArrayList(row.getValue().values()); }
 						}
 					);
 
 					// apply the calculated seats to the table and reset votes
 					row.getValue().values().forEach(
 						party -> {
-							party.votes = votes.get(party);
-							party.seats = output.parties().find(party.name).seats();
-							party.uniqueness = output.parties().find(party.name).uniqueness();
+							party.votes(votes.get(party));
+							VectorOutput.Party outParty = find(output.parties(), p -> p.name().equals(party.name()));
+							party.seats(outParty.seats());
+							party.uniqueness(outParty.uniqueness());
 						}
 					);
 
@@ -119,7 +140,7 @@ class ASAlgorithm
 			cols.forEach(
 				(colKey, col) -> {
 					Int sum = col.values().stream()
-						.map(BipropOutput.Party::seats)
+						.map(Party::seats)
 						.reduce(Int::add).orElse(BMath.ZERO);
 					int comp = sum.compareTo(seats.get(colKey));
 					if (comp < 0) Iminus.add(colKey);
@@ -141,8 +162,8 @@ class ASAlgorithm
 				rowsAndCols.get(u).forEach(
 					(key, party) -> {
 						if (!L.contains(key)
-							&& party.votes.compareTo(0) > 0
-							&& party.uniqueness == uniqueness)
+							&& party.votes().compareTo(0) > 0
+							&& party.uniqueness() == uniqueness)
 						{
 							Q.add(key);
 							L.add(key);
@@ -161,14 +182,14 @@ class ASAlgorithm
 			do
 			{
 				Object rowKey = pre.get(colKey);
-				BipropOutput.Party party = cols.get(colKey).get(rowKey);
-				party.seats = party.seats.sub(1);
-				party.uniqueness = Uniqueness.CAN_BE_MORE;
+				Party party = cols.get(colKey).get(rowKey);
+				party.seats(party.seats().sub(1));
+				party.uniqueness(Uniqueness.CAN_BE_MORE);
 
 				colKey = pre.get(rowKey);
 				party = cols.get(colKey).get(rowKey);
-				party.seats = party.seats.add(1);
-				party.uniqueness = Uniqueness.CAN_BE_LESS;
+				party.seats(party.seats().add(1));
+				party.uniqueness(Uniqueness.CAN_BE_LESS);
 			} while (!Iminus.contains(colKey));
 		}
 	}
@@ -176,8 +197,8 @@ class ASAlgorithm
 
 	private void transpose()
 	{
-		Map<?, ? extends Map<?, BipropOutput.Party>> temp = rows;
+		Map<?, ? extends Map<?, Party>> temp = rows;
 		rows = cols;
 		cols = temp;
-	}*/
+	}
 }
