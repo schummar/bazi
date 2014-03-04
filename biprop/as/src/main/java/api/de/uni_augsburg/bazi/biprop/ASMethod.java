@@ -1,6 +1,6 @@
 package de.uni_augsburg.bazi.biprop;
 
-public class ASMethod extends BipropMethod
+public class ASMethod extends BipropAlgorithm
 {
 	/*private final DivisorAlgorithm divisorAlgorithm;
 	private final DivisorUpdateFunction divisorUpdateFunction;

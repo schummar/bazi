@@ -8,6 +8,9 @@ import java.util.Map;
 @Converter(Data.Converter.class)
 public interface Data
 {
+	static <T extends Data> T create(Class<T> type) { return new MapData().cast(type); }
+
+
 	default <T extends Data> T cast(Class<? extends T> type) { return MapData.fromDataInterface(this).cast(type); }
 	default Data merge(Data value) { return MapData.fromDataInterface(this).merge(value); }
 	default Data copy() { return MapData.fromDataInterface(this); }

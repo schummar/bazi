@@ -4,6 +4,8 @@ import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.math.BMath;
 
+import static de.uni_augsburg.bazi.list.ListOutput.Party;
+
 /**
  * Created by Marco on 27.02.14.
  */
@@ -17,12 +19,11 @@ class ListAlgorithmImpl
 	public static ListOutput calculate(ListInput in, VectorAlgorithm main, VectorAlgorithm sub)
 	{
 		check(in);
-
-		in.parties().forEach(ListAlgorithmImpl::sumSubParties);
-
-		VectorOutput mainOut = main.apply(in);
 		ListOutput out = in.copy(ListOutput.class);
-		out.merge(mainOut);
+
+		out.parties().forEach(ListAlgorithmImpl::sumSubParties);
+
+		out.merge(main.apply(in));
 
 		out.parties().parallelStream().forEach(
 			p -> {
@@ -38,14 +39,13 @@ class ListAlgorithmImpl
 		return out;
 	}
 
-	private static void sumSubParties(ListInput.Party party)
+	private static void sumSubParties(Party party)
 	{
 		if (party.parties() == null || party.parties().size() == 0) return;
 
 		if (!party.votes().equals(0))
 		{
-			ListInput.Party copy = party.copy().cast(ListInput.Party.class);
-			copy.parties().clear();
+			Party copy = party.copy().cast(Party.class);
 			party.parties().add(0, copy);
 			party.votes(BMath.ZERO);
 			party.min(BMath.ZERO);

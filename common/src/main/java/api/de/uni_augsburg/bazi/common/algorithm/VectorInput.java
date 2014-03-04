@@ -1,9 +1,11 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
 import de.uni_augsburg.bazi.common.data.Data;
+import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,25 +14,14 @@ import java.util.List;
 public interface VectorInput extends Data
 {
 	String name();
-	void name(String name);
-
-	Int seats();
-	void seats(Int seats);
-
-	List<? extends Party> parties();
+	default Int seats() { return BMath.ZERO; }
+	default List<? extends Party> parties() { return new ArrayList<>(); }
 
 	public interface Party extends Data
 	{
 		String name();
-		void name(String name);
-
-		Real votes();
-		void votes(Real votes);
-
-		Int min();
-		void min(Int min);
-
-		Int max();
-		void max(Int max);
+		default Real votes() { return BMath.ZERO; }
+		default Int min() { return BMath.ZERO; }
+		default Int max() { return BMath.INF; }
 	}
 }
