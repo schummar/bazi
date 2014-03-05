@@ -31,7 +31,11 @@ allprojects {
 	}
 }
 
+
+repositories { mavenCentral() }
 dependencies {
+	compile project(':cl')
+
 	runtime project(':divisor')
 	runtime project(':list')
 	runtime project(':quota')
@@ -39,21 +43,21 @@ dependencies {
 	runtime project(':as')
 }
 
-repositories { mavenCentral() }
-dependencies {
-	compile project(':cl')
-}
-
 
 buildscript {
-	repositories { mavenCentral() }
-
-	dependencies { classpath 'eu.appsatori:gradle-fatjar-plugin:0.2' }
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
+	}
 }
-
-apply plugin: 'fatjar'
-
-fatJar {
-	archiveName = 'bazi.jar'
-	manifest { attributes 'Main-Class': 'de.uni_augsburg.bazi.cl.BAZI' }
+apply plugin: 'shadow'
+shadow {
+	outputFile = new File("${project.buildDir}/distributions/", "bazi.jar")
+}
+jar {
+	manifest {
+		attributes "Main-Class": "de.uni_augsburg.bazi.cl.BAZI"
+	}
 }

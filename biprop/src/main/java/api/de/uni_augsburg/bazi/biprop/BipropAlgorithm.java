@@ -46,12 +46,7 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm
 
 		data.districts().forEach(d -> d.divisor(new Divisor(divisors.get(d), divisors.get(d))));
 		data.partyDivisors(new LinkedHashMap<>());
-		table.columnKeySet().forEach(
-			name -> {
-				System.out.println(name + " -> " + data.partyDivisors());
-				data.partyDivisors().put(name, new Divisor(divisors.get(name), divisors.get(name)));
-			}
-		);
+		table.columnKeySet().forEach(name -> data.partyDivisors().put(name, new Divisor(divisors.get(name), divisors.get(name))));
 		return data;
 	}
 

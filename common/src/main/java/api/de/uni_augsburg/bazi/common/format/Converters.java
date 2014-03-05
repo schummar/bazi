@@ -122,6 +122,7 @@ public class Converters
 
 		if (Plugin.Instance.class.isAssignableFrom(type))
 		{
+			@SuppressWarnings("unchecked")
 			PluginConverter<?> adapter = new PluginConverter<>((Class<? extends Plugin.Instance>) type);
 			SERIALIZERS.putIfAbsent(type, adapter);
 			DESERIALIZERS.putIfAbsent(type, adapter);

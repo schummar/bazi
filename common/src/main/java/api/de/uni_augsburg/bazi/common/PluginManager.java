@@ -30,13 +30,14 @@ public enum PluginManager
 				{
 					Plugin<?> plugin = c.getConstructor().newInstance();
 					plugins.add(plugin);
-					LOGGER.info("loaded " + c);
 				}
 				catch (NoSuchMethodException | SecurityException e)
 				{
-					LOGGER.error(e.getMessage());
+					LOGGER.warn(e.getMessage());
 				}
 			}
+
+			LOGGER.info("loaded plugins:\n{}", plugins.toString().replaceAll(",", ",\n"));
 		}
 		catch (Exception e) {e.printStackTrace();}
 	}

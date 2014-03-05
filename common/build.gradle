@@ -17,7 +17,7 @@ sourceSets {
 
 repositories { mavenCentral() }
 dependencies {
-	compile 'org.slf4j:slf4j-simple:1.7.5'
+	compile 'org.slf4j:slf4j-jdk14:1.7.6'
 	compile 'com.google.guava:guava:16.0.1'
 	compile 'org.reflections:reflections:0.9.9-RC1'
 	compile project(':math')

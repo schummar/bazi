@@ -1,7 +1,9 @@
 package de.uni_augsburg.bazi.cl;
 
 import com.google.common.io.Files;
-import de.uni_augsburg.bazi.common.*;
+import de.uni_augsburg.bazi.common.PluginManager;
+import de.uni_augsburg.bazi.common.Resources;
+import de.uni_augsburg.bazi.common.Version;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.common.data.MapData;
@@ -16,6 +18,8 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 
 class BAZIImpl
@@ -24,10 +28,13 @@ class BAZIImpl
 
 	public static void main(String[] args)
 	{
+		boolean debug = keyExists(args, "-debug");
+		LogManager.getLogManager().getLogger("").setLevel(debug ? Level.ALL : Level.WARNING);
+
 		try {start(args);}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error("", e);
 		}
 	}
 
@@ -109,10 +116,20 @@ class BAZIImpl
 	}
 
 
+	private static boolean keyExists(String[] args, String key)
+	{
+		key = key.toLowerCase();
+		for (String s : args)
+			if (s.toLowerCase().equals(key))
+				return true;
+		return false;
+	}
+
 	private static <T> Optional<T> readValue(String[] args, String key, Function<String, T> converter)
 	{
+		key = key.toLowerCase();
 		int i = 0;
-		while (i < args.length && !args[i].equals(key))
+		while (i < args.length && !args[i].toLowerCase().equals(key))
 			i++;
 		i++;
 
