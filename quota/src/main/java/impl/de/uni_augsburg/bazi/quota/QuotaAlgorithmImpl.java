@@ -12,7 +12,7 @@ class QuotaAlgorithmImpl
 {
 	public static QuotaOutput calculate(VectorInput input, QuotaFunction quotaFunction, ResidualHandler residualHandler)
 	{
-		QuotaOutput output = input.copy().cast(QuotaOutput.class);
+		QuotaOutput output = input.copy(QuotaOutput.class);
 		Supplier<Int> seatsOff = () -> output.seats().sub(output.parties().stream().map(VectorOutput.Party::seats).reduce(Int::add).get());
 
 		Real votes = output.parties().stream().map(p -> p.votes()).reduce((x, y) -> x.add(y)).get();
