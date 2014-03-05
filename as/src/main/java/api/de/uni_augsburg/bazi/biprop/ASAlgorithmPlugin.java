@@ -1,7 +1,7 @@
 package de.uni_augsburg.bazi.biprop;
 
 import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.monoprop.DivisorAlgorithm;
+import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 
 import java.util.Collections;
 import java.util.List;

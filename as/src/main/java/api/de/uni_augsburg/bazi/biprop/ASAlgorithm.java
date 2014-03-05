@@ -3,7 +3,7 @@ package de.uni_augsburg.bazi.biprop;
 import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.DivisorAlgorithm;
+import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 
 import java.util.Map;
 

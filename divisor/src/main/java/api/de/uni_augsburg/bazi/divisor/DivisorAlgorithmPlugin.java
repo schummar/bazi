@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.monoprop;
+package de.uni_augsburg.bazi.divisor;
 
 
 import de.uni_augsburg.bazi.common.Plugin;

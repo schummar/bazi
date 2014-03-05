@@ -1,8 +1,8 @@
-package de.uni_augsburg.bazi.monoprop;
+package de.uni_augsburg.bazi.divisor;
 
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
-import de.uni_augsburg.bazi.monoprop.RoundingFunction.ExactRoundingFunction;
+import de.uni_augsburg.bazi.divisor.RoundingFunction.ExactRoundingFunction;
 
 import java.util.Collections;
 import java.util.List;

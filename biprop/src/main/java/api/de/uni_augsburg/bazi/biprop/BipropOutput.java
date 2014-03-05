@@ -1,8 +1,8 @@
 package de.uni_augsburg.bazi.biprop;
 
 import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
-import de.uni_augsburg.bazi.monoprop.Divisor;
-import de.uni_augsburg.bazi.monoprop.DivisorOutput;
+import de.uni_augsburg.bazi.divisor.Divisor;
+import de.uni_augsburg.bazi.divisor.DivisorOutput;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.monoprop;
+package de.uni_augsburg.bazi.divisor;
 
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
@@ -6,6 +6,7 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
+import de.uni_augsburg.bazi.monoprop.ShiftQueue;
 
 import java.util.function.Supplier;
 

@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.monoprop;
+package de.uni_augsburg.bazi.quota;
 
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
