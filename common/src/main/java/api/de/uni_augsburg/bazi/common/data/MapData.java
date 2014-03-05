@@ -5,10 +5,7 @@ import com.google.common.base.Defaults;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.uni_augsburg.bazi.common.data.Getter.asGetter;
@@ -27,17 +24,28 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 		if (obj instanceof MapData) return (MapData) obj;
 		if (obj instanceof ProxyData) return ((ProxyData) obj).delegate();
 
-		MapData data = new MapData();
+		MapData data = new MapData(obj);
 		for (Getter getter : Getter.getters(obj.getClass()))
 			data.put(getter.key(), getter.invoke(obj));
 		return data;
 	}
 
 
+	private final Object id;
 	private final Map<Class<?>, Data> proxies = new HashMap<>();
 
-	public MapData() {}
-	public MapData(Map<?, ?> m) { m.forEach((k, v) -> put(k.toString(), v)); }
+	public MapData()
+	{
+		id = this;
+	}
+	public MapData(Map<?, ?> m)
+	{
+		id = this; m.forEach((k, v) -> put(k.toString(), v));
+	}
+	public MapData(Object id)
+	{
+		this.id = id;
+	}
 
 
 	@Override public <T extends Data> T cast(Class<? extends T> type)
@@ -93,29 +101,12 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 	@SuppressWarnings("unchecked")
 	@Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
-		if (overriddenBy(method, getClass().getMethod("cast", Class.class)))
-			return cast((Class<? extends Data>) args[0]);
-
-		if (overriddenBy(method, getClass().getMethod("merge", Data.class)))
-			return merge((Data) args[0]);
-
-		if (overriddenBy(method, getClass().getMethod("copy")))
-			return copy();
-
-		if (overriddenBy(method, getClass().getMethod("copy", Class.class)))
-			return copy((Class<? extends Data>) args[0]);
-
-		if (overriddenBy(method, getClass().getMethod("crop", Class.class)))
-			return crop((Class<? extends Data>) args[0]);
-
-		if (overriddenBy(method, getClass().getMethod("serialize")))
-			return serialize();
-
-		if (overriddenBy(method, Object.class.getMethod("toString")))
-			return toString();
+		if (method.getDeclaringClass().isAssignableFrom(MapData.class))
+			return method.invoke(this, args);
 
 		if (overriddenBy(method, ProxyData.class.getMethod("delegate")))
 			return this;
+
 
 		Getter getter = asGetter(method);
 		if (getter != null)
@@ -161,5 +152,16 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 		return super.toString();
 	}
 
+	@Override public boolean equals(Object o)
+	{
+		if (o instanceof ProxyData) o = ((ProxyData) o).delegate();
+		if (o instanceof MapData) return id == ((MapData) o).id;
+		if (o instanceof Data) return id == o;
+		return super.equals(o);
+	}
 
+	@Override public int hashCode()
+	{
+		return System.identityHashCode(id);
+	}
 }
