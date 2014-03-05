@@ -20,7 +20,7 @@ public class Getter
 			String name = method.getName();
 			name = name.toLowerCase();
 			if (name.startsWith("get")) name = name.substring(3);
-			return new Getter(method);
+			return new Getter(name, method.getGenericReturnType(), method);
 		}
 		return null;
 	}
@@ -31,7 +31,6 @@ public class Getter
 		for (Method method : type.getMethods())
 		{
 			if (!Data.class.isAssignableFrom(method.getDeclaringClass())
-				|| !method.getDeclaringClass().isInterface()
 				|| method.getDeclaringClass().equals(Data.class)
 				|| !Modifier.isPublic(method.getModifiers())) continue;
 
@@ -42,18 +41,22 @@ public class Getter
 	}
 
 
+	private final String key;
+	private final Type type;
 	private final Method method;
-	public Getter(Method method)
+	public Getter(String key, Type type, Method method)
 	{
+		this.key = key;
+		this.type = type;
 		this.method = method;
 	}
 	public String key()
 	{
-		return method.getName();
+		return key;
 	}
 	public Type type()
 	{
-		return method.getGenericReturnType();
+		return type;
 	}
 	public Method method()
 	{
