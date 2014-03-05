@@ -80,7 +80,7 @@ class ASAlgorithmImpl
 						.sub(seats.get(row.getKey()))
 				)
 			);
-			if (!faults.values().stream().allMatch(BMath.ZERO::equals))
+			if (faults.values().stream().allMatch(BMath.ZERO::equals))
 				break;
 
 			// for each row (or column when transposed)

@@ -6,19 +6,26 @@
 	},
 	"districts": [
 		{
-			"name": "D0",
-			"seats": "10",
+			"name": "I",
+			"seats": "7",
 			"parties": [
 				{
 					"name": "A",
-					"votes": "1",
+					"votes": "123",
 					"min": "0",
 					"max": "oo",
 					"dir": "0"
 				},
 				{
 					"name": "B",
-					"votes": "1",
+					"votes": "912",
+					"min": "0",
+					"max": "oo",
+					"dir": "0"
+				},
+				{
+					"name": "C",
+					"votes": "312",
 					"min": "0",
 					"max": "oo",
 					"dir": "0"
@@ -26,19 +33,53 @@
 			]
 		},
 		{
-			"name": "D1",
-			"seats": "10",
+			"name": "II",
+			"seats": "5",
 			"parties": [
 				{
-					"name": "C",
-					"votes": "1",
+					"name": "A",
+					"votes": "45",
 					"min": "0",
 					"max": "oo",
 					"dir": "0"
 				},
 				{
-					"name": "D",
-					"votes": "1",
+					"name": "B",
+					"votes": "714",
+					"min": "0",
+					"max": "oo",
+					"dir": "0"
+				},
+				{
+					"name": "C",
+					"votes": "255",
+					"min": "0",
+					"max": "oo",
+					"dir": "0"
+				}
+			]
+		},
+		{
+			"name": "III",
+			"seats": "8",
+			"parties": [
+				{
+					"name": "A",
+					"votes": "815",
+					"min": "0",
+					"max": "oo",
+					"dir": "0"
+				},
+				{
+					"name": "B",
+					"votes": "414",
+					"min": "0",
+					"max": "oo",
+					"dir": "0"
+				},
+				{
+					"name": "C",
+					"votes": "215",
 					"min": "0",
 					"max": "oo",
 					"dir": "0"
