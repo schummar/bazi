@@ -2,10 +2,7 @@ package de.uni_augsburg.bazi.biprop;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
-import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
-import de.uni_augsburg.bazi.common.algorithm.MatrixInput;
-import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
-import de.uni_augsburg.bazi.common.algorithm.VectorInput;
+import de.uni_augsburg.bazi.common.algorithm.*;
 import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
@@ -49,7 +46,12 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm
 
 		data.districts().forEach(d -> d.divisor(new Divisor(divisors.get(d), divisors.get(d))));
 		data.partyDivisors(new LinkedHashMap<>());
-		table.columnKeySet().forEach(name -> data.partyDivisors().put(name, new Divisor(divisors.get(name), divisors.get(name))));
+		table.columnKeySet().forEach(
+			name -> {
+				System.out.println(name + " -> " + data.partyDivisors());
+				data.partyDivisors().put(name, new Divisor(divisors.get(name), divisors.get(name)));
+			}
+		);
 		return data;
 	}
 
@@ -68,8 +70,9 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm
 			{
 				Party party = district.parties().stream()
 					.filter(p -> p.name().equals(name))
-					.findAny().get();
+					.findAny().orElse(null);
 				if (party == null) party = ((VectorInput.Party) () -> name).cast(Party.class);
+				party.seats(BMath.ZERO);
 				table.put(district, name, party);
 			}
 
