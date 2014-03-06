@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Marco on 21.02.14.
  */
-public interface VectorOutput extends VectorInput, AlgorithmOutput
+public interface VectorOutput extends VectorInput
 {
 	@Override default List<? extends Party> parties() { return new ArrayList<>(); }
 

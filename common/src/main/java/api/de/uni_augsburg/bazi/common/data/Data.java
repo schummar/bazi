@@ -2,6 +2,7 @@ package de.uni_augsburg.bazi.common.data;
 
 import de.uni_augsburg.bazi.common.format.Converter;
 import de.uni_augsburg.bazi.common.format.ObjectConverter;
+import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 
 import java.util.Map;
 
@@ -16,13 +17,15 @@ public interface Data
 	default Data copy() { return MapData.fromDataInterface(this); }
 	default <T extends Data> T copy(Class<T> type) { return MapData.fromDataInterface(this).copy(type); }
 	default <T extends Data> T crop(Class<T> type) { return MapData.fromDataInterface(this).crop(type); }
-	default Map<String, Object> serialize() { return MapData.fromDataInterface(this).serialize(); }
+	default Map<String, Object> toMap() { return MapData.fromDataInterface(this).toMap(); }
+	default PlainSupplier plain() { return MapData.fromDataInterface(this).plain(); }
+	default Data plain(PlainSupplier plain) { return MapData.fromDataInterface(this).plain(plain); }
 
 	public static class Converter implements ObjectConverter<Data>
 	{
 		@Override public Object serialize(Data value)
 		{
-			return value.serialize();
+			return value.toMap();
 		}
 		@Override public Data deserialize(Object value)
 		{

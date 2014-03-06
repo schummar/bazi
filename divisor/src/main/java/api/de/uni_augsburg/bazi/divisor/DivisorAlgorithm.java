@@ -12,22 +12,25 @@ public class DivisorAlgorithm implements VectorAlgorithm
 {
 	private final RoundingFunction roundingFunction;
 	private final int minPrecision;
+	private final String name;
 
-	public DivisorAlgorithm(RoundingFunction roundingFunction, int minPrecision)
+	public DivisorAlgorithm(RoundingFunction roundingFunction, int minPrecision, String name)
 	{
 		this.roundingFunction = roundingFunction;
 		this.minPrecision = minPrecision;
+		this.name = name;
 	}
 
-	public DivisorAlgorithm(ExactRoundingFunction roundingFunction)
+	public DivisorAlgorithm(ExactRoundingFunction roundingFunction, String name)
 	{
 		this.roundingFunction = roundingFunction;
 		this.minPrecision = 0;
+		this.name = name;
 	}
 
 	public RoundingFunction roundingFunction() { return roundingFunction; }
 	public int minPrecision() { return minPrecision; }
 
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
-	@Override public DivisorOutput apply(VectorInput in) { return DivisorAlgorithmImpl.calculate(in, roundingFunction, minPrecision); }
+	@Override public DivisorOutput apply(VectorInput in) { return DivisorAlgorithmImpl.calculate(in, roundingFunction, minPrecision, name); }
 }

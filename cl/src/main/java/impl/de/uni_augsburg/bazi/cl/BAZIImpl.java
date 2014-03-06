@@ -64,7 +64,7 @@ class BAZIImpl
 		{
 			String name = out.isPresent()
 				? Files.getFileExtension(out.get().toString())
-				: "json";
+				: "plain";
 			outFormat = PluginManager.INSTANCE.tryInstantiate(Format.class, () -> name);
 		}
 
@@ -107,7 +107,7 @@ class BAZIImpl
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
 
 		Data result = algorithm.apply(baziFile);
-		System.out.println(outFormat.get().serialize(result.serialize()));
+		System.out.println(outFormat.get().serialize(result));
 	}
 
 	public interface BaziFile extends Data

@@ -42,7 +42,7 @@ public class CastHelper
 			if (Map.class.isAssignableFrom(raw))
 			{
 				if (param(type, 0).equals(String.class) && param(type, 1).equals(Object.class) && value instanceof Data)
-					return (T) ((Data) value).serialize();
+					return (T) ((Data) value).toMap();
 				if (value instanceof Map)
 					return (T) new CastMap<>((Map) value, param(type, 1));
 			}

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 class DivisorAlgorithmImpl
 {
-	public static DivisorOutput calculate(VectorInput input, RoundingFunction r, int minPrecision)
+	public static DivisorOutput calculate(VectorInput input, RoundingFunction r, int minPrecision, String name)
 	{
 		DivisorOutput output = input.copy(DivisorOutput.class);
 		try
@@ -33,6 +33,8 @@ class DivisorAlgorithmImpl
 			q.updateUniquenesses();
 			output.divisor(new Divisor(q.nextIncreaseValue(), q.nextDecreaseValue()));
 
+			if (output.name() == null) output.name(name);
+			output.plain(new DivisorPlain(output, r));
 			return output;
 		}
 		catch (ShiftQueue.NoShiftPossible e)

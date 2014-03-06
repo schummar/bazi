@@ -1,11 +1,15 @@
 package de.uni_augsburg.bazi.common.data;
 
 import com.google.common.base.Defaults;
+import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.uni_augsburg.bazi.common.data.Getter.asGetter;
@@ -33,6 +37,7 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 
 	private final Object id;
 	private final Map<Class<?>, Data> proxies = new HashMap<>();
+	private PlainSupplier plain = null;
 
 	public MapData()
 	{
@@ -92,10 +97,13 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 	}
 
 
-	@Override public Map<String, Object> serialize()
+	@Override public Map<String, Object> toMap()
 	{
 		return this;
 	}
+
+	@Override public PlainSupplier plain() { return plain; }
+	@Override public Data plain(PlainSupplier plain) { this.plain = plain; return this; }
 
 
 	@SuppressWarnings("unchecked")
@@ -104,7 +112,7 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 		if (method.getDeclaringClass().isAssignableFrom(MapData.class))
 			return method.invoke(this, args);
 
-		if (overriddenBy(method, ProxyData.class.getMethod("delegate")))
+		if (method.getDeclaringClass().equals(ProxyData.class))
 			return this;
 
 
@@ -125,20 +133,6 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 		}
 
 		return Defaults.defaultValue(method.getReturnType());
-	}
-
-
-	private static boolean overriddenBy(Method m0, Method m1)
-	{
-		if (!m0.getName().equals(m1.getName())
-			|| !m0.getReturnType().isAssignableFrom(m1.getReturnType())
-			|| m0.getParameterCount() != m1.getParameterCount())
-			return false;
-
-		for (int i = 0; i < m0.getParameterCount(); i++)
-			if (!m1.getParameterTypes()[i].isAssignableFrom(m0.getParameterTypes()[i]))
-				return false;
-		return true;
 	}
 
 

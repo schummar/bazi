@@ -1,12 +1,12 @@
-package de.uni_augsburg.bazi.cl;
+package de.uni_augsburg.bazi.common.plain;
 
-public class Options
+public class PlainOptions
 {
 	public final Orientation orientation;
 	public final DivisorFormat divisorFormat;
 	public final TieFormat tieFormat;
 
-	public Options(Orientation orientation, DivisorFormat divisorFormat, TieFormat tieFormat)
+	public PlainOptions(Orientation orientation, DivisorFormat divisorFormat, TieFormat tieFormat)
 	{
 		this.orientation = orientation;
 		this.divisorFormat = divisorFormat;

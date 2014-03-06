@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import de.uni_augsburg.bazi.common.Resources;
+import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.common.format.Converters;
 import de.uni_augsburg.bazi.common.format.Format;
 
@@ -56,9 +57,9 @@ public class JsonFormat implements Format
 	}
 
 
-	@Override public String serialize(Map<String, Object> map)
+	@Override public String serialize(Data data)
 	{
-		return gson.toJson(map);
+		return gson.toJson(data.toMap());
 	}
 
 	private static final TypeAdapterFactory TYPE_ADAPTER_FACTORY = new TypeAdapterFactory()

@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.common.format;
 
 import de.uni_augsburg.bazi.common.Plugin;
+import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.Map;
 
@@ -10,5 +11,5 @@ import java.util.Map;
 public interface Format extends Plugin.Instance
 {
 	Map<String, Object> deserialize(String s);
-	String serialize(Map<String, Object> map);
+	String serialize(Data data);
 }
