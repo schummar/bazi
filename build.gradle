@@ -29,10 +29,27 @@ allprojects {
 			'year'   : Calendar.getInstance().get(Calendar.YEAR).toString()
 		]
 	}
+
+	apply plugin: 'java'
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+	sourceSets {
+		main {
+			java {
+				srcDirs = [
+					'src/main/java/api',
+					'src/main/java/impl'
+				]
+			}
+		}
+	}
+
+	repositories { mavenCentral() }
+	dependencies {
+		testCompile 'junit:junit:4.11'
+	}
 }
 
-
-repositories { mavenCentral() }
 dependencies {
 	compile project(':cl')
 
@@ -41,6 +58,8 @@ dependencies {
 	runtime project(':quota')
 	runtime project(':json')
 	runtime project(':as')
+
+	runtime 'org.slf4j:slf4j-jdk14:1.7.6'
 }
 
 

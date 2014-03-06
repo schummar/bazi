@@ -1,24 +1,7 @@
-apply plugin: 'java'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-
-
-sourceSets {
-	main {
-		java {
-			srcDirs = [
-				'src/main/java/api',
-				'src/main/java/impl'
-			]
-		}
-	}
-}
-
-repositories { mavenCentral() }
 dependencies {
-	compile 'org.slf4j:slf4j-jdk14:1.7.6'
+	compile project(':math')
+
+	compile 'org.slf4j:slf4j-api:1.7.6'
 	compile 'com.google.guava:guava:16.0.1'
 	compile 'org.reflections:reflections:0.9.9-RC1'
-	compile project(':math')
 }
