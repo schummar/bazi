@@ -75,13 +75,13 @@ public class BMath
 		{
 			return new Apint(s);
 		}
-		catch (NumberFormatException e)
+		catch (NumberFormatException ignored)
 		{}
 		try
 		{
 			return new Aprational(s);
 		}
-		catch (NumberFormatException e)
+		catch (NumberFormatException ignored)
 		{}
 		try
 		{
@@ -90,7 +90,7 @@ public class BMath
 			String num = s.replaceAll("\\.", "");
 			return AprationalMath.scale(new Apint(num), scale);
 		}
-		catch (NumberFormatException e)
+		catch (NumberFormatException ignored)
 		{}
 
 		throw new NumberFormatException();

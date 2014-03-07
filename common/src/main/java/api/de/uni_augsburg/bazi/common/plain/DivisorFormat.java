@@ -90,5 +90,5 @@ public enum DivisorFormat implements ConvertibleEnum
 			{
 				return Resources.get("divisorformat.quotients");
 			}
-		};
+		}
 }

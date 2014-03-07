@@ -73,7 +73,7 @@ class ASAlgorithmImpl
 			// update faults
 			Map<Object, Int> faults = rows.entrySet().stream().collect(
 				Collectors.toMap(
-					row -> row.getKey(),
+					Map.Entry::getKey,
 					row -> row.getValue().values().stream()
 						.map(Party::seats)
 						.reduce(Int::add).orElse(BMath.ZERO)
