@@ -1,3 +1,4 @@
+import de.undercouch.gradle.tasks.download.Download
 import org.apache.tools.ant.filters.ReplaceTokens
 
 def getVersionFromGit = {
@@ -69,6 +70,7 @@ buildscript {
 	}
 	dependencies {
 		classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
+		classpath 'de.undercouch:gradle-download-task:0.5'
 	}
 }
 apply plugin: 'shadow'
@@ -83,6 +85,7 @@ jar {
 
 
 apply plugin: 'distribution'
+apply plugin: 'download-task'
 distributions {
 	main {
 		baseName = 'bazi'
@@ -94,9 +97,18 @@ distributions {
 				]
 			}
 			from 'build/distributions/bazi.jar'
+			from 'build/data.zip'
 		}
+
 	}
 }
 
+task downloadDataZip(type: Download) {
+	src 'http://www.math.uni-augsburg.de/stochastik/bazitest/data.zip'
+	dest buildDir
+}
+
 shadowJar.dependsOn subprojects.jar
-installDist.dependsOn shadowJar
+distTar.dependsOn shadowJar, downloadDataZip
+distZip.dependsOn shadowJar, downloadDataZip
+installDist.dependsOn shadowJar, downloadDataZip
