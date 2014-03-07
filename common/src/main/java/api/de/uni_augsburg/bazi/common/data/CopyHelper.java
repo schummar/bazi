@@ -16,19 +16,19 @@ public class CopyHelper
 	public static <T> T copy(Object v)
 	{
 		// Map
-		if (v instanceof MapData.ProxyData) v = ((MapData.ProxyData) v).delegate();
+		if (v instanceof Data) v = MapData.fromDataInterface((Data) v);
 		if (v instanceof Map)
 		{
 			Map map = (Map) v;
 			Map newMap = new LinkedHashMap();
 			map.forEach((k, w) -> newMap.put(k, copy(w)));
+			if (v instanceof Data)
+			{
+				MapData md = new MapData(newMap);
+				md.plain(((Data) v).plain());
+				return (T) md;
+			}
 			return (T) newMap;
-		}
-
-		// Data instance
-		if (v instanceof Data)
-		{
-			return (T) ((Data) v).copy();
 		}
 
 		// List

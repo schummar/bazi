@@ -17,6 +17,8 @@ public class MergeHelper
 		// Map
 		if (v1 instanceof MapData.ProxyData) v1 = ((MapData.ProxyData) v1).delegate();
 		if (v2 instanceof MapData.ProxyData) v2 = ((MapData.ProxyData) v2).delegate();
+		if (v1 instanceof Data && v2 instanceof Data)
+			v1 = ((Data) v1).plain(((Data) v2).plain());
 		if (v1 instanceof Map && v2 instanceof Map)
 		{
 			Map m1 = (Map) v1, m2 = (Map) v2;

@@ -36,6 +36,7 @@ class ListAlgorithmImpl
 			}
 		);
 
+		out.plain(new ListPlain(out));
 		return out;
 	}
 

@@ -82,7 +82,7 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 
 	@Override public MapData copy()
 	{
-		return new MapData(CopyHelper.copy(this));
+		return CopyHelper.copy(this);
 	}
 
 
