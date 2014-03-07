@@ -33,8 +33,7 @@ class DivisorAlgorithmImpl
 			q.updateUniquenesses();
 			output.divisor(new Divisor(q.nextIncreaseValue(), q.nextDecreaseValue()));
 
-			if (output.name() == null) output.name(name);
-			output.plain(new DivisorPlain(output, r));
+			output.plain(new DivisorPlain(output, r, name));
 			return output;
 		}
 		catch (ShiftQueue.NoShiftPossible e)

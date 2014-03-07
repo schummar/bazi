@@ -10,6 +10,16 @@ public class StringTable
 	public static final int DEFAULT_MARGIN = 2;
 
 	private final List<Column> columns = new ArrayList<>();
+	private final List<String> titles = new ArrayList<>(), footnotes = new ArrayList<>();
+
+	public List<String> titles()
+	{
+		return titles;
+	}
+	public List<String> footnotes()
+	{
+		return footnotes;
+	}
 
 
 	public Column col(int col)
@@ -59,6 +69,7 @@ public class StringTable
 		}
 
 		StringBuilder s = new StringBuilder();
+		titles.forEach(t -> s.append("*").append(t).append("\n"));
 		for (int row = 0; row < height(); row++)
 		{
 			for (int col = 0; col < width(); col++)
@@ -66,8 +77,9 @@ public class StringTable
 				String value = col(col).getOrDefault(row, "");
 				s.append(paddings.get(col).apply(value));
 			}
-			if (row < height() - 1) s.append("\n");
+			s.append("\n");
 		}
+		footnotes.forEach(f -> s.append("*").append(f).append("\n"));
 		return s.toString();
 	}
 

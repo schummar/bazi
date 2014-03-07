@@ -37,7 +37,7 @@ public class PlainFormat implements Format
 		if (data.plain() != null)
 			return data.plain().get(options).stream()
 				.map(StringTable::toString)
-				.collect(Collectors.joining("\n\n\n"));
+				.collect(Collectors.joining("\n\n"));
 
 		return null;
 	}

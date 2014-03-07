@@ -19,15 +19,19 @@ import java.util.List;
 public class MonopropPlain implements PlainSupplier
 {
 	protected final VectorOutput output;
-	public MonopropPlain(VectorOutput output)
+	protected final String name;
+	public MonopropPlain(VectorOutput output, String name)
 	{
 		this.output = output;
+		this.name = name;
 	}
 
 
 	@Override public List<StringTable> get(PlainOptions options)
 	{
 		StringTable table = new StringTable();
+		if (output.name() != null)
+			table.titles().add(output.name());
 		partyColumn(table.col(), options);
 		voteColumn(table.col(), options);
 		conditionColumn(table.col(), options);
@@ -77,7 +81,7 @@ public class MonopropPlain implements PlainSupplier
 
 	public void resultColumn(StringTable.Column col, PlainOptions options)
 	{
-		col.add(output.name());
+		col.add(name);
 		output.parties().forEach(p -> col.add(p.seats().toString() + p.uniqueness().toString()));
 
 		Int sum = output.parties().stream()

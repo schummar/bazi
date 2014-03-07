@@ -1,7 +1,8 @@
 {
 	"algorithm": {
 		"name": "list",
-		"main": "divstd"
+		"main": "divstd",
+		"sub": "HaQgrR"
 	},
 	"seats": "10",
 	"parties": [

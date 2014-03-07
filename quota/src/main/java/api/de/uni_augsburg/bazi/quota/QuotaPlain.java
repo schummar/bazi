@@ -16,9 +16,9 @@ import de.uni_augsburg.bazi.monoprop.MonopropPlain;
 public class QuotaPlain extends MonopropPlain
 {
 	private final QuotaOutput output;
-	public QuotaPlain(QuotaOutput output)
+	public QuotaPlain(QuotaOutput output, String name)
 	{
-		super(output);
+		super(output, name);
 		this.output = output;
 	}
 

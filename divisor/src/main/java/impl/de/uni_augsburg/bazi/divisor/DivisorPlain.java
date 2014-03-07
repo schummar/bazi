@@ -14,9 +14,9 @@ public class DivisorPlain extends MonopropPlain
 {
 	protected final DivisorOutput output;
 	protected final RoundingFunction r;
-	public DivisorPlain(DivisorOutput output, RoundingFunction r)
+	public DivisorPlain(DivisorOutput output, RoundingFunction r, String name)
 	{
-		super(output);
+		super(output, name);
 		this.output = output;
 		this.r = r;
 	}
@@ -47,7 +47,7 @@ public class DivisorPlain extends MonopropPlain
 		output.parties().forEach(
 			p -> {
 				Real q = p.votes().div(output.divisor().nice());
-				col.add(DivisorRoundingHelper.round(q, 3, 100, r).toString());
+				col.add(DivisorRoundingHelper.round(q, 3, options.maxDigits(), r).toString());
 			}
 		);
 		col.add(String.format("(%s)", divisor(options)));
@@ -58,15 +58,23 @@ public class DivisorPlain extends MonopropPlain
 		switch (options.divisorFormat())
 		{
 			case INTERVAL:
-				return String.format("[%s..%s]", output.divisor().min(), output.divisor().max());
+				return String.format(
+					"[%s..%s]",
+					output.divisor().min().precision(options.maxDigits()),
+					output.divisor().max().precision(options.maxDigits())
+				);
 			case MULT:
 				return output.divisor().nice().inv().toString();
 			case MULT_INTERVAL:
-				return String.format("[%s..%s]", output.divisor().max().inv(), output.divisor().min().inv());
+				return String.format(
+					"[%s..%s]",
+					output.divisor().max().inv().precision(options.maxDigits()),
+					output.divisor().min().inv().precision(options.maxDigits())
+				);
 			case DIV_SPLIT:
 			case QUOTIENTS:
 			default:
-				return output.divisor().nice().toString();
+				return output.divisor().nice().precision(options.maxDigits()).toString();
 		}
 	}
 }

@@ -35,8 +35,7 @@ class QuotaAlgorithmImpl
 
 		q.updateUniquenesses();
 
-		if (output.name() == null) output.name(name);
-		output.plain(new QuotaPlain(output));
+		output.plain(new QuotaPlain(output,name));
 		return output;
 	}
 }
