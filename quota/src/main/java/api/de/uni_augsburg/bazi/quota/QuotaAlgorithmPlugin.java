@@ -53,6 +53,6 @@ public class QuotaAlgorithmPlugin implements Plugin<QuotaAlgorithm>
 			default: return Optional.empty();
 		}
 
-		return Optional.of(new QuotaAlgorithm(q, r));
+		return Optional.of(new QuotaAlgorithm(q, r, params.name()));
 	}
 }

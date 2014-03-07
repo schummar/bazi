@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 class QuotaAlgorithmImpl
 {
-	public static QuotaOutput calculate(VectorInput input, QuotaFunction quotaFunction, ResidualHandler residualHandler)
+	public static QuotaOutput calculate(VectorInput input, QuotaFunction quotaFunction, ResidualHandler residualHandler, String name)
 	{
 		QuotaOutput output = input.copy(QuotaOutput.class);
 		Supplier<Int> seatsOff = () -> output.seats().sub(output.parties().stream().map(VectorOutput.Party::seats).reduce(Int::add).get());
@@ -35,6 +35,8 @@ class QuotaAlgorithmImpl
 
 		q.updateUniquenesses();
 
+		if (output.name() == null) output.name(name);
+		output.plain(new QuotaPlain(output));
 		return output;
 	}
 }

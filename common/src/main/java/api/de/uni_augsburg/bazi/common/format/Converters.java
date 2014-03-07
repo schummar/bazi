@@ -129,6 +129,13 @@ public class Converters
 			return;
 		}
 
+		if (type.isEnum() && ConvertibleEnum.class.isAssignableFrom(type))
+		{
+			EnumConverter adapter = EnumConverter.of(type);
+			SERIALIZERS.putIfAbsent(type, adapter);
+			DESERIALIZERS.putIfAbsent(type, adapter);
+		}
+
 
 		if (!SERIALIZERS.containsKey(type))
 		{

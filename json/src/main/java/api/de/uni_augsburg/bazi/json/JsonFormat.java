@@ -26,6 +26,9 @@ public class JsonFormat implements Format
 		.create();
 
 
+	@Override public void configure(Data data) { }
+
+
 	@Override public Map<String, Object> deserialize(String s)
 	{
 		JsonElement root = new JsonParser().parse(s);

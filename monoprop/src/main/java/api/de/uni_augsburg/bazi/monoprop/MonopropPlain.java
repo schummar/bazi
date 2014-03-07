@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.monoprop;
 
+import de.uni_augsburg.bazi.common.plain.Orientation;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
@@ -32,6 +33,10 @@ public class MonopropPlain implements PlainSupplier
 		voteColumn(table.col(), options);
 		conditionColumn(table.col(), options);
 		resultColumn(table.col(), options);
+
+		if (options.orientation() == Orientation.HORIZONTAL
+			|| options.orientation() == Orientation.HORVER)
+			table = table.transposed();
 		return Arrays.asList(table);
 	}
 
@@ -69,49 +74,6 @@ public class MonopropPlain implements PlainSupplier
 			.reduce(Int::add).orElse(BMath.ZERO);
 		col.add(String.format("%s..%s", minSum, maxSum));
 	}
-
-
-	/*private StringTable asStringTable(Collection<? extends MonopropInput.Party> parties, Collection<? extends BasicMethod.Output> outputs)
-	{
-		StringTable st = new StringTable();
-		StringTable.Column names = st.col(0), votes = st.col(1), conditions = st.col(2);
-
-		names.append(Resources.get("output.names"));
-		votes.append(Resources.get("output.votes"));
-		conditions.append(Resources.get("output.conditions"));
-
-		for (MonopropInput.Party party : parties)
-		{
-			names.append(party.name());
-			votes.append(party.votes());
-			conditions.append(String.format("%s|%s..%s", party.dir(), party.min(), party.max()));
-		}
-
-		boolean divisor = outputs.stream().map(BasicMethod.Output::method).anyMatch(BasicMethod.Divisor.class::isInstance);
-		boolean quota = outputs.stream().map(BasicMethod.Output::method).anyMatch(BasicMethod.Quota.class::isInstance);
-		String label = divisor && quota ? "div_quo" : (divisor ? "div" : "quo");
-		if (options.divisorFormat == Options.DivisorFormat.QUOTIENT)
-		{
-			names.append(String.format("%s (%s)", Resources.get("output.sum"), Resources.get("output.div_quo." + label)));
-		}
-		else
-		{
-			names.append(Resources.get("output.sum"));
-			names.append(Resources.get("output." + options.divisorFormat.name().toLowerCase() + "." + label));
-		}
-
-		Real sum = parties.stream().map(MonopropInput.Party::votes).reduce(Real::add).get();
-		Rational dirSum = parties.stream().map(MonopropInput.Party::dir).reduce(Int::add).get();
-		Rational minSum = parties.stream().map(MonopropInput.Party::min).reduce(Int::add).get();
-		Rational maxSum = parties.stream().map(MonopropInput.Party::max).reduce(Int::add).get();
-		votes.append(sum);
-		conditions.append(String.format("%s|%s..%s", dirSum, minSum, maxSum));
-
-		for (BasicMethod.Output output : outputs)
-			st.append(output.asStringTable(options.divisorFormat, options.tieFormat));
-
-		return options.orientation == Options.Orientation.VERTICAL ? st : st.transposed();
-	}*/
 
 
 	public void resultColumn(StringTable.Column col, PlainOptions options)

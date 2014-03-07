@@ -4,7 +4,7 @@ import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.apfloat.Apint;
 
-public class Real implements Comparable<Real>
+public class Real implements Comparable<Real>, Interval
 {
 	public static Real valueOf(String that)
 	{
@@ -144,7 +144,7 @@ public class Real implements Comparable<Real>
 	public boolean equals(Object that)
 	{
 		return (this == that)
-					 || (that != null && getClass().isInstance(that) && equals((Real) that));
+			|| (that != null && getClass().isInstance(that) && equals((Real) that));
 	}
 	public boolean equals(long that)
 	{
@@ -237,7 +237,13 @@ public class Real implements Comparable<Real>
 
 	public long scale()
 	{
-		return delegate.scale();
+		return delegate.scale() - 1;
+	}
+
+
+	public Real scale(long l)
+	{
+		return mul(BMath.TEN.pow(l));
 	}
 
 
@@ -256,6 +262,21 @@ public class Real implements Comparable<Real>
 		if (rounded.delegate.equals(Apint.ZERO)) return BMath.ZERO;
 		return new Real(rounded.delegate.precision(precision + rounded.delegate.scale()));
 	}
+
+
+	@Override public Real min()
+	{
+		return this;
+	}
+	@Override public Real max()
+	{
+		return this;
+	}
+	@Override public Real nice()
+	{
+		return this;
+	}
+
 
 	@Override
 	public String toString()

@@ -266,6 +266,10 @@ public class Rational extends Real
 		return sub(Int());
 	}
 
+	@Override public Rational scale(long l)
+	{
+		return mul(BMath.TEN.pow(l));
+	}
 
 	@Override
 	public String toString()

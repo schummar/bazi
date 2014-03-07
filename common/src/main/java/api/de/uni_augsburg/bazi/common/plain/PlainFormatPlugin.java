@@ -22,6 +22,6 @@ public class PlainFormatPlugin implements Plugin<PlainFormat>
 	@Override public Optional<? extends PlainFormat> tryInstantiate(Params params)
 	{
 		if (!params.name().equals("plain")) return Optional.empty();
-		return Optional.of(new PlainFormat());
+		return Optional.of(new PlainFormat(params));
 	}
 }

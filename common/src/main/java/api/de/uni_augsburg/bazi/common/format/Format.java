@@ -12,4 +12,5 @@ public interface Format extends Plugin.Instance
 {
 	Map<String, Object> deserialize(String s);
 	String serialize(Data data);
+	void configure(Data data);
 }

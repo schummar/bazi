@@ -13,6 +13,21 @@ import java.util.stream.Collectors;
  */
 public class PlainFormat implements Format
 {
+	private PlainOptions options;
+	public PlainFormat(Data data)
+	{
+		options = data.cast(PlainOptions.class);
+		if (options.divisorFormat() == null) options.divisorFormat(DivisorFormat.DIV_SPLIT);
+		if (options.orientation() == null) options.oritentation(Orientation.VERTICAL);
+		if (options.tieFormat() == null) options.tieFormat(TieFormat.CODED);
+		if (options.maxDigits() == null) options.maxDigits(16);
+	}
+	@Override public void configure(Data data)
+	{
+		options.merge(data);
+	}
+
+
 	@Override public Map<String, Object> deserialize(String s)
 	{
 		throw new RuntimeException(new OperationNotSupportedException());
@@ -20,9 +35,7 @@ public class PlainFormat implements Format
 	@Override public String serialize(Data data)
 	{
 		if (data.plain() != null)
-			return data.plain().get(
-				new PlainOptions(PlainOptions.Orientation.VERTICAL, PlainOptions.DivisorFormat.QUOTIENT, PlainOptions.TieFormat.CODED)
-			).stream()
+			return data.plain().get(options).stream()
 				.map(StringTable::toString)
 				.collect(Collectors.joining("\n\n\n"));
 

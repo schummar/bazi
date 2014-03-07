@@ -1,6 +1,11 @@
 {
 	"algorithm": {
-		"name": "divstd"
+		"name": "haqgrr"
+	},
+	"output": {
+		"orientation": "ver",
+		"divisorformat": "quotients",
+		"tieformat": "coded"
 	},
 	"seats": "10",
 	"parties": [

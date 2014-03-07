@@ -124,4 +124,28 @@ public class BMath
 			if (res.precision() >= minPrecision) return res;
 		}
 	}
+
+
+	public static Real niceMidValue(Real min, Real max)
+	{
+		if (min.equals(max)) return min;
+
+		int digits = 0;
+		Real minr, maxr;
+		do
+		{
+			minr = min.precision(digits);
+			maxr = max.precision(digits);
+			digits++;
+		} while (minr.equals(maxr));
+
+		Real diff = maxr.sub(minr);
+		long scale = diff.scale();
+		diff = diff.scale(-scale);
+		if (diff.compareTo(ONE) > 0 || diff.compareTo(MINUS_ONE) < 0) diff = diff.div(2).floor();
+		else diff = diff.div(2);
+		diff = diff.scale(scale);
+
+		return min.add(diff);
+	}
 }

@@ -19,5 +19,5 @@ public interface Plugin<T extends Plugin.Instance>
 		String name();
 	}
 
-	public interface Instance{}
+	public interface Instance {}
 }

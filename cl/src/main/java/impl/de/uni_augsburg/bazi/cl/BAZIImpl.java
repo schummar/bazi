@@ -101,7 +101,8 @@ class BAZIImpl
 
 		// now the actual work begins
 		BaziFile baziFile = new MapData(inFormat.get().deserialize(inputString)).cast(BaziFile.class);
-		//System.out.println(baziFile);
+		if (baziFile.output() != null)
+			outFormat.get().configure(baziFile.output());
 
 		Algorithm algorithm = baziFile.algorithm();
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
@@ -113,6 +114,7 @@ class BAZIImpl
 	public interface BaziFile extends Data
 	{
 		public Algorithm algorithm();
+		public Data output();
 	}
 
 
