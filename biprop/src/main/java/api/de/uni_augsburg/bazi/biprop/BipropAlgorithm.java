@@ -2,14 +2,17 @@ package de.uni_augsburg.bazi.biprop;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
-import de.uni_augsburg.bazi.common.algorithm.*;
+import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
+import de.uni_augsburg.bazi.common.algorithm.MatrixInput;
+import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
+import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.data.Data;
-import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Real;
 import de.uni_augsburg.bazi.divisor.Divisor;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorOutput;
+import de.uni_augsburg.bazi.math.BMath;
+import de.uni_augsburg.bazi.math.Int;
+import de.uni_augsburg.bazi.math.Real;
 
 import java.util.*;
 import java.util.function.Function;

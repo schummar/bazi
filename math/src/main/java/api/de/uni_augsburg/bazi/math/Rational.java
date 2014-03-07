@@ -187,7 +187,7 @@ public class Rational extends Real
 	public boolean equals(Object that)
 	{
 		return (this == that)
-					 || (that != null && getClass().isInstance(that) && equals((Rational) that));
+			|| (that != null && getClass().isInstance(that) && equals((Rational) that));
 	}
 	@Override
 	public boolean equals(long that)

@@ -7,11 +7,11 @@ import de.uni_augsburg.bazi.common.UserCanceledException;
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
+import de.uni_augsburg.bazi.divisor.DivisorOutput;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
-import de.uni_augsburg.bazi.divisor.DivisorOutput;
 
 import java.util.*;
 import java.util.function.Function;

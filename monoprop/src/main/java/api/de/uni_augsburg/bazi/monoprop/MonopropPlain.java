@@ -1,10 +1,10 @@
 package de.uni_augsburg.bazi.monoprop;
 
-import de.uni_augsburg.bazi.common.plain.Orientation;
-import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.common.plain.Orientation;
+import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
@@ -12,7 +12,6 @@ import de.uni_augsburg.bazi.math.Real;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Created by Marco on 06.03.14.

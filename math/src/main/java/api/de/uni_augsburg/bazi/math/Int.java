@@ -202,7 +202,7 @@ public class Int extends Rational
 	public boolean equals(Object that)
 	{
 		return (this == that)
-					 || (that != null && getClass().isInstance(that) && equals((Int) that));
+			|| (that != null && getClass().isInstance(that) && equals((Int) that));
 	}
 	@Override
 	public boolean equals(long that)

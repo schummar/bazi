@@ -106,19 +106,19 @@ public class ShiftQueue
 	{
 		Collections.sort(
 			increase, (x, y) -> {
-			int comp = -compare(parties.get(x), parties.get(x).seats(), parties.get(y), parties.get(y).seats());
-			if (comp == 0)
-				comp = x.compareTo(y);
-			return comp;
-		}
+				int comp = -compare(parties.get(x), parties.get(x).seats(), parties.get(y), parties.get(y).seats());
+				if (comp == 0)
+					comp = x.compareTo(y);
+				return comp;
+			}
 		);
 		Collections.sort(
 			decrease, (x, y) -> {
-			int comp = compare(parties.get(x), parties.get(x).seats().sub(1), parties.get(y), parties.get(y).seats().sub(1));
-			if (comp == 0)
-				comp = -x.compareTo(y);
-			return comp;
-		}
+				int comp = compare(parties.get(x), parties.get(x).seats().sub(1), parties.get(y), parties.get(y).seats().sub(1));
+				if (comp == 0)
+					comp = -x.compareTo(y);
+				return comp;
+			}
 		);
 	}
 

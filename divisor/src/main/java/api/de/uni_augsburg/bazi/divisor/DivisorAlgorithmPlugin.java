@@ -29,13 +29,41 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 		Params cast = params.cast(Params.class);
 		RoundingFunction r = null;
 		String name = null;
-		if (params.name().matches(DIV_STD)) { r = RoundingFunction.DIV_STD; name = Resources.get("method.divstd"); }
-		else if (params.name().matches(DIV_UPW)) {r = RoundingFunction.DIV_UPW; name = Resources.get("method.divdwn"); }
-		else if (params.name().matches(DIV_DWN)) {r = RoundingFunction.DIV_DWN; name = Resources.get("method.divupw"); }
-		else if (params.name().matches(DIV_HAR)) {r = RoundingFunction.DIV_HAR; name = Resources.get("method.divhar"); }
-		else if (params.name().matches(DIV_GEO)) {r = RoundingFunction.DIV_GEO; name = Resources.get("method.divgeo"); }
-		else if (params.name().matches(DIV_STA)) {r = buildStationary(cast.r()); name = Resources.get("method.divsta"); }
-		else if (params.name().matches(DIV_POW)) {r = buildPower(cast.p()); name = Resources.get("method.divpow"); }
+		if (params.name().matches(DIV_STD))
+		{
+			r = RoundingFunction.DIV_STD;
+			name = Resources.get("method.divstd");
+		}
+		else if (params.name().matches(DIV_UPW))
+		{
+			r = RoundingFunction.DIV_UPW;
+			name = Resources.get("method.divdwn");
+		}
+		else if (params.name().matches(DIV_DWN))
+		{
+			r = RoundingFunction.DIV_DWN;
+			name = Resources.get("method.divupw");
+		}
+		else if (params.name().matches(DIV_HAR))
+		{
+			r = RoundingFunction.DIV_HAR;
+			name = Resources.get("method.divhar");
+		}
+		else if (params.name().matches(DIV_GEO))
+		{
+			r = RoundingFunction.DIV_GEO;
+			name = Resources.get("method.divgeo");
+		}
+		else if (params.name().matches(DIV_STA))
+		{
+			r = buildStationary(cast.r());
+			name = Resources.get("method.divsta");
+		}
+		else if (params.name().matches(DIV_POW))
+		{
+			r = buildPower(cast.p());
+			name = Resources.get("method.divpow");
+		}
 		if (r == null) return Optional.empty();
 		return Optional.of(new DivisorAlgorithm(r, cast.minPrecision(), name));
 	}

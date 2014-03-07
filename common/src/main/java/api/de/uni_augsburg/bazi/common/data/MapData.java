@@ -45,7 +45,8 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 	}
 	public MapData(Map<?, ?> m)
 	{
-		id = this; m.forEach((k, v) -> put(k.toString(), v));
+		id = this;
+		m.forEach((k, v) -> put(k.toString(), v));
 	}
 	public MapData(Object id)
 	{
@@ -103,7 +104,11 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 	}
 
 	@Override public PlainSupplier plain() { return plain; }
-	@Override public Data plain(PlainSupplier plain) { this.plain = plain; return this; }
+	@Override public Data plain(PlainSupplier plain)
+	{
+		this.plain = plain;
+		return this;
+	}
 
 
 	@SuppressWarnings("unchecked")

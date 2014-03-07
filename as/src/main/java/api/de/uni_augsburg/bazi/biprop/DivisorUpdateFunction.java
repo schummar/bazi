@@ -2,10 +2,10 @@ package de.uni_augsburg.bazi.biprop;
 
 import de.uni_augsburg.bazi.common.format.Converter;
 import de.uni_augsburg.bazi.common.format.ObjectConverter;
+import de.uni_augsburg.bazi.divisor.Divisor;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.divisor.Divisor;
 
 @Converter(DivisorUpdateFunction.Converter.class)
 public interface DivisorUpdateFunction
