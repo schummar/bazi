@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.common.plain;
 
 import de.uni_augsburg.bazi.common.StringTable;
+import de.uni_augsburg.bazi.common.Version;
 import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.common.format.Format;
 
@@ -35,10 +36,15 @@ public class PlainFormat implements Format
 	@Override public String serialize(Data data)
 	{
 		if (data.plain() != null)
-			return data.plain().get(options).stream()
+		{
+			String s = "************************************************************\n";
+			s += data.plain().get(options).stream()
 				.map(StringTable::toString)
 				.collect(Collectors.joining("\n\n"));
-
+			s += "BAZI " + Version.getCurrentVersionName() + " - Made in Augsburg University\n";
+			s += "************************************************************\n";
+			return s;
+		}
 		return null;
 	}
 }

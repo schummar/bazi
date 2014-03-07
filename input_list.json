@@ -1,4 +1,5 @@
 {
+	"name": "Testeingaben für Listenverbindungen",
 	"algorithm": {
 		"name": "list",
 		"main": "divstd",
