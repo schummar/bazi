@@ -3,11 +3,12 @@ package de.uni_augsburg.bazi.quota;
 
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
+import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.Collections;
 import java.util.List;
 
-public class QuotaAlgorithm implements VectorAlgorithm
+public class QuotaAlgorithm extends VectorAlgorithm
 {
 	private final QuotaFunction quotaFunction;
 	private final ResidualHandler residualHandler;
@@ -21,5 +22,13 @@ public class QuotaAlgorithm implements VectorAlgorithm
 	}
 
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
-	@Override public QuotaOutput apply(VectorInput in) { return QuotaAlgorithmImpl.calculate(in, quotaFunction, residualHandler, name); }
+	@Override public QuotaOutput applyUnfiltered(Data in)
+	{
+		return QuotaAlgorithmImpl.calculate(
+			in.cast(VectorInput.class),
+			quotaFunction,
+			residualHandler,
+			name
+		);
+	}
 }

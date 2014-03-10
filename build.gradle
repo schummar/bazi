@@ -53,12 +53,7 @@ allprojects {
 
 dependencies {
 	compile project(':cl')
-
-	runtime project(':divisor')
-	runtime project(':list')
-	runtime project(':quota')
-	runtime project(':json')
-	runtime project(':as')
+	runtime subprojects
 
 	runtime 'org.slf4j:slf4j-jdk14:1.7.6'
 }

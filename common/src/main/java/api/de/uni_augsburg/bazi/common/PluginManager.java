@@ -1,5 +1,7 @@
 package de.uni_augsburg.bazi.common;
 
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.algorithm.Filter;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public enum PluginManager
 {
@@ -16,6 +19,7 @@ public enum PluginManager
 	private final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
 
 	private final List<Plugin<?>> plugins = new ArrayList<>();
+	private final List<Filter> filters = new ArrayList<>();
 
 
 	private PluginManager()
@@ -38,6 +42,12 @@ public enum PluginManager
 			}
 
 			LOGGER.info("loaded plugins:\n{}", plugins.toString().replaceAll(",", ",\n"));
+
+
+			getPluginsOfInstanceType(Filter.class)
+				.forEach(p -> p.tryInstantiate(() -> null).ifPresent(filters::add));
+
+			LOGGER.info("loaded filters:\n{}", filters.toString().replaceAll(",", ",\n"));
 		}
 		catch (Exception e) {e.printStackTrace();}
 	}
@@ -46,13 +56,13 @@ public enum PluginManager
 	public <T extends Plugin.Instance> List<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
 	{
 		List<Plugin<? extends T>> list = new ArrayList<>();
-		for (Plugin<?> plugin : plugins)
-			if (type.isAssignableFrom(plugin.getInstanceType()))
-			{
+		plugins.stream().filter(plugin -> type.isAssignableFrom(plugin.getInstanceType())).forEach(
+			plugin -> {
 				@SuppressWarnings("unchecked")
 				Plugin<? extends T> cast = (Plugin<? extends T>) plugin;
 				list.add(cast);
 			}
+		);
 		return list;
 	}
 
@@ -64,6 +74,20 @@ public enum PluginManager
 			if (t.isPresent()) return Optional.ofNullable(t.get());
 		}
 		return Optional.empty();
+	}
+
+	public List<Filter> getGlobalFilters()
+	{
+		return filters.stream()
+			.filter(Filter::applicableGlobally)
+			.collect(Collectors.toList());
+	}
+
+	public List<Filter> getFiltersFor(Algorithm algorithm)
+	{
+		return filters.stream()
+			.filter(f -> f.applicableTo(algorithm))
+			.collect(Collectors.toList());
 	}
 
 	public class NoSuchPluginException extends RuntimeException

@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
+import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.List;
@@ -7,12 +8,11 @@ import java.util.List;
 /**
  * Created by Marco on 21.02.14.
  */
-public interface Filter
+public interface Filter extends Plugin.Instance
 {
-	boolean runBefore(Algorithm algorithm);
-	boolean runBefore(Filter filter);
-	boolean runAfter(Algorithm algorithm);
-	boolean runAfter(Filter filter);
+	boolean applicableGlobally();
+	boolean applicableTo(Algorithm algorithm);
 	List<Object> getInputAttributes();
-	void apply(Data in);
+	void preprocess(Data in);
+	void postprocess(Data in, Data out);
 }

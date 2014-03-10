@@ -2,13 +2,14 @@ package de.uni_augsburg.bazi.divisor;
 
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
+import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.divisor.RoundingFunction.ExactRoundingFunction;
 
 import java.util.Collections;
 import java.util.List;
 
 
-public class DivisorAlgorithm implements VectorAlgorithm
+public class DivisorAlgorithm extends VectorAlgorithm<DivisorOutput>
 {
 	private final RoundingFunction roundingFunction;
 	private final int minPrecision;
@@ -32,5 +33,13 @@ public class DivisorAlgorithm implements VectorAlgorithm
 	public int minPrecision() { return minPrecision; }
 
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
-	@Override public DivisorOutput apply(VectorInput in) { return DivisorAlgorithmImpl.calculate(in, roundingFunction, minPrecision, name); }
+	@Override public DivisorOutput applyUnfiltered(Data in)
+	{
+		return DivisorAlgorithmImpl.calculate(
+			in.cast(VectorInput.class),
+			roundingFunction,
+			minPrecision,
+			name
+		);
+	}
 }

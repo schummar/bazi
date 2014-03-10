@@ -1,8 +1,6 @@
 {
 	"name": "Testeingaben für einfache Zuteilungen",
-	"algorithm": {
-		"name": "haqgrr"
-	},
+	"algorithm": "divstd",
 	"output": {
 		"orientation": "ver",
 		"divisorformat": "quotients",
@@ -15,7 +13,7 @@
 			"votes": "1",
 			"min": "2",
 			"max": "oo",
-			"dir": "0"
+			"dir": "5"
 		},
 		{
 			"name": "B",

@@ -1,6 +1,10 @@
 package de.uni_augsburg.bazi.common.util;
 
+import de.uni_augsburg.bazi.common.Resources;
+
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 /**
@@ -14,5 +18,22 @@ public class CollectionHelper
 			if (predicate.test(t))
 				return t;
 		return null;
+	}
+
+	public static <A, B> void forEach(Iterable<A> ia, Iterable<B> ib, BiConsumer<A, B> consumer)
+	{
+		Iterator<A> a = ia.iterator();
+		Iterator<B> b = ib.iterator();
+		while (a.hasNext() && b.hasNext())
+			consumer.accept(a.next(), b.next());
+		if (a.hasNext() || b.hasNext())
+			throw new RuntimeException(Resources.get("error.different_length"));
+	}
+
+	public static <A, B> void forEachCombination(Iterable<A> ia, Iterable<B> ib, BiConsumer<A, B> consumer)
+	{
+		for (A a : ia)
+			for (B b : ib)
+				consumer.accept(a, b);
 	}
 }

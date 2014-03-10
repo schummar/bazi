@@ -11,14 +11,8 @@ import static de.uni_augsburg.bazi.list.ListOutput.Party;
  */
 class ListAlgorithmImpl
 {
-	private static void check(ListInput in)
+	public static ListOutput calculate(ListInput in, VectorAlgorithm<?> main, VectorAlgorithm<?> sub)
 	{
-
-	}
-
-	public static ListOutput calculate(ListInput in, VectorAlgorithm main, VectorAlgorithm sub)
-	{
-		check(in);
 		ListOutput out = in.copy(ListOutput.class);
 
 		out.parties().forEach(ListAlgorithmImpl::sumSubParties);

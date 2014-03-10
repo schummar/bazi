@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static de.uni_augsburg.bazi.biprop.BipropOutput.District;
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
-public abstract class BipropAlgorithm implements MatrixAlgorithm
+public abstract class BipropAlgorithm extends MatrixAlgorithm
 {
 	@Override public List<Object> getInputAttributes()
 	{
@@ -29,7 +29,7 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm
 	}
 
 
-	@Override public MatrixOutput apply(MatrixInput in)
+	@Override public MatrixOutput applyUnfiltered(Data in)
 	{
 		BipropOutput data = in.copy(BipropOutput.class);
 		Table<District, String, Party> table = generateTable(data);
