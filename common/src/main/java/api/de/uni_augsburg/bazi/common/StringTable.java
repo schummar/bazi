@@ -31,6 +31,7 @@ public class StringTable
 	{
 		return col(columns.size());
 	}
+	public List<Column> cols() { return columns; }
 
 	public int width()
 	{
@@ -148,6 +149,11 @@ public class StringTable
 			Column col = new Column();
 			columns.add(index, col);
 			return col;
+		}
+
+		public void delete()
+		{
+			columns.remove(this);
 		}
 	}
 

@@ -22,6 +22,14 @@ public enum Orientation implements ConvertibleEnum
 			{
 				return Resources.get("orientation.ver");
 			}
+			@Override public boolean vectorVertical()
+			{
+				return true;
+			}
+			@Override public boolean matrixVertical()
+			{
+				return true;
+			}
 		},
 
 
@@ -38,6 +46,14 @@ public enum Orientation implements ConvertibleEnum
 			@Override public String toString()
 			{
 				return Resources.get("orientation.hor");
+			}
+			@Override public boolean vectorVertical()
+			{
+				return false;
+			}
+			@Override public boolean matrixVertical()
+			{
+				return false;
 			}
 		},
 
@@ -56,6 +72,14 @@ public enum Orientation implements ConvertibleEnum
 			{
 				return Resources.get("orientation.verhor");
 			}
+			@Override public boolean vectorVertical()
+			{
+				return true;
+			}
+			@Override public boolean matrixVertical()
+			{
+				return false;
+			}
 		},
 
 
@@ -73,5 +97,16 @@ public enum Orientation implements ConvertibleEnum
 			{
 				return Resources.get("orientation.horver");
 			}
-		}
+			@Override public boolean vectorVertical()
+			{
+				return false;
+			}
+			@Override public boolean matrixVertical()
+			{
+				return true;
+			}
+		};
+
+	public abstract boolean vectorVertical();
+	public abstract boolean matrixVertical();
 }

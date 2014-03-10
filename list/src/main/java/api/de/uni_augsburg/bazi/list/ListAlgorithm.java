@@ -20,6 +20,7 @@ public class ListAlgorithm extends VectorAlgorithm<ListOutput>
 		this.sub = sub;
 	}
 
+	@Override public String name() { return ""; }
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
 	@Override public ListOutput applyUnfiltered(Data in)
 	{

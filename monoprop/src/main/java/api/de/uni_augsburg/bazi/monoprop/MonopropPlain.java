@@ -46,15 +46,20 @@ public class MonopropPlain implements PlainSupplier
 
 	public void partyColumn(StringTable.Column col, PlainOptions options)
 	{
-		col.add(Resources.get("output.names"));
+		if (options.nameLabel() != null) col.add(options.nameLabel());
+		else col.add(Resources.get("output.names"));
+
 		output.parties().forEach(p -> col.add(p.name()));
+
 		col.add(Resources.get("output.sum"));
 	}
 
 
 	public void voteColumn(StringTable.Column col, PlainOptions options)
 	{
-		col.add(Resources.get("output.votes"));
+		if (options.voteLabel() != null) col.add(options.voteLabel());
+		else col.add(Resources.get("output.votes"));
+
 		output.parties().forEach(p -> col.add(p.votes().toString()));
 
 		Real sum = output.parties().stream()
@@ -76,6 +81,8 @@ public class MonopropPlain implements PlainSupplier
 			.map(VectorOutput.Party::max)
 			.reduce(Int::add).orElse(BMath.ZERO);
 		col.add(String.format("%s..%s", minSum, maxSum));
+
+		if (minSum.equals(BMath.ZERO) && maxSum.equals(BMath.INF)) col.delete();
 	}
 
 

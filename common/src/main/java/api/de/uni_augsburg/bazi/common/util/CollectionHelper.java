@@ -2,9 +2,12 @@ package de.uni_augsburg.bazi.common.util;
 
 import de.uni_augsburg.bazi.common.Resources;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 /**
@@ -35,5 +38,18 @@ public class CollectionHelper
 		for (A a : ia)
 			for (B b : ib)
 				consumer.accept(a, b);
+	}
+
+	public static <T, A, B> List<List<T>> createTable(Iterable<A> ia, Iterable<B> ib, BiFunction<A, B, T> function)
+	{
+		List<List<T>> table = new ArrayList<>();
+		for (A a : ia)
+		{
+			List<T> row = new ArrayList<>();
+			for (B b : ib)
+				row.add(function.apply(a, b));
+			table.add(row);
+		}
+		return table;
 	}
 }

@@ -1,9 +1,8 @@
 {
 	"name": "Testeingaben für Biproportionale Zuteilungen",
 	"algorithm": {
-		"name": "as",
-		"div": "divstd",
-		"update": "mid"
+		"name": "separate",
+		"vector": "divstd"
 	},
 	"districts": [
 		{

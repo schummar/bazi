@@ -124,7 +124,14 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 		Getter getter = asGetter(method);
 		if (getter != null)
 		{
-			if (!containsKey(getter.key())) return Defaults.defaultValue(method.getReturnType());
+			if (!containsKey(getter.key()))
+			{
+				String def = getter.def();
+				if (def != null) put(getter.key(), def);
+			}
+			if (!containsKey(getter.key()))
+				return Defaults.defaultValue(method.getReturnType());
+
 			Object value = CastHelper.cast(get(getter.key()), getter.type());
 			put(getter.key(), value);
 			return value;

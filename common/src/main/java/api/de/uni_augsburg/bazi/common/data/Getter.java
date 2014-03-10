@@ -74,4 +74,10 @@ public class Getter
 			throw new RuntimeException(e);
 		}
 	}
+	public String def()
+	{
+		return method.isAnnotationPresent(Default.class)
+			? method.getAnnotation(Default.class).value()
+			: null;
+	}
 }

@@ -29,6 +29,7 @@ public class DivisorAlgorithm extends VectorAlgorithm<DivisorOutput>
 		this.name = name;
 	}
 
+	@Override public String name() { return name; }
 	public RoundingFunction roundingFunction() { return roundingFunction; }
 	public int minPrecision() { return minPrecision; }
 

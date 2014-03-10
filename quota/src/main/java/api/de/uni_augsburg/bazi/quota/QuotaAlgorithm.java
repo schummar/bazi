@@ -21,6 +21,7 @@ public class QuotaAlgorithm extends VectorAlgorithm
 		this.name = name;
 	}
 
+	@Override public String name() { return name; }
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
 	@Override public QuotaOutput applyUnfiltered(Data in)
 	{

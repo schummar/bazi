@@ -1,11 +1,20 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
-public enum Uniqueness
+import de.uni_augsburg.bazi.common.format.ConvertibleEnum;
+
+public enum Uniqueness implements ConvertibleEnum
 {
 	CAN_BE_MORE
 		{
-			@Override
-			public String toString()
+			@Override public String key()
+			{
+				return "+";
+			}
+			@Override public boolean matches(String s)
+			{
+				return s.equals("+");
+			}
+			@Override public String toString()
 			{
 				return "+";
 			}
@@ -13,6 +22,14 @@ public enum Uniqueness
 
 	UNIQUE
 		{
+			@Override public String key()
+			{
+				return "";
+			}
+			@Override public boolean matches(String s)
+			{
+				return s.equals("");
+			}
 			@Override
 			public String toString()
 			{
@@ -22,6 +39,14 @@ public enum Uniqueness
 
 	CAN_BE_LESS
 		{
+			@Override public String key()
+			{
+				return "-";
+			}
+			@Override public boolean matches(String s)
+			{
+				return s.matches("-");
+			}
 			@Override
 			public String toString()
 			{

@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
+import de.uni_augsburg.bazi.common.data.Default;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
@@ -21,8 +22,8 @@ public interface VectorOutput extends VectorInput
 
 	public interface Party extends VectorInput.Party
 	{
-		default Int seats() { return BMath.ZERO; }
-		default Uniqueness uniqueness() { return Uniqueness.UNIQUE; }
+		@Default("0") default Int seats() { return BMath.ZERO; }
+		@Default("") default Uniqueness uniqueness() { return Uniqueness.UNIQUE; }
 
 		void name(String name);
 		void votes(Real votes);
