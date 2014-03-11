@@ -4,7 +4,7 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.ShiftQueue;
+import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 
 import java.util.HashMap;
 import java.util.Map;

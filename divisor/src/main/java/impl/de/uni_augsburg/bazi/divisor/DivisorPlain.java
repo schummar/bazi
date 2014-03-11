@@ -5,7 +5,7 @@ import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.MonopropPlain;
+import de.uni_augsburg.bazi.common_vector.MonopropPlain;
 
 /**
  * Created by Marco on 06.03.14.

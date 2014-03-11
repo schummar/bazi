@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.monoprop;
+package de.uni_augsburg.bazi.common_vector;
 
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;

@@ -8,7 +8,7 @@ import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.monoprop.MonopropPlain;
+import de.uni_augsburg.bazi.common_vector.MonopropPlain;
 
 /**
  * Created by Marco on 07.03.14.
