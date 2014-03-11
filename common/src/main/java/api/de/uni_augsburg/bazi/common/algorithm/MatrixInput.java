@@ -9,5 +9,6 @@ import java.util.List;
  */
 public interface MatrixInput extends Data
 {
+	String name();
 	List<? extends VectorInput> districts();
 }

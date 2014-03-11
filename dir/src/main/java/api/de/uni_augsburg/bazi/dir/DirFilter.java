@@ -33,7 +33,7 @@ public class DirFilter implements Filter
 		DirOutput din = in.cast(DirOutput.class);
 		DirOutput dout = out.cast(DirOutput.class);
 
-		CollectionHelper.forEach(din.parties(), dout.parties(), (ip, op) -> op.dir(ip.dir()));
+		CollectionHelper.forEachPair(din.parties(), dout.parties(), (ip, op) -> op.dir(ip.dir()));
 		dout.plain(new DirPlain(dout));
 	}
 }

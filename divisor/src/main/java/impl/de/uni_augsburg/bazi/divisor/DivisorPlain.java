@@ -4,13 +4,13 @@ import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
+import de.uni_augsburg.bazi.common_vector.VectorPlain;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.common_vector.MonopropPlain;
 
 /**
  * Created by Marco on 06.03.14.
  */
-public class DivisorPlain extends MonopropPlain
+public class DivisorPlain extends VectorPlain
 {
 	protected final DivisorOutput output;
 	protected final RoundingFunction r;

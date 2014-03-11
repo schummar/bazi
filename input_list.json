@@ -2,7 +2,7 @@
 	"name": "Testeingaben für Listenverbindungen",
 	"algorithm": {
 		"name": "list",
-		"main": "divstd",
+		"super": "divstd",
 		"sub": "HaQgrR"
 	},
 	"seats": "10",

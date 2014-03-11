@@ -41,7 +41,8 @@ public class PlainFormat implements Format
 			s += data.plain().get(options).stream()
 				.map(StringTable::toString)
 				.collect(Collectors.joining("\n\n"));
-			s += "BAZI " + Version.getCurrentVersionName() + " - Made in Augsburg University\n";
+			if (!s.endsWith("\n")) s += "\n";
+			s += "\nBAZI " + Version.getCurrentVersionName() + " - Made in Augsburg University\n";
 			s += "************************************************************\n";
 			return s;
 		}

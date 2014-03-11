@@ -28,9 +28,15 @@ public class Converters
 		registerAdapter(Rational.class, (StringConverter<Rational>) Rational::valueOf);
 		registerAdapter(Int.class, (StringConverter<Int>) Int::valueOf);
 		registerAdapter(Integer.class, (StringConverter<Integer>) Integer::valueOf);
+		registerAdapter(Integer.class, (StringConverter<Integer>) Integer::valueOf);
 		registerAdapter(Long.class, (StringConverter<Long>) Long::valueOf);
+		registerAdapter(long.class, (StringConverter<Long>) Long::valueOf);
 		registerAdapter(Float.class, (StringConverter<Float>) Float::valueOf);
+		registerAdapter(float.class, (StringConverter<Float>) Float::valueOf);
 		registerAdapter(Double.class, (StringConverter<Double>) Double::valueOf);
+		registerAdapter(double.class, (StringConverter<Double>) Double::valueOf);
+		registerAdapter(Boolean.class, (StringConverter<Boolean>) Boolean::valueOf);
+		registerAdapter(boolean.class, (StringConverter<Boolean>) Boolean::valueOf);
 	}
 
 

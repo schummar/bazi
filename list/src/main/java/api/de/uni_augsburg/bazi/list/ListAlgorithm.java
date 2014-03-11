@@ -11,12 +11,12 @@ import java.util.List;
  */
 public class ListAlgorithm extends VectorAlgorithm<ListOutput>
 {
-	public VectorAlgorithm<?> main;
+	public VectorAlgorithm<?> Super;
 	public VectorAlgorithm<?> sub;
 
-	public ListAlgorithm(VectorAlgorithm<?> main, VectorAlgorithm<?> sub)
+	public ListAlgorithm(VectorAlgorithm<?> Super, VectorAlgorithm<?> sub)
 	{
-		this.main = main;
+		this.Super = Super;
 		this.sub = sub;
 	}
 
@@ -24,6 +24,6 @@ public class ListAlgorithm extends VectorAlgorithm<ListOutput>
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
 	@Override public ListOutput applyUnfiltered(Data in)
 	{
-		return ListAlgorithmImpl.calculate(in.cast(ListInput.class), main, sub);
+		return ListAlgorithmImpl.calculate(in.cast(ListInput.class), Super, sub);
 	}
 }

@@ -3,7 +3,6 @@ package de.uni_augsburg.bazi.biprop;
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
-import de.uni_augsburg.bazi.common.algorithm.MatrixInput;
 import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.data.Data;
@@ -51,7 +50,7 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 		data.districts().forEach(d -> d.divisor(new Divisor(divisors.get(d), divisors.get(d))));
 		data.partyDivisors(new LinkedHashMap<>());
 		table.columnKeySet().forEach(name -> data.partyDivisors().put(name, new Divisor(divisors.get(name), divisors.get(name))));
-		data.plain(new BipropPlain(data));
+		data.plain(new BipropPlain(data, Super().name(), sub().name()));
 		return data;
 	}
 
@@ -89,7 +88,7 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 			.map(col -> mergeParties(col.values()))
 			.collect(Collectors.toList());
 
-		return divisorMethod().apply(
+		return Super().apply(
 			new VectorInput()
 			{
 				@Override public String name() { return ""; }
@@ -113,6 +112,7 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 	}
 
 
-	protected abstract DivisorAlgorithm divisorMethod();
+	protected abstract DivisorAlgorithm Super();
+	protected abstract DivisorAlgorithm sub();
 	protected abstract Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats);
 }

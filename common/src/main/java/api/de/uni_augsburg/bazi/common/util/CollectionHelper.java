@@ -23,7 +23,7 @@ public class CollectionHelper
 		return null;
 	}
 
-	public static <A, B> void forEach(Iterable<A> ia, Iterable<B> ib, BiConsumer<A, B> consumer)
+	public static <A, B> void forEachPair(Iterable<A> ia, Iterable<B> ib, BiConsumer<A, B> consumer)
 	{
 		Iterator<A> a = ia.iterator();
 		Iterator<B> b = ib.iterator();

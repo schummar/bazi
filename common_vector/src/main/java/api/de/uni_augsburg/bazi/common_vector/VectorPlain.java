@@ -16,11 +16,11 @@ import java.util.List;
 /**
  * Created by Marco on 06.03.14.
  */
-public class MonopropPlain implements PlainSupplier
+public class VectorPlain implements PlainSupplier
 {
 	protected final VectorOutput output;
 	protected final String name;
-	public MonopropPlain(VectorOutput output, String name)
+	public VectorPlain(VectorOutput output, String name)
 	{
 		this.output = output;
 		this.name = name;
@@ -30,8 +30,18 @@ public class MonopropPlain implements PlainSupplier
 	@Override public List<StringTable> get(PlainOptions options)
 	{
 		StringTable table = new StringTable();
+
 		if (output.name() != null)
 			table.titles().add(output.name());
+
+		Real sum = output.parties().stream()
+			.map(VectorOutput.Party::votes)
+			.reduce(Real::add).orElse(BMath.ZERO);
+		Real half = sum.div(2);
+		output.parties().stream()
+			.filter(p -> p.votes().compareTo(half) > 0)
+			.findAny().ifPresent(p -> table.titles().add(Resources.get("output.absolute_majority", p.name(), p.votes(), sum)));
+
 		partyColumn(table.col(), options);
 		voteColumn(table.col(), options);
 		conditionColumn(table.col(), options);
@@ -39,7 +49,7 @@ public class MonopropPlain implements PlainSupplier
 
 		if (options.orientation() == Orientation.HORIZONTAL
 			|| options.orientation() == Orientation.HORVER)
-			table = table.transposed();
+			return Arrays.asList(table.transposed());
 		return Arrays.asList(table);
 	}
 

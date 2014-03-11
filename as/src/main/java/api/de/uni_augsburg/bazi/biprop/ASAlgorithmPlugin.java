@@ -23,16 +23,20 @@ public class ASAlgorithmPlugin implements Plugin<ASAlgorithm>
 	}
 	@Override public Optional<? extends ASAlgorithm> tryInstantiate(Plugin.Params params)
 	{
+		if (!params.name().equals("as")) return Optional.empty();
+
 		Params asParams = params.cast(Params.class);
-		if (params.name().equals("as"))
-			return Optional.of(new ASAlgorithm(asParams.vector(), asParams.update()));
-		return Optional.empty();
+		DivisorAlgorithm Super = asParams.Super() != null ? asParams.Super() : asParams.method();
+		DivisorAlgorithm sub = asParams.sub() != null ? asParams.sub() : asParams.method();
+		return Optional.of(new ASAlgorithm(Super, sub, asParams.update()));
 	}
 
 
 	public interface Params extends Plugin.Params
 	{
-		@Default("divstd") DivisorAlgorithm vector();
+		DivisorAlgorithm Super();
+		DivisorAlgorithm sub();
+		@Default("divstd") DivisorAlgorithm method();
 		@Default("mid") DivisorUpdateFunction update();
 	}
 }

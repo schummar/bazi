@@ -12,25 +12,28 @@ import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
 public class ASAlgorithm extends BipropAlgorithm
 {
-	private final DivisorAlgorithm divisorAlgorithm;
+	private final DivisorAlgorithm Super, sub;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 
-	public ASAlgorithm(DivisorAlgorithm divisorAlgorithm, DivisorUpdateFunction divisorUpdateFunction)
+	public ASAlgorithm(DivisorAlgorithm Super, DivisorAlgorithm sub, DivisorUpdateFunction divisorUpdateFunction)
 	{
-		this.divisorAlgorithm = divisorAlgorithm;
+		this.Super = Super;
+		this.sub = sub;
 		this.divisorUpdateFunction = divisorUpdateFunction;
 	}
 
 
-	@Override
-	protected Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats)
+	@Override protected Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats)
 	{
-		return ASAlgorithmImpl.calculate(table, seats, divisorUpdateFunction, divisorAlgorithm);
+		return ASAlgorithmImpl.calculate(table, seats, divisorUpdateFunction, Super);
 	}
 
-	@Override
-	protected DivisorAlgorithm divisorMethod()
+	@Override protected DivisorAlgorithm Super()
 	{
-		return divisorAlgorithm;
+		return Super;
+	}
+	@Override protected DivisorAlgorithm sub()
+	{
+		return Super;
 	}
 }

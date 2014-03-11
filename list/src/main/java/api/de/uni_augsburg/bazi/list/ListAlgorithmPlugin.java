@@ -16,14 +16,14 @@ public class ListAlgorithmPlugin implements Plugin<ListAlgorithm>
 	{
 		Params cast = params.cast(Params.class);
 		return params.name().toLowerCase().equals("list")
-			? Optional.of(new ListAlgorithm(cast.main(), cast.sub()))
+			? Optional.of(new ListAlgorithm(cast.Super(), cast.sub()))
 			: Optional.empty();
 	}
 
 
 	public interface Params extends Plugin.Params
 	{
-		VectorAlgorithm main();
+		VectorAlgorithm Super();
 		VectorAlgorithm sub();
 	}
 }

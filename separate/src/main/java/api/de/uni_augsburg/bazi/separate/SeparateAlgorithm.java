@@ -13,10 +13,10 @@ import java.util.List;
  */
 public class SeparateAlgorithm extends MatrixAlgorithm<MatrixOutput>
 {
-	private final VectorAlgorithm<?> vector;
-	public SeparateAlgorithm(VectorAlgorithm<?> vector)
+	private final VectorAlgorithm<?> method;
+	public SeparateAlgorithm(VectorAlgorithm<?> method)
 	{
-		this.vector = vector;
+		this.method = method;
 	}
 
 
@@ -30,9 +30,9 @@ public class SeparateAlgorithm extends MatrixAlgorithm<MatrixOutput>
 	{
 		MatrixOutput out = in.copy(MatrixOutput.class);
 
-		out.districts().parallelStream().forEach(d -> d.merge(vector.apply(d)));
+		out.districts().parallelStream().forEach(d -> d.merge(method.apply(d)));
 
-		out.plain(new SeparatePlain(out, vector.name()));
+		out.plain(new SeparatePlain(out, method.name()));
 		return out;
 	}
 }

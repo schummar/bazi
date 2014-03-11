@@ -1,3 +1,4 @@
 dependencies {
 	compile project(':divisor')
+	compile project(':common_matrix')
 }

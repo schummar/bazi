@@ -5,15 +5,15 @@ import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
+import de.uni_augsburg.bazi.common_vector.VectorPlain;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.common_vector.MonopropPlain;
 
 /**
  * Created by Marco on 07.03.14.
  */
-public class QuotaPlain extends MonopropPlain
+public class QuotaPlain extends VectorPlain
 {
 	private final QuotaOutput output;
 	public QuotaPlain(QuotaOutput output, String name)

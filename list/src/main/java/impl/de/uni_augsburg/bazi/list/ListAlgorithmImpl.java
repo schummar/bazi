@@ -11,20 +11,20 @@ import static de.uni_augsburg.bazi.list.ListOutput.Party;
  */
 class ListAlgorithmImpl
 {
-	public static ListOutput calculate(ListInput in, VectorAlgorithm<?> main, VectorAlgorithm<?> sub)
+	public static ListOutput calculate(ListInput in, VectorAlgorithm<?> Super, VectorAlgorithm<?> sub)
 	{
 		ListOutput out = in.copy(ListOutput.class);
 
 		out.parties().forEach(ListAlgorithmImpl::sumSubParties);
 
-		out.merge(main.apply(in));
+		out.merge(Super.apply(in));
 
 		out.parties().parallelStream().forEach(
 			p -> {
 				if (p.parties() == null || p.parties().isEmpty()) return;
 
 				VectorOutput subOut = sub == null
-					? main.apply(p)
+					? Super.apply(p)
 					: sub.apply(p);
 				p.merge(subOut);
 			}

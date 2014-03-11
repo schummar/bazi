@@ -2,7 +2,7 @@
 	"name": "Testeingaben für Biproportionale Zuteilungen",
 	"algorithm": {
 		"name": "as",
-		"vector": "divstd"
+		"method": "divstd"
 	},
 	"districts": [
 		{
