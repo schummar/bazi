@@ -1,8 +1,10 @@
 package de.uni_augsburg.bazi.divisor;
 
+import de.uni_augsburg.bazi.math.BMath;
+import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
 
-public class Divisor
+public class Divisor implements Interval
 {
 	private final Real min, nice, max;
 
@@ -10,7 +12,7 @@ public class Divisor
 	{
 		this.min = min;
 		this.max = max;
-		this.nice = min.add(max).div(2);
+		this.nice = BMath.niceMidValue(this);
 	}
 
 	public Real min() { return min; }

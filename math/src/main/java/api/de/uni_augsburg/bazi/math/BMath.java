@@ -126,26 +126,23 @@ public class BMath
 	}
 
 
-	public static Real niceMidValue(Real min, Real max)
+	public static Real niceMidValue(Interval i)
 	{
-		if (min.equals(max)) return min;
+		if (i.min().equals(i.max())) return i.min();
+		if (i.min().sgn() < 0 && i.max().sgn() > 0) return ZERO;
+		if (i.max().equals(INF)) return ONE.scale(i.min().scale() + 1);
+		if (i.min().equals(INFN)) return MINUS_ONE.scale(i.max().scale() + 1);
 
-		int digits = 0;
-		Real minr, maxr;
+		Real nice = i.min().add(i.max()).div(2);
+		long digits = -nice.scale() - 1;
+
+		Real nicer;
 		do
 		{
-			minr = min.precision(digits);
-			maxr = max.precision(digits);
+			nicer = nice.round(digits);
 			digits++;
-		} while (minr.equals(maxr));
+		} while (!i.contains(nicer));
 
-		Real diff = maxr.sub(minr);
-		long scale = diff.scale();
-		diff = diff.scale(-scale);
-		if (diff.compareTo(ONE) > 0 || diff.compareTo(MINUS_ONE) < 0) diff = diff.div(2).floor();
-		else diff = diff.div(2);
-		diff = diff.scale(scale);
-
-		return min.add(diff);
+		return nicer;
 	}
 }

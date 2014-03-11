@@ -9,8 +9,11 @@ import java.util.Map;
 
 public interface BipropOutput extends MatrixOutput
 {
+	DivisorOutput superApportionment();
 	@Override List<? extends District> districts();
 	Map<String, Divisor> partyDivisors();
+
+	void superApportionment(DivisorOutput superApportionment);
 	void partyDivisors(Map<String, Divisor> partyDivisors);
 
 	public interface District extends DivisorOutput

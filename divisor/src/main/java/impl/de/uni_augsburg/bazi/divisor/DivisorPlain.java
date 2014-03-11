@@ -47,7 +47,7 @@ public class DivisorPlain extends MonopropPlain
 		output.parties().forEach(
 			p -> {
 				Real q = p.votes().div(output.divisor().nice());
-				col.add(DivisorRoundingHelper.round(q, 3, options.maxDigits(), r).toString());
+				col.add(DivisorRoundingHelper.round(q, 1, options.maxDigits(), r).toString());
 			}
 		);
 		col.add(String.format("(%s)", divisor(options)));

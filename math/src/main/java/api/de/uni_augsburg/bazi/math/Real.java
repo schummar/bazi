@@ -221,6 +221,11 @@ public class Real implements Comparable<Real>, Interval
 	{
 		return frac().compareTo(BMath.HALF) < 0 ? Int() : Int().add(BMath.ONE);
 	}
+	public Real round(long digits)
+	{
+		Rational x = BMath.TEN.pow(digits);
+		return mul(x).round().div(x).precision(precision());
+	}
 
 
 	public Int Int()
@@ -251,16 +256,15 @@ public class Real implements Comparable<Real>, Interval
 	{
 		if (delegate.precision() == Long.MAX_VALUE)
 			return Long.MAX_VALUE;
-		return delegate.precision() - delegate.scale();
+		return delegate.precision() - delegate.scale() - 1;
 	}
 
 
 	public Real precision(long precision)
 	{
-		Rational x = BMath.TEN.pow(precision);
-		Real rounded = mul(x).round().div(x);
-		if (rounded.delegate.equals(Apint.ZERO)) return BMath.ZERO;
-		return new Real(rounded.delegate.precision(precision + rounded.delegate.scale()));
+		if (delegate.equals(Apfloat.ZERO)) return this;
+		if (precision == Long.MAX_VALUE) return new Real(delegate.precision(Long.MAX_VALUE));
+		return new Real(delegate.precision(precision + delegate.scale() + 1));
 	}
 
 
@@ -281,6 +285,6 @@ public class Real implements Comparable<Real>, Interval
 	@Override
 	public String toString()
 	{
-		return delegate.toString(true);
+		return round(precision()).delegate.toString(true);
 	}
 }

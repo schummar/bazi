@@ -52,7 +52,7 @@ public class CastHelper
 		}
 		catch (Exception e)
 		{
-			throw new IncompatibleTypesException(String.format("cannot cast %s to %s", value.getClass(), raw(type)));
+			throw new IncompatibleTypesException(String.format("cannot cast %s to %s\n%s", value.getClass(), raw(type), value), e);
 		}
 	}
 

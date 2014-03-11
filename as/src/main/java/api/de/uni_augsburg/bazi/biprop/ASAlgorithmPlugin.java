@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.biprop;
 
 import de.uni_augsburg.bazi.common.Plugin;
+import de.uni_augsburg.bazi.common.data.Default;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 
 import java.util.Collections;
@@ -22,16 +23,16 @@ public class ASAlgorithmPlugin implements Plugin<ASAlgorithm>
 	}
 	@Override public Optional<? extends ASAlgorithm> tryInstantiate(Plugin.Params params)
 	{
-		Params cast = params.cast(Params.class);
+		Params asParams = params.cast(Params.class);
 		if (params.name().equals("as"))
-			return Optional.of(new ASAlgorithm(cast.div(), cast.update()));
+			return Optional.of(new ASAlgorithm(asParams.vector(), asParams.update()));
 		return Optional.empty();
 	}
 
 
 	public interface Params extends Plugin.Params
 	{
-		DivisorAlgorithm div();
-		DivisorUpdateFunction update();
+		@Default("divstd") DivisorAlgorithm vector();
+		@Default("mid") DivisorUpdateFunction update();
 	}
 }

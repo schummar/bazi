@@ -6,16 +6,14 @@ public interface Interval
 	{
 		return new Interval()
 		{
-			private final Real nice = BMath.niceMidValue(min, max);
 			@Override public Real min() { return min; }
-			@Override public Real nice() { return max; }
-			@Override public Real max() { return nice; }
+			@Override public Real max() { return max; }
 		};
 	}
 
 
 	Real min();
-	default Real nice() { return BMath.niceMidValue(min(), max()); }
+	default Real nice() { return BMath.niceMidValue(this); }
 	Real max();
 	default boolean contains(Real r) { return min().compareTo(r) <= 0 && r.compareTo(max()) <= 0; }
 	default int compareTo(Real r)

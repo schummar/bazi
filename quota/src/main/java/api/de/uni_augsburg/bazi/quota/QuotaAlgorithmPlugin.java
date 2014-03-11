@@ -25,6 +25,7 @@ public class QuotaAlgorithmPlugin implements Plugin<QuotaAlgorithm>
 		if (name.equals("hare")) name = "haqgrr";
 		else if (name.equals("droop")) name = "drqgrr";
 
+		if (name.length() != 6) return Optional.empty();
 		String qs = name.substring(0, 3);
 		String rs = name.substring(3);
 

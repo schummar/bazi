@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static de.uni_augsburg.bazi.biprop.BipropOutput.District;
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
-public abstract class BipropAlgorithm extends MatrixAlgorithm
+public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 {
 	@Override public List<Object> getInputAttributes()
 	{
@@ -47,9 +47,11 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm
 
 		Map<Object, Real> divisors = calculate(table, seats);
 
+		data.superApportionment(superApportionment);
 		data.districts().forEach(d -> d.divisor(new Divisor(divisors.get(d), divisors.get(d))));
 		data.partyDivisors(new LinkedHashMap<>());
 		table.columnKeySet().forEach(name -> data.partyDivisors().put(name, new Divisor(divisors.get(name), divisors.get(name))));
+		data.plain(new BipropPlain(data));
 		return data;
 	}
 

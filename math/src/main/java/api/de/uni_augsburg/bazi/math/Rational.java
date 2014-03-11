@@ -271,6 +271,14 @@ public class Rational extends Real
 		return mul(BMath.TEN.pow(l));
 	}
 
+
+	@Override public Rational round(long digits)
+	{
+		Rational x = BMath.TEN.pow(digits);
+		return mul(x).round().div(x);
+	}
+
+
 	@Override
 	public String toString()
 	{
