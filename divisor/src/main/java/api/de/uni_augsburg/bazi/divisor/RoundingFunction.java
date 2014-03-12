@@ -1,22 +1,23 @@
 package de.uni_augsburg.bazi.divisor;
 
+import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public interface RoundingFunction
 {
-	public Real getBorder(Int value, int minPrecision);
-	public Real[] getBorders(Real value, int minPrecision);
-	public Int round(Real value, int minPrecision);
-	public Rational getParam();
+	Real getBorder(Int value, long minPrecision);
+	Real[] getBorders(Real value, long minPrecision);
+	Int round(Real value, long minPrecision);
+	Rational getParam();
+	boolean isImpervious();
 
-	public default ShiftQueue.ShiftFunction getShiftFunction(int minPrecision)
+	public default ShiftQueue.ShiftFunction getShiftFunction(long minPrecision)
 	{
 		return (party, seats) -> {
 			Real border = getBorder(seats, minPrecision);
@@ -39,19 +40,19 @@ public interface RoundingFunction
 	public static interface ExactRoundingFunction extends RoundingFunction
 	{
 		@Override
-		public default Rational getBorder(Int value, int minPrecision)
+		public default Rational getBorder(Int value, long minPrecision)
 		{
 			return getBorder(value);
 		}
 		public Rational getBorder(Int value);
 		@Override
-		public default Rational[] getBorders(Real value, int minPrecision)
+		public default Rational[] getBorders(Real value, long minPrecision)
 		{
 			return getBorders(value);
 		}
 		public Rational[] getBorders(Real value);
 		@Override
-		public default Int round(Real value, int minPrecision)
+		public default Int round(Real value, long minPrecision)
 		{
 			return round(value);
 		}
@@ -102,6 +103,12 @@ public interface RoundingFunction
 		{
 			return r;
 		}
+
+		@Override public boolean isImpervious()
+		{
+
+			return r.equals(BMath.ZERO) || specialCases.get(BMath.ZERO).equals(BMath.ZERO);
+		}
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -119,7 +126,7 @@ public interface RoundingFunction
 		}
 
 		@Override
-		public Real getBorder(Int value, int minPrecision)
+		public Real getBorder(Int value, long minPrecision)
 		{
 			Rational p = specialCases.get(value);
 			if (p == null)
@@ -130,9 +137,9 @@ public interface RoundingFunction
 			return calc(value, p, minPrecision);
 		}
 
-		protected Real calc(Int value, Rational p, int minPrecision)
+		protected Real calc(Int value, Rational p, long minPrecision)
 		{
-			int precision = minPrecision;
+			long precision = minPrecision;
 			while (true)
 			{
 				Real x = value.precision(precision);
@@ -142,12 +149,21 @@ public interface RoundingFunction
 			}
 		}
 
-		protected Real calcGeometric(Int value, int minPrecision) { return BMath.pow(value.mul(value.add(1)), BMath.HALF, minPrecision); }
-		protected Rational calcHarmonic(Int value) { return value.inv().add(value.add(1).inv()).div(2).inv(); }
+		protected Real calcGeometric(Int value, long minPrecision)
+		{
+			if (value.equals(BMath.ZERO)) return BMath.ZERO;
+			return BMath.pow(value.mul(value.add(1)), BMath.HALF, minPrecision);
+		}
+
+		protected Rational calcHarmonic(Int value)
+		{
+			if (value.equals(BMath.ZERO)) return BMath.ZERO;
+			return value.inv().add(value.add(1).inv()).div(2).inv();
+		}
 
 
 		@Override
-		public Real[] getBorders(Real value, int minPrecision)
+		public Real[] getBorders(Real value, long minPrecision)
 		{
 			Real hi = getBorder(value.floor(), minPrecision);
 			Real lo = hi;
@@ -157,7 +173,7 @@ public interface RoundingFunction
 		}
 
 		@Override
-		public Int round(Real value, int minPrecision)
+		public Int round(Real value, long minPrecision)
 		{
 			if (value.compareTo(getBorder(value.floor(), minPrecision)) > 0)
 				return value.ceil();
@@ -169,6 +185,8 @@ public interface RoundingFunction
 		{
 			return p;
 		}
+
+		@Override public boolean isImpervious() { return false; }
 	}
 
 
@@ -178,6 +196,8 @@ public interface RoundingFunction
 	public static class Geometric extends Power
 	{
 		public Geometric() { super(BMath.ZERO, null); }
+
+		@Override public boolean isImpervious() { return true; }
 	}
 
 
@@ -192,17 +212,17 @@ public interface RoundingFunction
 		}
 
 		@Override
-		public Rational getBorder(Int value, int minPrecision)
+		public Rational getBorder(Int value, long minPrecision)
 		{
 			return getBorder(value);
 		}
 		@Override
-		public Rational[] getBorders(Real value, int minPrecision)
+		public Rational[] getBorders(Real value, long minPrecision)
 		{
 			return getBorders(value);
 		}
 		@Override
-		public Int round(Real value, int minPrecision)
+		public Int round(Real value, long minPrecision)
 		{
 			return round(value);
 		}
@@ -230,5 +250,7 @@ public interface RoundingFunction
 				return value.ceil();
 			return value.floor();
 		}
+
+		@Override public boolean isImpervious() { return true; }
 	}
 }

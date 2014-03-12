@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.bmm;
 
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.common.data.Data;
@@ -32,7 +33,9 @@ public class BMMAlgorithm extends VectorAlgorithm<VectorOutput>
 	{
 		return Collections.emptyList();
 	}
-	@Override public VectorOutput applyUnfiltered(Data in)
+
+
+	@Override public VectorOutput applyUnfiltered(Data in, Options options)
 	{
 		VectorOutput data = in.cast(VectorOutput.class);
 		data.parties().forEach(
@@ -43,7 +46,7 @@ public class BMMAlgorithm extends VectorAlgorithm<VectorOutput>
 		);
 		data.seats(data.seats().sub(base.mul(data.parties().size())));
 
-		data = method.applyUnfiltered(data);
+		data = method.applyUnfiltered(data, options);
 
 		data.parties().forEach(
 			p -> {

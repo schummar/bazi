@@ -5,6 +5,7 @@ import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Version;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.common.data.MapData;
 import de.uni_augsburg.bazi.common.format.Format;
@@ -107,7 +108,7 @@ class BAZIImpl
 		Algorithm algorithm = baziFile.algorithm();
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
 
-		Data result = algorithm.apply(baziFile);
+		Data result = algorithm.apply(baziFile,new Options());
 		System.out.println(outFormat.get().serialize(result));
 	}
 

@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.list;
 
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.data.Data;
 
@@ -22,8 +23,8 @@ public class ListAlgorithm extends VectorAlgorithm<ListOutput>
 
 	@Override public String name() { return ""; }
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
-	@Override public ListOutput applyUnfiltered(Data in)
+	@Override public ListOutput applyUnfiltered(Data in, Options options)
 	{
-		return ListAlgorithmImpl.calculate(in.cast(ListInput.class), Super, sub);
+		return ListAlgorithmImpl.calculate(in.cast(ListInput.class), Super, sub,options);
 	}
 }

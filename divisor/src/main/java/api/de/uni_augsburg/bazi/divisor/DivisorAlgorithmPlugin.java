@@ -65,7 +65,7 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 			name = Resources.get("method.divpow");
 		}
 		if (r == null) return Optional.empty();
-		return Optional.of(new DivisorAlgorithm(r, cast.minPrecision(), name));
+		return Optional.of(new DivisorAlgorithm(r, name));
 	}
 
 	public static RoundingFunction.Stationary buildStationary(String line)
@@ -92,7 +92,7 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 	public static Map<Int, Rational> buildSpecialCases(String line)
 	{
 		Map<Int, Rational> map = new HashMap<>();
-		for (String s : line.split("[,|;|\\s]+"))
+		for (String s : line.split("[,;\\s]+"))
 		{
 			s = s.trim();
 			boolean lowerInterval = s.endsWith("]");
@@ -109,6 +109,5 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 	{
 		String p();
 		String r();
-		int minPrecision();
 	}
 }

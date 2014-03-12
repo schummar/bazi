@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.list;
 
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.math.BMath;
@@ -11,20 +12,20 @@ import static de.uni_augsburg.bazi.list.ListOutput.Party;
  */
 class ListAlgorithmImpl
 {
-	public static ListOutput calculate(ListInput in, VectorAlgorithm<?> Super, VectorAlgorithm<?> sub)
+	public static ListOutput calculate(ListInput in, VectorAlgorithm<?> Super, VectorAlgorithm<?> sub, Options options)
 	{
 		ListOutput out = in.copy().cast(ListOutput.class);
 		out.parties().forEach(ListAlgorithmImpl::sumSubParties);
 
-		out.merge(Super.applyUnfiltered(in));
+		out.merge(Super.applyUnfiltered(in, options));
 
 		out.parties().parallelStream().forEach(
 			p -> {
 				if (p.parties() == null || p.parties().isEmpty()) return;
 
 				VectorOutput subOut = sub == null
-					? Super.apply(p)
-					: sub.apply(p);
+					? Super.apply(p, options)
+					: sub.apply(p, options);
 				p.merge(subOut);
 			}
 		);

@@ -2,6 +2,7 @@ package de.uni_augsburg.bazi.separate;
 
 import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.data.Data;
 
@@ -26,11 +27,11 @@ public class SeparateAlgorithm extends MatrixAlgorithm<MatrixOutput>
 	}
 
 
-	@Override public MatrixOutput applyUnfiltered(Data in)
+	@Override public MatrixOutput applyUnfiltered(Data in, Options options)
 	{
 		MatrixOutput out = in.copy(MatrixOutput.class);
 
-		out.districts().parallelStream().forEach(d -> d.merge(method.apply(d)));
+		out.districts().parallelStream().forEach(d -> d.merge(method.apply(d, options)));
 
 		out.plain(new SeparatePlain(out, method.name()));
 		return out;

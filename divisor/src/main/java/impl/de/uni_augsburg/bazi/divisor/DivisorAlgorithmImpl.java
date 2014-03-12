@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.divisor;
 
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.common_vector.ShiftQueue;
@@ -12,16 +13,16 @@ import java.util.function.Supplier;
 
 class DivisorAlgorithmImpl
 {
-	public static DivisorOutput calculate(VectorInput input, RoundingFunction r, int minPrecision, String name)
+	public static DivisorOutput calculate(VectorInput input, RoundingFunction r,String name, Options options)
 	{
 		DivisorOutput output = input.copy(DivisorOutput.class);
 		try
 		{
 			Supplier<Int> seatsOff = () -> output.seats().sub(output.parties().stream().map(VectorOutput.Party::seats).reduce(Int::add).orElse(BMath.ZERO));
 
-			calculateInitialSeats(output, r, minPrecision);
+			calculateInitialSeats(output, r,  options);
 
-			ShiftQueue q = new ShiftQueue(output.parties(), r.getShiftFunction(minPrecision));
+			ShiftQueue q = new ShiftQueue(output.parties(), r.getShiftFunction(options.precision()));
 			q.shift(seatsOff.get());
 
 			output.parties().forEach(
@@ -33,7 +34,7 @@ class DivisorAlgorithmImpl
 				}
 			);
 
-			q = new ShiftQueue(output.parties(), r.getShiftFunction(minPrecision).mindConditions());
+			q = new ShiftQueue(output.parties(), r.getShiftFunction(options.precision()).mindConditions());
 			q.shift(seatsOff.get());
 
 			q.updateUniquenesses();
@@ -49,7 +50,7 @@ class DivisorAlgorithmImpl
 		return output;
 	}
 
-	private static void calculateInitialSeats(DivisorOutput output, RoundingFunction r, int minPrecision)
+	private static void calculateInitialSeats(DivisorOutput output, RoundingFunction r, Options options)
 	{
 		/* Erste Zuteilung der Sitze gemaess der Min-Bedingung und der Zuteilung mit Hilfe des Unbiased Multipliers
 		 * Stationaere Methoden erlauben noch eine Verbesserung */
@@ -65,7 +66,7 @@ class DivisorAlgorithmImpl
 
 		for (DivisorOutput.Party party : output.parties())
 		{
-			Int s = r.round(party.votes().mul(ubm), minPrecision);
+			Int s = r.round(party.votes().mul(ubm), options.precision());
 			party.seats(s.max(party.min()).min(party.max()));
 		}
 	}

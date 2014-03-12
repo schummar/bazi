@@ -115,14 +115,27 @@ public class BMath
 		return valueOf(RANDOM.nextDouble());
 	}
 
-	public static Real pow(Real x, Real y, int minPrecision)
+	public static Real pow(Real x, Real y, long precision)
 	{
-		int precision = minPrecision;
+		/*long precision = minPrecision;
 		while (true)
 		{
 			Real res = x.precision(precision).pow(y);
 			if (res.precision() >= minPrecision) return res;
-		}
+		}*/
+		return x.precision(precision).pow(y);
+	}
+
+
+	public static Real log(Real x, long precision)
+	{
+		return x.precision(precision).log();
+	}
+
+
+	public static Real exp(Real x, long precision)
+	{
+		return x.precision(precision).exp();
 	}
 
 

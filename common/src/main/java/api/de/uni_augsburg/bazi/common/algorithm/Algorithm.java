@@ -14,14 +14,14 @@ public abstract class Algorithm<O extends Data> implements Plugin.Instance
 {
 	public abstract List<Object> getInputAttributes();
 
-	public abstract O applyUnfiltered(Data in);
+	public abstract O applyUnfiltered(Data in, Options options);
 
-	public final O apply(Data in)
+	public final O apply(Data in, Options options)
 	{
 		List<Filter> filters = PluginManager.INSTANCE.getFiltersFor(this);
 		filters.forEach(f -> f.preprocess(in));
 
-		O out = applyUnfiltered(in);
+		O out = applyUnfiltered(in, options);
 
 		Collections.reverse(filters);
 		filters.forEach(f -> f.postprocess(in, out));

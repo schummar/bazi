@@ -108,6 +108,16 @@ public class Real implements Comparable<Real>, Interval
 	}
 
 
+	public Real log()
+	{
+		return new Real(ApfloatMath.log(delegate));
+	}
+	public Real exp()
+	{
+		return new Real(ApfloatMath.exp(delegate));
+	}
+
+
 	public Real min(long that)
 	{
 		return min(BMath.valueOf(that));
