@@ -13,8 +13,7 @@ class ListAlgorithmImpl
 {
 	public static ListOutput calculate(ListInput in, VectorAlgorithm<?> Super, VectorAlgorithm<?> sub)
 	{
-		ListOutput out = in.copy(ListOutput.class);
-
+		ListOutput out = in.copy().cast(ListOutput.class);
 		out.parties().forEach(ListAlgorithmImpl::sumSubParties);
 
 		out.merge(Super.applyUnfiltered(in));

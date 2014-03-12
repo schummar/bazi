@@ -9,6 +9,8 @@ import de.uni_augsburg.bazi.common.util.CollectionHelper;
 import java.util.Collections;
 import java.util.List;
 
+import static de.uni_augsburg.bazi.dir.DirOutput.Party;
+
 /**
  * Created by Marco on 10.03.14.
  */
@@ -30,10 +32,22 @@ public class DirFilter implements Filter
 	{ }
 	@Override public void postprocess(Data in, Data out)
 	{
-		DirOutput din = in.cast(DirOutput.class);
+		DirOutput din = in.copy().cast(DirOutput.class);
 		DirOutput dout = out.cast(DirOutput.class);
 
+		din.parties().forEach(DirFilter::sumDir);
 		CollectionHelper.forEachPair(din.parties(), dout.parties(), (ip, op) -> op.dir(ip.dir()));
 		dout.plain(new DirPlain(dout));
+	}
+
+	public static void sumDir(Party party)
+	{
+		party.parties().forEach(
+			p -> {
+				Party dp = p.cast(DirOutput.Party.class);
+				sumDir(dp);
+				party.dir(party.dir().add(dp.dir()));
+			}
+		);
 	}
 }
