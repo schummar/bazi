@@ -1,7 +1,7 @@
 {
 	"name": "Testeingaben für einfache Zuteilungen",
 	"algorithm": {
-		"name": "bmm",
+		"name": "list",
 		"base": "1",
 		"min": "2",
 		"max": "10"
@@ -18,7 +18,23 @@
 			"votes": "1",
 			"min": "2",
 			"max": "oo",
-			"dir": "5"
+			"dir": "5",
+			"parties": [
+				{
+					"name": "A1",
+					"votes": "1",
+					"min": "0",
+					"max": "oo",
+					"dir": "10"
+				},
+				{
+					"name": "A2",
+					"votes": "1",
+					"min": "0",
+					"max": "oo",
+					"dir": "0"
+				}
+			]
 		},
 		{
 			"name": "B",

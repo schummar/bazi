@@ -17,7 +17,7 @@ public interface Data
 	default Data copy() { return MapData.fromDataInterface(this); }
 	default <T extends Data> T copy(Class<T> type) { return MapData.fromDataInterface(this).copy(type); }
 	default <T extends Data> T crop(Class<T> type) { return MapData.fromDataInterface(this).crop(type); }
-	default Map<String, Object> toMap() { return MapData.fromDataInterface(this).toMap(); }
+	default MapData toMapData() { return MapData.fromDataInterface(this).toMapData(); }
 	default PlainSupplier plain() { return MapData.fromDataInterface(this).plain(); }
 	default Data plain(PlainSupplier plain) { return MapData.fromDataInterface(this).plain(plain); }
 
@@ -25,7 +25,7 @@ public interface Data
 	{
 		@Override public Object serialize(Data value)
 		{
-			return value.toMap();
+			return value.toMapData();
 		}
 		@Override public Data deserialize(Object value)
 		{

@@ -6,12 +6,10 @@ import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.uni_augsburg.bazi.common.data.CastHelper.raw;
 import static de.uni_augsburg.bazi.common.data.Getter.asGetter;
 import static de.uni_augsburg.bazi.common.data.Setter.asSetter;
 
@@ -98,7 +96,7 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 	}
 
 
-	@Override public Map<String, Object> toMap()
+	@Override public MapData toMapData()
 	{
 		return this;
 	}
@@ -126,8 +124,19 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 		{
 			if (!containsKey(getter.key()))
 			{
-				String def = getter.def();
-				if (def != null) put(getter.key(), def);
+				if (List.class.isAssignableFrom(raw(getter.type())))
+				{
+					put(getter.key(), new ArrayList<>());
+				}
+				else if (Map.class.isAssignableFrom(raw(getter.type())))
+				{
+					put(getter.key(), new HashMap<>());
+				}
+				else
+				{
+					String def = getter.def();
+					if (def != null) put(getter.key(), def);
+				}
 			}
 			if (!containsKey(getter.key()))
 				return Defaults.defaultValue(method.getReturnType());

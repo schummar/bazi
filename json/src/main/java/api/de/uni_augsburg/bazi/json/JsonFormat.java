@@ -62,7 +62,7 @@ public class JsonFormat implements Format
 
 	@Override public String serialize(Data data)
 	{
-		return gson.toJson(data.toMap());
+		return gson.toJson(data.toMapData());
 	}
 
 	private static final TypeAdapterFactory TYPE_ADAPTER_FACTORY = new TypeAdapterFactory()

@@ -17,7 +17,7 @@ class ListAlgorithmImpl
 
 		out.parties().forEach(ListAlgorithmImpl::sumSubParties);
 
-		out.merge(Super.apply(in));
+		out.merge(Super.applyUnfiltered(in));
 
 		out.parties().parallelStream().forEach(
 			p -> {
