@@ -1,6 +1,11 @@
 {
 	"name": "Testeingaben für einfache Zuteilungen",
-	"algorithm": "divstd",
+	"algorithm": {
+		"name": "bmm",
+		"base": "1",
+		"min": "2",
+		"max": "10"
+	},
 	"output": {
 		"orientation": "ver",
 		"divisorformat": "quotients",
@@ -17,14 +22,14 @@
 		},
 		{
 			"name": "B",
-			"votes": "1",
+			"votes": "2",
 			"min": "0",
 			"max": "oo",
 			"dir": "0"
 		},
 		{
 			"name": "C",
-			"votes": "1",
+			"votes": "2",
 			"min": "0",
 			"max": "oo",
 			"dir": "0"

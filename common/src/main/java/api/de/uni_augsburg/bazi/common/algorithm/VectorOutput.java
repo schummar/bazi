@@ -24,6 +24,7 @@ public interface VectorOutput extends VectorInput
 	{
 		@Default("0") default Int seats() { return BMath.ZERO; }
 		@Default("") default Uniqueness uniqueness() { return Uniqueness.UNIQUE; }
+		@Default("false") default boolean conditionUsed() { return false; }
 
 		void name(String name);
 		void votes(Real votes);
@@ -31,5 +32,6 @@ public interface VectorOutput extends VectorInput
 		void max(Int max);
 		void seats(Int seats);
 		void uniqueness(Uniqueness uniqueness);
+		void conditionUsed(boolean conditionUsed);
 	}
 }

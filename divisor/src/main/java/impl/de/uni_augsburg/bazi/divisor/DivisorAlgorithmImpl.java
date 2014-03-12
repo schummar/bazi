@@ -2,11 +2,11 @@ package de.uni_augsburg.bazi.divisor;
 
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 
 import java.util.function.Supplier;
 
@@ -24,24 +24,29 @@ class DivisorAlgorithmImpl
 			ShiftQueue q = new ShiftQueue(output.parties(), r.getShiftFunction(minPrecision));
 			q.shift(seatsOff.get());
 
-			for (DivisorOutput.Party party : output.parties())
-				party.seats(party.seats().max(party.min()).min(party.max()));
+			output.parties().forEach(
+				p -> {
+					if (p.seats().compareTo(p.min()) < 0) p.seats(p.min());
+					else if (p.seats().compareTo(p.max()) > 0) p.seats(p.max());
+					else return;
+					p.conditionUsed(true);
+				}
+			);
 
 			q = new ShiftQueue(output.parties(), r.getShiftFunction(minPrecision).mindConditions());
 			q.shift(seatsOff.get());
 
 			q.updateUniquenesses();
 			output.divisor(new Divisor(q.nextIncreaseValue(), q.nextDecreaseValue()));
-
-			output.plain(new DivisorPlain(output, r, name));
-			return output;
 		}
 		catch (ShiftQueue.NoShiftPossible e)
 		{
 			output.parties().forEach(p -> p.seats(BMath.NAN));
 			output.divisor(new Divisor(BMath.NAN, BMath.NAN));
-			return output;
 		}
+
+		output.plain(new DivisorPlain(output, r, name));
+		return output;
 	}
 
 	private static void calculateInitialSeats(DivisorOutput output, RoundingFunction r, int minPrecision)

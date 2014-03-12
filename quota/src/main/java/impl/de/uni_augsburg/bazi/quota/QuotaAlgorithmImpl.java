@@ -2,9 +2,9 @@ package de.uni_augsburg.bazi.quota;
 
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 
 import java.util.function.Supplier;
 
@@ -27,15 +27,21 @@ class QuotaAlgorithmImpl
 		ShiftQueue q = new ShiftQueue(output.parties(), residualHandler.getShiftFunction(output.quota()));
 		q.shift(seatsOff.get());
 
-		for (QuotaOutput.Party party : output.parties())
-			party.seats(party.seats().max(party.min()).min(party.max()));
+		output.parties().forEach(
+			p -> {
+				if (p.seats().compareTo(p.min()) < 0) p.seats(p.min());
+				else if (p.seats().compareTo(p.max()) > 0) p.seats(p.max());
+				else return;
+				p.conditionUsed(true);
+			}
+		);
 
 		q = new ShiftQueue(output.parties(), residualHandler.getShiftFunction(output.quota()).mindConditions());
 		q.shift(seatsOff.get());
 
 		q.updateUniquenesses();
 
-		output.plain(new QuotaPlain(output,name));
+		output.plain(new QuotaPlain(output, name));
 		return output;
 	}
 }
