@@ -26,10 +26,10 @@ public class QuotaPlain extends VectorPlain
 	{
 		super.partyColumn(col, options);
 		if (options.divisorFormat() != DivisorFormat.QUOTIENTS)
-			col.add(Resources.get("output.div_quo.quo"));
+			col.add(quotaLabel(options));
 		else
 		{
-			col.set(String.format("%s (%s)", col.get(), Resources.get("output.div_quo.quo")));
+			col.set(String.format("%s (%s)", col.get(), quotaLabel(options)));
 		}
 	}
 
@@ -62,7 +62,7 @@ public class QuotaPlain extends VectorPlain
 		switch (options.divisorFormat())
 		{
 			case INTERVAL:
-				return String.format("[%s..%s]", splitToString(split.min()), splitToString(split.max()));
+				return String.format("[%s;%s]", splitToString(split.min()), splitToString(split.max()));
 			case MULT:
 				return "---";
 			case MULT_INTERVAL:
@@ -91,5 +91,22 @@ public class QuotaPlain extends VectorPlain
 			else max = max.min(f);
 		}
 		return Interval.of(min, max);
+	}
+
+	public static String quotaLabel(PlainOptions options)
+	{
+		switch (options.divisorFormat())
+		{
+			case DIV_SPLIT:
+			case QUOTIENTS:
+			default:
+				return Resources.get("output.div_quo.quo");
+			case INTERVAL:
+				return Resources.get("output.div_interval.quo");
+			case MULT:
+				return Resources.get("output.mul.quo");
+			case MULT_INTERVAL:
+				return Resources.get("output.mul_interval.quo");
+		}
 	}
 }

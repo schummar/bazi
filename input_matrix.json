@@ -4,6 +4,11 @@
 		"name": "as",
 		"method": "divstd"
 	},
+	"output": {
+		"orientation": "verhor",
+		"divisorformat": "quotient",
+		"tieformat": "coded"
+	},
 	"districts": [
 		{
 			"name": "I",

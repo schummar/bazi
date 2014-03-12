@@ -19,6 +19,10 @@ public class Divisor implements Interval
 	public Real nice() { return nice; }
 	public Real max() { return max; }
 
+	public Real minMultiplier() { return max.inv(); }
+	public Real niceMultiplier() { return BMath.niceMidValue(Interval.of(minMultiplier(), maxMultiplier())); }
+	public Real maxMultiplier() { return min.inv(); }
+
 	@Override public String toString()
 	{
 		return String.format("[%s,%s] -> %s]", min, max, nice);

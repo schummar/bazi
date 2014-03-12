@@ -25,10 +25,10 @@ public class DivisorPlain extends VectorPlain
 	{
 		super.partyColumn(col, options);
 		if (options.divisorFormat() != DivisorFormat.QUOTIENTS)
-			col.add(Resources.get("output.div_quo.div"));
+			col.add(divisorLabel(options));
 		else
 		{
-			col.set(String.format("%s (%s)", col.get(), Resources.get("output.div_quo.div")));
+			col.set(String.format("%s (%s)", col.get(), divisorLabel(options)));
 		}
 	}
 
@@ -36,7 +36,7 @@ public class DivisorPlain extends VectorPlain
 	{
 		super.resultColumn(col, options);
 		if (options.divisorFormat() != DivisorFormat.QUOTIENTS)
-			col.add(divisor(options));
+			col.add(divisor(output.divisor(), options));
 		else
 			quotientColumn(col.inserBefore(), options);
 	}
@@ -50,31 +50,48 @@ public class DivisorPlain extends VectorPlain
 				col.add(DivisorRoundingHelper.round(q, 1, options.maxDigits(), r).toString());
 			}
 		);
-		col.add(String.format("(%s)", divisor(options)));
+		col.add(String.format("(%s)", divisor(output.divisor(), options)));
 	}
 
-	public String divisor(PlainOptions options)
+	public static String divisor(Divisor divisor, PlainOptions options)
 	{
 		switch (options.divisorFormat())
 		{
 			case INTERVAL:
 				return String.format(
-					"[%s..%s]",
-					output.divisor().min().precision(options.maxDigits()),
-					output.divisor().max().precision(options.maxDigits())
+					"[%s;%s]",
+					divisor.min().precision(options.maxDigits()),
+					divisor.max().precision(options.maxDigits())
 				);
 			case MULT:
-				return output.divisor().nice().inv().toString();
+				return divisor.niceMultiplier().precision(options.maxDigits()).toString();
 			case MULT_INTERVAL:
 				return String.format(
-					"[%s..%s]",
-					output.divisor().max().inv().precision(options.maxDigits()),
-					output.divisor().min().inv().precision(options.maxDigits())
+					"[%s;%s]",
+					divisor.minMultiplier().precision(options.maxDigits()),
+					divisor.maxMultiplier().precision(options.maxDigits())
 				);
 			case DIV_SPLIT:
 			case QUOTIENTS:
 			default:
-				return output.divisor().nice().precision(options.maxDigits()).toString();
+				return divisor.nice().precision(options.maxDigits()).toString();
+		}
+	}
+
+	public static String divisorLabel(PlainOptions options)
+	{
+		switch (options.divisorFormat())
+		{
+			case DIV_SPLIT:
+			case QUOTIENTS:
+			default:
+				return Resources.get("output.div_quo.div");
+			case INTERVAL:
+				return Resources.get("output.div_interval.div");
+			case MULT:
+				return Resources.get("output.mul.div");
+			case MULT_INTERVAL:
+				return Resources.get("output.mul_interval.div");
 		}
 	}
 }

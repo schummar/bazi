@@ -70,12 +70,12 @@ public class VectorPlain implements PlainSupplier
 		if (options.voteLabel() != null) col.add(options.voteLabel());
 		else col.add(Resources.get("output.votes"));
 
-		output.parties().forEach(p -> col.add(p.votes().toString()));
+		output.parties().forEach(p -> col.add(p.votes().precision(options.maxDigits()).toString()));
 
 		Real sum = output.parties().stream()
 			.map(VectorOutput.Party::votes)
 			.reduce(Real::add).orElse(BMath.ZERO);
-		col.add(sum.toString());
+		col.add(sum.precision(options.maxDigits()).toString());
 	}
 
 

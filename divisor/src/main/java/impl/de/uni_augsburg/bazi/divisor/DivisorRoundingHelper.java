@@ -24,9 +24,9 @@ public class DivisorRoundingHelper
 		do
 		{
 			digits++;
-			qr = q.precision(digits);
+			qr = q.round(digits);
 		} while (borders.contains(qr) && digits < maxDigits);
 
-		return qr;
+		return qr.precision(digits);
 	}
 }

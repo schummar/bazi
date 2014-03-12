@@ -6,7 +6,7 @@ import de.uni_augsburg.bazi.common.data.Default;
 public interface PlainOptions extends Plugin.Params
 {
 	@Default("quotients") DivisorFormat divisorFormat();
-	@Default("ver") Orientation orientation();
+	@Default("verhor") Orientation orientation();
 	@Default("coded") TieFormat tieFormat();
 	@Default("10") Integer maxDigits();
 	String nameLabel();
