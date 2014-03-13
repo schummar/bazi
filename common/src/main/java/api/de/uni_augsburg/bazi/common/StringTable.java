@@ -3,10 +3,14 @@ package de.uni_augsburg.bazi.common;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class StringTable
 {
+	public static class Key {}
+
 	public static final int DEFAULT_MARGIN = 2;
 
 	private final List<Column> columns = new ArrayList<>();
@@ -22,16 +26,24 @@ public class StringTable
 	}
 
 
-	public Column col(int col)
+	public Column col(int col) { return col(col, null); }
+	public Column col(int col, Key key)
 	{
-		while (col >= columns.size()) columns.add(new Column());
+		while (col >= columns.size()) columns.add(new Column(key));
 		return columns.get(col);
 	}
-	public Column col()
+	public Column col() { return col(null); }
+	public Column col(Key key)
 	{
-		return col(columns.size());
+		return col(columns.size(), key);
 	}
 	public List<Column> cols() { return columns; }
+	public List<Column> cols(Key key)
+	{
+		return columns.stream()
+			.filter(c -> Objects.equals(c.key(), key))
+			.collect(Collectors.toList());
+	}
 
 	public int width()
 	{
@@ -84,6 +96,18 @@ public class StringTable
 		return s.toString();
 	}
 
+	public void add(List<String> col)
+	{
+		columns.add(new Column(col));
+	}
+
+
+	public void removeAll(Key key)
+	{
+		columns.removeIf(c -> Objects.equals(c.key(), key));
+	}
+
+
 	public StringTable append(StringTable that)
 	{
 		that.columns.forEach(col -> columns.add(new Column(col)));
@@ -104,10 +128,22 @@ public class StringTable
 
 	public class Column extends ArrayList<String>
 	{
+		private Key key = null;
 		private Alignment alignment = null;
 
 		public Column(Collection<? extends String> c) { super(c); }
-		public Column() { }
+		public Column(Collection<? extends String> c, Key key)
+		{
+			super(c);
+			this.key = key;
+		}
+		public Column(Key key)
+		{
+			this.key = key;
+		}
+
+		public Key key() { return key; }
+		public void key(Key key) { this.key = key; }
 
 		@Override public String get(int index)
 		{
@@ -135,18 +171,20 @@ public class StringTable
 		public Alignment alignment() { return alignment; }
 		public void alignment(Alignment aligment) { this.alignment = aligment; }
 
-		public Column insertAfter()
+		public Column insertAfter() { return insertAfter(null); }
+		public Column insertAfter(Key key)
 		{
 			int index = columns.indexOf(this);
-			Column col = new Column();
+			Column col = new Column(key);
 			columns.add(index + 1, col);
 			return col;
 		}
 
-		public Column inserBefore()
+		public Column inserBefore() { return inserBefore(null); }
+		public Column inserBefore(Key key)
 		{
 			int index = columns.indexOf(this);
-			Column col = new Column();
+			Column col = new Column(key);
 			columns.add(index, col);
 			return col;
 		}

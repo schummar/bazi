@@ -42,7 +42,7 @@ public class PlainFormat implements Format
 				.map(StringTable::toString)
 				.collect(Collectors.joining("\n\n"));
 			if (!s.endsWith("\n")) s += "\n";
-			s += "\nBAZI " + Version.getCurrentVersionName() + " - Made in Augsburg University\n";
+			s += "BAZI " + Version.getCurrentVersionName() + " - Made in Augsburg University\n";
 			s += "************************************************************\n";
 			return s;
 		}

@@ -149,7 +149,8 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 		Setter setter = asSetter(method);
 		if (setter != null)
 		{
-			put(setter.key(), args[0]);
+			if (args[0] == null) remove(setter.key());
+			else put(setter.key(), args[0]);
 			return null;
 		}
 

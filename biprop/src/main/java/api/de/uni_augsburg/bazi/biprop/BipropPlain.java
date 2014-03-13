@@ -29,6 +29,8 @@ import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
  */
 public class BipropPlain extends MatrixPlain
 {
+	public static final StringTable.Key DIVISOR = new StringTable.Key();
+
 	protected final BipropOutput output;
 	protected final String sub;
 	public BipropPlain(BipropOutput output, String Super, String sub)
@@ -66,10 +68,10 @@ public class BipropPlain extends MatrixPlain
 	{
 		StringTable table = new StringTable();
 		table.titles().add(Resources.get("output.biprop_table", "?"));
-		firstColumn(table.col(), options);
-		seatSumColumn(table.col(), options);
+		firstColumn(table.col(FIRST), options);
+		seatSumColumn(table.col(SEATSUM), options);
 		table.append(getParts(options));
-		divisorColumn(table.col(), options);
+		divisorColumn(table.col(DIVISOR), options);
 		return table;
 	}
 
@@ -105,7 +107,7 @@ public class BipropPlain extends MatrixPlain
 	{
 		return key instanceof DivisorOutput
 			? ((DivisorOutput) key).divisor()
-			: output.partyDivisors().get(key);
+			: output.partyDivisors().get(key.toString());
 	}
 
 	public List<Divisor> rowDivisors(boolean forDistrict)

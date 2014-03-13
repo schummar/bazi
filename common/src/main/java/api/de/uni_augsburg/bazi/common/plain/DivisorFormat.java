@@ -16,7 +16,7 @@ public enum DivisorFormat implements ConvertibleEnum
 			}
 			@Override public boolean matches(String s)
 			{
-				return s.matches("div|split|quo|div[/|\\-_]?(split|quo)");
+				return s.matches("div|split|quo|div[/|\\\\-_]?(split|quo)");
 			}
 			@Override public String toString()
 			{
@@ -67,7 +67,7 @@ public enum DivisorFormat implements ConvertibleEnum
 			}
 			@Override public boolean matches(String s)
 			{
-				return s.matches("m(ul(t)?)?[/|\\-_]?i(nter)?val");
+				return s.matches("m(ul(t)?)?[/|\\\\-_]?i(nter)?val");
 			}
 			@Override public String toString()
 			{

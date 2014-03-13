@@ -66,7 +66,7 @@ public enum Orientation implements ConvertibleEnum
 			}
 			@Override public boolean matches(String s)
 			{
-				return s.matches("ver(t(i[ck]al)?)?[/|\\-_]?hor(izontal)?");
+				return s.matches("ver(t(i[ck]al)?)?[/|\\\\-_]?hor(izontal)?");
 			}
 			@Override public String toString()
 			{
@@ -91,7 +91,7 @@ public enum Orientation implements ConvertibleEnum
 			}
 			@Override public boolean matches(String s)
 			{
-				return s.matches("hor(izontal)?[/|\\-_]?ver(t(i[ck]al)?)?");
+				return s.matches("hor(izontal)?[/|\\\\-_]?ver(t(i[ck]al)?)?");
 			}
 			@Override public String toString()
 			{

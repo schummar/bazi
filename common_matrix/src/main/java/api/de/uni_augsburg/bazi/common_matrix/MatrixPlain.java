@@ -23,6 +23,11 @@ import java.util.stream.Collectors;
  */
 public abstract class MatrixPlain implements PlainSupplier
 {
+	public static final StringTable.Key
+	FIRST=new StringTable.Key(),
+	SEATSUM = new StringTable.Key();
+
+
 	protected final MatrixOutput output;
 	protected final String vectorName;
 	protected MatrixPlain(MatrixOutput output, String vectorName)

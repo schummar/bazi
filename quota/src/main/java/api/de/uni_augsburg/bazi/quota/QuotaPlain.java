@@ -39,7 +39,7 @@ public class QuotaPlain extends VectorPlain
 		if (options.divisorFormat() != DivisorFormat.QUOTIENTS)
 			col.add(split(splitInterval(), options));
 		else
-			quotientColumn(col.inserBefore(), options);
+			quotientColumn(col.inserBefore(QUTIENT), options);
 	}
 
 	public void quotientColumn(StringTable.Column col, PlainOptions options)

@@ -19,7 +19,7 @@ public interface RoundingFunction
 
 	public default ShiftQueue.ShiftFunction getShiftFunction(long minPrecision)
 	{
-		return (party, seats) -> {
+		return (party, seats, increase) -> {
 			Real border = getBorder(seats, minPrecision);
 			if (border.sgn() <= 0)
 				return BMath.INF;
@@ -107,7 +107,7 @@ public interface RoundingFunction
 		@Override public boolean isImpervious()
 		{
 
-			return r.equals(BMath.ZERO) || specialCases.get(BMath.ZERO).equals(BMath.ZERO);
+			return r.equals(BMath.ZERO) || (specialCases.containsKey(BMath.ZERO) && specialCases.get(BMath.ZERO).equals(BMath.ZERO));
 		}
 	}
 

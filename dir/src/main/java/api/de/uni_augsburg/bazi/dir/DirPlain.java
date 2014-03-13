@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class DirPlain implements PlainSupplier
 {
+	public static final StringTable.Key DIR = new StringTable.Key();
+
+
 	private final DirOutput output;
 	private PlainSupplier mainSupplier;
 	public DirPlain(DirOutput output)
@@ -25,7 +28,7 @@ public class DirPlain implements PlainSupplier
 	{
 		List<StringTable> tables = mainSupplier.get(options);
 		if (output.parties().stream().anyMatch(p -> p.dir() != null && !p.dir().equals(0)))
-			dirColumn(tables.get(0).col());
+			dirColumn(tables.get(0).col(DIR));
 		return tables;
 	}
 

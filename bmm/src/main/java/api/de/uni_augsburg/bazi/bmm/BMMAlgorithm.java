@@ -51,6 +51,8 @@ public class BMMAlgorithm extends VectorAlgorithm<VectorOutput>
 		data.parties().forEach(
 			p -> {
 				p.seats(p.seats().add(base));
+				p.min(null);
+				p.max(null);
 			}
 		);
 		data.seats(data.seats().add(base.mul(data.parties().size())));

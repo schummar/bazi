@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.biprop;
 
 import com.google.common.collect.Table;
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
@@ -23,9 +24,9 @@ public class ASAlgorithm extends BipropAlgorithm
 	}
 
 
-	@Override protected Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats)
+	@Override protected Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats, Options options)
 	{
-		return ASAlgorithmImpl.calculate(table, seats, divisorUpdateFunction, Super);
+		return ASAlgorithmImpl.calculate(table, seats, divisorUpdateFunction, Super, options);
 	}
 
 	@Override protected DivisorAlgorithm Super()

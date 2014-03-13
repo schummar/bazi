@@ -1,10 +1,11 @@
 package de.uni_augsburg.bazi.bmm_pow;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import de.uni_augsburg.bazi.bmm.BMMAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
-import de.uni_augsburg.bazi.common.data.Data;
-import de.uni_augsburg.bazi.common.util.Tuple;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorOutput;
 import de.uni_augsburg.bazi.math.BMath;
@@ -13,7 +14,9 @@ import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static de.uni_augsburg.bazi.bmm_pow.BMMPowOutput.BMMPowResult;
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
@@ -48,6 +51,14 @@ class BMMPowAlgorithmImpl
 
 	public BMMPowOutput calculate()
 	{
+		dout = in.copy().cast(DivisorOutput.class);
+		dout.parties().forEach(
+			p -> {
+				p.min(min);
+				p.max(BMath.INF);
+			}
+		);
+		dout.seats(dout.seats().sub(base.mul(dout.parties().size())));
 		dout = method.apply(dout, options);
 
 		List<Real> powers = new ArrayList<>();
@@ -59,7 +70,9 @@ class BMMPowAlgorithmImpl
 		{
 			Real Emin = BMath.ONE;
 			while (strongest.seats().compareTo(max) > 0)
+			{
 				Emin = transfer();
+			}
 			while (strongest.seats().equals(max))
 			{
 				Real Emax = Emin;
@@ -69,24 +82,29 @@ class BMMPowAlgorithmImpl
 			powers.sort(Real::compareTo);
 		}
 
-		BMMPowOutput out = Data.create(BMMPowOutput.class);
-		powers.forEach(
+		BMMPowOutput out = in.copy(BMMPowOutput.class);
+		powers.parallelStream().map(
 			pow -> {
 				VectorOutput partInt = in.copy().cast(VectorOutput.class);
 				partInt.parties().forEach(
-					p -> {
-						p.min(min);
-						p.max(BMath.INF);
-						p.votes(BMath.pow(p.votes(), pow, options.precision()));
-					}
+					p -> p.votes(BMath.pow(p.votes(), pow, options.precision()))
 				);
 
-				BMMPowResult partOut = method.apply(partInt, options).cast(BMMPowResult.class);
+				BMMAlgorithm bmm = new BMMAlgorithm(base, min, BMath.INF, method);
+				BMMPowResult partOut = bmm.apply(partInt, options).cast(BMMPowResult.class);
 				partOut.power(pow);
-				out.results().add(partOut);
+				return partOut;
+			}
+		)
+			.forEachOrdered(out.results()::add);
+
+		powers.forEach(
+			pow -> {
+
 			}
 		);
 
+		out.plain(new BMMPowPlain(out, method, ""));
 		return out;
 	}
 
@@ -99,33 +117,77 @@ class BMMPowAlgorithmImpl
 		return strongest;
 	}
 
-	private Real E(Party a, Party b)
+
+	private Map<Real, Real> logCache = new HashMap<>();
+	private Real log(Real x)
 	{
-		Real temp = method.roundingFunction().getBorder(b.seats().sub(1), options.precision());
-		temp = temp.div(method.roundingFunction().getBorder(a.seats(), options.precision()));
-		return temp.div(BMath.log(b.votes().div(a.votes()), options.precision()));
+		Real log = logCache.get(x);
+		if (log == null) logCache.put(x, log = BMath.log(x, options.precision()));
+		return log;
 	}
 
+	private final Table<Party, Party, Real> ECache = HashBasedTable.create();
+	private Real E(Party from, Party to)
+	{
+		Real E = ECache.get(from, to);
+		if (E != null) return E;
+
+		Real a = log(method.roundingFunction().getBorder(from.seats().sub(BMath.ONE), options.precision())),
+			b = log(method.roundingFunction().getBorder(to.seats(), options.precision())),
+			c = log(from.votes()), d = log(to.votes());
+
+		E = a.sub(b).div(c.sub(d));
+
+		ECache.put(from, to, E);
+		return E;
+	}
+
+	private class Data
+	{
+		public Real E = BMath.INFN;
+		public Party from, to;
+		public synchronized void offer(Real E, Party from, Party to)
+		{
+			if (E.compareTo(this.E) > 0)
+			{
+				this.E = E;
+				this.from = from;
+				this.to = to;
+			}
+		}
+	}
 	private Real transfer()
 	{
-		Real E = BMath.INFN;
-		Tuple<Party, Party> transfer = null;
+		Data d = new Data();
 
-		for (Party a : dout.parties())
-			for (Party b : dout.parties())
-			{
-				if (!(a.votes().compareTo(b.votes()) > 0 && a.seats().compareTo(bound) >= 0))
-					continue;
-				Real temp = E(b, a);
-				if (temp.compareTo(E) > 0)
+		dout.parties().parallelStream().forEach(
+			a -> {
+				if (a.seats().compareTo(bound) < 0) return;
+				Real E = BMath.INFN;
+				Party to = null;
+				for (Party b : dout.parties())
 				{
-					E = temp;
-					transfer = Tuple.of(a, b);
-				}
-			}
+					if (b.votes().compareTo(a.votes()) >= 0) continue;
 
-		transfer.x().seats(transfer.x().seats().sub(1));
-		transfer.y().seats(transfer.y().seats().add(1));
-		return E;
+					Real temp = E(a, b);
+					if (temp.compareTo(E) > 0)
+					{
+						E = temp;
+						to = b;
+					}
+				}
+
+				d.offer(E, a, to);
+			}
+		);
+
+		d.from.seats(d.from.seats().sub(1));
+		d.to.seats(d.to.seats().add(1));
+
+		ECache.row(d.from).clear();
+		ECache.column(d.from).clear();
+		ECache.row(d.to).clear();
+		ECache.column(d.to).clear();
+		return d.E;
 	}
 }

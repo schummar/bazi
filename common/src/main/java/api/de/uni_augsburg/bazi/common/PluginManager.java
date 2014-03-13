@@ -27,6 +27,7 @@ public enum PluginManager
 		try
 		{
 			Reflections reflections = new Reflections("de.uni_augsburg.bazi");
+
 			for (Class<? extends Plugin> c : reflections.getSubTypesOf(Plugin.class))
 			{
 				if (c.isInterface() || Modifier.isAbstract(c.getModifiers())) continue;
@@ -40,14 +41,23 @@ public enum PluginManager
 					LOGGER.warn(e.getMessage());
 				}
 			}
-
-			LOGGER.info("loaded plugins:\n{}", plugins.toString().replaceAll(",", ",\n"));
+			LOGGER.info(
+				"loaded plugins:\n{}", plugins.stream()
+					.map(p -> p.getClass().toString())
+					.sorted()
+					.collect(Collectors.joining(",\n"))
+			);
 
 
 			getPluginsOfInstanceType(Filter.class)
 				.forEach(p -> p.tryInstantiate(() -> null).ifPresent(filters::add));
 
-			LOGGER.info("loaded filters:\n{}", filters.toString().replaceAll(",", ",\n"));
+			LOGGER.info(
+				"loaded filters:\n{}", filters.stream()
+					.map(f -> f.getClass().toString())
+					.sorted()
+					.collect(Collectors.joining(",\n"))
+			);
 		}
 		catch (Exception e) {e.printStackTrace();}
 	}

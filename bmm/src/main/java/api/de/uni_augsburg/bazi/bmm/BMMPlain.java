@@ -27,7 +27,7 @@ public class BMMPlain implements PlainSupplier
 	@Override public List<StringTable> get(PlainOptions options)
 	{
 		List<StringTable> tables = sub.get(options);
-		tables.get(0).col(2).delete();
+		//tables.get(0).col(2).delete();
 		if (options.divisorFormat() == DivisorFormat.QUOTIENTS)
 			modifyQuotientColumn(tables.get(0).col(2), options);
 		return tables;

@@ -18,6 +18,13 @@ import java.util.List;
  */
 public class VectorPlain implements PlainSupplier
 {
+	public static final StringTable.Key
+		PARTY = new StringTable.Key(),
+		VOTE = new StringTable.Key(),
+		QUTIENT = new StringTable.Key(),
+		CONDITION = new StringTable.Key(),
+		SEAT = new StringTable.Key();
+
 	protected final VectorOutput output;
 	protected final String name;
 	public VectorPlain(VectorOutput output, String name)
@@ -42,10 +49,10 @@ public class VectorPlain implements PlainSupplier
 			.filter(p -> p.votes().compareTo(half) > 0)
 			.findAny().ifPresent(p -> table.titles().add(Resources.get("output.absolute_majority", p.name(), p.votes(), sum)));
 
-		partyColumn(table.col(), options);
-		voteColumn(table.col(), options);
-		conditionColumn(table.col(), options);
-		resultColumn(table.col(), options);
+		partyColumn(table.col(PARTY), options);
+		voteColumn(table.col(VOTE), options);
+		conditionColumn(table.col(CONDITION), options);
+		resultColumn(table.col(SEAT), options);
 
 		if (options.orientation() == Orientation.HORIZONTAL
 			|| options.orientation() == Orientation.HORVER)

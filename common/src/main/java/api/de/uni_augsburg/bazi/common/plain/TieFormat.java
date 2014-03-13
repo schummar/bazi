@@ -33,7 +33,7 @@ public enum TieFormat implements ConvertibleEnum
 			}
 			@Override public boolean matches(String s)
 			{
-				return s.matches("(coded[/|\\-_]?)?list");
+				return s.matches("(coded[/|\\\\-_]?)?list");
 			}
 			@Override public String toString()
 			{
@@ -50,7 +50,7 @@ public enum TieFormat implements ConvertibleEnum
 			}
 			@Override public boolean matches(String s)
 			{
-				return s.matches("uncoded[/|\\-_]?list");
+				return s.matches("uncoded[/|\\\\-_]?list");
 			}
 			@Override public String toString()
 			{

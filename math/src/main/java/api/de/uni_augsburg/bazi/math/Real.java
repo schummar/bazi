@@ -88,7 +88,7 @@ public class Real implements Comparable<Real>, Interval
 			return that.div(this).inv();
 		if (that.equals(BMath.ZERO))
 			return BMath.INF;
-		return new Real(delegate.divide(that.delegate));
+		return new Real(delegate.divide(that.delegate.precision(delegate.precision())));
 	}
 
 
@@ -169,6 +169,12 @@ public class Real implements Comparable<Real>, Interval
 		if (that.isSpecial())
 			return that.equals(this);
 		return delegate.equals(that.delegate);
+	}
+
+
+	@Override public int hashCode()
+	{
+		return delegate.hashCode();
 	}
 
 

@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.divisor.Divisor;
@@ -28,7 +29,7 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 	}
 
 
-	@Override public MatrixOutput applyUnfiltered(Data in)
+	@Override public MatrixOutput applyUnfiltered(Data in, Options options)
 	{
 		BipropOutput data = in.copy(BipropOutput.class);
 		Table<District, String, Party> table = generateTable(data);
@@ -41,10 +42,10 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 				)
 			);
 
-		DivisorOutput superApportionment = calculateSuperApportionment(table, seats.values());
+		DivisorOutput superApportionment = calculateSuperApportionment(table, seats.values(), options);
 		superApportionment.parties().forEach(party -> seats.put(party.name(), party.seats()));
 
-		Map<Object, Real> divisors = calculate(table, seats);
+		Map<Object, Real> divisors = calculate(table, seats, options);
 
 		data.superApportionment(superApportionment);
 		data.districts().forEach(d -> d.divisor(new Divisor(divisors.get(d), divisors.get(d))));
@@ -79,7 +80,7 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 	}
 
 
-	private DivisorOutput calculateSuperApportionment(Table<District, String, Party> table, Collection<Int> districtSeats)
+	private DivisorOutput calculateSuperApportionment(Table<District, String, Party> table, Collection<Int> districtSeats, Options options)
 	{
 		Int superSeats = districtSeats.stream()
 			.reduce(Int::add).orElse(BMath.ZERO);
@@ -94,7 +95,8 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 				@Override public String name() { return ""; }
 				@Override public Int seats() { return superSeats; }
 				@Override public List<? extends Party> parties() { return superParties; }
-			}
+			},
+			options
 		);
 	}
 
@@ -114,5 +116,5 @@ public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
 
 	protected abstract DivisorAlgorithm Super();
 	protected abstract DivisorAlgorithm sub();
-	protected abstract Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats);
+	protected abstract Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats, Options options);
 }

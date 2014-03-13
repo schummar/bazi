@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.common.UserCanceledException;
+import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
@@ -27,10 +28,11 @@ class ASAlgorithmImpl
 		Table<District, String, Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
-		DivisorAlgorithm divisorAlgorithm
+		DivisorAlgorithm divisorAlgorithm,
+		Options options
 	)
 	{
-		return new ASAlgorithmImpl(divisorUpdateFunction, divisorAlgorithm, table, seats).calculate();
+		return new ASAlgorithmImpl(divisorUpdateFunction, divisorAlgorithm, table, seats, options).calculate();
 	}
 
 
@@ -39,13 +41,15 @@ class ASAlgorithmImpl
 	Map<Object, Int> seats;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 	private final DivisorAlgorithm divisorAlgorithm;
+	private final Options options;
 
-	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<District, String, Party> table, Map<Object, Int> seats)
+	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<District, String, Party> table, Map<Object, Int> seats, Options options)
 	{
 		this.divisorUpdateFunction = divisorUpdateFunction;
 		this.divisorAlgorithm = divisorAlgorithm;
 		this.table = table;
 		this.seats = seats;
+		this.options = options;
 		rows = table.rowMap();
 		cols = table.columnMap();
 
@@ -99,7 +103,8 @@ class ASAlgorithmImpl
 							@Override public String name() { return ""; }
 							@Override public Int seats() { return seats.get(row.getKey()); }
 							@Override public List<? extends Party> parties() { return Lists.newArrayList(row.getValue().values()); }
-						}
+						},
+						options
 					);
 
 					// apply the calculated seats to the table and reset votes

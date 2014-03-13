@@ -1,9 +1,9 @@
 package de.uni_augsburg.bazi.quota;
 
+import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import de.uni_augsburg.bazi.common_vector.ShiftQueue;
 
 public interface ResidualHandler
 {
@@ -13,7 +13,7 @@ public interface ResidualHandler
 	public static ResidualHandler
 
 		GREATEST_REMINDERS =
-		quota -> (party, seats) -> {
+		quota -> (party, seats, increase) -> {
 			Real quotient = party.votes().div(quota);
 			Int initialSeats = quotient.floor();
 			if (seats.compareTo(initialSeats.add(1)) > 0) return BMath.ZERO;
@@ -22,7 +22,7 @@ public interface ResidualHandler
 		},
 
 	GREATEST_REMAINDERS_MIN =
-		quota -> (party, seats) -> {
+		quota -> (party, seats, increase) -> {
 			Real quotient = party.votes().div(quota);
 			Int initialSeats = quotient.floor();
 			if (initialSeats.equals(BMath.ZERO) || seats.compareTo(initialSeats.add(1)) > 0) return BMath.ZERO;
@@ -30,7 +30,7 @@ public interface ResidualHandler
 			return quotient.frac();
 		},
 
-	WINNER_TAKES_ALL = quota -> (party, seats) -> {
+	WINNER_TAKES_ALL = quota -> (party, seats, increase) -> {
 		Real quotient = party.votes().div(quota);
 		Int initialSeats = quotient.floor();
 		if (seats.compareTo(initialSeats) <= 0) return BMath.INF;

@@ -20,6 +20,9 @@ import java.util.List;
  */
 public class SeparatePlain extends MatrixPlain
 {
+	public static final StringTable.Key
+		VOTE_SUM = new StringTable.Key();
+
 	public SeparatePlain(MatrixOutput output, String vectorName)
 	{
 		super(output, vectorName);
@@ -63,7 +66,7 @@ public class SeparatePlain extends MatrixPlain
 		PlainOptions opt = options.copy(PlainOptions.class);
 		opt.voteLabel(label(key));
 		StringTable part = new VectorPlain(out, vectorName).get(opt).get(0);
-		part.col(0).delete();
+		part.removeAll(VectorPlain.PARTY);
 		part.cols().forEach(c -> c.add(1, ""));
 		table.append(part);
 
