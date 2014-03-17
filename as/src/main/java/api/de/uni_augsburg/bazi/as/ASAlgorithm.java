@@ -1,6 +1,7 @@
-package de.uni_augsburg.bazi.biprop;
+package de.uni_augsburg.bazi.as;
 
 import com.google.common.collect.Table;
+import de.uni_augsburg.bazi.biprop.BipropAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.math.Int;

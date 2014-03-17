@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.biprop;
+package de.uni_augsburg.bazi.as;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

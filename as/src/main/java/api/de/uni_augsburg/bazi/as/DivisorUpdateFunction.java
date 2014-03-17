@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.biprop;
+package de.uni_augsburg.bazi.as;
 
 import de.uni_augsburg.bazi.common.format.Converter;
 import de.uni_augsburg.bazi.common.format.ObjectConverter;
