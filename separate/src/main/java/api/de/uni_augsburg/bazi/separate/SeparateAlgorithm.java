@@ -9,7 +9,7 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
-public class SeparateAlgorithm extends MatrixAlgorithm<MatrixOutput>
+public class SeparateAlgorithm implements MatrixAlgorithm<MatrixOutput>
 {
 	private final VectorAlgorithm<?> method;
 	public SeparateAlgorithm(VectorAlgorithm<?> method)

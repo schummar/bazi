@@ -9,7 +9,7 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
-public class QuotaAlgorithm extends VectorAlgorithm
+public class QuotaAlgorithm implements VectorAlgorithm
 {
 	private final QuotaFunction quotaFunction;
 	private final ResidualHandler residualHandler;

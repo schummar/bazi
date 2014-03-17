@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class DivisorAlgorithm extends VectorAlgorithm<DivisorOutput>
+public class DivisorAlgorithm implements VectorAlgorithm<DivisorOutput>
 {
 	private final RoundingFunction roundingFunction;
 	private final String name;

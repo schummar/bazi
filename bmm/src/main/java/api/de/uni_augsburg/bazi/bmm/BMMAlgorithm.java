@@ -9,7 +9,7 @@ import de.uni_augsburg.bazi.math.Int;
 import java.util.Collections;
 import java.util.List;
 
-public class BMMAlgorithm extends VectorAlgorithm<VectorOutput>
+public class BMMAlgorithm implements VectorAlgorithm<VectorOutput>
 {
 	public final Int base, min, max;
 	public final VectorAlgorithm<?> method;

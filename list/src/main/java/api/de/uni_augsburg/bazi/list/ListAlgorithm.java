@@ -7,7 +7,7 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
-public class ListAlgorithm extends VectorAlgorithm<ListOutput>
+public class ListAlgorithm implements VectorAlgorithm<ListOutput>
 {
 	public VectorAlgorithm<?> Super;
 	public VectorAlgorithm<?> sub;

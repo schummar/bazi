@@ -10,7 +10,7 @@ import de.uni_augsburg.bazi.math.Int;
 import java.util.Collections;
 import java.util.List;
 
-public class BMMPowAlgorithm extends Algorithm<BMMPowOutput>
+public class BMMPowAlgorithm implements Algorithm<BMMPowOutput>
 {
 	public final Int base, min, max;
 	public final DivisorAlgorithm method;

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static de.uni_augsburg.bazi.biprop.BipropOutput.District;
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
-public abstract class BipropAlgorithm extends MatrixAlgorithm<MatrixOutput>
+public abstract class BipropAlgorithm implements MatrixAlgorithm<MatrixOutput>
 {
 	@Override public List<Object> getInputAttributes()
 	{
