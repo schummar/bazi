@@ -44,6 +44,11 @@ class BAZIImpl
 		LOGGER.info("BAZI under development...");
 		LOGGER.info("The current Version is: {}", Version.getCurrentVersionName());
 
+		if (args.length == 0 || keyExists(args, "-help"))
+		{
+			System.out.println(Resources.get("usage"));
+			System.exit(0);
+		}
 
 		// read args
 		Optional<Locale> locale = readValue(args, "-l", Locale::forLanguageTag);
@@ -108,7 +113,7 @@ class BAZIImpl
 		Algorithm algorithm = baziFile.algorithm();
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
 
-		Data result = algorithm.apply(baziFile,new Options());
+		Data result = algorithm.apply(baziFile, new Options());
 		System.out.println(outFormat.get().serialize(result));
 	}
 
