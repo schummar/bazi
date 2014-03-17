@@ -10,9 +10,6 @@ import de.uni_augsburg.bazi.math.Int;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Marco on 12.03.14.
- */
 public class BMMPowAlgorithm extends Algorithm<BMMPowOutput>
 {
 	public final Int base, min, max;

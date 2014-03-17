@@ -11,9 +11,6 @@ import java.util.List;
 
 import static de.uni_augsburg.bazi.dir.DirOutput.Party;
 
-/**
- * Created by Marco on 10.03.14.
- */
 public class DirFilter implements Filter
 {
 	@Override public boolean applicableGlobally()

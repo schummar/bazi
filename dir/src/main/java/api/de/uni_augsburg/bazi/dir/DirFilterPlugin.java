@@ -6,9 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by Marco on 10.03.14.
- */
 public class DirFilterPlugin implements Plugin<DirFilter>
 {
 	@Override public Class<? extends DirFilter> getInstanceType()

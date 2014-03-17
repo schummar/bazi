@@ -8,9 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by Marco on 10.03.14.
- */
 public class SeparateAlgorithmPlugin implements Plugin<SeparateAlgorithm>
 {
 	@Override public Class<? extends SeparateAlgorithm> getInstanceType()

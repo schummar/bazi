@@ -7,9 +7,6 @@ import de.uni_augsburg.bazi.math.Int;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Marco on 21.02.14.
- */
 public interface ListOutput extends VectorOutput
 {
 	List<? extends Party> parties();

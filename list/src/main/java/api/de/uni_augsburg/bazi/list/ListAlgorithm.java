@@ -7,9 +7,6 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Marco on 21.02.14.
- */
 public class ListAlgorithm extends VectorAlgorithm<ListOutput>
 {
 	public VectorAlgorithm<?> Super;
@@ -25,6 +22,6 @@ public class ListAlgorithm extends VectorAlgorithm<ListOutput>
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
 	@Override public ListOutput applyUnfiltered(Data in, Options options)
 	{
-		return ListAlgorithmImpl.calculate(in.cast(ListInput.class), Super, sub,options);
+		return ListAlgorithmImpl.calculate(in.cast(ListInput.class), Super, sub, options);
 	}
 }

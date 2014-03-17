@@ -13,9 +13,6 @@ import de.uni_augsburg.bazi.math.Real;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Marco on 06.03.14.
- */
 public class VectorPlain implements PlainSupplier
 {
 	public static final StringTable.Key

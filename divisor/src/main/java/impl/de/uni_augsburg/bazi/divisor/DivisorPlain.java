@@ -7,9 +7,6 @@ import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common_vector.VectorPlain;
 import de.uni_augsburg.bazi.math.Real;
 
-/**
- * Created by Marco on 06.03.14.
- */
 public class DivisorPlain extends VectorPlain
 {
 	protected final DivisorOutput output;

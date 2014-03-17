@@ -6,9 +6,6 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by Marco on 03.03.14.
- */
 public class Setter
 {
 	public static Setter asSetter(Method method)

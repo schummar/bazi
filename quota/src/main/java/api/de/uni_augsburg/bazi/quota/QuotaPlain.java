@@ -10,9 +10,6 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
 
-/**
- * Created by Marco on 07.03.14.
- */
 public class QuotaPlain extends VectorPlain
 {
 	private final QuotaOutput output;

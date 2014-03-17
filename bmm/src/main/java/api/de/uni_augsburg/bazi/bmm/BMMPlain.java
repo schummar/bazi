@@ -8,9 +8,6 @@ import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 
 import java.util.List;
 
-/**
- * Created by Marco on 12.03.14.
- */
 public class BMMPlain implements PlainSupplier
 {
 	protected final VectorOutput output;

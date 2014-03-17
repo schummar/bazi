@@ -13,14 +13,14 @@ import java.util.function.Supplier;
 
 class DivisorAlgorithmImpl
 {
-	public static DivisorOutput calculate(VectorInput input, RoundingFunction r,String name, Options options)
+	public static DivisorOutput calculate(VectorInput input, RoundingFunction r, String name, Options options)
 	{
 		DivisorOutput output = input.copy(DivisorOutput.class);
 		try
 		{
 			Supplier<Int> seatsOff = () -> output.seats().sub(output.parties().stream().map(VectorOutput.Party::seats).reduce(Int::add).orElse(BMath.ZERO));
 
-			calculateInitialSeats(output, r,  options);
+			calculateInitialSeats(output, r, options);
 
 			ShiftQueue q = new ShiftQueue(output.parties(), r.getShiftFunction(options.precision()));
 			q.shift(seatsOff.get());

@@ -8,9 +8,6 @@ import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Marco on 07.03.14.
- */
 public class ListPlain implements PlainSupplier
 {
 	private final ListOutput output;

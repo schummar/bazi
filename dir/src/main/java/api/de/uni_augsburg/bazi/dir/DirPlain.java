@@ -9,9 +9,6 @@ import de.uni_augsburg.bazi.math.Int;
 
 import java.util.List;
 
-/**
- * Created by Marco on 10.03.14.
- */
 public class DirPlain implements PlainSupplier
 {
 	public static final StringTable.Key DIR = new StringTable.Key();

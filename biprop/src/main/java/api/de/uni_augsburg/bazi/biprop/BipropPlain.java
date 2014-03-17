@@ -24,9 +24,6 @@ import java.util.stream.Collectors;
 
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
-/**
- * Created by Marco on 11.03.14.
- */
 public class BipropPlain extends MatrixPlain
 {
 	public static final StringTable.Key DIVISOR = new StringTable.Key();

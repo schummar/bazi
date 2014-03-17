@@ -3,9 +3,6 @@ package de.uni_augsburg.bazi.common.data;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Marco on 03.03.14.
- */
 public class MergeHelper
 {
 	@SuppressWarnings("unchecked")

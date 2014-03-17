@@ -7,9 +7,6 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by Marco on 03.03.14.
- */
 public class Getter
 {
 	public static Getter asGetter(Method method)

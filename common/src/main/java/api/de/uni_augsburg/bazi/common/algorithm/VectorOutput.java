@@ -8,9 +8,6 @@ import de.uni_augsburg.bazi.math.Real;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Marco on 21.02.14.
- */
 public interface VectorOutput extends VectorInput
 {
 	@Override default List<? extends Party> parties() { return new ArrayList<>(); }

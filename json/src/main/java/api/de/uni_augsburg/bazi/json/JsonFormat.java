@@ -15,9 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Marco on 21.02.14.
- */
 public class JsonFormat implements Format
 {
 	private final Gson gson = new GsonBuilder()

@@ -7,9 +7,6 @@ import de.uni_augsburg.bazi.math.Real;
 
 import java.util.List;
 
-/**
- * Created by Marco on 12.03.2014.
- */
 public interface BMMPowOutput extends OutputList, VectorOutput
 {
 	@Override List<BMMPowResult> results();

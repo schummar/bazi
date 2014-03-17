@@ -10,9 +10,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-/**
- * Created by Marco on 04.03.14.
- */
 public class CollectionHelper
 {
 	public static <T> T find(Collection<? extends T> collection, Predicate<T> predicate)

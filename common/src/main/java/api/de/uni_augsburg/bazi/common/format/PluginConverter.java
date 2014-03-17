@@ -7,9 +7,6 @@ import de.uni_augsburg.bazi.common.data.MapData;
 
 import java.util.Map;
 
-/**
- * Created by Marco on 27.02.14.
- */
 public class PluginConverter<T extends Plugin.Instance> implements ObjectConverter<T>
 {
 	private final Class<T> type;

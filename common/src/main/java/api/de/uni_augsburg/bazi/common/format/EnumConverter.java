@@ -4,9 +4,6 @@ import de.uni_augsburg.bazi.common.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by Marco on 07.03.14.
- */
 public class EnumConverter<T extends Enum<T>> implements ObjectConverter<T>
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnumConverter.class);

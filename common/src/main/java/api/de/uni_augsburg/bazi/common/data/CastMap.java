@@ -5,9 +5,6 @@ import java.util.*;
 
 import static de.uni_augsburg.bazi.common.data.CastHelper.cast;
 
-/**
- * Created by Marco on 03.03.14.
- */
 @SuppressWarnings("unchecked")
 public class CastMap<V> implements Map<Object, V>
 {

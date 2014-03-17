@@ -1,8 +1,5 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
-/**
- * Created by Marco on 12.03.2014.
- */
 public class Options
 {
 	private long precision = 20;

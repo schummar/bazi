@@ -9,9 +9,6 @@ import javax.naming.OperationNotSupportedException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Created by Marco on 06.03.14.
- */
 public class PlainFormat implements Format
 {
 	private PlainOptions options;

@@ -3,9 +3,6 @@ package de.uni_augsburg.bazi.common.plain;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.format.ConvertibleEnum;
 
-/**
- * Created by Marco on 07.03.14.
- */
 public enum DivisorFormat implements ConvertibleEnum
 {
 	DIV_SPLIT

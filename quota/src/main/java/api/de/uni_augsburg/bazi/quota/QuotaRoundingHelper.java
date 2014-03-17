@@ -3,9 +3,6 @@ package de.uni_augsburg.bazi.quota;
 import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
 
-/**
- * Created by Marco on 07.03.14.
- */
 public class QuotaRoundingHelper
 {
 	public static Real round(Real q, Interval split, int minDigits, int maxDigits)

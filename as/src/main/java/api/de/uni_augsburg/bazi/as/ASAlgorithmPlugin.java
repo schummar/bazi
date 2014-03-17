@@ -8,9 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by Marco on 04.03.14.
- */
 public class ASAlgorithmPlugin implements Plugin<ASAlgorithm>
 {
 	@Override public Class<? extends ASAlgorithm> getInstanceType()

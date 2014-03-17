@@ -5,9 +5,6 @@ import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.List;
 
-/**
- * Created by Marco on 21.02.14.
- */
 public interface Filter extends Plugin.Instance
 {
 	boolean applicableGlobally();

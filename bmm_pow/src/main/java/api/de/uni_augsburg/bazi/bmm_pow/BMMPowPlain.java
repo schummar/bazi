@@ -15,19 +15,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by Marco on 12.03.14.
- */
 public class BMMPowPlain implements PlainSupplier
 {
 	protected final BMMPowOutput output;
 	protected final DivisorAlgorithm method;
-	protected final String name;
-	public BMMPowPlain(BMMPowOutput output, DivisorAlgorithm method, String name)
+	public BMMPowPlain(BMMPowOutput output, DivisorAlgorithm method)
 	{
 		this.output = output;
 		this.method = method;
-		this.name = name;
 	}
 
 

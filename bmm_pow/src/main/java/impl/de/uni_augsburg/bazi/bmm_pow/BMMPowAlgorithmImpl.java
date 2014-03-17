@@ -21,9 +21,6 @@ import java.util.Map;
 import static de.uni_augsburg.bazi.bmm_pow.BMMPowOutput.BMMPowResult;
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
-/**
- * Created by Marco on 12.03.14.
- */
 class BMMPowAlgorithmImpl
 {
 	public static BMMPowOutput calculate(VectorInput in, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
@@ -104,7 +101,7 @@ class BMMPowAlgorithmImpl
 			}
 		);
 
-		out.plain(new BMMPowPlain(out, method, ""));
+		out.plain(new BMMPowPlain(out, method));
 		return out;
 	}
 

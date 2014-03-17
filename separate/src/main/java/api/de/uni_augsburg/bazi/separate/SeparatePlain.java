@@ -15,9 +15,6 @@ import de.uni_augsburg.bazi.math.Real;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Marco on 10.03.14.
- */
 public class SeparatePlain extends MatrixPlain
 {
 	public static final StringTable.Key

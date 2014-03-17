@@ -9,9 +9,6 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Marco on 10.03.14.
- */
 public class SeparateAlgorithm extends MatrixAlgorithm<MatrixOutput>
 {
 	private final VectorAlgorithm<?> method;

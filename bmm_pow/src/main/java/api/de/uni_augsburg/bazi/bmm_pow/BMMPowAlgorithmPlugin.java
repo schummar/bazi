@@ -9,9 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by Marco on 12.03.14.
- */
 public class BMMPowAlgorithmPlugin implements Plugin<BMMPowAlgorithm>
 {
 	@Override public Class<? extends BMMPowAlgorithm> getInstanceType()

@@ -7,9 +7,6 @@ import de.uni_augsburg.bazi.math.BMath;
 
 import static de.uni_augsburg.bazi.list.ListOutput.Party;
 
-/**
- * Created by Marco on 27.02.14.
- */
 class ListAlgorithmImpl
 {
 	public static ListOutput calculate(ListInput in, VectorAlgorithm<?> Super, VectorAlgorithm<?> sub, Options options)

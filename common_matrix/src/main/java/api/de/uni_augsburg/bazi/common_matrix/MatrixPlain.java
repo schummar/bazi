@@ -18,14 +18,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by Marco on 11.03.14.
- */
 public abstract class MatrixPlain implements PlainSupplier
 {
 	public static final StringTable.Key
-	FIRST=new StringTable.Key(),
-	SEATSUM = new StringTable.Key();
+		FIRST = new StringTable.Key(),
+		SEATSUM = new StringTable.Key();
 
 
 	protected final MatrixOutput output;

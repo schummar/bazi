@@ -4,9 +4,6 @@ import de.uni_augsburg.bazi.common.algorithm.VectorInput;
 
 import java.util.List;
 
-/**
- * Created by Marco on 21.02.14.
- */
 public interface ListInput extends VectorInput
 {
 	List<? extends Party> parties();

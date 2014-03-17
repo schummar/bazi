@@ -102,7 +102,7 @@ class ASAlgorithmImpl
 						{
 							@Override public String name() { return ""; }
 							@Override public Int seats() { return seats.get(row.getKey()); }
-							@Override public List<? extends Party> parties() { return Lists.newArrayList(row.getValue().values()); }
+							@Override public List<? extends Party> parties() { return Lists.<Party>newArrayList(row.getValue().values()); }
 						},
 						options
 					);

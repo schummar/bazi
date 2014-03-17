@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 import static de.uni_augsburg.bazi.common.data.CropHelper.crop;
 
-/**
- * Created by Marco on 03.03.14.
- */
 public class CopyHelper
 {
 	@SuppressWarnings("unchecked")

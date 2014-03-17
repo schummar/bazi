@@ -6,9 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by Marco on 06.03.14.
- */
 public class PlainFormatPlugin implements Plugin<PlainFormat>
 {
 	@Override public Class<? extends PlainFormat> getInstanceType()

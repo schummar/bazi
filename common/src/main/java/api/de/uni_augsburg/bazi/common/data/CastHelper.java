@@ -8,9 +8,6 @@ import java.lang.reflect.WildcardType;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Marco on 03.03.14.
- */
 public class CastHelper
 {
 	@SuppressWarnings("unchecked")

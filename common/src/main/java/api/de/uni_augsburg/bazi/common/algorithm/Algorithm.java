@@ -7,9 +7,6 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Marco on 21.02.14.
- */
 public abstract class Algorithm<O extends Data> implements Plugin.Instance
 {
 	public abstract List<Object> getInputAttributes();
