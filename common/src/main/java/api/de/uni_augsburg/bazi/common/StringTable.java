@@ -43,7 +43,7 @@ public class StringTable
 
 	/**
 	 * Get the column with the given index.
-	 * Creates it and all clólumns before if needed.
+	 * Creates it and all columns before if needed.
 	 * @param col the column index.
 	 * @return the column.
 	 */
