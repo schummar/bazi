@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Basically a Data->Data function. Calling {@link #apply(Data, Options)}
+ * Basically a Data to Data function. Calling {@link #apply(Data, Options)}
  * automatically uses available Filters for pre- and postprocessing.
  */
 public interface Algorithm<O extends Data> extends Plugin.Instance

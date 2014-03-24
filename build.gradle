@@ -107,3 +107,10 @@ shadowJar.dependsOn subprojects.jar
 distTar.dependsOn shadowJar, downloadDataZip
 distZip.dependsOn shadowJar, downloadDataZip
 installDist.dependsOn shadowJar, downloadDataZip
+
+
+javadoc {
+	source subprojects.collect { project -> project.sourceSets.main.allJava }
+	classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
+	destinationDir = new File(buildDir, 'javadoc')
+}
