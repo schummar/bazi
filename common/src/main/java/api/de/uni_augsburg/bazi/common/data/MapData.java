@@ -13,14 +13,30 @@ import static de.uni_augsburg.bazi.common.data.CastHelper.raw;
 import static de.uni_augsburg.bazi.common.data.Getter.asGetter;
 import static de.uni_augsburg.bazi.common.data.Setter.asSetter;
 
+/**
+ * Implementation of the {@link Data} interface as String-Object-Map.
+ * @see Data
+ */
 public class MapData extends LinkedHashMap<String, Object> implements InvocationHandler, Data
 {
+	/** Each proxy created by a MapData object also implements ProxyData. */
 	public interface ProxyData
 	{
+		/**
+		 * The MapData object behind this proxied data.
+		 * @return the MapData object behind this proxied data.
+		 */
 		MapData delegate();
 	}
 
 
+	/**
+	 * Creates a MapData representation of any Data object.
+	 * If <b>obj</b> is not already a MapData instance all its getters are read according to the
+	 * {@link Data}-convention and the values put in a new MapData instance.
+	 * @param obj the source object.
+	 * @return a MapData representation of <b>obj</b>.
+	 */
 	public static MapData fromDataInterface(Data obj)
 	{
 		if (obj instanceof MapData) return (MapData) obj;
@@ -37,16 +53,24 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 	private final Map<Class<?>, Data> proxies = new HashMap<>();
 	private PlainSupplier plain = null;
 
+
+	/** Default constructor. */
 	public MapData()
 	{
 		id = this;
 	}
+
+	/**
+	 * Constructor with initial data.
+	 * @param m a map with initial data for this MapData. Keys will be used by calling {@link Object#toString()}.
+	 */
 	public MapData(Map<?, ?> m)
 	{
 		id = this;
 		m.forEach((k, v) -> put(k.toString(), v));
 	}
-	public MapData(Object id)
+
+	private MapData(Object id)
 	{
 		this.id = id;
 	}
@@ -102,13 +126,19 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 	}
 
 	@Override public PlainSupplier plain() { return plain; }
-	@Override public Data plain(PlainSupplier plain)
+	@Override public MapData plain(PlainSupplier plain)
 	{
 		this.plain = plain;
 		return this;
 	}
 
 
+	/**
+	 * Handles invokations by a proxy of this object.
+	 * If the invoked method is declared by {@link Data} it is simply invoked on this.
+	 * If it is a getter or setter according to the {@link Data}-convention
+	 * the attribute is returned from / put in this Map.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
@@ -168,6 +198,14 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 		return super.toString();
 	}
 
+
+	/**
+	 * Whether that object represents the same data as this one.
+	 * If that is a ProxyData instance check if its delegate is equal to this.
+	 * If that is a MapData instance check if they originated from the same data set. (via {@link #copy()}, etc.)
+	 * If that is another Data instance check if this was created by copying that.
+	 * @return true iff that object represents the same data as this one.
+	 */
 	@Override public boolean equals(Object o)
 	{
 		if (o instanceof ProxyData) o = ((ProxyData) o).delegate();
