@@ -2,8 +2,10 @@ package de.uni_augsburg.bazi.common.algorithm;
 
 import de.uni_augsburg.bazi.common.format.ConvertibleEnum;
 
+/** Is the number of seats in an apportionment unique or could it be more/less? */
 public enum Uniqueness implements ConvertibleEnum
 {
+	/** The number of seats could be increased just as well. */
 	CAN_BE_MORE
 		{
 			@Override public String key()
@@ -20,6 +22,7 @@ public enum Uniqueness implements ConvertibleEnum
 			}
 		},
 
+	/** The number of seats is unique. */
 	UNIQUE
 		{
 			@Override public String key()
@@ -37,6 +40,7 @@ public enum Uniqueness implements ConvertibleEnum
 			}
 		},
 
+	/** The number of seats could be decreased just as well. */
 	CAN_BE_LESS
 		{
 			@Override public String key()

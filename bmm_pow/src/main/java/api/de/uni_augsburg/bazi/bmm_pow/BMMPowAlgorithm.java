@@ -22,6 +22,10 @@ public class BMMPowAlgorithm implements Algorithm<BMMPowOutput>
 		this.method = method;
 	}
 
+	@Override public String name()
+	{
+		return "bmmpow";
+	}
 
 	@Override public List<Object> getInputAttributes()
 	{

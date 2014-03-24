@@ -17,6 +17,10 @@ public class SeparateAlgorithm implements MatrixAlgorithm<MatrixOutput>
 		this.method = method;
 	}
 
+	@Override public String name()
+	{
+		return "separate";
+	}
 
 	@Override public List<Object> getInputAttributes()
 	{

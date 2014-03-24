@@ -7,15 +7,21 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Basically a Data to Data function. Calling {@link #apply(Data, Options)}
- * automatically uses available Filters for pre- and postprocessing.
- */
+/** An algorithm that in some way calculates seat apportionments out of votes and other input data. */
 public interface Algorithm<O extends Data> extends Plugin.Instance
 {
-	/** @return a list of Attributes this algorithm uses in its input data */
-	List<Object> getInputAttributes();
+	/**
+	 * The display name of this algorithm.
+	 * @return the display name of this algorithm.
+	 */
+	String name();
 
+	/**
+	 * The list of Attributes this algorithm uses in its input data.
+	 * Since the inputs are generic this method gives information about attributes that can or must be included and their types.
+	 * @return the list of Attributes this algorithm uses in its input data.
+	 */
+	List<Object> getInputAttributes();
 
 	/**
 	 * Applies this algorithm to the given input without using any filters.
@@ -24,7 +30,6 @@ public interface Algorithm<O extends Data> extends Plugin.Instance
 	 * @return the algorithm's result
 	 */
 	O applyUnfiltered(Data in, Options options);
-
 
 	/**
 	 * Applies this algorithm to the given input. Automatically uses available Filters for pre- and postprocessing.

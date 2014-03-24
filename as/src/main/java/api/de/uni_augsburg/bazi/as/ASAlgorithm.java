@@ -24,6 +24,10 @@ public class ASAlgorithm extends BipropAlgorithm
 		this.divisorUpdateFunction = divisorUpdateFunction;
 	}
 
+	@Override public String name()
+	{
+		return "alternating scaling";
+	}
 
 	@Override protected Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats, Options options)
 	{

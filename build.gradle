@@ -112,5 +112,6 @@ installDist.dependsOn shadowJar, downloadDataZip
 javadoc {
 	source subprojects.collect { project -> project.sourceSets.main.allJava }
 	classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
-	destinationDir = new File(buildDir, 'javadoc')
+	destinationDir = new File(buildDir, 'docs/api')
+	options.links 'http://download.java.net/jdk8/docs/api/'
 }
