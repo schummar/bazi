@@ -3,7 +3,7 @@ package de.uni_augsburg.bazi.common.data;
 import java.util.List;
 import java.util.Map;
 
-public class MergeHelper
+class MergeHelper
 {
 	@SuppressWarnings("unchecked")
 	public static <T> T merge(Object v1, Object v2)

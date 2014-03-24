@@ -6,7 +6,7 @@ import java.util.*;
 import static de.uni_augsburg.bazi.common.data.CastHelper.cast;
 
 @SuppressWarnings("unchecked")
-public class CastMap<V> implements Map<Object, V>
+class CastMap<V> implements Map<Object, V>
 {
 	private final Map delegate;
 	private final Type type;

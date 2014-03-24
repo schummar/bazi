@@ -8,7 +8,7 @@ import java.lang.reflect.WildcardType;
 import java.util.List;
 import java.util.Map;
 
-public class CastHelper
+class CastHelper
 {
 	@SuppressWarnings("unchecked")
 	public static <T> T cast(Object value, Type type)

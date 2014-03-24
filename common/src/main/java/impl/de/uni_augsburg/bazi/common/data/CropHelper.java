@@ -6,7 +6,7 @@ import java.util.*;
 import static de.uni_augsburg.bazi.common.data.CastHelper.*;
 
 @SuppressWarnings("unchecked")
-public class CropHelper
+class CropHelper
 {
 	public static <T> T crop(Object value, Type type)
 	{

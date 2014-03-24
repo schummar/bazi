@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import static de.uni_augsburg.bazi.common.data.CropHelper.crop;
 
-public class CopyHelper
+class CopyHelper
 {
 	@SuppressWarnings("unchecked")
 	public static <T> T copy(Object v)

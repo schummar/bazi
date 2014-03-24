@@ -7,7 +7,7 @@ import java.util.List;
 import static de.uni_augsburg.bazi.common.data.CastHelper.cast;
 
 @SuppressWarnings("unchecked")
-public class CastList<T> extends AbstractList<T>
+class CastList<T> extends AbstractList<T>
 {
 	private final List delegate;
 	private final Type type;
