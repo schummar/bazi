@@ -2,7 +2,7 @@ package de.uni_augsburg.bazi.common.format;
 
 import de.uni_augsburg.bazi.common.Resources;
 
-public class SimpleConverter<T> implements ObjectConverter<T>
+class SimpleConverter<T> implements ObjectConverter<T>
 {
 	@Override public Object serialize(T value)
 	{
