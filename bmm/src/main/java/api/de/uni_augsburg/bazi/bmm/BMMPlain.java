@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.bmm;
 
+import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
@@ -36,7 +37,7 @@ public class BMMPlain implements PlainSupplier
 		for (int i = 0; i < output.parties().size(); i++)
 		{
 			String s = String.format("%s+%s", algo.base, quotients.get(i));
-			if (output.parties().get(i).conditionUsed()) s += "•";
+			if (output.parties().get(i).conditionUsed()) s += Resources.get("output.");
 			quotients.set(i, s);
 		}
 	}

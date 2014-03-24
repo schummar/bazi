@@ -55,7 +55,7 @@ public class StringTable
 
 	/**
 	 * Get the column with the given index and sets its identifier to the given key.
-	 * Creates it and all clólumns before if needed.
+	 * Creates it and all columns before if needed.
 	 * @param col the column index.
 	 * @param key the column identifier.
 	 * @return the column.
