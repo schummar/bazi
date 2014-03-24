@@ -9,13 +9,20 @@ import javax.naming.OperationNotSupportedException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/** The PlainFormat is a human-readable output format */
 public class PlainFormat implements Format
 {
 	private PlainOptions options;
+
+	/**
+	 * Constructor with options initializer.
+	 * @param data the options.
+	 */
 	public PlainFormat(Data data)
 	{
 		options = data.cast(PlainOptions.class);
 	}
+
 	@Override public void configure(Data data)
 	{
 		options.merge(data);

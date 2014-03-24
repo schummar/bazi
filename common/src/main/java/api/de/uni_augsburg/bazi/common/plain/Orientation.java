@@ -3,8 +3,10 @@ package de.uni_augsburg.bazi.common.plain;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.format.ConvertibleEnum;
 
+/** The orientation in which the tables of the plain output should be printed. */
 public enum Orientation implements ConvertibleEnum
 {
+	/** One row per party. */
 	VERTICAL
 		{
 			@Override public String key()
@@ -30,6 +32,7 @@ public enum Orientation implements ConvertibleEnum
 		},
 
 
+	/** One row per pary. */
 	HORIZONTAL
 		{
 			@Override public String key()
@@ -55,6 +58,7 @@ public enum Orientation implements ConvertibleEnum
 		},
 
 
+	/** Superapportionments vertical, matrix apportionments horizontal. */
 	VERHOR
 		{
 			@Override public String key()
@@ -80,6 +84,7 @@ public enum Orientation implements ConvertibleEnum
 		},
 
 
+	/** Superapportionments horizontal, matrix apportionments vertical. */
 	HORVER
 		{
 			@Override public String key()
@@ -104,6 +109,16 @@ public enum Orientation implements ConvertibleEnum
 			}
 		};
 
+
+	/**
+	 * Whether the vector apportionments should be printed vertically.
+	 * @return true iff the vector apportionments should be printed vertically.
+	 */
 	public abstract boolean vectorVertical();
+
+	/**
+	 * Whether the matrix apportionments should be printed vertically.
+	 * @return true iff the matrix apportionments should be printed vertically.
+	 */
 	public abstract boolean matrixVertical();
 }

@@ -3,8 +3,10 @@ package de.uni_augsburg.bazi.common.plain;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.format.ConvertibleEnum;
 
+/** The way divisors should be displayed in plain output. */
 public enum DivisorFormat implements ConvertibleEnum
 {
+	/** Display the divisor (nice) or split under the seat column. */
 	DIV_SPLIT
 		{
 			@Override public String key()
@@ -22,6 +24,7 @@ public enum DivisorFormat implements ConvertibleEnum
 		},
 
 
+	/** Display the divisor or split interval under the seat column. */
 	INTERVAL
 		{
 			@Override public String key()
@@ -39,6 +42,7 @@ public enum DivisorFormat implements ConvertibleEnum
 		},
 
 
+	/** Display the multiplier under the seat column. */
 	MULT
 		{
 			@Override public String key()
@@ -56,6 +60,7 @@ public enum DivisorFormat implements ConvertibleEnum
 		},
 
 
+	/** Display the multiplier interval under the seat column. */
 	MULT_INTERVAL
 		{
 			@Override public String key()
@@ -73,6 +78,7 @@ public enum DivisorFormat implements ConvertibleEnum
 		},
 
 
+	/** Display the divisor (nice) or split under an extra qutient column. */
 	QUOTIENTS
 		{
 			@Override public String key()
