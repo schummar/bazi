@@ -27,6 +27,6 @@ class PluginConverter<T extends Plugin.Instance> implements ObjectConverter<T>
 		if (value instanceof Data) params = ((Data) value).cast(Plugin.Params.class);
 		else if (value instanceof Map<?, ?>) params = new MapData((Map<?, ?>) value).cast(Plugin.Params.class);
 		else params = value::toString;
-		return PluginManager.INSTANCE.tryInstantiate(type, params).get();
+		return PluginManager.tryInstantiate(type, params).get();
 	}
 }

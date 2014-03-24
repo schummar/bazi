@@ -50,12 +50,14 @@ class BAZIImpl
 			System.exit(0);
 		}
 
+		PluginManager.load();
+
 		// read args
 		Optional<Locale> locale = readValue(args, "-l", Locale::forLanguageTag);
 		Optional<Path> in = readValue(args, "-i", BAZIImpl::readIn);
 		Optional<Path> out = readValue(args, "-o", BAZIImpl::readOut);
-		Optional<Format> inFormat = readValue(args, "-if", s -> PluginManager.INSTANCE.tryInstantiate(Format.class, () -> s).get());
-		Optional<Format> outFormat = readValue(args, "-of", s -> PluginManager.INSTANCE.tryInstantiate(Format.class, () -> s).get());
+		Optional<Format> inFormat = readValue(args, "-if", s -> PluginManager.tryInstantiate(Format.class, () -> s).get());
+		Optional<Format> outFormat = readValue(args, "-of", s -> PluginManager.tryInstantiate(Format.class, () -> s).get());
 
 
 		// backup plans
@@ -64,14 +66,14 @@ class BAZIImpl
 			String name = in.isPresent()
 				? Files.getFileExtension(in.get().toString())
 				: "json";
-			inFormat = PluginManager.INSTANCE.tryInstantiate(Format.class, () -> name);
+			inFormat = PluginManager.tryInstantiate(Format.class, () -> name);
 		}
 		if (!outFormat.isPresent())
 		{
 			String name = out.isPresent()
 				? Files.getFileExtension(out.get().toString())
 				: "plain";
-			outFormat = PluginManager.INSTANCE.tryInstantiate(Format.class, () -> name);
+			outFormat = PluginManager.tryInstantiate(Format.class, () -> name);
 		}
 
 

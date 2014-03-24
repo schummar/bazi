@@ -12,18 +12,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public enum PluginManager
+/**
+ * Utitlity class that manages plugins.
+ * Call {@link PluginManager#load()} once to find all plugin in the classpath (slow!).
+ * After that they can be queried.
+ */
+public class PluginManager
 {
-	INSTANCE;
+	private PluginManager() {}
 
-	private final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
 
-	private final List<Plugin<?>> plugins = new ArrayList<>();
-	private final List<Filter> filters = new ArrayList<>();
+	private static final List<Plugin<?>> plugins = new ArrayList<>();
+	private static final List<Filter> filters = new ArrayList<>();
 
 
-	private PluginManager()
+	/** Find and cache all plugins in the classpath. */
+	public static void load()
 	{
+		plugins.clear();
+		filters.clear();
 		try
 		{
 			Reflections reflections = new Reflections("de.uni_augsburg.bazi");
@@ -63,7 +71,13 @@ public enum PluginManager
 	}
 
 
-	public <T extends Plugin.Instance> List<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
+	/**
+	 * Find all plugin in the cache that instantiate a subtype of <b>type</b>.
+	 * @param <T> the type whose subtypes should be found.
+	 * @param type the class of the type whose subtypes should be found.
+	 * @return a list of all plugins that instantiate a subtype of <b>type</b>.
+	 */
+	public static <T extends Plugin.Instance> List<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
 	{
 		List<Plugin<? extends T>> list = new ArrayList<>();
 		plugins.stream().filter(plugin -> type.isAssignableFrom(plugin.getInstanceType())).forEach(
@@ -76,7 +90,15 @@ public enum PluginManager
 		return list;
 	}
 
-	public <T extends Plugin.Instance> Optional<T> tryInstantiate(Class<T> type, Plugin.Params params)
+
+	/**
+	 * Create an instance of the given type and with the given parameters.
+	 * @param <T> the type the instance must be a subtype of.
+	 * @param type the class of the type the instance must be a subtype of.
+	 * @param params the parameters for instantiation.
+	 * @return an Optional of the instance if any, an empty Optional else.
+	 */
+	public static <T extends Plugin.Instance> Optional<T> tryInstantiate(Class<T> type, Plugin.Params params)
 	{
 		for (Plugin<? extends T> plugin : getPluginsOfInstanceType(type))
 		{
@@ -86,20 +108,28 @@ public enum PluginManager
 		return Optional.empty();
 	}
 
-	public List<Filter> getGlobalFilters()
+
+	/**
+	 * Find all global filters.
+	 * @return all global filters.
+	 */
+	public static List<Filter> getGlobalFilters()
 	{
 		return filters.stream()
 			.filter(Filter::applicableGlobally)
 			.collect(Collectors.toList());
 	}
 
-	public List<Filter> getFiltersFor(Algorithm algorithm)
+
+	/**
+	 * Find all filters that are applicable for the given algorithm.
+	 * @param algorithm the algorithm to find filters for.
+	 * @return all filters that are applicable for the given algorithm.
+	 */
+	public static List<Filter> getFiltersFor(Algorithm algorithm)
 	{
 		return filters.stream()
 			.filter(f -> f.applicableTo(algorithm))
 			.collect(Collectors.toList());
 	}
-
-	public class NoSuchPluginException extends RuntimeException
-	{}
 }

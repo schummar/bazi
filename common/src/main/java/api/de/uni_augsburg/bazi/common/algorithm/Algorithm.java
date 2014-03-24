@@ -39,7 +39,7 @@ public interface Algorithm<O extends Data> extends Plugin.Instance
 	 */
 	default O apply(Data in, Options options)
 	{
-		List<Filter> filters = PluginManager.INSTANCE.getFiltersFor(this);
+		List<Filter> filters = PluginManager.getFiltersFor(this);
 		filters.forEach(f -> f.preprocess(in));
 
 		O out = applyUnfiltered(in, options);

@@ -9,12 +9,21 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/** Utility class for localized String resources. */
 public class Resources
 {
+	private Resources() {}
+
+
 	private static final Logger LOG = LoggerFactory.getLogger(Resources.class);
 	private static final String RESOURCE_NAME = "de.uni_augsburg.bazi.common.messages";
 	private static ResourceBundle resources = ResourceBundle.getBundle(RESOURCE_NAME);
 
+
+	/**
+	 * Set the locale to the fiven one.
+	 * @param locale the new locale.
+	 */
 	public static void setLocale(Locale locale)
 	{
 		resources = ResourceBundle.getBundle(RESOURCE_NAME, locale);
@@ -22,6 +31,13 @@ public class Resources
 	}
 
 
+	/**
+	 * Get a localized String for the given key.
+	 * @param key the key of the localized String.
+	 * @param args these arguments' string representations fill in placeholders in the localized String.
+	 * (E.g. 'text {0}, more text {1}')
+	 * @return the localized String.
+	 */
 	public static String get(String key, Object... args)
 	{
 		try
