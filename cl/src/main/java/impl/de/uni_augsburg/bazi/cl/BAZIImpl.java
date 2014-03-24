@@ -114,7 +114,7 @@ class BAZIImpl
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
 
 		Data result = algorithm.apply(baziFile, new Options());
-		System.out.println(outFormat.get().serialize(result));
+		System.out.println(outFormat.get().serialize(result.toMapData()));
 	}
 
 	public interface BaziFile extends Data

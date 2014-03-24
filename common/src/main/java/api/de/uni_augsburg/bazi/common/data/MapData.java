@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.common.data;
 
 import com.google.common.base.Defaults;
+import de.uni_augsburg.bazi.common.format.Converters;
 import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 
 import java.lang.reflect.InvocationHandler;
@@ -123,6 +124,13 @@ public class MapData extends LinkedHashMap<String, Object> implements Invocation
 	@Override public MapData toMapData()
 	{
 		return this;
+	}
+
+	@Override public Map<String, Object> toRawData()
+	{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> serialized = (Map<String, Object>) Converters.serialize(this);
+		return serialized;
 	}
 
 	@Override public PlainSupplier plain() { return plain; }

@@ -15,10 +15,6 @@ public class PlainFormat implements Format
 	public PlainFormat(Data data)
 	{
 		options = data.cast(PlainOptions.class);
-		if (options.divisorFormat() == null) options.divisorFormat(DivisorFormat.DIV_SPLIT);
-		if (options.orientation() == null) options.oritentation(Orientation.VERTICAL);
-		if (options.tieFormat() == null) options.tieFormat(TieFormat.CODED);
-		if (options.maxDigits() == null) options.maxDigits(16);
 	}
 	@Override public void configure(Data data)
 	{

@@ -92,12 +92,24 @@ public interface Data
 
 	/**
 	 * A {@link de.uni_augsburg.bazi.common.data.MapData} representation of this, which is both a Data object and a map.
-	 * Useful for serialization.
 	 * @return a {@link de.uni_augsburg.bazi.common.data.MapData} representation of this.
 	 */
 	default MapData toMapData()
 	{
 		return MapData.fromDataInterface(this).toMapData();
+	}
+
+
+	/**
+	 * Converts to a map of raw data.
+	 * Each entry represents an attribute.
+	 * The key is the attribute name.
+	 * The value must either be a String, a List of values or again an attribute map.
+	 * @return a raw data map.
+	 */
+	default Map<String, Object> toRawData()
+	{
+		return MapData.fromDataInterface(this).toRawData();
 	}
 
 

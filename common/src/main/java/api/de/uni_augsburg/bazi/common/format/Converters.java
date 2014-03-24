@@ -1,7 +1,9 @@
 package de.uni_augsburg.bazi.common.format;
 
 import de.uni_augsburg.bazi.common.Plugin;
+import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.Resources;
+import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import de.uni_augsburg.bazi.math.Real;
@@ -12,9 +14,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+/**
+ * Utitlity class that serializes / deserializes instances.
+ * The responsible converter is the first successful of the following possibilities:
+ * <ol>
+ * <li>An adapter register via {@link #registerAdapter(Class, ObjectConverter)}.</li>
+ * <li>An adapter pointed to by a {@link Converter} annotation.</li>
+ * <li>For {@link Plugin} types: A plugin adapter that delegates to the {@link PluginManager}.</li>
+ * <li>For {@link ConvertibleEnum} types: An enum adapter that
+ * serializes via {@link ConvertibleEnum#key()} and
+ * deserializes via {@link ConvertibleEnum#matches(String)}.</li>
+ * <li>Serialize via an adapter of the extended class / one of the implemented interfaces of the type.
+ * Deserialize via an adapter of some class that extends the type.</li>
+ * <li>Last resort: A simple adapter, that serializes via {@link Object#toString()}
+ * and throws an exception when trying to deserialize.</li>
+ * </ol>
+ */
 public class Converters
 {
+	private Converters() {}
+
+
 	static final Logger LOGGER = LoggerFactory.getLogger(Converters.class);
 	static final Map<Class<?>, ObjectConverter<?>>
 		ADAPTERS = new HashMap<>(),
@@ -27,33 +49,40 @@ public class Converters
 		registerAdapter(Real.class, (StringConverter<Real>) Real::valueOf);
 		registerAdapter(Rational.class, (StringConverter<Rational>) Rational::valueOf);
 		registerAdapter(Int.class, (StringConverter<Int>) Int::valueOf);
+
+		registerAdapter(Integer.class, Integer::valueOf);
 		registerAdapter(Integer.class, (StringConverter<Integer>) Integer::valueOf);
-		registerAdapter(Integer.class, (StringConverter<Integer>) Integer::valueOf);
+
 		registerAdapter(Long.class, (StringConverter<Long>) Long::valueOf);
 		registerAdapter(long.class, (StringConverter<Long>) Long::valueOf);
+
 		registerAdapter(Float.class, (StringConverter<Float>) Float::valueOf);
 		registerAdapter(float.class, (StringConverter<Float>) Float::valueOf);
+
 		registerAdapter(Double.class, (StringConverter<Double>) Double::valueOf);
 		registerAdapter(double.class, (StringConverter<Double>) Double::valueOf);
+
 		registerAdapter(Boolean.class, (StringConverter<Boolean>) Boolean::valueOf);
 		registerAdapter(boolean.class, (StringConverter<Boolean>) Boolean::valueOf);
+
+		registerAdapter(Byte.class, (StringConverter<Byte>) Byte::valueOf);
+		registerAdapter(byte.class, (StringConverter<Byte>) Byte::valueOf);
+
+		registerAdapter(Short.class, (StringConverter<Short>) Short::valueOf);
+		registerAdapter(short.class, (StringConverter<Short>) Short::valueOf);
+
+		registerAdapter(Character.class, (StringConverter<Character>) s -> s.charAt(0));
+		registerAdapter(char.class, (StringConverter<Character>) s -> s.charAt(0));
 	}
 
 
-	public static <T> void registerAdapter(Class<T> type, Converter converter)
-	{
-		if (converter == null || converter.value().isInstance(ADAPTERS.get(type))) return;
-		try
-		{
-			@SuppressWarnings("unchecked")
-			ObjectConverter<? super T> adapter = (ObjectConverter<? super T>) converter.value().newInstance();
-			registerAdapter(type, adapter);
-		}
-		catch (InstantiationException | IllegalAccessException e)
-		{
-			e.printStackTrace();
-		}
-	}
+	/**
+	 * Registers a type adapter that will be used for future conversions.
+	 * Overwrites any other adapter for that type.
+	 * @param <T> the type the adapter should be registered for.
+	 * @param type the class of the type the adapter should be registered for.
+	 * @param adapter the adapter.
+	 */
 	public static <T> void registerAdapter(Class<T> type, ObjectConverter<? super T> adapter)
 	{
 		ADAPTERS.put(type, adapter);
@@ -64,13 +93,25 @@ public class Converters
 	}
 
 
-	public static <T> Object serialize(T value, Converter attributeConverter)
+	/**
+	 * Serialize an object.
+	 * @param value the object.
+	 * @return the serialized object.
+	 */
+	public static Object serialize(Object value)
 	{
-		registerAdapter(value.getClass(), attributeConverter);
-		return serialize(value.getClass(), value);
-	}
-	public static <T> Object serialize(T value)
-	{
+		if (value instanceof String) return value;
+		if (value instanceof List<?>) return ((List<?>) value).stream()
+			.map(Converters::serialize).collect(Collectors.toList());
+		if (value instanceof Data) value = ((Data) value).toMapData();
+		if (value instanceof Map<?, ?>)
+		{
+			Map<?, ?> map = (Map<?, ?>) value;
+			Map<String, Object> newMap = new HashMap<>();
+			map.forEach((k, v) -> newMap.put(k.toString(), serialize(v)));
+			return newMap;
+		}
+
 		return serialize(value.getClass(), value);
 	}
 	private static <T> Object serialize(Class<T> type, Object value)
@@ -81,17 +122,25 @@ public class Converters
 	}
 
 
-	public static <T> T deserialize(Object value, Class<T> type, Converter attributeConverter)
-	{
-		registerAdapter(type, attributeConverter);
-		return deserialize(value, type);
-	}
+	/**
+	 * Deserialize an object of type <b>type</b>.
+	 * @param <T> the target type.
+	 * @param value the serialized object.
+	 * @param type the class of the target type.
+	 * @return the object.
+	 */
 	public static <T> T deserialize(Object value, Class<T> type)
 	{
 		return getDeserializer(type).deserialize(value);
 	}
 
 
+	/**
+	 * Returns an ObjectConverter responsible serializing the given type.
+	 * @param <T> the type in question.
+	 * @param type the class of the type in question.
+	 * @return an ObjectConverter responsible serializing the given type.
+	 */
 	public static <T> ObjectConverter<T> getSerializer(Class<T> type)
 	{
 		if (!SERIALIZERS.containsKey(type)) refreshAdapters(type);
@@ -101,6 +150,12 @@ public class Converters
 	}
 
 
+	/**
+	 * Returns an ObjectConverter responsible deserializing the given type.
+	 * @param <T> the type in question.
+	 * @param type the class of the type in question.
+	 * @return an ObjectConverter responsible deserializing the given type.
+	 */
 	public static <T> ObjectConverter<T> getDeserializer(Class<T> type)
 	{
 		if (!DESERIALIZERS.containsKey(type)) refreshAdapters(type);
