@@ -15,10 +15,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/** A PlainSupplier that generates plain output for the bmmp algorithm on request. */
 public class BMMPowPlain implements PlainSupplier
 {
 	protected final BMMPowOutput output;
 	protected final DivisorAlgorithm method;
+
+	/**
+	 * Constructor with initializers.
+	 * @param output the result to prduce plain output for.
+	 * @param method the algorithm used for the actual apportionments.
+	 */
 	public BMMPowPlain(BMMPowOutput output, DivisorAlgorithm method)
 	{
 		this.output = output;
@@ -55,6 +62,11 @@ public class BMMPowPlain implements PlainSupplier
 		return Arrays.asList(table);
 	}
 
+	/**
+	 * Returns the name and the vote column.
+	 * @param options output options.
+	 * @return the name and the vote column.
+	 */
 	public StringTable firstColumns(PlainOptions options)
 	{
 		StringTable table = new StringTable();

@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/** This plugin produces instances of BMMAlgorithm. */
 public class BMMAlgorithmPlugin implements Plugin<BMMAlgorithm>
 {
 	@Override public Class<? extends BMMAlgorithm> getInstanceType()
@@ -28,11 +29,31 @@ public class BMMAlgorithmPlugin implements Plugin<BMMAlgorithm>
 	}
 
 
+	/** Parameters for the BMMAlgorithm. */
 	public interface Params extends Plugin.Params
 	{
+		/**
+		 * The base seats for each party.
+		 * @return the base seats for each party.
+		 */
 		@Default("0") Int base();
+
+		/**
+		 * The min seats for each party.
+		 * @return the min seats for each party.
+		 */
 		@Default("0") Int min();
+
+		/**
+		 * The max seats for each party.
+		 * @return the max seats for each party.
+		 */
 		@Default("oo") Int max();
+
+		/**
+		 * The algorithm to calculate the actual apportionment with.
+		 * @return the algorithm to calculate the actual apportionment with.
+		 */
 		@Default("divstd") VectorAlgorithm<?> method();
 	}
 }

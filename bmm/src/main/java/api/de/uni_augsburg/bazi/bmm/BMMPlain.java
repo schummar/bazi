@@ -9,11 +9,18 @@ import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 
 import java.util.List;
 
+/** A PlainSupplier that generates plain output for the bmm algorithm on request. */
 public class BMMPlain implements PlainSupplier
 {
 	protected final VectorOutput output;
 	protected final PlainSupplier sub;
 	protected final BMMAlgorithm algo;
+
+	/**
+	 * Constructor with initializers.
+	 * @param output the result to prduce plain output for.
+	 * @param algo the used algorithm.
+	 */
 	public BMMPlain(VectorOutput output, BMMAlgorithm algo)
 	{
 		this.output = output;
@@ -31,6 +38,12 @@ public class BMMPlain implements PlainSupplier
 		return tables;
 	}
 
+
+	/**
+	 * Modifies the quotient column. Adds the base seats to the quotients.
+	 * @param col the column that will be filled.
+	 * @param options output options.
+	 */
 	public void modifyQuotientColumn(StringTable.Column col, PlainOptions options)
 	{
 		List<String> quotients = col.subList(1, col.size() - 1);

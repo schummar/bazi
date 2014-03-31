@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/** This plugin produces instances of BMMPowAlgorithm. */
 public class BMMPowAlgorithmPlugin implements Plugin<BMMPowAlgorithm>
 {
 	@Override public Class<? extends BMMPowAlgorithm> getInstanceType()
@@ -27,11 +28,31 @@ public class BMMPowAlgorithmPlugin implements Plugin<BMMPowAlgorithm>
 		return Optional.of(new BMMPowAlgorithm(bmmParams.base(), bmmParams.min(), bmmParams.max(), bmmParams.method()));
 	}
 
+	/** Parameters for the BMMPowAlgorithm. */
 	public interface Params extends Plugin.Params
 	{
+		/**
+		 * The base seats for each party.
+		 * @return the base seats for each party.
+		 */
 		@Default("0") Int base();
+
+		/**
+		 * The min seats for each party.
+		 * @return the min seats for each party.
+		 */
 		@Default("0") Int min();
+
+		/**
+		 * The max seats for each party.
+		 * @return the max seats for each party.
+		 */
 		@Default("oo") Int max();
+
+		/**
+		 * The algorithm to calculate the actual apportionment with.
+		 * @return the algorithm to calculate the actual apportionment with.
+		 */
 		@Default("divstd") DivisorAlgorithm method();
 	}
 }

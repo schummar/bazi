@@ -9,10 +9,22 @@ import de.uni_augsburg.bazi.math.Int;
 import java.util.Collections;
 import java.util.List;
 
+/** The base+min..max algorithm. */
 public class BMMAlgorithm implements VectorAlgorithm<VectorOutput>
 {
+	/** Constraints for the seats of each party. */
 	public final Int base, min, max;
+
+	/** The algorithm to calculate the actual apportionment with. */
 	public final VectorAlgorithm<?> method;
+
+	/**
+	 * Consreuctor with initielizers.
+	 * @param base the base seats for each party.
+	 * @param min the min seats for each party.
+	 * @param max the max seats for each party.
+	 * @param method the algorithm to calculate the actual apportionment with.
+	 */
 	public BMMAlgorithm(Int base, Int min, Int max, VectorAlgorithm<?> method)
 	{
 		this.base = base;

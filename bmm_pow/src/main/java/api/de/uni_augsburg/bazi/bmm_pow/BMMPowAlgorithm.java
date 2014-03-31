@@ -10,10 +10,22 @@ import de.uni_augsburg.bazi.math.Int;
 import java.util.Collections;
 import java.util.List;
 
+/** The base+min..max(pow) algorithm. */
 public class BMMPowAlgorithm implements Algorithm<BMMPowOutput>
 {
+	/** Constraints for the seats of each party. */
 	public final Int base, min, max;
+
+	/** The algorithm to calculate the actual apportionment with. */
 	public final DivisorAlgorithm method;
+
+	/**
+	 * Consreuctor with initielizers.
+	 * @param base the base seats for each party.
+	 * @param min the min seats for each party.
+	 * @param max the max seats for each party.
+	 * @param method the algorithm to calculate the actual apportionment with.
+	 */
 	public BMMPowAlgorithm(Int base, Int min, Int max, DivisorAlgorithm method)
 	{
 		this.base = base;
