@@ -7,7 +7,7 @@ import de.uni_augsburg.bazi.common.UserCanceledException;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
 import de.uni_augsburg.bazi.common.algorithm.VectorInput;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.common.util.CollectionHelper;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorOutput;
 import de.uni_augsburg.bazi.math.BMath;
@@ -18,14 +18,12 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static de.uni_augsburg.bazi.biprop.BipropOutput.District;
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
-import static de.uni_augsburg.bazi.common.util.CollectionHelper.find;
 
 class ASAlgorithmImpl
 {
 	public static Map<Object, Real> calculate(
-		Table<District, String, Party> table,
+		Table<DivisorOutput, String, Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
 		DivisorAlgorithm divisorAlgorithm,
@@ -36,14 +34,14 @@ class ASAlgorithmImpl
 	}
 
 
-	Table<District, String, Party> table;
+	Table<DivisorOutput, String, Party> table;
 	Map<?, ? extends Map<?, Party>> rows, cols, rowsAndCols;
 	Map<Object, Int> seats;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 	private final DivisorAlgorithm divisorAlgorithm;
 	private final Options options;
 
-	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<District, String, Party> table, Map<Object, Int> seats, Options options)
+	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<DivisorOutput, String, Party> table, Map<Object, Int> seats, Options options)
 	{
 		this.divisorUpdateFunction = divisorUpdateFunction;
 		this.divisorAlgorithm = divisorAlgorithm;
@@ -108,12 +106,11 @@ class ASAlgorithmImpl
 					);
 
 					// apply the calculated seats to the table and reset votes
-					row.getValue().values().forEach(
-						party -> {
-							party.votes(votes.get(party));
-							VectorOutput.Party outParty = find(output.parties(), p -> p.name().equals(party.name()));
-							party.seats(outParty.seats());
-							party.uniqueness(outParty.uniqueness());
+					CollectionHelper.forEachPair(
+						row.getValue().values(), output.parties(), (p, temp) -> {
+							p.votes(votes.get(p));
+							p.seats(temp.seats());
+							p.uniqueness(temp.uniqueness());
 						}
 					);
 

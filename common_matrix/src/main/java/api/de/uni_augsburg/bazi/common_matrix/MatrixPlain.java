@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/** A PlainSupplier that generates plain output for matrix algorithms on request. */
 public abstract class MatrixPlain implements PlainSupplier
 {
 	public static final StringTable.Key

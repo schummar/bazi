@@ -4,19 +4,26 @@ import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.biprop.BipropAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
+import de.uni_augsburg.bazi.divisor.DivisorOutput;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 
 import java.util.Map;
 
-import static de.uni_augsburg.bazi.biprop.BipropOutput.District;
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
+/** The alternating scaling algorithms is a biproportional algorithm. */
 public class ASAlgorithm extends BipropAlgorithm
 {
 	private final DivisorAlgorithm Super, sub;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 
+	/**
+	 * Constructor with initializers.
+	 * @param Super the divisor algrithm to use for the super apportionment.
+	 * @param sub the divisor algrithm to use for the sub apportionment.
+	 * @param divisorUpdateFunction the way the divisors are updates between iterations.
+	 */
 	public ASAlgorithm(DivisorAlgorithm Super, DivisorAlgorithm sub, DivisorUpdateFunction divisorUpdateFunction)
 	{
 		this.Super = Super;
@@ -29,7 +36,7 @@ public class ASAlgorithm extends BipropAlgorithm
 		return "alternating scaling";
 	}
 
-	@Override protected Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats, Options options)
+	@Override protected Map<Object, Real> calculate(Table<DivisorOutput, String, Party> table, Map<Object, Int> seats, Options options)
 	{
 		return ASAlgorithmImpl.calculate(table, seats, divisorUpdateFunction, Super, options);
 	}

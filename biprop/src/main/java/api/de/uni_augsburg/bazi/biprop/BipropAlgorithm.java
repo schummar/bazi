@@ -18,9 +18,12 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static de.uni_augsburg.bazi.biprop.BipropOutput.District;
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
+/**
+ * A biproportional algorithm calculates a set of row and column divisors that solve a two dimensional
+ * apportionment problem.
+ */
 public abstract class BipropAlgorithm implements MatrixAlgorithm<MatrixOutput>
 {
 	@Override public List<Object> getInputAttributes()
@@ -32,13 +35,13 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm<MatrixOutput>
 	@Override public MatrixOutput applyUnfiltered(Data in, Options options)
 	{
 		BipropOutput data = in.copy(BipropOutput.class);
-		Table<District, String, Party> table = generateTable(data);
+		Table<DivisorOutput, String, Party> table = generateTable(data);
 
 		Map<Object, Int> seats = data.districts().stream()
 			.collect(
-				Collectors.<District, Object, Int>toMap(
-					Function.<District>identity(),
-					District::seats
+				Collectors.<DivisorOutput, Object, Int>toMap(
+					Function.<DivisorOutput>identity(),
+					DivisorOutput::seats
 				)
 			);
 
@@ -51,21 +54,21 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm<MatrixOutput>
 		data.districts().forEach(d -> d.divisor(new Divisor(divisors.get(d), divisors.get(d))));
 		data.partyDivisors(new LinkedHashMap<>());
 		table.columnKeySet().forEach(name -> data.partyDivisors().put(name, new Divisor(divisors.get(name), divisors.get(name))));
-		data.plain(new BipropPlain(data, Super().name(), sub().name()));
+		data.plain(new BipropPlain(data, sub().name()));
 		return data;
 	}
 
 
-	private Table<District, String, Party> generateTable(BipropOutput out)
+	private Table<DivisorOutput, String, Party> generateTable(BipropOutput out)
 	{
 		Set<String> names = out.districts().stream()
 			.flatMap(district -> district.parties().stream())
 			.map(Party::name)
 			.collect(Collectors.toCollection(LinkedHashSet::new));
 
-		Table<District, String, Party> table = ArrayTable.create(out.districts(), names);
+		Table<DivisorOutput, String, Party> table = ArrayTable.create(out.districts(), names);
 
-		for (District district : out.districts())
+		for (DivisorOutput district : out.districts())
 			for (String name : names)
 			{
 				Party party = district.parties().stream()
@@ -80,7 +83,7 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm<MatrixOutput>
 	}
 
 
-	private DivisorOutput calculateSuperApportionment(Table<District, String, Party> table, Collection<Int> districtSeats, Options options)
+	private DivisorOutput calculateSuperApportionment(Table<DivisorOutput, String, Party> table, Collection<Int> districtSeats, Options options)
 	{
 		Int superSeats = districtSeats.stream()
 			.reduce(Int::add).orElse(BMath.ZERO);
@@ -116,5 +119,5 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm<MatrixOutput>
 
 	protected abstract DivisorAlgorithm Super();
 	protected abstract DivisorAlgorithm sub();
-	protected abstract Map<Object, Real> calculate(Table<District, String, Party> table, Map<Object, Int> seats, Options options);
+	protected abstract Map<Object, Real> calculate(Table<DivisorOutput, String, Party> table, Map<Object, Int> seats, Options options);
 }

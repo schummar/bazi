@@ -24,17 +24,35 @@ import java.util.stream.Collectors;
 
 import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
+/** A PlainSupplier that generates plain output for biproportional algorithms on request. */
 public class BipropPlain extends MatrixPlain
 {
+	/** PlainOptions for bipropotional methods. */
+	public interface BipropPlainOptions extends PlainOptions
+	{
+		/**
+		 * Whether to sort the super parties according to the number of seats
+		 * they aquired in the super apportionment.
+		 * @return true iff the super parties are sorted according to the number of seats
+		 * they aquired in the super apportionment.
+		 */
+		@Default("true") boolean sortSuper();
+	}
+
+
 	public static final StringTable.Key DIVISOR = new StringTable.Key();
 
 	protected final BipropOutput output;
-	protected final String sub;
-	public BipropPlain(BipropOutput output, String Super, String sub)
+
+	/**
+	 * Constructor with initializers.
+	 * @param output the biproportional result to prduce plain output for.
+	 * @param sub the name of the divisor method used for the main apportionment.
+	 */
+	public BipropPlain(BipropOutput output, String sub)
 	{
 		super(output, sub);
 		this.output = output;
-		this.sub = sub;
 	}
 
 
@@ -61,6 +79,11 @@ public class BipropPlain extends MatrixPlain
 	}
 
 
+	/**
+	 * Returns the table that summarizes the biproportional apportionment.
+	 * @param options output options.
+	 * @return the table that summarizes the biproportional apportionment.
+	 */
 	public StringTable getBipropTable(PlainOptions options)
 	{
 		StringTable table = new StringTable();
@@ -100,6 +123,12 @@ public class BipropPlain extends MatrixPlain
 		return table;
 	}
 
+
+	/**
+	 * Returns the divisor of a column.
+	 * @param key the column key. Either an instance of DivisorOutput (=district) or a party name.
+	 * @return the divisor of a column.
+	 */
 	public Divisor colDivisor(Object key)
 	{
 		return key instanceof DivisorOutput
@@ -107,6 +136,12 @@ public class BipropPlain extends MatrixPlain
 			: output.partyDivisors().get(key.toString());
 	}
 
+
+	/**
+	 * Returns a list of all rowDivisors.
+	 * @param forDistrict whether the cloumns represent districts.
+	 * @return a list of all rowDivisors.
+	 */
 	public List<Divisor> rowDivisors(boolean forDistrict)
 	{
 		return forDistrict
@@ -114,6 +149,13 @@ public class BipropPlain extends MatrixPlain
 			: output.districts().stream().map(d -> d.divisor()).collect(Collectors.toList());
 	}
 
+
+	/**
+	 * Returns the divisor format to use for the parts.
+	 * @param forDistrict whether the cloumns represent districts.
+	 * @param options output options.
+	 * @return the divisor format to use for the parts.
+	 */
 	public DivisorFormat divisorFormat(boolean forDistrict, PlainOptions options)
 	{
 		if (forDistrict) return options.divisorFormat();
@@ -132,6 +174,11 @@ public class BipropPlain extends MatrixPlain
 	}
 
 
+	/**
+	 * Fill the column with the seats sums of each row.
+	 * @param col the column that will be filled.
+	 * @param options output options.
+	 */
 	public void seatSumColumn(StringTable.Column col, PlainOptions options)
 	{
 		col.add("");
@@ -142,6 +189,11 @@ public class BipropPlain extends MatrixPlain
 	}
 
 
+	/**
+	 * Fill the column with the divisors of each row.
+	 * @param col the column that will be filled.
+	 * @param options output options.
+	 */
 	public void divisorColumn(StringTable.Column col, PlainOptions options)
 	{
 		PlainOptions opt = options.copy(PlainOptions.class);
@@ -152,11 +204,10 @@ public class BipropPlain extends MatrixPlain
 	}
 
 
-	public interface BipropPlainOptions extends PlainOptions
-	{
-		@Default("true") boolean sortSuper();
-	}
-
+	/**
+	 * Returns a list of all party names.
+	 * @return a list of all party names.
+	 */
 	@Override public List<String> names()
 	{
 		return output.superApportionment().parties().stream()
@@ -165,9 +216,18 @@ public class BipropPlain extends MatrixPlain
 	}
 
 
+	/** One part for each district/party. Consists of columns for votes, seats, quotients. */
 	public class Part extends DivisorPlain
 	{
 		protected final List<Divisor> rowDivisors;
+
+		/**
+		 * Constructor with initializers.
+		 * @param output the divisor output to produce plain output for.
+		 * @param r the rounding function.
+		 * @param name the apportionment's name.
+		 * @param rowDivisors a list of divisors for each row.
+		 */
 		public Part(DivisorOutput output, RoundingFunction r, String name, List<Divisor> rowDivisors)
 		{
 			super(output, r, name);
