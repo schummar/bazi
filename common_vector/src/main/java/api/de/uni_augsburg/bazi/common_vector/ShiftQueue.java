@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/** Manages increases or decreases of seats. The order is determined by a given ShiftFunction. */
 public class ShiftQueue
 {
 	private final List<? extends VectorOutput.Party> parties;
@@ -18,6 +19,11 @@ public class ShiftQueue
 
 	private final List<Integer> increase, decrease;
 
+	/**
+	 * Constructor with initializers.
+	 * @param parties the list of parties.
+	 * @param shiftFunction the shift function that determindes the order in which to increase/decrease.
+	 */
 	public ShiftQueue(List<? extends VectorOutput.Party> parties, ShiftFunction shiftFunction)
 	{
 		this.parties = parties;
@@ -32,6 +38,12 @@ public class ShiftQueue
 		update();
 	}
 
+	/**
+	 * If n is positive performs n increases. If n is negative performs -n decreases.
+	 * @param n the number of shifts.
+	 * @throws NoShiftPossible if no more increases/decreases are possible.
+	 * (Because conditions would be violated etc.)
+	 */
 	public void shift(Int n) throws NoShiftPossible
 	{
 		if (n.sgn() >= 0)
@@ -40,6 +52,12 @@ public class ShiftQueue
 			n.timesDo(this::decrease);
 	}
 
+
+	/**
+	 * Performes an increase.
+	 * @throws NoShiftPossible if no more increases are possible.
+	 * (Because conditions would be violated etc.)
+	 */
 	public void increase() throws NoShiftPossible
 	{
 		int i = nextIncrease();
@@ -50,17 +68,31 @@ public class ShiftQueue
 		update();
 	}
 
+	/**
+	 * Returns the index of the next increase.
+	 * @return the index of the next increase.
+	 */
 	public int nextIncrease()
 	{
 		return increase.get(0);
 	}
 
+	/**
+	 * Returns the value the shift function produces for the next increase.
+	 * @return the value the shift function produces for the next increase.
+	 */
 	public Real nextIncreaseValue()
 	{
 		int i = nextIncrease();
 		return shiftFunction.value(parties.get(i), parties.get(i).seats(), true);
 	}
 
+
+	/**
+	 * Performes an decrease.
+	 * @throws NoShiftPossible if no more decreases are possible.
+	 * (Because conditions would be violated etc.)
+	 */
 	public void decrease() throws NoShiftPossible
 	{
 		int i = nextDecrease();
@@ -71,17 +103,27 @@ public class ShiftQueue
 		update();
 	}
 
+	/**
+	 * Returns the index of the next decrease.
+	 * @return the index of the next decrease.
+	 */
 	public int nextDecrease()
 	{
 		return decrease.get(0);
 	}
 
+	/**
+	 * Returns the value the shift function produces for the next decrease.
+	 * @return the value the shift function produces for the next decrease.
+	 */
 	public Real nextDecreaseValue()
 	{
 		int i = nextDecrease();
 		return shiftFunction.value(parties.get(i), parties.get(i).seats().sub(1), false);
 	}
 
+
+	/** Sets the uniquenesses for all parties. */
 	public void updateUniquenesses()
 	{
 		for (VectorOutput.Party party : parties)
@@ -101,6 +143,7 @@ public class ShiftQueue
 			else
 				break;
 	}
+
 
 	private void update()
 	{
@@ -122,6 +165,7 @@ public class ShiftQueue
 		);
 	}
 
+
 	private int compare(VectorInput.Party p0, Int s0, VectorInput.Party p1, Int s1, boolean increase)
 	{
 		int compare = shiftFunction.value(p0, s0, increase).compareTo(shiftFunction.value(p1, s1, increase));
@@ -129,6 +173,7 @@ public class ShiftQueue
 			return compare;
 		return bias(p0, s0) - bias(p1, s1);
 	}
+
 
 	private static int bias(VectorInput.Party p, Int s)
 	{
@@ -139,10 +184,30 @@ public class ShiftQueue
 		return 0;
 	}
 
+
+	/**
+	 * A ShiftFunction returns a Real value that represents the priority of a party
+	 * with a certain number of seats getting an increase.
+	 * The party with the highest value for its current number of seats is increased first.
+	 * The party with the lowest value for its current number of seats minus one is decreased first.
+	 */
 	public static interface ShiftFunction
 	{
+		/**
+		 * Returns the priority of a given party with a given number of seats.
+		 * @param p the party.
+		 * @param s the number of seats.
+		 * @param increase whether the party competes for an increase (if false: a decrease).
+		 * @return the priority of a given party with a given number of seats.
+		 */
 		public Real value(VectorInput.Party p, Int s, boolean increase);
 
+		/**
+		 * Returns this shift function with the addition that 0/oo values are given if
+		 * an increase/decrease would mean violating a condition.
+		 * @return this shift function with the addition that 0/oo values are given if
+		 * an increase/decrease would mean violating a condition.
+		 */
 		public default ShiftFunction mindConditions()
 		{
 			ShiftFunction that = this;
@@ -158,6 +223,9 @@ public class ShiftQueue
 		}
 	}
 
+	/**
+	 * If no more increases/decreases are possible. (Because conditions would be violated etc.)
+	 */
 	public static class NoShiftPossible extends RuntimeException
 	{
 		private static final long serialVersionUID = 1L;

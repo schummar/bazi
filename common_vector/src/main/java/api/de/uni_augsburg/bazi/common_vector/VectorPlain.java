@@ -13,6 +13,7 @@ import de.uni_augsburg.bazi.math.Real;
 import java.util.Arrays;
 import java.util.List;
 
+/** A PlainSupplier that generates plain output for vector algorithms on request. */
 public class VectorPlain implements PlainSupplier
 {
 	public static final StringTable.Key
@@ -24,6 +25,12 @@ public class VectorPlain implements PlainSupplier
 
 	protected final VectorOutput output;
 	protected final String name;
+
+	/**
+	 * Constructor with initializers.
+	 * @param output the result to prduce plain output for.
+	 * @param name the name of the vector method used for the apportionment.
+	 */
 	public VectorPlain(VectorOutput output, String name)
 	{
 		this.output = output;
@@ -58,6 +65,11 @@ public class VectorPlain implements PlainSupplier
 	}
 
 
+	/**
+	 * Fills a column with the party names.
+	 * @param col the column that will be filled.
+	 * @param options output options.
+	 */
 	public void partyColumn(StringTable.Column col, PlainOptions options)
 	{
 		if (options.nameLabel() != null) col.add(options.nameLabel());
@@ -69,6 +81,11 @@ public class VectorPlain implements PlainSupplier
 	}
 
 
+	/**
+	 * Fills a column with the party votes.
+	 * @param col the column that will be filled.
+	 * @param options output options.
+	 */
 	public void voteColumn(StringTable.Column col, PlainOptions options)
 	{
 		if (options.voteLabel() != null) col.add(options.voteLabel());
@@ -83,6 +100,11 @@ public class VectorPlain implements PlainSupplier
 	}
 
 
+	/**
+	 * Fills a column with the party conditions.
+	 * @param col the column that will be filled.
+	 * @param options output options.
+	 */
 	public void conditionColumn(StringTable.Column col, PlainOptions options)
 	{
 		col.add(Resources.get("output.conditions"));
@@ -100,6 +122,11 @@ public class VectorPlain implements PlainSupplier
 	}
 
 
+	/**
+	 * Fills a column with the party seats.
+	 * @param col the column that will be filled.
+	 * @param options output options.
+	 */
 	public void resultColumn(StringTable.Column col, PlainOptions options)
 	{
 		col.add(name);

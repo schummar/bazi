@@ -13,7 +13,6 @@ import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +27,12 @@ public abstract class MatrixPlain implements PlainSupplier
 
 	protected final MatrixOutput output;
 	protected final String vectorName;
+
+	/**
+	 * Constructor with initializers.
+	 * @param output the result to prduce plain output for.
+	 * @param vectorName the name of the vector method used for the apportionment.
+	 */
 	protected MatrixPlain(MatrixOutput output, String vectorName)
 	{
 		this.output = output;
@@ -35,6 +40,11 @@ public abstract class MatrixPlain implements PlainSupplier
 	}
 
 
+	/**
+	 * Fills the first column which contains the names of the parties/districts.
+	 * @param col the column that will be filled.
+	 * @param options output options.
+	 */
 	public void firstColumn(StringTable.Column col, PlainOptions options)
 	{
 		col.add("");
@@ -49,6 +59,11 @@ public abstract class MatrixPlain implements PlainSupplier
 	}
 
 
+	/**
+	 * Returns one part (one or more columns) for each district/party.
+	 * @param options output options.
+	 * @return one part (one or more columns) for each district/party.
+	 */
 	public StringTable getParts(PlainOptions options)
 	{
 		StringTable table = new StringTable();
@@ -59,19 +74,38 @@ public abstract class MatrixPlain implements PlainSupplier
 
 		return table;
 	}
+
+	/**
+	 * Returns the part (one or more columns) for a specific district/party.
+	 * @param key the district/party.
+	 * @param options output options.
+	 * @return the part (one or more columns) for a specific district/party.
+	 */
 	public abstract StringTable getPart(Object key, PlainOptions options);
 
 
+	/**
+	 * Returns a list of all party names.
+	 * @return a list of all party names.
+	 */
 	public List<String> names()
 	{
 		return new ArrayList<>(
 			output.districts().stream()
 				.flatMap(d -> d.parties().stream())
 				.map(VectorOutput.Party::name)
-				.collect(Collectors.toCollection(LinkedHashSet::new))
+				.collect(Collectors.toList())
 		);
 	}
 
+
+	/**
+	 * Returns the party with the given name in the given district.
+	 * If no such party exists a dummy is returned.
+	 * @param name the party name.
+	 * @param district the district.
+	 * @return the party with the given name in the given district.
+	 */
 	public VectorOutput.Party party(String name, VectorOutput district)
 	{
 		Optional<? extends VectorOutput.Party> optional = district.parties().stream()
@@ -83,6 +117,12 @@ public abstract class MatrixPlain implements PlainSupplier
 		return party;
 	}
 
+
+	/**
+	 * Returns all parties for the given district/party name.
+	 * @param key the district/party.
+	 * @return all parties for the given district/party name.
+	 */
 	public List<VectorOutput.Party> parties(Object key)
 	{
 		return key instanceof VectorOutput
@@ -91,6 +131,11 @@ public abstract class MatrixPlain implements PlainSupplier
 	}
 
 
+	/**
+	 * Returns the name of the given district/party.
+	 * @param key the district/party.
+	 * @return the name of the given district/party.
+	 */
 	public String label(Object key)
 	{
 		return key instanceof VectorOutput
@@ -98,6 +143,13 @@ public abstract class MatrixPlain implements PlainSupplier
 			: key.toString();
 	}
 
+
+	/**
+	 * Returns a list of the vote sums for each district/party.
+	 * @param forNames if true the vote sums for the each party is returned.
+	 * Else the votes sums for each district.
+	 * @return a list of the vote sums for each district/party.
+	 */
 	public List<Real> votes(boolean forNames)
 	{
 		return forNames
@@ -117,6 +169,13 @@ public abstract class MatrixPlain implements PlainSupplier
 			.collect(Collectors.toList());
 	}
 
+
+	/**
+	 * Returns a list of the seat sums for each district/party.
+	 * @param forNames if true the seat sums for the each party is returned.
+	 * Else the seat sums for each district.
+	 * @return a list of the seat sums for each district/party.
+	 */
 	public List<Int> seats(boolean forNames)
 	{
 		return forNames
@@ -135,5 +194,4 @@ public abstract class MatrixPlain implements PlainSupplier
 			)
 			.collect(Collectors.toList());
 	}
-
 }

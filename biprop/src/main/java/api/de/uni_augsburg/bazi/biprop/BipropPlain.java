@@ -204,10 +204,6 @@ public class BipropPlain extends MatrixPlain
 	}
 
 
-	/**
-	 * Returns a list of all party names.
-	 * @return a list of all party names.
-	 */
 	@Override public List<String> names()
 	{
 		return output.superApportionment().parties().stream()

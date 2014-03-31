@@ -6,6 +6,7 @@ import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.plain.PlainSupplier;
+import de.uni_augsburg.bazi.common_vector.VectorPlain;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class BMMPlain implements PlainSupplier
 
 	/**
 	 * Constructor with initializers.
-	 * @param output the result to prduce plain output for.
+	 * @param output the result to produce plain output for.
 	 * @param algo the used algorithm.
 	 */
 	public BMMPlain(VectorOutput output, BMMAlgorithm algo)
@@ -32,9 +33,8 @@ public class BMMPlain implements PlainSupplier
 	@Override public List<StringTable> get(PlainOptions options)
 	{
 		List<StringTable> tables = sub.get(options);
-		//tables.get(0).col(2).delete();
 		if (options.divisorFormat() == DivisorFormat.QUOTIENTS)
-			modifyQuotientColumn(tables.get(0).col(2), options);
+			modifyQuotientColumn(tables.get(0).col(VectorPlain.QUTIENT), options);
 		return tables;
 	}
 
