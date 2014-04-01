@@ -9,6 +9,7 @@ import de.uni_augsburg.bazi.math.Rational;
 
 import java.util.*;
 
+/** This plugin produces instances of DivisorAlgorithm. */
 public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 {
 	private static final String
@@ -68,7 +69,7 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 		return Optional.of(new DivisorAlgorithm(r, name));
 	}
 
-	public static RoundingFunction.Stationary buildStationary(String line)
+	private static RoundingFunction.Stationary buildStationary(String line)
 	{
 		String[] split = line.split("[,|;|\\s]+", 2);
 		Rational r = Rational.valueOf(split[0]);
@@ -79,7 +80,7 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 		return new RoundingFunction.Stationary(r, specialCases);
 	}
 
-	public static RoundingFunction.Power buildPower(String line)
+	private static RoundingFunction.Power buildPower(String line)
 	{
 		String[] split = line.split("[,|;|\\s]+", 2);
 		Rational p = Rational.valueOf(split[0]);
@@ -89,7 +90,7 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 		return new RoundingFunction.Power(p, specialCases);
 	}
 
-	public static Map<Int, Rational> buildSpecialCases(String line)
+	private static Map<Int, Rational> buildSpecialCases(String line)
 	{
 		Map<Int, Rational> map = new HashMap<>();
 		for (String s : line.split("[,;\\s]+"))
@@ -105,9 +106,19 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 	}
 
 
+	/** Parameters for a DivisorAlgorithm. */
 	public interface Params extends Plugin.Params
 	{
+		/**
+		 * The parameter p for power rounding.
+		 * @return the parameter p for power rounding.
+		 */
 		String p();
+
+		/**
+		 * The parameter r for stationary rounding.
+		 * @return the parameter r for stationary rounding.
+		 */
 		String r();
 	}
 }

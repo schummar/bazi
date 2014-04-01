@@ -8,12 +8,16 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
-
+/** A divisor algorithm. */
 public class DivisorAlgorithm implements VectorAlgorithm<DivisorOutput>
 {
 	private final RoundingFunction roundingFunction;
 	private final String name;
 
+	/**
+	 * @param roundingFunction the rounding function this algorithm uses.
+	 * @param name the display name of this algorithm.
+	 */
 	public DivisorAlgorithm(RoundingFunction roundingFunction, String name)
 	{
 		this.roundingFunction = roundingFunction;
@@ -21,7 +25,15 @@ public class DivisorAlgorithm implements VectorAlgorithm<DivisorOutput>
 	}
 
 	@Override public String name() { return name; }
-	public RoundingFunction roundingFunction() { return roundingFunction; }
+
+	/**
+	 * The rounding function this algorithm uses.
+	 * @return the rounding function this algorithm uses.
+	 */
+	public RoundingFunction roundingFunction()
+	{
+		return roundingFunction;
+	}
 
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
 	@Override public DivisorOutput applyUnfiltered(Data in, Options options)

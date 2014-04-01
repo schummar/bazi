@@ -7,10 +7,17 @@ import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common_vector.VectorPlain;
 import de.uni_augsburg.bazi.math.Real;
 
+/** A PlainSupplier that generates plain output for the divisor algorithm on request. */
 public class DivisorPlain extends VectorPlain
 {
 	protected final DivisorOutput output;
 	protected final RoundingFunction r;
+
+	/**
+	 * @param output the output to produce plain output for.
+	 * @param r the rounding function the divisor algorithm used.
+	 * @param name the display name of the algorithm.
+	 */
 	public DivisorPlain(DivisorOutput output, RoundingFunction r, String name)
 	{
 		super(output, name);
@@ -38,6 +45,12 @@ public class DivisorPlain extends VectorPlain
 			quotientColumn(col.inserBefore(QUTIENT), options);
 	}
 
+
+	/**
+	 * Fills a column with the quotients for each party.
+	 * @param col the column to fill.
+	 * @param options output options.
+	 */
 	public void quotientColumn(StringTable.Column col, PlainOptions options)
 	{
 		col.add(Resources.get("output.quotient"));
@@ -50,6 +63,13 @@ public class DivisorPlain extends VectorPlain
 		col.add(String.format("(%s)", divisor(output.divisor(), options)));
 	}
 
+
+	/**
+	 * Returns the Divisor as String.
+	 * @param divisor the divisor.
+	 * @param options output options.
+	 * @return the Divisor as String.
+	 */
 	public static String divisor(Divisor divisor, PlainOptions options)
 	{
 		switch (options.divisorFormat())
@@ -75,6 +95,12 @@ public class DivisorPlain extends VectorPlain
 		}
 	}
 
+
+	/**
+	 * Returns the divisor label.
+	 * @param options output options.
+	 * @return the divisor label.
+	 */
 	public static String divisorLabel(PlainOptions options)
 	{
 		switch (options.divisorFormat())

@@ -129,8 +129,8 @@ class BMMPowAlgorithmImpl
 		Real E = ECache.get(from, to);
 		if (E != null) return E;
 
-		Real a = log(method.roundingFunction().getBorder(from.seats().sub(BMath.ONE), options.precision())),
-			b = log(method.roundingFunction().getBorder(to.seats(), options.precision())),
+		Real a = log(method.roundingFunction().apply(from.seats().sub(BMath.ONE), options.precision())),
+			b = log(method.roundingFunction().apply(to.seats(), options.precision())),
 			c = log(from.votes()), d = log(to.votes());
 
 		E = a.sub(b).div(c.sub(d));
