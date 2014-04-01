@@ -9,12 +9,18 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
+/** The quota algorithm. */
 public class QuotaAlgorithm implements VectorAlgorithm
 {
 	private final QuotaFunction quotaFunction;
 	private final ResidualHandler residualHandler;
 	private final String name;
 
+	/**
+	 * @param quotaFunction the quota function.
+	 * @param residualHandler the residual handler.
+	 * @param name the display name of this algorithm.
+	 */
 	public QuotaAlgorithm(QuotaFunction quotaFunction, ResidualHandler residualHandler, String name)
 	{
 		this.quotaFunction = quotaFunction;

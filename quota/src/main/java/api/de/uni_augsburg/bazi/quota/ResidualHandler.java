@@ -5,8 +5,17 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 
+/**
+ * A ResidualHandler determinces which parties' seats will be increased
+ * if there remain seats after the apportionment via the quota.
+ */
 public interface ResidualHandler
 {
+	/**
+	 * Creates the shift function for a given quota.
+	 * @param quota the quota.
+	 * @return the shift functions.
+	 */
 	public ShiftQueue.ShiftFunction getShiftFunction(Real quota);
 
 

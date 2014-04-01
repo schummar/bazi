@@ -10,9 +10,15 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
 
+/** A PlainSupplier that generates plain output for the divisor algorithm on request. */
 public class QuotaPlain extends VectorPlain
 {
 	private final QuotaOutput output;
+
+	/**
+	 * @param output the output to produce plain output for.
+	 * @param name the display name of the algorithm.
+	 */
 	public QuotaPlain(QuotaOutput output, String name)
 	{
 		super(output, name);
@@ -39,6 +45,12 @@ public class QuotaPlain extends VectorPlain
 			quotientColumn(col.inserBefore(QUTIENT), options);
 	}
 
+
+	/**
+	 * Fills a column with the quotients for each party.
+	 * @param col the column to fill.
+	 * @param options output options.
+	 */
 	public void quotientColumn(StringTable.Column col, PlainOptions options)
 	{
 		col.add(Resources.get("output.quotient"));
@@ -54,6 +66,13 @@ public class QuotaPlain extends VectorPlain
 		col.add(String.format("(%s)", split(split, options)));
 	}
 
+
+	/**
+	 * Returns the split interval as String.
+	 * @param split the split interval.
+	 * @param options output options.
+	 * @return the split interval as String.
+	 */
 	public String split(Interval split, PlainOptions options)
 	{
 		switch (options.divisorFormat())
@@ -78,6 +97,11 @@ public class QuotaPlain extends VectorPlain
 		return rs;
 	}
 
+
+	/**
+	 * Calculates the split interval.
+	 * @return the split interval.
+	 */
 	public Interval splitInterval()
 	{
 		Real min = BMath.ZERO, max = BMath.ONE;
@@ -90,6 +114,12 @@ public class QuotaPlain extends VectorPlain
 		return Interval.of(min, max);
 	}
 
+
+	/**
+	 * Returns the quota label.
+	 * @param options output options.
+	 * @return the quota label.
+	 */
 	public static String quotaLabel(PlainOptions options)
 	{
 		switch (options.divisorFormat())

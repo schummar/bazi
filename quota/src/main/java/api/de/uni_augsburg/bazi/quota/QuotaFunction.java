@@ -3,9 +3,16 @@ package de.uni_augsburg.bazi.quota;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 
+/** A quota function calculates a quota out of votes and seats. */
 public interface QuotaFunction
 {
-	public Real getQuota(Real votes, Int seats);
+	/**
+	 * Calculates a quota out of votes and seats.
+	 * @param votes the votes.
+	 * @param seats the seats.
+	 * @return the quota.
+	 */
+	public Real apply(Real votes, Int seats);
 
 
 	public static final QuotaFunction

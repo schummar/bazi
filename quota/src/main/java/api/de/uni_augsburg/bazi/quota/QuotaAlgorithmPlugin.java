@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/** This plugin produces instances of QuotaAlgorithm. */
 public class QuotaAlgorithmPlugin implements Plugin<QuotaAlgorithm>
 {
 	@Override public Class<QuotaAlgorithm> getInstanceType()

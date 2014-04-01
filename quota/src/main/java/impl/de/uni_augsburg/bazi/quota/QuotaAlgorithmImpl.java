@@ -16,7 +16,7 @@ class QuotaAlgorithmImpl
 		Supplier<Int> seatsOff = () -> output.seats().sub(output.parties().stream().map(VectorOutput.Party::seats).reduce(Int::add).get());
 
 		Real votes = output.parties().stream().map(VectorOutput.Party::votes).reduce((x, y) -> x.add(y)).get();
-		output.quota(quotaFunction.getQuota(votes, output.seats()));
+		output.quota(quotaFunction.apply(votes, output.seats()));
 
 		for (QuotaOutput.Party party : output.parties())
 		{
