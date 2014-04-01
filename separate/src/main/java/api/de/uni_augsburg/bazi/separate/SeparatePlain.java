@@ -15,11 +15,16 @@ import de.uni_augsburg.bazi.math.Real;
 import java.util.ArrayList;
 import java.util.List;
 
+/** A PlainSupplier that generates plain output for the separate algorithm on request. */
 public class SeparatePlain extends MatrixPlain
 {
 	public static final StringTable.Key
 		VOTE_SUM = new StringTable.Key();
 
+	/**
+	 * @param output the output to produce plain output for.
+	 * @param vectorName the display name of the method that was used for the district apportionments.
+	 */
 	public SeparatePlain(MatrixOutput output, String vectorName)
 	{
 		super(output, vectorName);
@@ -43,6 +48,11 @@ public class SeparatePlain extends MatrixPlain
 	}
 
 
+	/**
+	 * Creates the summary table.
+	 * @param options output options.
+	 * @return the summary table.
+	 */
 	public StringTable getSummary(PlainOptions options)
 	{
 		StringTable table = new StringTable();
@@ -71,6 +81,11 @@ public class SeparatePlain extends MatrixPlain
 	}
 
 
+	/**
+	 * Fills a column with the vote sums of each row.
+	 * @param col the column to be filled.
+	 * @param options output options.
+	 */
 	public void voteSumColumn(StringTable.Column col, PlainOptions options)
 	{
 		col.add(Resources.get("output.sum"));
@@ -82,6 +97,11 @@ public class SeparatePlain extends MatrixPlain
 	}
 
 
+	/**
+	 * Fills a column with the seat sums of each row.
+	 * @param col the column to be filled.
+	 * @param options output options.
+	 */
 	public void seatSumColumn(StringTable.Column col, PlainOptions options)
 	{
 		col.add(Resources.get("output.sum"));

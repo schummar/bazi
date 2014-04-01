@@ -9,9 +9,12 @@ import de.uni_augsburg.bazi.common.data.Data;
 import java.util.Collections;
 import java.util.List;
 
+/** The algorithm for separate district evaluations. */
 public class SeparateAlgorithm implements MatrixAlgorithm<MatrixOutput>
 {
 	private final VectorAlgorithm<?> method;
+
+	/** @param method the method used for the district apportionments. */
 	public SeparateAlgorithm(VectorAlgorithm<?> method)
 	{
 		this.method = method;

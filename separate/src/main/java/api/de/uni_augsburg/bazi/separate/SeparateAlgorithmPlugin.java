@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/** This plugin produces instances of SeparateAlgorithm. */
 public class SeparateAlgorithmPlugin implements Plugin<SeparateAlgorithm>
 {
 	@Override public Class<? extends SeparateAlgorithm> getInstanceType()
@@ -25,8 +26,13 @@ public class SeparateAlgorithmPlugin implements Plugin<SeparateAlgorithm>
 	}
 
 
+	/** Parameters for SeparateAlgorithm. */
 	public interface Params extends Plugin.Params
 	{
+		/**
+		 * The method used for the district apportionments.
+		 * @return the method used for the district apportionments.
+		 */
 		@Default("divstd") VectorAlgorithm<?> method();
 	}
 }
