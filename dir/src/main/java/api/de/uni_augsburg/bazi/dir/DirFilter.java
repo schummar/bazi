@@ -11,6 +11,7 @@ import java.util.List;
 
 import static de.uni_augsburg.bazi.dir.DirOutput.Party;
 
+/** The direct seats filter. */
 public class DirFilter implements Filter
 {
 	@Override public boolean applicableGlobally()
@@ -37,7 +38,7 @@ public class DirFilter implements Filter
 		dout.plain(new DirPlain(dout));
 	}
 
-	public static void sumDir(Party party)
+	private static void sumDir(Party party)
 	{
 		party.parties().forEach(
 			p -> {

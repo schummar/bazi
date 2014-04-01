@@ -46,7 +46,7 @@ public class BipropPlain extends MatrixPlain
 
 	/**
 	 * Constructor with initializers.
-	 * @param output the biproportional result to prduce plain output for.
+	 * @param output the biproportional result to produce plain output for.
 	 * @param sub the name of the divisor method used for the main apportionment.
 	 */
 	public BipropPlain(BipropOutput output, String sub)

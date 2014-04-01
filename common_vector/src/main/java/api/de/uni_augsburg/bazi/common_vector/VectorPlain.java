@@ -28,7 +28,7 @@ public class VectorPlain implements PlainSupplier
 
 	/**
 	 * Constructor with initializers.
-	 * @param output the result to prduce plain output for.
+	 * @param output the result to produce plain output for.
 	 * @param name the name of the vector method used for the apportionment.
 	 */
 	public VectorPlain(VectorOutput output, String name)

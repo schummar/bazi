@@ -9,6 +9,7 @@ import de.uni_augsburg.bazi.math.Int;
 
 import java.util.List;
 
+/** A PlainSupplier that generates plain output for the DirFilter on request. */
 public class DirPlain implements PlainSupplier
 {
 	public static final StringTable.Key DIR = new StringTable.Key();
@@ -16,6 +17,11 @@ public class DirPlain implements PlainSupplier
 
 	private final DirOutput output;
 	private PlainSupplier mainSupplier;
+
+	/**
+	 * Constructor with initializers.
+	 * @param output the result to produce plain output for.
+	 */
 	public DirPlain(DirOutput output)
 	{
 		this.output = output;
@@ -29,6 +35,10 @@ public class DirPlain implements PlainSupplier
 		return tables;
 	}
 
+	/**
+	 * Fills a column with overhang seats for each party.
+	 * @param col the column to fill.
+	 */
 	public void dirColumn(StringTable.Column col)
 	{
 		col.add(Resources.get("output.dir"));

@@ -7,6 +7,7 @@ import de.uni_augsburg.bazi.math.Int;
 
 import java.util.List;
 
+/** Output of the DirFilter */
 public interface DirOutput extends ListOutput
 {
 	@Override List<? extends Party> parties();
@@ -14,7 +15,16 @@ public interface DirOutput extends ListOutput
 
 	public interface Party extends ListOutput.Party
 	{
+		/**
+		 * The number of direct seats the party gets.
+		 * @return the number of direct seats the party gets.
+		 */
 		@Default("0") default Int dir() { return BMath.ZERO; }
+
+		/**
+		 * The number of direct seats the party gets.
+		 * @param dir the number of direct seats the party gets.
+		 */
 		void dir(Int dir);
 	}
 }

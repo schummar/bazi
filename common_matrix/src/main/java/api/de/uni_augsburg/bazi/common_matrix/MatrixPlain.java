@@ -30,7 +30,7 @@ public abstract class MatrixPlain implements PlainSupplier
 
 	/**
 	 * Constructor with initializers.
-	 * @param output the result to prduce plain output for.
+	 * @param output the result to produce plain output for.
 	 * @param vectorName the name of the vector method used for the apportionment.
 	 */
 	protected MatrixPlain(MatrixOutput output, String vectorName)

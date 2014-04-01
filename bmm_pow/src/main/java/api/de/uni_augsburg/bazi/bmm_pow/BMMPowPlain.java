@@ -23,7 +23,7 @@ public class BMMPowPlain implements PlainSupplier
 
 	/**
 	 * Constructor with initializers.
-	 * @param output the result to prduce plain output for.
+	 * @param output the result to produce plain output for.
 	 * @param method the algorithm used for the actual apportionments.
 	 */
 	public BMMPowPlain(BMMPowOutput output, DivisorAlgorithm method)
