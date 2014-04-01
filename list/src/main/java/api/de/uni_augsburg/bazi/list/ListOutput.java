@@ -7,9 +7,10 @@ import de.uni_augsburg.bazi.math.Int;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Output of the ListAlgorithm. */
 public interface ListOutput extends VectorOutput
 {
-	List<? extends Party> parties();
+	@Override List<? extends Party> parties();
 
 	public interface Party extends VectorOutput.Party, VectorOutput
 	{

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/** This plugin produces instances of ListAlgorithm. */
 public class ListAlgorithmPlugin implements Plugin<ListAlgorithm>
 {
 	@Override public Class<? extends ListAlgorithm> getInstanceType() { return ListAlgorithm.class; }
@@ -24,10 +25,25 @@ public class ListAlgorithmPlugin implements Plugin<ListAlgorithm>
 	}
 
 
+	/** Parameters for a ListAlgorithm. */
 	public interface Params extends Plugin.Params
 	{
+		/**
+		 * The algorithm used for the main apportionment.
+		 * @return the algorithm used for the main apportionment.
+		 */
 		VectorAlgorithm<?> Super();
+
+		/**
+		 * The algorithm used for the sub apportionment.
+		 * @return the algorithm used for the sub apportionment.
+		 */
 		VectorAlgorithm<?> sub();
+
+		/**
+		 * The algorithm used for the all apportionments without own algorithms.
+		 * @return the algorithm used for the all apportionments without own algorithms.
+		 */
 		@Default("divstd") VectorAlgorithm<?> method();
 	}
 }

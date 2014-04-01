@@ -8,10 +8,15 @@ import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 import java.util.ArrayList;
 import java.util.List;
 
+/** A PlainSupplier that generates plain output for the ListAlgorithm on request. */
 public class ListPlain implements PlainSupplier
 {
 	private final ListOutput output;
 	private final PlainSupplier mainSupplier;
+
+	/**
+	 * @param output the output to produce plain output for.
+	 */
 	public ListPlain(ListOutput output)
 	{
 		this.output = output;
