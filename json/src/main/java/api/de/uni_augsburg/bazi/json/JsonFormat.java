@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/** Serializes and deserializes data to and from json Strings. */
 public class JsonFormat implements Format
 {
 	private final Gson gson = new GsonBuilder()

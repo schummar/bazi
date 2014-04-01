@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/** This plugin produces instances of JsonFormat. */
 public class JsonFormatPlugin implements Plugin<JsonFormat>
 {
 	@Override public Class<? extends JsonFormat> getInstanceType() { return JsonFormat.class; }
