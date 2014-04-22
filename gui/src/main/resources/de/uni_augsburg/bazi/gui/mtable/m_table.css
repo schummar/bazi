@@ -1,0 +1,12 @@
+.table-cell:selected {
+    -fx-background-color: slategray;
+}
+
+.table-cell:empty {
+    -fx-opacity: 0;
+}
+
+.m-text-field {
+    -fx-padding: 0;
+    -fx-alignment: center;
+}

@@ -1,0 +1,50 @@
+.menu-item {
+    -fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: 10px;
+    -fx-padding: 10 10 10 50;
+}
+
+.menu-item.open {
+    -fx-background-image: url("img/open.png");
+}
+
+.menu-item.reopen {
+    -fx-background-image: url("img/reopen.png");
+}
+
+.menu-item.save {
+    -fx-background-image: url("img/save.png");
+}
+
+.menu-item.restart {
+    -fx-background-image: url("img/reset.png");
+}
+
+.menu-item.options {
+    -fx-background-image: url("img/options.png");
+}
+
+.menu-item.quit {
+    -fx-background-image: url("img/quit.png");
+}
+
+.menu-item.about {
+    -fx-background-image: url("img/about.png");
+}
+
+.menu-item.changelog {
+    -fx-background-image: url("img/changelog.png");
+}
+
+.menu-item.update {
+    -fx-background-image: url("img/update.png");
+}
+
+.button.start {
+    -fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-padding: 10 10 10 50;
+    -fx-background-image: url("img/play.png");
+}

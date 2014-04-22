@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="695"
+   height="695"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   inkscape:export-filename="C:\Users\Marco\projects\bazi2\gui\src\main\resources\de\uni_augsburg\bazi\gui\bazi_64.png"
+   inkscape:export-xdpi="8.2877693"
+   inkscape:export-ydpi="8.2877693"
+   sodipodi:docname="bazi.svg">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path3867"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.7697842"
+     inkscape:cx="347.5"
+     inkscape:cy="347.5"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2447"
+     inkscape:window-height="1417"
+     inkscape:window-x="105"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-27.71092,-172.74099)">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:100;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 364.29329,253.38564 c -125.39434,0.72228 -243.13822,96.76742 -265.231298,220.87542 -25.608744,119.51353 43.210748,248.89919 154.580338,297.7542 111.50922,53.25569 255.76681,21.53386 333.29813,-75.12122 81.57889,-94.67215 82.0987,-246.6213 0.86609,-341.67287 C 534.14958,288.96702 449.40179,250.65291 364.29329,253.38564 z"
+       id="path3771"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#b40000;stroke-width:180;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:1000;marker-mid:none;marker-end:none"
+       d="M 117.71092,765.82772 C 177.3697,676.77498 252.45137,599.55393 322.59887,518.92525 384.29781,454.08308 457.1605,401.22301 528.41161,347.58153 c 35.24615,-21.45293 68.03887,-46.71637 103.65607,-67.50239 -14.44631,12.36693 -36.86121,26.31015 -58.8696,41.05274 -67.64363,42.45132 -129.22603,93.81586 -190.61271,144.68608 -66.98014,59.86119 -122.22267,131.21571 -181.87203,198.05429 -27.68529,30.82303 -50.37646,67.4686 -75.92213,98.77454 -2.3601,1.06031 -4.72019,2.12062 -7.08029,3.18093 z"
+       id="path3848"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#b40000;stroke-width:180;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:1000"
+       d="m 142.59031,266.66804 c 98.17828,80.46421 184.89447,173.54113 276.17305,261.48309 61.07455,62.85406 124.76749,124.10768 176.14456,195.39334 7.07982,12.2334 42.32826,62.58251 13.67313,46.44271 C 564.75583,685.15011 494.27262,618.93628 429.78812,549.99683 346.97123,467.22559 264.52544,383.73395 175.83647,307.19282 170.96421,295.3894 115.22356,274.64847 142.59031,266.66804 z"
+       id="path3850"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

@@ -16,7 +16,7 @@ public class Resources
 
 
 	private static final Logger LOG = LoggerFactory.getLogger(Resources.class);
-	private static final String RESOURCE_NAME = "de.uni_augsburg.bazi.common.messages";
+	private static final String RESOURCE_NAME = "de.uni_augsburg.bazi.common.bazi";
 	private static ResourceBundle resources = ResourceBundle.getBundle(RESOURCE_NAME);
 
 

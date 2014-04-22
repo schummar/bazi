@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@main_window.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uni_augsburg.bazi.gui.MainController">
+    <children>
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="%gui.file">
+                    <items>
+                        <MenuItem mnemonicParsing="false" styleClass="open" text="%gui.file.open">
+<accelerator>
+<KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+</accelerator></MenuItem><MenuItem mnemonicParsing="false" styleClass="reopen" text="%gui.file.reopen">
+<accelerator>
+<KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+</accelerator></MenuItem><MenuItem mnemonicParsing="false" styleClass="save" text="%gui.file.save">
+<accelerator>
+<KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+</accelerator></MenuItem><MenuItem mnemonicParsing="false" styleClass="restart" text="%gui.file.restart">
+<accelerator>
+<KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+</accelerator></MenuItem><MenuItem mnemonicParsing="false" styleClass="options" text="%gui.file.options">
+<accelerator>
+<KeyCodeCombination alt="UP" code="T" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+</accelerator>
+</MenuItem><MenuItem mnemonicParsing="false" styleClass="quit" text="%gui.file.quit">
+<accelerator>
+<KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+</accelerator></MenuItem>
+                    </items>
+                </Menu><Menu mnemonicParsing="false" text="%gui.database" />
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" styleClass="about" text="%gui.help.about" /><MenuItem mnemonicParsing="false" styleClass="changelog" text="%gui.help.changelog" /><MenuItem mnemonicParsing="false" styleClass="update" text="%gui.help.update" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar><SplitPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+<items><VBox prefHeight="200.0" prefWidth="100.0">
+<children>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <Label text="%gui.title" />
+                <TextField fx:id="title" HBox.hgrow="ALWAYS">
+                </TextField>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox><Separator prefWidth="200.0" /><HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" />
+                <TabPane fx:id="districts" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+<tabs><Tab text="+" />
+</tabs></TabPane><Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="start" />
+</children></VBox>
+                        <VBox id="output" spacing="10.0" styleClass="vbox" HBox.hgrow="ALWAYS">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="10.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Label minWidth="-Infinity" text="%gui.orientation" />
+                                        <ComboBox minWidth="100.0" />
+                                        <Label minWidth="-Infinity" text="%gui.divisor" />
+                                        <ComboBox minWidth="100.0" />
+                                        <Label minWidth="-Infinity" text="%gui.tie" />
+                                        <ComboBox minWidth="100.0" />
+                                    </children>
+                                </HBox>
+                                <TextArea minWidth="-Infinity" VBox.vgrow="ALWAYS" />
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+</items></SplitPane>
+        <Label text="Status" />
+    </children>
+</VBox>
