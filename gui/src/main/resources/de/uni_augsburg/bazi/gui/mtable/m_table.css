@@ -1,12 +1,20 @@
-.table-cell:selected {
+.table-view:focused .table-cell:selected {
     -fx-background-color: slategray;
 }
 
-.table-cell:empty {
-    -fx-opacity: 0;
+.table-view {
+    -fx-table-cell-border-color: darkgray;
 }
 
 .m-text-field {
     -fx-padding: 0;
     -fx-alignment: center;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: white;
+}
+
+.table-row-cell:empty .table-cell {
+    -fx-border-width: 0;
 }

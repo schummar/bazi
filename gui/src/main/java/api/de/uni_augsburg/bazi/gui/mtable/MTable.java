@@ -1,6 +1,8 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
@@ -15,17 +17,22 @@ import java.util.function.Supplier;
 public class MTable<T> extends TableView<T>
 {
 	private Supplier<T> supplier;
+	private ObjectProperty<MTableCell<T>> selectedMCell = new SimpleObjectProperty<>();
+	private ObjectProperty<MTableCell<T>> editingMCell = new SimpleObjectProperty<>();
+
 	public MTable(Supplier<T> supplier)
 	{
 		this();
 		this.supplier = supplier;
 	}
+
 	public MTable()
 	{
 		setEditable(true);
 		getSelectionModel().setCellSelectionEnabled(true);
-		addEventHandler(KeyEvent.KEY_PRESSED, this::pressed);
-		addEventHandler(KeyEvent.KEY_TYPED, this::typed);
+		setOnKeyPressed(this::keyPressed);
+		setOnKeyTyped(this::keyTyped);
+
 		addEventFilter(
 			MouseEvent.MOUSE_DRAGGED, e -> {
 				if (e.getTarget() instanceof Label)
@@ -37,6 +44,30 @@ public class MTable<T> extends TableView<T>
 		setMinHeight(0);
 	}
 
+	public MTableCell<T> getSelectedMCell()
+	{
+		return selectedMCell.get();
+	}
+	public void setSelectedMCell(MTableCell<T> selectedMCell)
+	{
+		this.selectedMCell.set(selectedMCell);
+	}
+	public ObjectProperty<MTableCell<T>> selectedMCellProperty()
+	{
+		return selectedMCell;
+	}
+	public MTableCell<T> getEditingMCell()
+	{
+		return editingMCell.get();
+	}
+	public void setEditingMCell(MTableCell<T> editingMCell)
+	{
+		this.editingMCell.set(editingMCell);
+	}
+	public ObjectProperty<MTableCell<T>> editingMCellProperty()
+	{
+		return editingMCell;
+	}
 
 	public void addColumn(StringProperty name, Function<T, ObservableValue<String>> func)
 	{
@@ -47,27 +78,22 @@ public class MTable<T> extends TableView<T>
 		col.setCellValueFactory(p -> func.apply(p.getValue()));
 		getColumns().add(col);
 	}
-
-
 	public int selectedRow()
 	{
 		return getSelectionModel().getSelectedCells().size() > 0
 			? getSelectionModel().getSelectedCells().get(0).getRow() : -1;
 	}
-
 	public TableColumn<T, ?> selectedCol()
 	{
 		return getSelectionModel().getSelectedCells().size() > 0
 			? getSelectionModel().getSelectedCells().get(0).getTableColumn()
 			: (getColumns().size() > 0 ? getColumns().get(0) : null);
 	}
-
 	public void newRow(int row)
 	{
 		getItems().add(row, supplier.get());
 		Platform.runLater(() -> getSelectionModel().select(row, selectedCol()));
 	}
-
 	public void selectNext()
 	{
 		if (selectedRow() == -1
@@ -79,12 +105,11 @@ public class MTable<T> extends TableView<T>
 	public void selectPrev()
 	{
 		if (selectedRow() == -1
-			|| getSelectionModel().isSelected(getItems().size() - 1, getColumns().get(getColumns().size() - 1)))
+			|| getSelectionModel().isSelected(0, getColumns().get(0)))
 			getSelectionModel().select(0, getColumns().get(0));
 		else
-			getSelectionModel().selectNext();
+			getSelectionModel().selectPrevious();
 	}
-
 	public void selectNextLine()
 	{
 		if (selectedRow() == getItems().size() - 1 || selectedRow() == -1)
@@ -99,29 +124,22 @@ public class MTable<T> extends TableView<T>
 		else
 			getSelectionModel().selectBelowCell();
 	}
-
 	public void editSelected()
 	{
 		edit(selectedRow(), selectedCol());
 	}
-
 	public void clearSelected()
 	{
-		typed = "";
-		editSelected();
-		edit(-1, null);
-		typed = null;
+		getSelectedMCell().overwrite("");
 	}
-
 	public void deleteSelectedRow()
 	{
 		getItems().remove(selectedRow());
 		if (selectedRow() < getItems().size() - 1) selectNextLine();
 	}
-
-
-	public void pressed(KeyEvent e)
+	public void keyPressed(KeyEvent e)
 	{
+		System.out.println("table pressed");
 		switch (e.getCode())
 		{
 			case ENTER:
@@ -143,16 +161,11 @@ public class MTable<T> extends TableView<T>
 		}
 		e.consume();
 	}
-
-
-	public void typed(KeyEvent e)
+	public void keyTyped(KeyEvent e)
 	{
+		System.out.println("table typed");
 		if (e.getCharacter().trim().length() == 0) return;
-		typed = e.getCharacter();
 		editSelected();
-		typed = null;
+		getEditingMCell().overwrite(e.getCharacter());
 	}
-
-	private String typed = null;
-	public String typed() { return typed; }
 }

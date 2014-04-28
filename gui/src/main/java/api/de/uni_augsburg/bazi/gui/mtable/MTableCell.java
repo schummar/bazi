@@ -1,11 +1,10 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class MTableCell<T> extends TableCell<T, String>
 {
@@ -13,25 +12,39 @@ public class MTableCell<T> extends TableCell<T, String>
 
 	public MTableCell()
 	{
-		//getStyleClass().add("m-table-cell");
+		ChangeListener<Boolean> c = this::updateSelected;
+		selectedProperty().addListener((ChangeListener<Boolean>)this::updateSelected);
+		editingProperty().addListener(this::updateEditing);
+
+	}
+	private void updateSelected(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)
+	{
+		if (!oldValue && newValue) getTable().setSelectedMCell(this);
+		if (oldValue && !newValue) getTable().setSelectedMCell(null);
+	}
+	private void updateEditing(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)
+	{
+		if (!oldValue && newValue) getTable().setEditingMCell(this);
+		if (oldValue && !newValue) getTable().setEditingMCell(null);
 	}
 
 
-	private void ifMTable(Consumer<MTable> consumer)
+	public MTable<T> getTable()
 	{
-		if (getTableView() instanceof MTable<?>)
-			consumer.accept((MTable) getTableView());
+		return (MTable<T>) getTableView();
 	}
 
-	private <S> S ifMTableGet(Function<MTable, S> function)
+	public void overwrite(String item)
 	{
-		if (getTableView() instanceof MTable<?>)
-			return function.apply((MTable) getTableView());
-		return null;
+		setItem(item);
+		updateView();
+		if (isEditing())
+			textField.end();
 	}
 
 	@Override public void startEdit()
 	{
+		System.out.println("edit");
 		if (!isEditable()
 			|| !getTableView().isEditable()
 			|| !getTableColumn().isEditable())
@@ -41,27 +54,23 @@ public class MTableCell<T> extends TableCell<T, String>
 		super.startEdit();
 		updateView();
 
-		String typed = ifMTableGet(MTable::typed);
-		textField.deselect();
+		//getTable().setEditingMCell(this);
 		textField.requestFocus();
-		if (typed != null)
-		{
-			textField.setText(typed);
-			textField.end();
-		}
-		else
-			textField.selectAll();
+		textField.selectAll();
 	}
 
 	public void commitEdit()
 	{
+		System.out.println("commit: " + textField.getText());
 		commitEdit(textField.getText());
 		updateView();
+		getTableView().requestFocus();
 	}
 
 
 	@Override public void cancelEdit()
 	{
+		System.out.println("cancel");
 		commitEdit();
 	}
 
@@ -93,6 +102,7 @@ public class MTableCell<T> extends TableCell<T, String>
 		TextField textField = new TextField();
 		textField.getStyleClass().add("m-text-field");
 		textField.setOnKeyPressed(this::keyPressed);
+		textField.focusedProperty().addListener(this::focusChanged);
 		return textField;
 	}
 	private void keyPressed(KeyEvent e)
@@ -101,42 +111,34 @@ public class MTableCell<T> extends TableCell<T, String>
 		{
 			case ENTER:
 				commitEdit();
-				if (e.isControlDown() || getTableRow().getIndex() == getTableView().getItems().size() - 1)
-					ifMTable(t -> t.newRow(getTableRow().getIndex() + 1));
+				if (e.isControlDown())
+					getTable().newRow(getTableRow().getIndex() + 1);
 				else
-					ifMTable(MTable::selectNextLine);
+					getTable().selectNextLine();
 				break;
 
 			case UP:
-				if (e.isControlDown())
-				{
-					commitEdit();
-					ifMTable(MTable::selectPrevLine);
-				}
+				if (!e.isControlDown()) return;
+				commitEdit();
+				getTable().selectPrevLine();
 				break;
 
 			case DOWN:
-				if (e.isControlDown())
-				{
-					commitEdit();
-					ifMTable(MTable::selectNextLine);
-				}
+				if (!e.isControlDown()) return;
+				commitEdit();
+				getTable().selectNextLine();
 				break;
 
 			case LEFT:
-				if (e.isControlDown())
-				{
-					commitEdit();
-					ifMTable(MTable::selectPrev);
-				}
+				if (!e.isControlDown()) return;
+				commitEdit();
+				getTable().selectPrev();
 				break;
 
 			case RIGHT:
-				if (e.isControlDown())
-				{
-					commitEdit();
-					ifMTable(MTable::selectNext);
-				}
+				if (!e.isControlDown()) return;
+				commitEdit();
+				getTable().selectNext();
 				break;
 
 			case ESCAPE:
@@ -146,9 +148,17 @@ public class MTableCell<T> extends TableCell<T, String>
 
 			case TAB:
 				commitEdit();
-				ifMTable(MTable::selectNext);
+				getTable().selectNext();
+				break;
 
 			default:
+				return;
 		}
+		e.consume();
+	}
+
+	private void focusChanged(ObservableValue<? extends Boolean> v, Boolean o, Boolean n)
+	{
+		if (!n) cancelEdit();
 	}
 }

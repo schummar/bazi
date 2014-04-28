@@ -43,7 +43,8 @@ public class BAZI extends Application
 			getClass().getResource("main_window.fxml"),
 			ResourceBundle.getBundle("de.uni_augsburg.bazi.common.bazi")
 		);
-		primaryStage.setScene(new Scene(content));
+		Scene scene = new Scene(content);
+		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 }
