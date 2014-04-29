@@ -6,14 +6,21 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
-public class MTableCell<T> extends TableCell<T, String>
+import java.util.function.Function;
+
+public class MTableCell<T, S> extends TableCell<T, S>
 {
+	private final Function<S, String> toStringConverter;
+	private final Function<String, S> fromStringConverter;
+
 	private TextField textField = null;
 
-	public MTableCell()
+	public MTableCell(Function<S, String> toStringConverter, Function<String, S> fromStringConverter)
 	{
-		ChangeListener<Boolean> c = this::updateSelected;
-		selectedProperty().addListener((ChangeListener<Boolean>)this::updateSelected);
+		this.toStringConverter = toStringConverter;
+		this.fromStringConverter = fromStringConverter;
+
+		selectedProperty().addListener((ChangeListener<Boolean>) this::updateSelected);
 		editingProperty().addListener(this::updateEditing);
 
 	}
@@ -36,7 +43,7 @@ public class MTableCell<T> extends TableCell<T, String>
 
 	public void overwrite(String item)
 	{
-		setItem(item);
+		setItem(fromStringConverter.apply(item));
 		updateView();
 		if (isEditing())
 			textField.end();
@@ -44,7 +51,6 @@ public class MTableCell<T> extends TableCell<T, String>
 
 	@Override public void startEdit()
 	{
-		System.out.println("edit");
 		if (!isEditable()
 			|| !getTableView().isEditable()
 			|| !getTableColumn().isEditable())
@@ -54,15 +60,13 @@ public class MTableCell<T> extends TableCell<T, String>
 		super.startEdit();
 		updateView();
 
-		//getTable().setEditingMCell(this);
 		textField.requestFocus();
 		textField.selectAll();
 	}
 
 	public void commitEdit()
 	{
-		System.out.println("commit: " + textField.getText());
-		commitEdit(textField.getText());
+		commitEdit(fromStringConverter.apply(textField.getText()));
 		updateView();
 		getTableView().requestFocus();
 	}
@@ -70,11 +74,10 @@ public class MTableCell<T> extends TableCell<T, String>
 
 	@Override public void cancelEdit()
 	{
-		System.out.println("cancel");
 		commitEdit();
 	}
 
-	@Override public void updateItem(String item, boolean empty)
+	@Override public void updateItem(S item, boolean empty)
 	{
 		super.updateItem(item, empty);
 		updateView();
@@ -87,11 +90,11 @@ public class MTableCell<T> extends TableCell<T, String>
 			if (textField == null) textField = createTextField();
 			setText(null);
 			setGraphic(textField);
-			textField.setText(getItem());
+			textField.setText(toStringConverter.apply(getItem()));
 		}
 		else
 		{
-			setText(getItem());
+			setText(toStringConverter.apply(getItem()));
 			setGraphic(null);
 		}
 	}

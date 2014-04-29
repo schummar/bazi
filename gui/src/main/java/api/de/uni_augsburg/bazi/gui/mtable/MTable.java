@@ -11,14 +11,15 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MTable<T> extends TableView<T>
 {
 	private Supplier<T> supplier;
-	private ObjectProperty<MTableCell<T>> selectedMCell = new SimpleObjectProperty<>();
-	private ObjectProperty<MTableCell<T>> editingMCell = new SimpleObjectProperty<>();
+	private ObjectProperty<MTableCell<T, ?>> selectedMCell = new SimpleObjectProperty<>();
+	private ObjectProperty<MTableCell<T, ?>> editingMCell = new SimpleObjectProperty<>();
 
 	public MTable(Supplier<T> supplier)
 	{
@@ -44,38 +45,51 @@ public class MTable<T> extends TableView<T>
 		setMinHeight(0);
 	}
 
-	public MTableCell<T> getSelectedMCell()
+	public MTableCell<T, ?> getSelectedMCell()
 	{
 		return selectedMCell.get();
 	}
-	public void setSelectedMCell(MTableCell<T> selectedMCell)
+	public void setSelectedMCell(MTableCell<T, ?> selectedMCell)
 	{
 		this.selectedMCell.set(selectedMCell);
 	}
-	public ObjectProperty<MTableCell<T>> selectedMCellProperty()
+	public ObjectProperty<MTableCell<T, ?>> selectedMCellProperty()
 	{
 		return selectedMCell;
 	}
-	public MTableCell<T> getEditingMCell()
+	public MTableCell<T, ?> getEditingMCell()
 	{
 		return editingMCell.get();
 	}
-	public void setEditingMCell(MTableCell<T> editingMCell)
+	public void setEditingMCell(MTableCell<T, ?> editingMCell)
 	{
 		this.editingMCell.set(editingMCell);
 	}
-	public ObjectProperty<MTableCell<T>> editingMCellProperty()
+	public ObjectProperty<MTableCell<T, ?>> editingMCellProperty()
 	{
 		return editingMCell;
 	}
 
-	public void addColumn(StringProperty name, Function<T, ObservableValue<String>> func)
+	public void addColumn(
+		StringProperty name,
+		Function<T, ObservableValue<String>> extractor
+	)
 	{
-		TableColumn<T, String> col = new MTableColumn<>(name);
-		col.setSortable(false);
-		col.setMinWidth(100);
-		col.setCellFactory(c -> new MTableCell<>());
-		col.setCellValueFactory(p -> func.apply(p.getValue()));
+		addColumn(name, extractor, Function.identity(), Function.identity(), null);
+	}
+
+
+	public <S> void addColumn(
+		StringProperty name,
+		Function<T, ObservableValue<S>> extractor,
+		Function<S, String> toStringConverter,
+		Function<String, S> fromStringConverter,
+		BinaryOperator<S> aggregator
+	)
+	{
+		if (toStringConverter == null) toStringConverter = Object::toString;
+		if (aggregator == null) aggregator = (a, b) -> null;
+		TableColumn<T, S> col = new MTableColumn<>(name, extractor, toStringConverter, fromStringConverter, aggregator);
 		getColumns().add(col);
 	}
 	public int selectedRow()
@@ -139,7 +153,6 @@ public class MTable<T> extends TableView<T>
 	}
 	public void keyPressed(KeyEvent e)
 	{
-		System.out.println("table pressed");
 		switch (e.getCode())
 		{
 			case ENTER:
@@ -163,7 +176,6 @@ public class MTable<T> extends TableView<T>
 	}
 	public void keyTyped(KeyEvent e)
 	{
-		System.out.println("table typed");
 		if (e.getCharacter().trim().length() == 0) return;
 		editSelected();
 		getEditingMCell().overwrite(e.getCharacter());
