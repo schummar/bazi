@@ -54,7 +54,9 @@
             </padding>
         </HBox><Separator prefWidth="200.0" /><HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" />
                 <TabPane fx:id="districts" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
-<tabs><Tab text="+" />
+<tabs><Tab text="+">
+<tooltip><Tooltip text="%gui.tooltip.add_district" />
+</tooltip></Tab>
 </tabs></TabPane><Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="start" />
 </children></VBox>
                         <VBox id="output" spacing="10.0" styleClass="vbox" HBox.hgrow="ALWAYS">

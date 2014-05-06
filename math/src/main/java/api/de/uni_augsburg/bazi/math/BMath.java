@@ -41,6 +41,8 @@ public class BMath
 
 	public static Rational valueOf(String s)
 	{
+		if (s == null) return ZERO;
+
 		switch (s.toLowerCase())
 		{
 			case INF_STRING:
