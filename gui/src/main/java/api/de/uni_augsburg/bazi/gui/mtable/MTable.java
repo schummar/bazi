@@ -5,6 +5,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -72,10 +73,11 @@ public class MTable<T> extends TableView<T>
 
 	public void addColumn(
 		StringProperty name,
-		Function<T, ObservableValue<String>> extractor
+		Function<T, ObservableValue<String>> extractor,
+		Pos alignment
 	)
 	{
-		addColumn(name, extractor, Function.identity(), Function.identity(), null);
+		addColumn(name, extractor, Function.identity(), Function.identity(), null, alignment);
 	}
 
 
@@ -84,12 +86,13 @@ public class MTable<T> extends TableView<T>
 		Function<T, ObservableValue<S>> extractor,
 		Function<S, String> toStringConverter,
 		Function<String, S> fromStringConverter,
-		BinaryOperator<S> aggregator
+		BinaryOperator<S> aggregator,
+		Pos alignment
 	)
 	{
 		if (toStringConverter == null) toStringConverter = Object::toString;
 		if (aggregator == null) aggregator = (a, b) -> null;
-		TableColumn<T, S> col = new MTableColumn<>(name, extractor, toStringConverter, fromStringConverter, aggregator);
+		TableColumn<T, S> col = new MTableColumn<>(name, extractor, toStringConverter, fromStringConverter, aggregator, alignment);
 		getColumns().add(col);
 	}
 	public int selectedRow()

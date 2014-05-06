@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.gui.mtable;
+package de.uni_augsburg.bazi.gui;
 
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
@@ -8,13 +8,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 
-public class MTableHeader extends Label
+public class EditableLabel extends Label
 {
 	private final StringProperty text;
 	private boolean editing = false;
 	private TextField textField;
 
-	public MTableHeader(StringProperty text)
+	public EditableLabel(StringProperty text)
 	{
 		this.text = text;
 		textProperty().bind(text);
@@ -31,7 +31,6 @@ public class MTableHeader extends Label
 	{
 		TextField textField = new TextField();
 		textField.getStyleClass().add("m-text-field");
-		//textField.setAlignment(Pos.CENTER);
 		textField.focusedProperty().addListener(this::focusChanged);
 		textField.setOnKeyPressed(this::keyPressed);
 		return textField;

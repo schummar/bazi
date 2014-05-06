@@ -2,6 +2,7 @@ package de.uni_augsburg.bazi.gui.mtable;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -15,13 +16,14 @@ public class MTableCell<T, S> extends TableCell<T, S>
 
 	private TextField textField = null;
 
-	public MTableCell(Function<S, String> toStringConverter, Function<String, S> fromStringConverter)
+	public MTableCell(Function<S, String> toStringConverter, Function<String, S> fromStringConverter, Pos alignment)
 	{
 		this.toStringConverter = toStringConverter;
 		this.fromStringConverter = fromStringConverter;
 
 		selectedProperty().addListener((ChangeListener<Boolean>) this::updateSelected);
 		editingProperty().addListener(this::updateEditing);
+		setAlignment(alignment);
 
 	}
 	private void updateSelected(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)

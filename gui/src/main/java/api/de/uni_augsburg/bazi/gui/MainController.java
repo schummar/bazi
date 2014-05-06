@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
@@ -25,12 +26,14 @@ public class MainController extends VBox
 
 		table.addColumn(
 			new SimpleStringProperty("First Name"),
-			Test::firstProperty
+			Test::firstProperty,
+			Pos.CENTER_LEFT
 		);
 
 		table.addColumn(
 			new SimpleStringProperty("Last Name"),
-			Test::lastProperty
+			Test::lastProperty,
+			Pos.CENTER_RIGHT
 		);
 
 		table.addColumn(
@@ -38,12 +41,14 @@ public class MainController extends VBox
 			Test::ageProperty,
 			i -> i == null ? "" : i.toString(),
 			s -> s == null ? 0 : Integer.parseInt(s),
-			(a, b) -> a + b
+			(a, b) -> a + b,
+			Pos.CENTER_RIGHT
 		);
 
 		table.setItems(data);
 
-		Tab defaultTab = new Tab("1");
+		Tab defaultTab = new Tab();
+		defaultTab.setGraphic(new EditableLabel(new SimpleStringProperty("1")));
 		defaultTab.setContent(table);
 		districts.getTabs().add(0, defaultTab);
 		districts.getSelectionModel().select(defaultTab);
