@@ -1,7 +1,7 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
-import de.uni_augsburg.bazi.gui.EditableLabel;
 import de.uni_augsburg.bazi.gui.bind.NestedBinding;
+import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import javafx.beans.binding.ListBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.StringProperty;
@@ -34,6 +34,17 @@ public class MTableColumn<T, S> extends TableColumn<T, S>
 		setCellValueFactory(p -> extractor.apply(p.getValue()));
 
 
+		EditableLabel tableHeader = new EditableLabel(name);
+		tableHeader.setPrefWidth(1000);
+		HBox box = new HBox();
+		box.setAlignment(Pos.CENTER);
+		box.getChildren().add(tableHeader);
+		if (aggregator != null) box.getChildren().add(createAggregation(extractor, aggregator));
+		setGraphic(box);
+	}
+
+	private Label createAggregation(Function<T, ObservableValue<S>> extractor, BinaryOperator<S> aggregator)
+	{
 		ListBinding<ObservableValue<S>> attributes = NestedBinding.of(tableViewProperty())
 			.listProperty(TableView::itemsProperty)
 			.map(extractor);
@@ -61,19 +72,13 @@ public class MTableColumn<T, S> extends TableColumn<T, S>
 					.reduce(aggregator)
 					.orElse(null);
 
-				return aggregated == null ? ""
-					: String.format("Σ=%s", aggregated);
+				return String.format("Σ=%s", aggregated != null ? aggregated : "");
 			}
 		};
 
-		EditableLabel tableHeader = new EditableLabel(name);
-		tableHeader.setPrefWidth(1000);
 		Label label = new Label();
 		label.textProperty().bind(b);
 		label.setMinWidth(Region.USE_PREF_SIZE);
-		HBox box = new HBox();
-		box.setAlignment(Pos.CENTER);
-		box.getChildren().addAll(tableHeader, label);
-		setGraphic(box);
+		return label;
 	}
 }

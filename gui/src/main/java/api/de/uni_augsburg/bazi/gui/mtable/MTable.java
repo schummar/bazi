@@ -91,7 +91,6 @@ public class MTable<T> extends TableView<T>
 	)
 	{
 		if (toStringConverter == null) toStringConverter = Object::toString;
-		if (aggregator == null) aggregator = (a, b) -> null;
 		TableColumn<T, S> col = new MTableColumn<>(name, extractor, toStringConverter, fromStringConverter, aggregator, alignment);
 		getColumns().add(col);
 	}
@@ -147,7 +146,7 @@ public class MTable<T> extends TableView<T>
 	}
 	public void clearSelected()
 	{
-		getSelectedMCell().overwrite("");
+		getSelectedMCell().overwrite(null);
 	}
 	public void deleteSelectedRow()
 	{

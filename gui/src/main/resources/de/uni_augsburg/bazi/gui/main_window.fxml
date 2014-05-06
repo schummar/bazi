@@ -6,7 +6,7 @@
 <?import javafx.scene.input.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@main_window.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uni_augsburg.bazi.gui.MainController">
+<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@main_window.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uni_augsburg.bazi.gui.control.MainController">
     <children>
         <MenuBar>
             <menus>

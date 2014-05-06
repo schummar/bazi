@@ -1,4 +1,4 @@
-package de.uni_augsburg.bazi.gui;
+package de.uni_augsburg.bazi.gui.view;
 
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;

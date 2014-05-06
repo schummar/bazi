@@ -28,13 +28,11 @@ public class MTableCell<T, S> extends TableCell<T, S>
 	}
 	private void updateSelected(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)
 	{
-		if (!oldValue && newValue) getTable().setSelectedMCell(this);
-		if (oldValue && !newValue) getTable().setSelectedMCell(null);
+		if (newValue) getTable().setSelectedMCell(this);
 	}
 	private void updateEditing(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)
 	{
-		if (!oldValue && newValue) getTable().setEditingMCell(this);
-		if (oldValue && !newValue) getTable().setEditingMCell(null);
+		if (newValue) getTable().setEditingMCell(this);
 	}
 
 
@@ -45,10 +43,16 @@ public class MTableCell<T, S> extends TableCell<T, S>
 
 	public void overwrite(String item)
 	{
-		setItem(fromStringConverter.apply(item));
-		updateView();
 		if (isEditing())
+		{
+			textField.setText(item);
 			textField.end();
+		}
+		else
+		{
+			setItem(fromStringConverter.apply(item));
+			updateView();
+		}
 	}
 
 	@Override public void startEdit()
@@ -68,7 +72,14 @@ public class MTableCell<T, S> extends TableCell<T, S>
 
 	public void commitEdit()
 	{
-		commitEdit(fromStringConverter.apply(textField.getText()));
+		try
+		{
+			commitEdit(fromStringConverter.apply(textField.getText()));
+		}
+		catch (Exception e)
+		{
+			commitEdit(fromStringConverter.apply(null));
+		}
 		updateView();
 		getTableView().requestFocus();
 	}

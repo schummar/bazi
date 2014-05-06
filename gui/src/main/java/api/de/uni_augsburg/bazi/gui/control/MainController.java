@@ -1,5 +1,6 @@
-package de.uni_augsburg.bazi.gui;
+package de.uni_augsburg.bazi.gui.control;
 
+import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import de.uni_augsburg.bazi.gui.mtable.MTable;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
