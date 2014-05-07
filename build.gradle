@@ -21,6 +21,7 @@ def getVersionFromGit = {
 println("##teamcity[buildNumber '" + getVersionFromGit() + "']");
 
 apply plugin: 'java'
+
 allprojects {
 	version = getVersionFromGit()
 
@@ -28,6 +29,7 @@ allprojects {
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
 	compileJava.options.encoding = 'UTF-8'
+
 	sourceSets {
 		main {
 			java {
@@ -114,6 +116,7 @@ installDist.dependsOn shadowJar, downloadDataZip
 
 
 javadoc {
+	options.encoding = 'UTF-8'
 	source subprojects.collect { project -> project.sourceSets.main.allJava }
 	classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 	destinationDir = new File(buildDir, 'docs/api')
