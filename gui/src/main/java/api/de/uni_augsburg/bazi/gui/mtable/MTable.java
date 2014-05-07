@@ -102,7 +102,7 @@ public class MTable<T> extends TableView<T>
 	public TableColumn<T, ?> selectedCol()
 	{
 		return getSelectionModel().getSelectedCells().size() > 0
-			? getSelectionModel().getSelectedCells().get(0).getTableColumn()
+			? getColumns().get(getSelectionModel().getSelectedCells().get(0).getColumn())
 			: (getColumns().size() > 0 ? getColumns().get(0) : null);
 	}
 	public void newRow(int row)

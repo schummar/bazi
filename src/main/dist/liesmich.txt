@@ -9,10 +9,10 @@ Voraussetzungen
 ---------------
 Um BAZI benutzen zu koennen, muessen Sie einen Java-Interpreter installiert haben.
 Dieser muss Java SE und die Java Foundation Classes (JFC) unterstuetzen.
-Falls auf Ihrem System kein Java-Interpreter installiert ist, koennen Sie sich unter 
+Falls auf Ihrem System kein Java-Interpreter installiert ist, koennen Sie sich unter
     http://java.com/ -> "Kostenloser Java-Download"
-das Programm 
-    Java SE Runtime Environment, Version 6 (JRE) 
+das Programm
+    Java SE Runtime Environment, Version 6 (JRE)
 downloaden und installieren.
 
 BAZI laeuft mit Java Version 1.6 oder hoeher.
@@ -27,7 +27,7 @@ Alternativ koennen Sie eine Verknuepfung fuer .jar-Dateien einrichten, so dass B
 Doppelklick auf bazi.jar gestartet wird:
 Waehlen Sie im Explorer im Menue "Extras" den Punkt "Orderoptionen". Dort markieren Sie im
 Reiter "Dateitypen" die Zeile "JAR...". Nach Anklicken des Buttons "Erweitert" oeffnet sich
-der der Dialog "Dateityp bearbeiten". Hier markieren Sie die Aktion "open" und klicken auf 
+der der Dialog "Dateityp bearbeiten". Hier markieren Sie die Aktion "open" und klicken auf
 "Bearbeiten...". Im sich nun oeffnenden Dialog geben Sie als "Anwendung fuer diesen Vorgang"
 folgende Zeile ein (ersetzen Sie $JAVAHOME durch das Verzeichnis Ihrer Java-Installation):
 "$JAVAHOME\bin\javaw.exe" -jar "%1" %*

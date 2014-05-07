@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.gui;
 
 import de.uni_augsburg.bazi.common.Resources;
+import de.uni_augsburg.bazi.common.Version;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -38,7 +39,7 @@ public class BAZI extends Application
 		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("img/bazi_64.png")));
 		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("img/bazi_128.png")));
 
-		primaryStage.setTitle(Resources.get("gui.main_window_title"));
+		primaryStage.setTitle(Resources.get("gui.main_window_title", Version.getCurrentVersionName()));
 		Parent content = FXMLLoader.load(
 			getClass().getResource("main_window.fxml"),
 			ResourceBundle.getBundle("de.uni_augsburg.bazi.common.bazi")
