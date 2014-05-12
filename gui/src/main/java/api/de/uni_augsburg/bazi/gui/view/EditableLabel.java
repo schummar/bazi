@@ -1,30 +1,39 @@
 package de.uni_augsburg.bazi.gui.view;
 
-import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.beans.value.WritableStringValue;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 
 public class EditableLabel extends Label
 {
-	private final StringProperty text;
+	private final WritableStringValue text;
 	private boolean editing = false;
 	private TextField textField;
+	private ContextMenu contextMenu;
 
-	public EditableLabel(StringProperty text)
+	public EditableLabel(ObservableStringValue text)
 	{
-		this.text = text;
 		textProperty().bind(text);
-		setOnMouseClicked(this::clicked);
+		if (text instanceof WritableStringValue)
+		{
+			this.text = (WritableStringValue) text;
+			setOnMouseClicked(this::clicked);
+			getStyleClass().add("editable");
+		}
+		else this.text = null;
 	}
 
 	private void clicked(MouseEvent e)
 	{
-		if (!editing && e.getClickCount() == 2)
+		if (!editing && e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
 			startEditing();
+		else if (!editing && e.getButton() == MouseButton.SECONDARY)
+			showContextMenu(e);
 	}
 
 	private TextField createTextField()
@@ -52,19 +61,19 @@ public class EditableLabel extends Label
 				break;
 		}
 	}
-
-
 	public void startEditing()
 	{
 		if (editing) return;
 
 		editing = true;
-		if (textField == null) textField = createTextField();
+		if (textField == null)
+		{
+			textField = createTextField();
+			setGraphic(textField);
+		}
 
-		textProperty().unbind();
-		textField.setText(text.getValue());
-		setText("");
-		setGraphic(textField);
+		setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+		textField.setText(text.get());
 		textField.selectAll();
 		textField.requestFocus();
 	}
@@ -80,7 +89,23 @@ public class EditableLabel extends Label
 		if (!editing) return;
 
 		editing = false;
-		textProperty().bind(text);
-		setGraphic(null);
+		setContentDisplay(ContentDisplay.TEXT_ONLY);
+	}
+
+
+	private ContextMenu createContextMenu()
+	{
+		ContextMenu contextMenu = new ContextMenu();
+		MenuItem menuItem = new MenuItem("Edit label");
+		menuItem.setOnAction(e -> startEditing());
+		contextMenu.getItems().add(menuItem);
+		return contextMenu;
+	}
+	private void showContextMenu(MouseEvent e)
+	{
+		if (contextMenu == null)
+			contextMenu = createContextMenu();
+
+		contextMenu.show(this, e.getScreenX(), e.getScreenY());
 	}
 }

@@ -5,6 +5,7 @@ import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import javafx.beans.binding.ListBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
@@ -20,7 +21,7 @@ import java.util.function.Function;
 public class MTableColumn<T, S> extends TableColumn<T, S>
 {
 	public MTableColumn(
-		StringProperty name,
+		ObservableStringValue name,
 		Function<T, ObservableValue<S>> extractor,
 		Function<S, String> toStringConverter,
 		Function<String, S> fromStringConverter,

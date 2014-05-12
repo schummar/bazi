@@ -7,10 +7,7 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -56,7 +53,7 @@ public class TabController
 		);
 
 		table.addColumn(
-			new SimpleStringProperty("Min"),
+			new ReadOnlyStringWrapper("Min").getReadOnlyProperty(),
 			Party::minProperty,
 			x -> x == null ? "" : x.toString(),
 			Int::valueOf,
@@ -65,7 +62,7 @@ public class TabController
 		);
 
 		table.addColumn(
-			new SimpleStringProperty("Max"),
+			new ReadOnlyStringWrapper("Max").getReadOnlyProperty(),
 			Party::maxProperty,
 			x -> x == null ? "" : x.toString(),
 			Int::valueOf,

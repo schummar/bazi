@@ -3,14 +3,12 @@ package de.uni_augsburg.bazi.gui.mtable;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -34,13 +32,6 @@ public class MTable<T> extends TableView<T>
 		getSelectionModel().setCellSelectionEnabled(true);
 		setOnKeyPressed(this::keyPressed);
 		setOnKeyTyped(this::keyTyped);
-
-		addEventFilter(
-			MouseEvent.MOUSE_DRAGGED, e -> {
-				if (e.getTarget() instanceof Label)
-					e.consume();
-			}
-		); // no column reordering
 		getStylesheets().add("de/uni_augsburg/bazi/gui/mtable/m_table.css");
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 		setMinHeight(0);
@@ -72,7 +63,7 @@ public class MTable<T> extends TableView<T>
 	}
 
 	public void addColumn(
-		StringProperty name,
+		ObservableStringValue name,
 		Function<T, ObservableValue<String>> extractor,
 		Pos alignment
 	)
@@ -82,7 +73,7 @@ public class MTable<T> extends TableView<T>
 
 
 	public <S> void addColumn(
-		StringProperty name,
+		ObservableStringValue name,
 		Function<T, ObservableValue<S>> extractor,
 		Function<S, String> toStringConverter,
 		Function<String, S> fromStringConverter,
