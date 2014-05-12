@@ -1,7 +1,8 @@
 package de.uni_augsburg.bazi.gui.view;
 
-import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WritableObjectValue;
 import javafx.beans.value.WritableStringValue;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
@@ -11,12 +12,12 @@ import javafx.scene.input.MouseEvent;
 
 public class EditableLabel extends Label
 {
-	private final WritableStringValue text;
+	private final WritableObjectValue<String> text;
 	private boolean editing = false;
 	private TextField textField;
 	private ContextMenu contextMenu;
 
-	public EditableLabel(ObservableStringValue text)
+	public EditableLabel(ObservableObjectValue<String> text)
 	{
 		textProperty().bind(text);
 		if (text instanceof WritableStringValue)

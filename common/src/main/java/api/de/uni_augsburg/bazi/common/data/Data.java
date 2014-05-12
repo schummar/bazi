@@ -21,6 +21,16 @@ import java.util.Map;
 public interface Data
 {
 	/**
+	 * Creates an empty Data object.
+	 * @return an empty Data object.
+	 */
+	static Data create()
+	{
+		return new MapData();
+	}
+
+
+	/**
 	 * Creates an empty Data object of type <b>type</b>.
 	 * @param <T> the desired type. Must be a subtype of {@link Data}.
 	 * @param type the class of the desired type.

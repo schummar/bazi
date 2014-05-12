@@ -3,23 +3,20 @@ package de.uni_augsburg.bazi.gui.mtable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
-import java.util.function.Function;
-
 public class MTableCell<T, S> extends TableCell<T, S>
 {
-	private final Function<S, String> toStringConverter;
-	private final Function<String, S> fromStringConverter;
+	private final MTableAttribute<T, S> attribute;
 
 	private TextField textField = null;
 
-	public MTableCell(Function<S, String> toStringConverter, Function<String, S> fromStringConverter, Pos alignment)
+	public MTableCell(MTableAttribute<T, S> attribute, Pos alignment)
 	{
-		this.toStringConverter = toStringConverter;
-		this.fromStringConverter = fromStringConverter;
+		this.attribute = attribute;
 
 		selectedProperty().addListener((ChangeListener<Boolean>) this::updateSelected);
 		editingProperty().addListener(this::updateEditing);
@@ -50,7 +47,7 @@ public class MTableCell<T, S> extends TableCell<T, S>
 		}
 		else
 		{
-			setItem(fromStringConverter.apply(item));
+			setItem(attribute.deserializer().apply(item));
 			updateView();
 		}
 	}
@@ -74,11 +71,11 @@ public class MTableCell<T, S> extends TableCell<T, S>
 	{
 		try
 		{
-			commitEdit(fromStringConverter.apply(textField.getText()));
+			commitEdit(attribute.deserializer().apply(textField.getText()));
 		}
 		catch (Exception e)
 		{
-			commitEdit(fromStringConverter.apply(null));
+			commitEdit(attribute.deserializer().apply(null));
 		}
 		updateView();
 		getTableView().requestFocus();
@@ -100,15 +97,18 @@ public class MTableCell<T, S> extends TableCell<T, S>
 	{
 		if (isEditing())
 		{
-			if (textField == null) textField = createTextField();
-			setText(null);
-			setGraphic(textField);
-			textField.setText(toStringConverter.apply(getItem()));
+			if (textField == null)
+			{
+				textField = createTextField();
+				setGraphic(textField);
+			}
+			setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+			textField.setText(attribute.serializer().apply(getItem()));
 		}
 		else
 		{
-			setText(toStringConverter.apply(getItem()));
-			setGraphic(null);
+			setContentDisplay(ContentDisplay.TEXT_ONLY);
+			setText(attribute.serializer().apply(getItem()));
 		}
 	}
 

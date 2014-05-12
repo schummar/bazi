@@ -4,8 +4,7 @@ import de.uni_augsburg.bazi.gui.bind.NestedBinding;
 import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import javafx.beans.binding.ListBinding;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
@@ -15,24 +14,18 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-
 public class MTableColumn<T, S> extends TableColumn<T, S>
 {
 	public MTableColumn(
-		ObservableStringValue name,
-		Function<T, ObservableValue<S>> extractor,
-		Function<S, String> toStringConverter,
-		Function<String, S> fromStringConverter,
-		BinaryOperator<S> aggregator,
+		ObservableObjectValue<String> name,
+		MTableAttribute<T, S> attribute,
 		Pos alignment
 	)
 	{
 		setSortable(false);
 		setMinWidth(100);
-		setCellFactory(c -> new MTableCell<>(toStringConverter, fromStringConverter, alignment));
-		setCellValueFactory(p -> extractor.apply(p.getValue()));
+		setCellFactory(c -> new MTableCell<>(attribute, alignment));
+		setCellValueFactory(p -> attribute.extractor().apply(p.getValue()));
 
 
 		EditableLabel tableHeader = new EditableLabel(name);
@@ -40,15 +33,16 @@ public class MTableColumn<T, S> extends TableColumn<T, S>
 		HBox box = new HBox();
 		box.setAlignment(Pos.CENTER);
 		box.getChildren().add(tableHeader);
-		if (aggregator != null) box.getChildren().add(createAggregation(extractor, aggregator));
+		if (attribute.addition() != null) box.getChildren().add(createAggregation(attribute));
 		setGraphic(box);
 	}
 
-	private Label createAggregation(Function<T, ObservableValue<S>> extractor, BinaryOperator<S> aggregator)
+	private Label createAggregation(MTableAttribute<T, S> attribute)
 	{
 		ListBinding<ObservableValue<S>> attributes = NestedBinding.of(tableViewProperty())
 			.listProperty(TableView::itemsProperty)
-			.map(extractor);
+			.map(attribute.extractor());
+
 
 		StringBinding b = new StringBinding()
 		{
@@ -70,7 +64,7 @@ public class MTableColumn<T, S> extends TableColumn<T, S>
 				S aggregated = attributes.stream()
 					.map(ObservableValue::getValue)
 					.filter(o -> o != null)
-					.reduce(aggregator)
+					.reduce(attribute.addition())
 					.orElse(null);
 
 				return String.format("Σ=%s", aggregated != null ? aggregated : "");

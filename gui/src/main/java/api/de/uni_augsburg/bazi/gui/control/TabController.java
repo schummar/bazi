@@ -1,17 +1,15 @@
 package de.uni_augsburg.bazi.gui.control;
 
 import de.uni_augsburg.bazi.common.data.Data;
-import de.uni_augsburg.bazi.gui.mtable.MTable;
-import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
@@ -35,47 +33,7 @@ public class TabController
 
 	private void createNewTab()
 	{
-		ObservableList<Party> data = FXCollections.observableArrayList(new Party());
-		MTable<Party> table = new MTable<>(Party::new);
-
-		table.addColumn(
-			new SimpleStringProperty("Name"),
-			Party::nameProperty,
-			Pos.CENTER_LEFT
-		);
-		table.addColumn(
-			new SimpleStringProperty("Votes"),
-			Party::voteProperty,
-			x -> x == null ? "" : x.toString(),
-			Rational::valueOf,
-			Rational::add,
-			Pos.CENTER_RIGHT
-		);
-
-		table.addColumn(
-			new ReadOnlyStringWrapper("Min").getReadOnlyProperty(),
-			Party::minProperty,
-			x -> x == null ? "" : x.toString(),
-			Int::valueOf,
-			Int::add,
-			Pos.CENTER_RIGHT
-		);
-
-		table.addColumn(
-			new ReadOnlyStringWrapper("Max").getReadOnlyProperty(),
-			Party::maxProperty,
-			x -> x == null ? "" : x.toString(),
-			Int::valueOf,
-			Int::add,
-			Pos.CENTER_RIGHT
-		);
-
-		table.setItems(data);
-
-		Tab tab = new Tab();
-		tab.setGraphic(new EditableLabel(new SimpleStringProperty("District " + tabPane.getTabs().size())));
-		tab.setContent(table);
-		tabPane.getTabs().add(tab);
+		tabPane.getTabs().add(new DistrictTab(tabPane.getTabs().size()));
 		tabPane.getSelectionModel().select(tabPane.getTabs().size() - 1);
 	}
 

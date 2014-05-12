@@ -3,28 +3,19 @@ package de.uni_augsburg.bazi.gui.mtable;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
 
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MTable<T> extends TableView<T>
 {
-	private Supplier<T> supplier;
+	private Supplier<T> supplier = null;
 	private ObjectProperty<MTableCell<T, ?>> selectedMCell = new SimpleObjectProperty<>();
 	private ObjectProperty<MTableCell<T, ?>> editingMCell = new SimpleObjectProperty<>();
-
-	public MTable(Supplier<T> supplier)
-	{
-		this();
-		this.supplier = supplier;
-	}
 
 	public MTable()
 	{
@@ -36,7 +27,14 @@ public class MTable<T> extends TableView<T>
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 		setMinHeight(0);
 	}
-
+	public Supplier<T> getSupplier()
+	{
+		return supplier;
+	}
+	public void setSupplier(Supplier<T> supplier)
+	{
+		this.supplier = supplier;
+	}
 	public MTableCell<T, ?> getSelectedMCell()
 	{
 		return selectedMCell.get();
@@ -62,27 +60,13 @@ public class MTable<T> extends TableView<T>
 		return editingMCell;
 	}
 
-	public void addColumn(
-		ObservableStringValue name,
-		Function<T, ObservableValue<String>> extractor,
-		Pos alignment
-	)
-	{
-		addColumn(name, extractor, Function.identity(), Function.identity(), null, alignment);
-	}
-
-
 	public <S> void addColumn(
-		ObservableStringValue name,
-		Function<T, ObservableValue<S>> extractor,
-		Function<S, String> toStringConverter,
-		Function<String, S> fromStringConverter,
-		BinaryOperator<S> aggregator,
+		ObservableObjectValue<String> name,
+		MTableAttribute<T, S> attribute,
 		Pos alignment
 	)
 	{
-		if (toStringConverter == null) toStringConverter = Object::toString;
-		TableColumn<T, S> col = new MTableColumn<>(name, extractor, toStringConverter, fromStringConverter, aggregator, alignment);
+		TableColumn<T, S> col = new MTableColumn<>(name, attribute.nullSafe(), alignment);
 		getColumns().add(col);
 	}
 	public int selectedRow()
