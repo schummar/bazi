@@ -7,7 +7,6 @@ import de.uni_augsburg.bazi.common.algorithm.MatrixData;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.Orientation;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
-import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
@@ -18,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /** A PlainSupplier that generates plain output for matrix algorithms on request. */
-public abstract class MatrixPlain implements PlainSupplier
+public abstract class MatrixPlain
 {
 	public static final StringTable.Key
 		FIRST = new StringTable.Key(),
@@ -26,6 +25,7 @@ public abstract class MatrixPlain implements PlainSupplier
 
 
 	protected final MatrixData output;
+	protected final PlainOptions options;
 	protected final String vectorName;
 
 	/**
@@ -33,9 +33,10 @@ public abstract class MatrixPlain implements PlainSupplier
 	 * @param output the result to produce plain output for.
 	 * @param vectorName the name of the vector method used for the apportionment.
 	 */
-	protected MatrixPlain(MatrixData output, String vectorName)
+	protected MatrixPlain(MatrixData output, PlainOptions options, String vectorName)
 	{
 		this.output = output;
+		this.options = options;
 		this.vectorName = vectorName;
 	}
 
@@ -43,9 +44,8 @@ public abstract class MatrixPlain implements PlainSupplier
 	/**
 	 * Fills the first column which contains the names of the parties/districts.
 	 * @param col the column that will be filled.
-	 * @param options output options.
 	 */
-	public void firstColumn(StringTable.Column col, PlainOptions options)
+	public void firstColumn(StringTable.Column col)
 	{
 		col.add("");
 		col.add("");
@@ -61,16 +61,15 @@ public abstract class MatrixPlain implements PlainSupplier
 
 	/**
 	 * Returns one part (one or more columns) for each district/party.
-	 * @param options output options.
 	 * @return one part (one or more columns) for each district/party.
 	 */
-	public StringTable getParts(PlainOptions options)
+	public StringTable getParts()
 	{
 		StringTable table = new StringTable();
 		if (options.orientation().matrixVertical())
-			output.districts().forEach(d -> table.append(getPart(d, options)));
+			output.districts().forEach(d -> table.append(getPart(d)));
 		else
-			names().forEach(n -> table.append(getPart(n, options)));
+			names().forEach(n -> table.append(getPart(n)));
 
 		return table;
 	}
@@ -78,10 +77,9 @@ public abstract class MatrixPlain implements PlainSupplier
 	/**
 	 * Returns the part (one or more columns) for a specific district/party.
 	 * @param key the district/party.
-	 * @param options output options.
 	 * @return the part (one or more columns) for a specific district/party.
 	 */
-	public abstract StringTable getPart(Object key, PlainOptions options);
+	public abstract StringTable getPart(Object key);
 
 
 	/**

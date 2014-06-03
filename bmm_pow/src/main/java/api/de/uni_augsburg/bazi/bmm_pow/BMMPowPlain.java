@@ -3,7 +3,6 @@ package de.uni_augsburg.bazi.bmm_pow;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
-import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 import de.uni_augsburg.bazi.common_vector.VectorPlain;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorData;
@@ -15,37 +14,39 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/** A PlainSupplier that generates plain output for the bmmp algorithm on request. */
-public class BMMPowPlain implements PlainSupplier
+/** A PlainSupplier that generates plain data for the bmmp algorithm on request. */
+public class BMMPowPlain
 {
-	protected final BMMPowData output;
 	protected final DivisorAlgorithm method;
+	protected final BMMPowData data;
+	protected final PlainOptions options;
 
 	/**
 	 * Constructor with initializers.
-	 * @param output the result to produce plain output for.
+	 * @param data the result to produce plain data for.
 	 * @param method the algorithm used for the actual apportionments.
+	 * @param options
 	 */
-	public BMMPowPlain(BMMPowData output, DivisorAlgorithm method)
+	public BMMPowPlain(DivisorAlgorithm method, BMMPowData data, PlainOptions options)
 	{
-		this.output = output;
 		this.method = method;
+		this.data = data;
+		this.options = options;
 	}
 
 
-	@Override public List<StringTable> get(PlainOptions options)
+	public List<StringTable> get()
 	{
 		List<StringTable> partTables = new ArrayList<>();
-		//output.results().forEach(r -> partTables.addAll(r.plain().get(options)));
 
-		StringTable table = firstColumns(options);
+		StringTable table = firstColumns();
 
 		AtomicInteger i = new AtomicInteger(1);
-		output.results().forEach(
+		data.results().forEach(
 			r -> {
 				PlainOptions opt = options.copy().cast(PlainOptions.class);
 				opt.voteLabel(Resources.get("output.pop", r.power(), i.getAndIncrement()));
-				StringTable t = null;//r.plain().get(opt).get(0);
+				StringTable t = method.plainFormatter().apply(r, opt).get(0);
 				t.removeAll(VectorPlain.PARTY);
 				t.cols(VectorPlain.VOTE).forEach(
 					c ->
@@ -64,15 +65,15 @@ public class BMMPowPlain implements PlainSupplier
 
 	/**
 	 * Returns the name and the vote column.
-	 * @param options output options.
+	 * @param options data options.
 	 * @return the name and the vote column.
 	 */
-	public StringTable firstColumns(PlainOptions options)
+	public StringTable firstColumns()
 	{
 		StringTable table = new StringTable();
-		DivisorPlain vp = new DivisorPlain(output.cast(DivisorData.class), method.roundingFunction(), "a");
-		vp.partyColumn(table.col(), options);
-		vp.voteColumn(table.col(), options);
+		DivisorPlain vp = new DivisorPlain(data.cast(DivisorData.class), options, method.roundingFunction(), "a");
+		vp.partyColumn(table.col());
+		vp.voteColumn(table.col());
 		return table;
 	}
 }

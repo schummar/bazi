@@ -7,27 +7,27 @@ import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common_vector.VectorPlain;
 import de.uni_augsburg.bazi.math.Real;
 
-/** A PlainSupplier that generates plain output for the divisor algorithm on request. */
+/** A PlainSupplier that generates plain data for the divisor algorithm on request. */
 public class DivisorPlain extends VectorPlain
 {
-	protected final DivisorData output;
+	protected final DivisorData data;
 	protected final RoundingFunction r;
 
 	/**
-	 * @param output the output to produce plain output for.
+	 * @param data the data to produce plain data for.
 	 * @param r the rounding function the divisor algorithm used.
 	 * @param name the display name of the algorithm.
 	 */
-	public DivisorPlain(DivisorData output, RoundingFunction r, String name)
+	public DivisorPlain(DivisorData data, PlainOptions options, RoundingFunction r, String name)
 	{
-		super(output, name);
-		this.output = output;
+		super(data, options, name);
+		this.data = data;
 		this.r = r;
 	}
 
-	@Override public void partyColumn(StringTable.Column col, PlainOptions options)
+	@Override public void partyColumn(StringTable.Column col)
 	{
-		super.partyColumn(col, options);
+		super.partyColumn(col);
 		if (options.divisorFormat() != DivisorFormat.QUOTIENTS)
 			col.add(divisorLabel(options));
 		else
@@ -36,38 +36,37 @@ public class DivisorPlain extends VectorPlain
 		}
 	}
 
-	@Override public void resultColumn(StringTable.Column col, PlainOptions options)
+	@Override public void resultColumn(StringTable.Column col)
 	{
-		super.resultColumn(col, options);
+		super.resultColumn(col);
 		if (options.divisorFormat() != DivisorFormat.QUOTIENTS)
-			col.add(divisor(output.divisor(), options));
+			col.add(divisor(data.divisor(), options));
 		else
-			quotientColumn(col.inserBefore(QUTIENT), options);
+			quotientColumn(col.inserBefore(QUTIENT));
 	}
 
 
 	/**
 	 * Fills a column with the quotients for each party.
 	 * @param col the column to fill.
-	 * @param options output options.
 	 */
-	public void quotientColumn(StringTable.Column col, PlainOptions options)
+	public void quotientColumn(StringTable.Column col)
 	{
 		col.add(Resources.get("output.quotient"));
-		output.parties().forEach(
+		data.parties().forEach(
 			p -> {
-				Real q = p.votes().div(output.divisor().nice());
+				Real q = p.votes().div(data.divisor().nice());
 				col.add(DivisorRoundingHelper.round(q, 1, options.maxDigits(), r).toString());
 			}
 		);
-		col.add(String.format("(%s)", divisor(output.divisor(), options)));
+		col.add(String.format("(%s)", divisor(data.divisor(), options)));
 	}
 
 
 	/**
 	 * Returns the Divisor as String.
 	 * @param divisor the divisor.
-	 * @param options output options.
+	 * @param options data options.
 	 * @return the Divisor as String.
 	 */
 	public static String divisor(Divisor divisor, PlainOptions options)
@@ -98,7 +97,7 @@ public class DivisorPlain extends VectorPlain
 
 	/**
 	 * Returns the divisor label.
-	 * @param options output options.
+	 * @param options data options.
 	 * @return the divisor label.
 	 */
 	public static String divisorLabel(PlainOptions options)

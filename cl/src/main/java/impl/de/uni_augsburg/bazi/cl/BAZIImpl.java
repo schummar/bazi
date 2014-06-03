@@ -2,6 +2,7 @@ package de.uni_augsburg.bazi.cl;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import de.schummar.castable.Attribute;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.PluginManager;
@@ -10,6 +11,7 @@ import de.uni_augsburg.bazi.common.Version;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.format.Format;
+import de.uni_augsburg.bazi.common.plain.PlainFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +119,9 @@ class BAZIImpl
 
 		Algorithm algorithm = baziFile.algorithm();
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
+		if (outFormat.get() instanceof PlainFormat)
+			((PlainFormat) outFormat.get()).configure(algorithm.plainFormatter());
+
 
 		algorithm.apply(baziFile, new Options());
 		outFormat.get().serialize(baziFile.src(), System.out);
@@ -124,8 +129,8 @@ class BAZIImpl
 
 	public interface BaziFile extends Data
 	{
-		public Algorithm algorithm();
-		public Data output();
+		@Attribute Algorithm algorithm();
+		@Attribute Data output();
 	}
 
 

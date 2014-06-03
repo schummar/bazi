@@ -91,7 +91,7 @@ class BMMPowAlgorithmImpl
 			}
 		)
 			.forEachOrdered(data.results()::add);
-		//data.plain(new BMMPowPlain(out, method));
+		//data.plain(new BMMPowPlain(out, algorithm));
 	}
 
 

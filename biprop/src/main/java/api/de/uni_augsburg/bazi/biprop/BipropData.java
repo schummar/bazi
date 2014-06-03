@@ -13,8 +13,8 @@ import java.util.Map;
 public interface BipropData extends MatrixData
 {
 	/**
-	 * The output of the super apportionment.
-	 * @return the output of the super apportionment.
+	 * The data of the super apportionment.
+	 * @return the data of the super apportionment.
 	 */
 	@Attribute Property<DivisorData> superApportionmentProperty();
 	default DivisorData superApportionment() { return superApportionmentProperty().getValue(); }

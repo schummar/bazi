@@ -25,13 +25,13 @@ public class SeparatePlain extends MatrixPlain
 	 * @param data the output to produce plain output for.
 	 * @param vectorName the display name of the method that was used for the district apportionments.
 	 */
-	public SeparatePlain(MatrixData data, String vectorName)
+	public SeparatePlain(MatrixData data, PlainOptions options, String vectorName)
 	{
-		super(data, vectorName);
+		super(data, options, vectorName);
 	}
 
 
-	@Override public List<StringTable> get(PlainOptions options)
+	public List<StringTable> get()
 	{
 		List<StringTable> tables = new ArrayList<>();
 		output.districts().forEach(
@@ -43,28 +43,27 @@ public class SeparatePlain extends MatrixPlain
 		);
 		tables.get(0).titles().add(0, output.name());
 
-		tables.add(getSummary(options));
+		tables.add(getSummary());
 		return tables;
 	}
 
 
 	/**
 	 * Creates the summary table.
-	 * @param options output options.
 	 * @return the summary table.
 	 */
-	public StringTable getSummary(PlainOptions options)
+	public StringTable getSummary()
 	{
 		StringTable table = new StringTable();
 		table.titles().add(Resources.get("output.summary", output.districts().size(), vectorName));
-		firstColumn(table.col(), options);
-		table.append(getParts(options));
-		voteSumColumn(table.col(), options);
-		seatSumColumn(table.col(), options);
+		firstColumn(table.col());
+		table.append(getParts());
+		voteSumColumn(table.col());
+		seatSumColumn(table.col());
 		return table;
 	}
 
-	@Override public StringTable getPart(Object key, PlainOptions options)
+	@Override public StringTable getPart(Object key)
 	{
 		StringTable table = new StringTable();
 
@@ -77,7 +76,7 @@ public class SeparatePlain extends MatrixPlain
 		);
 		PlainOptions opt = options.copy().cast(PlainOptions.class);
 		opt.voteLabel(label(key));
-		StringTable part = new VectorPlain(out, vectorName).get(opt).get(0);
+		StringTable part = new VectorPlain(out, options, vectorName).get().get(0);
 		part.removeAll(VectorPlain.PARTY);
 		part.cols().forEach(c -> c.add(1, ""));
 		table.append(part);
@@ -89,9 +88,8 @@ public class SeparatePlain extends MatrixPlain
 	/**
 	 * Fills a column with the vote sums of each row.
 	 * @param col the column to be filled.
-	 * @param options output options.
 	 */
-	public void voteSumColumn(StringTable.Column col, PlainOptions options)
+	public void voteSumColumn(StringTable.Column col)
 	{
 		col.add(Resources.get("output.sum"));
 		col.add(Resources.get("output.votes"));
@@ -105,9 +103,8 @@ public class SeparatePlain extends MatrixPlain
 	/**
 	 * Fills a column with the seat sums of each row.
 	 * @param col the column to be filled.
-	 * @param options output options.
 	 */
-	public void seatSumColumn(StringTable.Column col, PlainOptions options)
+	public void seatSumColumn(StringTable.Column col)
 	{
 		col.add(Resources.get("output.sum"));
 		col.add(vectorName);

@@ -1,13 +1,16 @@
 package de.uni_augsburg.bazi.bmm;
 
 import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
+import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.math.Int;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /** The base+min..max algorithm. */
 public class BMMAlgorithm implements Algorithm
@@ -43,6 +46,10 @@ public class BMMAlgorithm implements Algorithm
 		return Collections.emptyList();
 	}
 
+	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
+	{
+		return (data, options) -> new BMMPlain(this, data.cast(VectorData.class), options).get();
+	}
 
 	@Override public void applyUnfiltered(Data data, Options options)
 	{

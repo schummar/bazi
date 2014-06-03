@@ -19,15 +19,15 @@ public class QuotaPlain extends VectorPlain
 	 * @param output the output to produce plain output for.
 	 * @param name the display name of the algorithm.
 	 */
-	public QuotaPlain(QuotaData output, String name)
+	public QuotaPlain(QuotaData output, PlainOptions options, String name)
 	{
-		super(output, name);
+		super(output, options, name);
 		this.output = output;
 	}
 
-	@Override public void partyColumn(StringTable.Column col, PlainOptions options)
+	@Override public void partyColumn(StringTable.Column col)
 	{
-		super.partyColumn(col, options);
+		super.partyColumn(col);
 		if (options.divisorFormat() != DivisorFormat.QUOTIENTS)
 			col.add(quotaLabel(options));
 		else
@@ -36,22 +36,21 @@ public class QuotaPlain extends VectorPlain
 		}
 	}
 
-	@Override public void resultColumn(StringTable.Column col, PlainOptions options)
+	@Override public void resultColumn(StringTable.Column col)
 	{
-		super.resultColumn(col, options);
+		super.resultColumn(col);
 		if (options.divisorFormat() != DivisorFormat.QUOTIENTS)
-			col.add(split(splitInterval(), options));
+			col.add(split(splitInterval()));
 		else
-			quotientColumn(col.inserBefore(QUTIENT), options);
+			quotientColumn(col.inserBefore(QUTIENT));
 	}
 
 
 	/**
 	 * Fills a column with the quotients for each party.
 	 * @param col the column to fill.
-	 * @param options output options.
 	 */
-	public void quotientColumn(StringTable.Column col, PlainOptions options)
+	public void quotientColumn(StringTable.Column col)
 	{
 		col.add(Resources.get("output.quotient"));
 
@@ -63,17 +62,16 @@ public class QuotaPlain extends VectorPlain
 			}
 		);
 
-		col.add(String.format("(%s)", split(split, options)));
+		col.add(String.format("(%s)", split(split)));
 	}
 
 
 	/**
 	 * Returns the split interval as String.
 	 * @param split the split interval.
-	 * @param options output options.
 	 * @return the split interval as String.
 	 */
-	public String split(Interval split, PlainOptions options)
+	public String split(Interval split)
 	{
 		switch (options.divisorFormat())
 		{
