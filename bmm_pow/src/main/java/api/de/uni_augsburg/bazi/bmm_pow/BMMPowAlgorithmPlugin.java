@@ -1,9 +1,10 @@
 package de.uni_augsburg.bazi.bmm_pow;
 
+import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.common.data.Default;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.math.Int;
+import javafx.beans.property.Property;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,24 +36,32 @@ public class BMMPowAlgorithmPlugin implements Plugin<BMMPowAlgorithm>
 		 * The base seats for each party.
 		 * @return the base seats for each party.
 		 */
-		@Default("0") Int base();
+		@Attribute Property<Int> baseProperty();
+		default Int base() { return baseProperty().getValue(); }
+		default void base(Int v) { baseProperty().setValue(v); }
 
 		/**
 		 * The min seats for each party.
 		 * @return the min seats for each party.
 		 */
-		@Default("0") Int min();
+		@Attribute Property<Int> minProperty();
+		default Int min() { return minProperty().getValue(); }
+		default void min(Int v) { minProperty().setValue(v); }
 
 		/**
 		 * The max seats for each party.
 		 * @return the max seats for each party.
 		 */
-		@Default("oo") Int max();
+		@Attribute(def = "oo") Property<Int> maxProperty();
+		default Int max() { return maxProperty().getValue(); }
+		default void max(Int v) { maxProperty().setValue(v); }
 
 		/**
 		 * The algorithm to calculate the actual apportionment with.
 		 * @return the algorithm to calculate the actual apportionment with.
 		 */
-		@Default("divstd") DivisorAlgorithm method();
+		@Attribute(def = "divstd") Property<DivisorAlgorithm> methodProperty();
+		default DivisorAlgorithm method() { return methodProperty().getValue(); }
+		default void method(DivisorAlgorithm v) { methodProperty().setValue(v); }
 	}
 }

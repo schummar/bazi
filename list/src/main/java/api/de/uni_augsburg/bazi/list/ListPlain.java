@@ -20,7 +20,7 @@ public class ListPlain implements PlainSupplier
 	public ListPlain(ListData output)
 	{
 		this.output = output;
-		this.mainSupplier = output.plain();
+		this.mainSupplier = null;//output.plain();
 	}
 
 
@@ -32,7 +32,7 @@ public class ListPlain implements PlainSupplier
 			p -> {
 				if (p.parties() != null && p.parties().size() > 0)
 				{
-					tables.addAll(p.plain().get(options));
+					//tables.addAll(p.plain().get(options));
 					StringTable table = tables.get(tables.size() - 1);
 					String title = table.titles().get(0);
 					table.titles().set(0, Resources.get("output.subapportionment", title));

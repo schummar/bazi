@@ -1,12 +1,12 @@
 package de.uni_augsburg.bazi.biprop;
 
 import de.schummar.castable.Attribute;
+import de.schummar.castable.DataList;
 import de.uni_augsburg.bazi.common.algorithm.MatrixData;
 import de.uni_augsburg.bazi.divisor.Divisor;
 import de.uni_augsburg.bazi.divisor.DivisorData;
 import javafx.beans.property.Property;
 
-import java.util.List;
 import java.util.Map;
 
 /** Output of a biproportional method. */
@@ -28,5 +28,5 @@ public interface BipropData extends MatrixData
 	@Attribute Map<String, Divisor> partyDivisors();
 
 
-	@Override @Attribute List<? extends DivisorData> districts();
+	@Override @Attribute DataList<? extends DivisorData> districts();
 }

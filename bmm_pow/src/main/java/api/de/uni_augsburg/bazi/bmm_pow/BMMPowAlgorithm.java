@@ -1,9 +1,8 @@
 package de.uni_augsburg.bazi.bmm_pow;
 
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorData;
-import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.math.Int;
 
@@ -11,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 /** The base+min..max(pow) algorithm. */
-public class BMMPowAlgorithm implements Algorithm<BMMPowOutput>
+public class BMMPowAlgorithm implements Algorithm
 {
 	/** Constraints for the seats of each party. */
 	public final Int base, min, max;
@@ -45,8 +44,8 @@ public class BMMPowAlgorithm implements Algorithm<BMMPowOutput>
 	}
 
 
-	@Override public BMMPowOutput applyUnfiltered(Data in, Options options)
+	@Override public void applyUnfiltered(Data in, Options options)
 	{
-		return BMMPowAlgorithmImpl.calculate(in.cast(VectorData.class), method, base, min, max, options);
+		BMMPowAlgorithmImpl.calculate(in.cast(BMMPowData.class), method, base, min, max, options);
 	}
 }

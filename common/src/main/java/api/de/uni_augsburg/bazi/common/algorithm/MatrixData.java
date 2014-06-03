@@ -2,9 +2,8 @@ package de.uni_augsburg.bazi.common.algorithm;
 
 import de.schummar.castable.Attribute;
 import de.schummar.castable.Data;
+import de.schummar.castable.DataList;
 import javafx.beans.property.Property;
-
-import java.util.List;
 
 /** A minimal maxtrix input interface. */
 public interface MatrixData extends Data
@@ -21,5 +20,5 @@ public interface MatrixData extends Data
 	 * The list of one dimensional inputs which represent one district each.
 	 * @return the list of one dimensional inputs which represent one district each.
 	 */
-	List<? extends VectorData> districts();
+	@Attribute DataList<? extends VectorData> districts();
 }

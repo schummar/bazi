@@ -10,7 +10,7 @@ import de.uni_augsburg.bazi.math.Real;
 
 import java.util.Map;
 
-import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
+import static de.uni_augsburg.bazi.common.algorithm.VectorData.Party;
 
 /** The alternating scaling algorithms is a biproportional algorithm. */
 public class ASAlgorithm extends BipropAlgorithm

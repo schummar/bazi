@@ -1,8 +1,9 @@
 package de.uni_augsburg.bazi.as;
 
+import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.common.data.Default;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
+import javafx.beans.property.Property;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,24 +38,32 @@ public class ASAlgorithmPlugin implements Plugin<ASAlgorithm>
 		 * The divisor algrithm to use for the super apportionment.
 		 * @return the divisor algrithm to use for the super apportionment.
 		 */
-		DivisorAlgorithm Super();
+		@Attribute Property<DivisorAlgorithm> superProperty();
+		default DivisorAlgorithm Super() { return superProperty().getValue(); }
+		default void Super(DivisorAlgorithm v) { superProperty().setValue(v); }
 
 		/**
 		 * The divisor algrithm to use for the sub apportionment.
 		 * @return the divisor algrithm to use for the sub apportionment.
 		 */
-		DivisorAlgorithm sub();
+		@Attribute Property<DivisorAlgorithm> subProperty();
+		default DivisorAlgorithm sub() { return subProperty().getValue(); }
+		default void sub(DivisorAlgorithm v) { subProperty().setValue(v); }
 
 		/**
 		 * The divisor algrithm to use for the super/sub if Super and/or sub are not specified apportionment.
 		 * @return the divisor algrithm to use for the super/sub if Super and/or sub are not specified apportionment.
 		 */
-		@Default("divstd") DivisorAlgorithm method();
+		@Attribute(def = "divstd") Property<DivisorAlgorithm> methodProperty();
+		default DivisorAlgorithm method() { return methodProperty().getValue(); }
+		default void method(DivisorAlgorithm v) { methodProperty().setValue(v); }
 
 		/**
 		 * The way the divisors are updates between iterations.
 		 * @return the way the divisors are updates between iterations.
 		 */
-		@Default("mid") DivisorUpdateFunction update();
+		@Attribute(def = "mid") Property<DivisorUpdateFunction> updateProperty();
+		default DivisorUpdateFunction update() { return updateProperty().getValue(); }
+		default void update(DivisorUpdateFunction v) { updateProperty().setValue(v); }
 	}
 }

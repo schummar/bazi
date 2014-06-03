@@ -1,6 +1,8 @@
 package de.uni_augsburg.bazi.as;
 
-import de.uni_augsburg.bazi.common.format.Converter;
+import de.schummar.castable.Castable;
+import de.schummar.castable.CastableString;
+import de.schummar.castable.Convert;
 import de.uni_augsburg.bazi.divisor.Divisor;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
@@ -8,7 +10,7 @@ import de.uni_augsburg.bazi.math.Real;
 
 
 /** The way the divisors are updates between iterations. */
-@Converter(DivisorUpdateFunction.Converter.class)
+@Convert(DivisorUpdateFunction.Converter.class)
 public interface DivisorUpdateFunction
 {
 	/**
@@ -44,15 +46,15 @@ public interface DivisorUpdateFunction
 	};
 
 
-	public static class Converter implements ObjectConverter<DivisorUpdateFunction>
+	public static class Converter implements de.schummar.castable.Converter<DivisorUpdateFunction>
 	{
-		@Override public Object serialize(DivisorUpdateFunction value)
-		{
-			return "mid";
-		}
-		@Override public DivisorUpdateFunction deserialize(Object value)
+		@Override public DivisorUpdateFunction apply(Castable castable)
 		{
 			return MIDPOINT;
+		}
+		@Override public Castable applyInverse(DivisorUpdateFunction divisorUpdateFunction)
+		{
+			return new CastableString("mid");
 		}
 	}
 }

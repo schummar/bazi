@@ -1,12 +1,11 @@
 package de.uni_augsburg.bazi.as;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.UserCanceledException;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
-import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.util.CollectionHelper;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorData;
@@ -18,7 +17,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
+import static de.uni_augsburg.bazi.common.algorithm.VectorData.Party;
 
 class ASAlgorithmImpl
 {
@@ -95,19 +94,15 @@ class ASAlgorithmImpl
 					);
 
 					// calculate an apportionment => the row sum will be correct
-					DivisorData output = divisorAlgorithm.apply(
-						new VectorData()
-						{
-							@Override public String name() { return ""; }
-							@Override public Int seats() { return seats.get(row.getKey()); }
-							@Override public List<? extends Party> parties() { return Lists.<Party>newArrayList(row.getValue().values()); }
-						},
-						options
-					);
+					DivisorData divisorData = Data.create(DivisorData.class);
+					divisorData.seats(seats.get(row.getKey()));
+					divisorData.parties().setAllData(row.getValue().values());
+					divisorAlgorithm.apply(divisorData, options);
+
 
 					// apply the calculated seats to the table and reset votes
 					CollectionHelper.forEachPair(
-						row.getValue().values(), output.parties(), (p, temp) -> {
+						row.getValue().values(), divisorData.parties(), (p, temp) -> {
 							p.votes(votes.get(p));
 							p.seats(temp.seats());
 							p.uniqueness(temp.uniqueness());
@@ -117,7 +112,7 @@ class ASAlgorithmImpl
 					// set the calculated divisor as row divisor
 					divisors.compute(
 						row.getKey(),
-						(key, value) -> divisorUpdateFunction.apply(output.divisor(), faults.get(key))
+						(key, value) -> divisorUpdateFunction.apply(divisorData.divisor(), faults.get(key))
 					);
 				}
 			);

@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /** A PlainSupplier that generates plain output for the bmmp algorithm on request. */
 public class BMMPowPlain implements PlainSupplier
 {
-	protected final BMMPowOutput output;
+	protected final BMMPowData output;
 	protected final DivisorAlgorithm method;
 
 	/**
@@ -26,7 +26,7 @@ public class BMMPowPlain implements PlainSupplier
 	 * @param output the result to produce plain output for.
 	 * @param method the algorithm used for the actual apportionments.
 	 */
-	public BMMPowPlain(BMMPowOutput output, DivisorAlgorithm method)
+	public BMMPowPlain(BMMPowData output, DivisorAlgorithm method)
 	{
 		this.output = output;
 		this.method = method;
@@ -36,16 +36,16 @@ public class BMMPowPlain implements PlainSupplier
 	@Override public List<StringTable> get(PlainOptions options)
 	{
 		List<StringTable> partTables = new ArrayList<>();
-		output.results().forEach(r -> partTables.addAll(r.plain().get(options)));
+		//output.results().forEach(r -> partTables.addAll(r.plain().get(options)));
 
 		StringTable table = firstColumns(options);
 
 		AtomicInteger i = new AtomicInteger(1);
 		output.results().forEach(
 			r -> {
-				PlainOptions opt = options.copy(PlainOptions.class);
+				PlainOptions opt = options.copy().cast(PlainOptions.class);
 				opt.voteLabel(Resources.get("output.pop", r.power(), i.getAndIncrement()));
-				StringTable t = r.plain().get(opt).get(0);
+				StringTable t = null;//r.plain().get(opt).get(0);
 				t.removeAll(VectorPlain.PARTY);
 				t.cols(VectorPlain.VOTE).forEach(
 					c ->

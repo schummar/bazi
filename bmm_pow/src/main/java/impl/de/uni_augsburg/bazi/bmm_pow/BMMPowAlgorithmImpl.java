@@ -4,8 +4,6 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.bmm.BMMAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorData;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.math.BMath;
@@ -18,26 +16,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static de.uni_augsburg.bazi.bmm_pow.BMMPowOutput.BMMPowResult;
-import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
+import static de.uni_augsburg.bazi.bmm_pow.BMMPowData.BMMPowResult;
+import static de.uni_augsburg.bazi.common.algorithm.VectorData.Party;
 
 class BMMPowAlgorithmImpl
 {
-	public static BMMPowOutput calculate(VectorData in, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
+	public static void calculate(BMMPowData data, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
 	{
-		return new BMMPowAlgorithmImpl(in, method, base, min, max, options).calculate();
+		new BMMPowAlgorithmImpl(data, method, base, min, max, options).calculate();
 	}
 
 
-	private VectorData in;
-	private DivisorData dout;
+	private BMMPowData data;
+	private DivisorData scalingData;
 	private final DivisorAlgorithm method;
 	private final Int base, min, max;
 	private final Options options;
 	private final Int bound;
-	BMMPowAlgorithmImpl(VectorData in, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
+	BMMPowAlgorithmImpl(BMMPowData data, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
 	{
-		this.in = in;
+		this.data = data;
 		this.method = method;
 		this.base = base;
 		this.min = min;
@@ -46,20 +44,20 @@ class BMMPowAlgorithmImpl
 		this.bound = min.add(1).max(method.roundingFunction().isImpervious() ? BMath.TWO : BMath.ONE);
 	}
 
-	public BMMPowOutput calculate()
+	public void calculate()
 	{
-		dout = in.copy().cast(DivisorData.class);
-		dout.parties().forEach(
+		scalingData = data.copy().cast(DivisorData.class);
+		scalingData.parties().forEach(
 			p -> {
 				p.min(min);
 				p.max(BMath.INF);
 			}
 		);
-		dout.seats(dout.seats().sub(base.mul(dout.parties().size())));
-		dout = method.apply(dout, options);
+		scalingData.seats(scalingData.seats().sub(base.mul(scalingData.parties().size())));
+		method.apply(scalingData, options);
 
 		List<Real> powers = new ArrayList<>();
-		Party strongest = strongest(dout.parties());
+		Party strongest = strongest(scalingData.parties());
 
 		if (strongest.seats().compareTo(max) <= 0)
 			powers.add(BMath.ONE);
@@ -79,30 +77,21 @@ class BMMPowAlgorithmImpl
 			powers.sort(Real::compareTo);
 		}
 
-		BMMPowOutput out = in.copy(BMMPowOutput.class);
 		powers.parallelStream().map(
 			pow -> {
-				VectorOutput partInt = in.copy().cast(VectorOutput.class);
-				partInt.parties().forEach(
+				BMMPowResult part = data.copy().cast(BMMPowResult.class);
+				part.parties().forEach(
 					p -> p.votes(BMath.pow(p.votes(), pow, options.precision()))
 				);
 
 				BMMAlgorithm bmm = new BMMAlgorithm(base, min, BMath.INF, method);
-				BMMPowResult partOut = bmm.apply(partInt, options).cast(BMMPowResult.class);
-				partOut.power(pow);
-				return partOut;
+				bmm.apply(part, options);
+				part.power(pow);
+				return part;
 			}
 		)
-			.forEachOrdered(out.results()::add);
-
-		powers.forEach(
-			pow -> {
-
-			}
-		);
-
-		out.plain(new BMMPowPlain(out, method));
-		return out;
+			.forEachOrdered(data.results()::add);
+		//data.plain(new BMMPowPlain(out, method));
 	}
 
 
@@ -157,12 +146,12 @@ class BMMPowAlgorithmImpl
 	{
 		Data d = new Data();
 
-		dout.parties().parallelStream().forEach(
+		scalingData.parties().parallelStream().forEach(
 			a -> {
 				if (a.seats().compareTo(bound) < 0) return;
 				Real E = BMath.INFN;
 				Party to = null;
-				for (Party b : dout.parties())
+				for (Party b : scalingData.parties())
 				{
 					if (b.votes().compareTo(a.votes()) >= 0) continue;
 

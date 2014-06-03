@@ -15,17 +15,17 @@ public class DirPlain implements PlainSupplier
 	public static final StringTable.Key DIR = new StringTable.Key();
 
 
-	private final DirOutput output;
+	private final DirData output;
 	private PlainSupplier mainSupplier;
 
 	/**
 	 * Constructor with initializers.
 	 * @param output the result to produce plain output for.
 	 */
-	public DirPlain(DirOutput output)
+	public DirPlain(DirData output)
 	{
 		this.output = output;
-		this.mainSupplier = output.plain();
+		this.mainSupplier = null;//output.plain();
 	}
 	@Override public List<StringTable> get(PlainOptions options)
 	{

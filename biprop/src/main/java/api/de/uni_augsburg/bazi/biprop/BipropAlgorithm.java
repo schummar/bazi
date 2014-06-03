@@ -4,12 +4,7 @@ import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
-import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
-import de.uni_augsburg.bazi.common.algorithm.MatrixData;
-import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorData;
-import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.divisor.Divisor;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorData;
@@ -75,7 +70,11 @@ public abstract class BipropAlgorithm implements Algorithm
 				Party party = district.parties().stream()
 					.filter(p -> p.name().equals(name))
 					.findAny().orElse(null);
-				if (party == null) party = ((VectorData.Party) () -> name).cast(Party.class);
+				if (party == null)
+				{
+					party = Data.create(Party.class);
+					party.name(name);
+				}
 				party.seats(BMath.ZERO);
 				table.put(district, name, party);
 			}
@@ -93,23 +92,20 @@ public abstract class BipropAlgorithm implements Algorithm
 			.map(col -> mergeParties(col.values()))
 			.collect(Collectors.toList());
 
-		return Super().apply(
-			new VectorData()
-			{
-				@Override public String name() { return ""; }
-				@Override public Int seats() { return superSeats; }
-				@Override public List<? extends Party> parties() { return superParties; }
-			},
-			options
-		);
+		DivisorData superApportionment = Data.create(DivisorData.class);
+		superApportionment.seats(superSeats);
+		superApportionment.parties().setAllData(superParties);
+
+		Super().apply(superApportionment, options);
+		return superApportionment;
 	}
 
 
 	private Party mergeParties(Collection<Party> parties)
 	{
-		if (parties.size() == 0) return ((VectorData.Party) () -> "").cast(Party.class);
-
 		Party party = Data.create(Party.class);
+		if (parties.size() == 0) return party;
+
 		party.name(parties.stream().findAny().get().name());
 		party.votes(parties.stream().map(Party::votes).reduce(Real::add).get());
 		party.min(parties.stream().map(Party::min).reduce(Int::add).get());

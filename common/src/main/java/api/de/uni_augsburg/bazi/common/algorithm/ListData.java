@@ -1,15 +1,14 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
 import de.schummar.castable.Data;
-
-import java.util.List;
+import de.schummar.castable.DataList;
 
 /** A calculation result that is a list of results. */
-public interface OutputList
+public interface ListData
 {
 	/**
 	 * The list of results.
 	 * @return the list of results.
 	 */
-	List<? extends Data> results();
+	DataList<? extends Data> results();
 }
