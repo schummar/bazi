@@ -1,7 +1,6 @@
 package de.uni_augsburg.bazi.as;
 
 import de.uni_augsburg.bazi.common.format.Converter;
-import de.uni_augsburg.bazi.common.format.ObjectConverter;
 import de.uni_augsburg.bazi.divisor.Divisor;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;

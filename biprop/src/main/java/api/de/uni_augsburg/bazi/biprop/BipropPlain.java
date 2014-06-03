@@ -1,20 +1,21 @@
 package de.uni_augsburg.bazi.biprop;
 
+import de.schummar.castable.Attribute;
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.data.Data;
-import de.uni_augsburg.bazi.common.data.Default;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.util.CollectionHelper;
 import de.uni_augsburg.bazi.common_matrix.MatrixPlain;
 import de.uni_augsburg.bazi.divisor.Divisor;
-import de.uni_augsburg.bazi.divisor.DivisorOutput;
+import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.divisor.DivisorPlain;
 import de.uni_augsburg.bazi.divisor.RoundingFunction;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
+import javafx.beans.property.Property;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
+import static de.uni_augsburg.bazi.common.algorithm.VectorData.Party;
 
 /** A PlainSupplier that generates plain output for biproportional algorithms on request. */
 public class BipropPlain extends MatrixPlain
@@ -36,20 +37,22 @@ public class BipropPlain extends MatrixPlain
 		 * @return true iff the super parties are sorted according to the number of seats
 		 * they aquired in the super apportionment.
 		 */
-		@Default("true") boolean sortSuper();
+		@Attribute(def = "true") Property<Boolean> sortSuperProperty();
+		default Boolean sortSuper() { return sortSuperProperty().getValue(); }
+		default void sortSuper(Boolean v) { sortSuperProperty().setValue(v); }
 	}
 
 
 	public static final StringTable.Key DIVISOR = new StringTable.Key();
 
-	protected final BipropOutput output;
+	protected final BipropData output;
 
 	/**
 	 * Constructor with initializers.
 	 * @param output the biproportional result to produce plain output for.
 	 * @param sub the name of the divisor method used for the main apportionment.
 	 */
-	public BipropPlain(BipropOutput output, String sub)
+	public BipropPlain(BipropData output, String sub)
 	{
 		super(output, sub);
 		this.output = output;
@@ -68,7 +71,7 @@ public class BipropPlain extends MatrixPlain
 
 		List<StringTable> tables = new ArrayList<>();
 
-		List<StringTable> dTables = output.superApportionment().plain().get(options);
+		List<StringTable> dTables = null;//output.superApportionment().plain().get(options);
 		dTables.get(0).titles().set(0, Resources.get(sorted ? "output.super_sorted" : "output.super"));
 		tables.addAll(dTables);
 
@@ -111,13 +114,18 @@ public class BipropPlain extends MatrixPlain
 			.map(p -> p.copy().cast(Party.class))
 			.collect(Collectors.toList());
 
-		DivisorOutput out = Data.create(DivisorOutput.class);
-		out.parties(parties);
+		DivisorData out = Data.create(DivisorData.class);
+		parties.forEach(
+			p -> {
+				out.parties().add(null);
+				out.parties().get(out.parties().size() - 1).merge(p);
+			}
+		);
 		out.divisor(colDivisor(key));
-		PlainOptions opt = options.copy(PlainOptions.class);
+		PlainOptions opt = options.copy().cast(PlainOptions.class);
 		opt.voteLabel(label(key));
-		opt.divisorFormat(divisorFormat(key instanceof DivisorOutput, options));
-		StringTable part = new Part(out, RoundingFunction.DIV_STD, vectorName, rowDivisors(key instanceof DivisorOutput)).get(opt).get(0);
+		opt.divisorFormat(divisorFormat(key instanceof DivisorData, options));
+		StringTable part = new Part(out, RoundingFunction.DIV_STD, vectorName, rowDivisors(key instanceof DivisorData)).get(opt).get(0);
 		table.append(part);
 
 		return table;
@@ -131,8 +139,8 @@ public class BipropPlain extends MatrixPlain
 	 */
 	public Divisor colDivisor(Object key)
 	{
-		return key instanceof DivisorOutput
-			? ((DivisorOutput) key).divisor()
+		return key instanceof DivisorData
+			? ((DivisorData) key).divisor()
 			: output.partyDivisors().get(key.toString());
 	}
 
@@ -196,7 +204,7 @@ public class BipropPlain extends MatrixPlain
 	 */
 	public void divisorColumn(StringTable.Column col, PlainOptions options)
 	{
-		PlainOptions opt = options.copy(PlainOptions.class);
+		PlainOptions opt = options.copy().cast(PlainOptions.class);
 		opt.divisorFormat(divisorFormat(!options.orientation().matrixVertical(), options));
 		col.add(DivisorPlain.divisorLabel(options));
 		col.add(String.format("[%s]", vectorName));
@@ -224,7 +232,7 @@ public class BipropPlain extends MatrixPlain
 		 * @param name the apportionment's name.
 		 * @param rowDivisors a list of divisors for each row.
 		 */
-		public Part(DivisorOutput output, RoundingFunction r, String name, List<Divisor> rowDivisors)
+		public Part(DivisorData output, RoundingFunction r, String name, List<Divisor> rowDivisors)
 		{
 			super(output, r, name);
 			this.rowDivisors = rowDivisors;

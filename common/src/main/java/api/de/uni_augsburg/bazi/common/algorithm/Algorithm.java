@@ -1,14 +1,15 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
+import de.schummar.castable.CastableObject;
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.PluginManager;
-import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.Collections;
 import java.util.List;
 
 /** An algorithm that in some way calculates seat apportionments out of votes and other input data. */
-public interface Algorithm<O extends Data> extends Plugin.Instance
+public interface Algorithm extends Plugin.Instance
 {
 	/**
 	 * The display name of this algorithm.
@@ -29,24 +30,22 @@ public interface Algorithm<O extends Data> extends Plugin.Instance
 	 * @param options general calculation options
 	 * @return the algorithm's result
 	 */
-	O applyUnfiltered(Data in, Options options);
+	void applyUnfiltered(Data data, Options options);
 
 	/**
 	 * Applies this algorithm to the given input. Automatically uses available Filters for pre- and postprocessing.
-	 * @param in input
+	 * @param data input
 	 * @param options general calculation options
 	 * @return the algorithm's result
 	 */
-	default O apply(Data in, Options options)
+	default void apply(Data data, Options options)
 	{
 		List<Filter> filters = PluginManager.getFiltersFor(this);
-		filters.forEach(f -> f.preprocess(in));
+		filters.forEach(f -> f.preprocess(data));
 
-		O out = applyUnfiltered(in, options);
+		applyUnfiltered(data, options);
 
 		Collections.reverse(filters);
-		filters.forEach(f -> f.postprocess(in, out));
-
-		return out;
+		filters.forEach(f -> f.postprocess(data));
 	}
 }

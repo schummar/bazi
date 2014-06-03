@@ -1,13 +1,13 @@
 package de.uni_augsburg.bazi.common.format;
 
+import de.schummar.castable.Castable;
+import de.schummar.castable.CastableObject;
+import de.schummar.castable.CastableString;
+import de.schummar.castable.Converter;
 import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.PluginManager;
-import de.uni_augsburg.bazi.common.data.Data;
-import de.uni_augsburg.bazi.common.data.MapData;
 
-import java.util.Map;
-
-class PluginConverter<T extends Plugin.Instance> implements ObjectConverter<T>
+class PluginConverter<T extends Plugin.Instance> implements Converter<T>
 {
 	private final Class<T> type;
 
@@ -16,17 +16,20 @@ class PluginConverter<T extends Plugin.Instance> implements ObjectConverter<T>
 		this.type = type;
 	}
 
-	@Override public Object serialize(T value)
+	@Override public T apply(Castable castable)
 	{
-		return value;
+		CastableObject data;
+		if (castable instanceof CastableObject) data = castable.asCastableObject();
+		else if (castable instanceof CastableString)
+		{
+			data = new CastableObject();
+			data.cast(Plugin.Params.class).name(castable.toString());
+		}
+		else data = new CastableObject();
+		return PluginManager.tryInstantiate(type, data).get();
 	}
-
-	@Override public T deserialize(Object value)
+	@Override public Castable applyInverse(T t)
 	{
-		Plugin.Params params;
-		if (value instanceof Data) params = ((Data) value).cast(Plugin.Params.class);
-		else if (value instanceof Map<?, ?>) params = new MapData((Map<?, ?>) value).cast(Plugin.Params.class);
-		else params = value::toString;
-		return PluginManager.tryInstantiate(type, params).get();
+		return new CastableString(t.toString());
 	}
 }

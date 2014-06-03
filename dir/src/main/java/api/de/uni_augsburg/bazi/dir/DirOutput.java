@@ -1,19 +1,19 @@
 package de.uni_augsburg.bazi.dir;
 
 import de.uni_augsburg.bazi.common.data.Default;
-import de.uni_augsburg.bazi.list.ListOutput;
+import de.uni_augsburg.bazi.list.ListData;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 
 import java.util.List;
 
 /** Output of the DirFilter */
-public interface DirOutput extends ListOutput
+public interface DirOutput extends ListData
 {
 	@Override List<? extends Party> parties();
 
 
-	public interface Party extends ListOutput.Party
+	public interface Party extends ListData.Party
 	{
 		/**
 		 * The number of direct seats the party gets.

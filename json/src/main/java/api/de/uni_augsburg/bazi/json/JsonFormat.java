@@ -1,13 +1,13 @@
 package de.uni_augsburg.bazi.json;
 
 import com.google.gson.*;
-import de.uni_augsburg.bazi.common.Resources;
-import de.uni_augsburg.bazi.common.data.Data;
+import de.schummar.castable.*;
 import de.uni_augsburg.bazi.common.format.Format;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Map;
 
 /** Serializes and deserializes data to and from json Strings. */
@@ -15,45 +15,47 @@ public class JsonFormat implements Format
 {
 	private final Gson gson = new GsonBuilder()
 		.setPrettyPrinting()
+		.registerTypeAdapter(
+			CastableString.class, (JsonSerializer<CastableString>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getValue())
+		)
 		.create();
 
 
 	@Override public void configure(Data data) { }
 
 
-	@Override public Map<String, Object> deserialize(String s)
+	@Override public Castable deserialize(InputStream stream)
 	{
-		JsonElement root = new JsonParser().parse(s);
-		if (!root.isJsonObject()) throw new RuntimeException(Resources.get("format.invalid"));
-		return deserialize(root.getAsJsonObject());
+		JsonElement root = new JsonParser().parse(new InputStreamReader(stream));
+		return deserialize(root);
 	}
 
-	private Map<String, Object> deserialize(JsonObject object)
+	private CastableObject deserialize(JsonObject object)
 	{
-		Map<String, Object> map = new LinkedHashMap<>();
+		CastableObject co = new CastableObject();
 		for (Map.Entry<String, JsonElement> e : object.entrySet())
-			map.put(e.getKey(), deserialize(e.getValue()));
-		return map;
+			co.put(e.getKey(), deserialize(e.getValue()));
+		return co;
 	}
 
-	private List<Object> deserialize(JsonArray array)
+	private CastableList deserialize(JsonArray array)
 	{
-		List<Object> list = new ArrayList<>();
+		CastableList list = new CastableList();
 		for (JsonElement element : array)
 			list.add(deserialize(element));
 		return list;
 	}
 
-	private Object deserialize(JsonElement element)
+	private Castable deserialize(JsonElement element)
 	{
 		if (element.isJsonObject()) return deserialize(element.getAsJsonObject());
 		if (element.isJsonArray()) return deserialize(element.getAsJsonArray());
-		return element.getAsString();
+		return new CastableString(element.getAsString());
 	}
 
 
-	@Override public String serialize(Data data)
+	@Override public void serialize(Castable data, OutputStream stream)
 	{
-		return gson.toJson(data.toRawData());
+		gson.toJson(data, new OutputStreamWriter(stream));
 	}
 }

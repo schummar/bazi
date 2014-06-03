@@ -4,10 +4,10 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.bmm.BMMAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorInput;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
-import de.uni_augsburg.bazi.divisor.DivisorOutput;
+import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Interval;
@@ -23,19 +23,19 @@ import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 
 class BMMPowAlgorithmImpl
 {
-	public static BMMPowOutput calculate(VectorInput in, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
+	public static BMMPowOutput calculate(VectorData in, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
 	{
 		return new BMMPowAlgorithmImpl(in, method, base, min, max, options).calculate();
 	}
 
 
-	private VectorInput in;
-	private DivisorOutput dout;
+	private VectorData in;
+	private DivisorData dout;
 	private final DivisorAlgorithm method;
 	private final Int base, min, max;
 	private final Options options;
 	private final Int bound;
-	BMMPowAlgorithmImpl(VectorInput in, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
+	BMMPowAlgorithmImpl(VectorData in, DivisorAlgorithm method, Int base, Int min, Int max, Options options)
 	{
 		this.in = in;
 		this.method = method;
@@ -48,7 +48,7 @@ class BMMPowAlgorithmImpl
 
 	public BMMPowOutput calculate()
 	{
-		dout = in.copy().cast(DivisorOutput.class);
+		dout = in.copy().cast(DivisorData.class);
 		dout.parties().forEach(
 			p -> {
 				p.min(min);

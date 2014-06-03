@@ -1,10 +1,10 @@
 package de.uni_augsburg.bazi.common_matrix;
 
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
-import de.uni_augsburg.bazi.common.data.Data;
+import de.uni_augsburg.bazi.common.algorithm.MatrixData;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.Orientation;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.plain.PlainSupplier;
@@ -25,7 +25,7 @@ public abstract class MatrixPlain implements PlainSupplier
 		SEATSUM = new StringTable.Key();
 
 
-	protected final MatrixOutput output;
+	protected final MatrixData output;
 	protected final String vectorName;
 
 	/**
@@ -33,7 +33,7 @@ public abstract class MatrixPlain implements PlainSupplier
 	 * @param output the result to produce plain output for.
 	 * @param vectorName the name of the vector method used for the apportionment.
 	 */
-	protected MatrixPlain(MatrixOutput output, String vectorName)
+	protected MatrixPlain(MatrixData output, String vectorName)
 	{
 		this.output = output;
 		this.vectorName = vectorName;
@@ -53,7 +53,7 @@ public abstract class MatrixPlain implements PlainSupplier
 		if (options.orientation() == Orientation.VERTICAL || options.orientation() == Orientation.HORVER)
 			names().forEach(col::add);
 		else
-			output.districts().stream().map(VectorOutput::name).forEach(col::add);
+			output.districts().stream().map(VectorData::name).forEach(col::add);
 
 		col.add(Resources.get("output.sum"));
 	}
@@ -93,7 +93,7 @@ public abstract class MatrixPlain implements PlainSupplier
 		return new ArrayList<>(
 			output.districts().stream()
 				.flatMap(d -> d.parties().stream())
-				.map(VectorOutput.Party::name)
+				.map(VectorData.Party::name)
 				.collect(Collectors.toList())
 		);
 	}
@@ -106,13 +106,13 @@ public abstract class MatrixPlain implements PlainSupplier
 	 * @param district the district.
 	 * @return the party with the given name in the given district.
 	 */
-	public VectorOutput.Party party(String name, VectorOutput district)
+	public VectorData.Party party(String name, VectorData district)
 	{
-		Optional<? extends VectorOutput.Party> optional = district.parties().stream()
+		Optional<? extends VectorData.Party> optional = district.parties().stream()
 			.filter(p -> p.name().equals(name)).findAny();
 		if (optional.isPresent()) return optional.get();
 
-		VectorOutput.Party party = Data.create(VectorOutput.Party.class);
+		VectorData.Party party = Data.create(VectorData.Party.class);
 		party.name(name);
 		return party;
 	}
@@ -123,10 +123,10 @@ public abstract class MatrixPlain implements PlainSupplier
 	 * @param key the district/party.
 	 * @return all parties for the given district/party name.
 	 */
-	public List<VectorOutput.Party> parties(Object key)
+	public List<VectorData.Party> parties(Object key)
 	{
-		return key instanceof VectorOutput
-			? names().stream().map(n -> party(n, (VectorOutput) key)).collect(Collectors.toList())
+		return key instanceof VectorData
+			? names().stream().map(n -> party(n, (VectorData) key)).collect(Collectors.toList())
 			: output.districts().stream().map(d -> party(key.toString(), d)).collect(Collectors.toList());
 	}
 
@@ -138,8 +138,8 @@ public abstract class MatrixPlain implements PlainSupplier
 	 */
 	public String label(Object key)
 	{
-		return key instanceof VectorOutput
-			? ((VectorOutput) key).name()
+		return key instanceof VectorData
+			? ((VectorData) key).name()
 			: key.toString();
 	}
 

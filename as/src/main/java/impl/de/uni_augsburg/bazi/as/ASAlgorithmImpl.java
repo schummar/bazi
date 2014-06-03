@@ -6,10 +6,10 @@ import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.common.UserCanceledException;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
-import de.uni_augsburg.bazi.common.algorithm.VectorInput;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.util.CollectionHelper;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
-import de.uni_augsburg.bazi.divisor.DivisorOutput;
+import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
@@ -23,7 +23,7 @@ import static de.uni_augsburg.bazi.common.algorithm.VectorOutput.Party;
 class ASAlgorithmImpl
 {
 	public static Map<Object, Real> calculate(
-		Table<DivisorOutput, String, Party> table,
+		Table<DivisorData, String, Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
 		DivisorAlgorithm divisorAlgorithm,
@@ -34,14 +34,14 @@ class ASAlgorithmImpl
 	}
 
 
-	Table<DivisorOutput, String, Party> table;
+	Table<DivisorData, String, Party> table;
 	Map<?, ? extends Map<?, Party>> rows, cols, rowsAndCols;
 	Map<Object, Int> seats;
 	private final DivisorUpdateFunction divisorUpdateFunction;
 	private final DivisorAlgorithm divisorAlgorithm;
 	private final Options options;
 
-	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<DivisorOutput, String, Party> table, Map<Object, Int> seats, Options options)
+	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<DivisorData, String, Party> table, Map<Object, Int> seats, Options options)
 	{
 		this.divisorUpdateFunction = divisorUpdateFunction;
 		this.divisorAlgorithm = divisorAlgorithm;
@@ -95,8 +95,8 @@ class ASAlgorithmImpl
 					);
 
 					// calculate an apportionment => the row sum will be correct
-					DivisorOutput output = divisorAlgorithm.apply(
-						new VectorInput()
+					DivisorData output = divisorAlgorithm.apply(
+						new VectorData()
 						{
 							@Override public String name() { return ""; }
 							@Override public Int seats() { return seats.get(row.getKey()); }

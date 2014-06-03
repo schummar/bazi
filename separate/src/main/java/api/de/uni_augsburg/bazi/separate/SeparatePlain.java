@@ -1,10 +1,10 @@
 package de.uni_augsburg.bazi.separate;
 
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
-import de.uni_augsburg.bazi.common.data.Data;
+import de.uni_augsburg.bazi.common.algorithm.MatrixData;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common_matrix.MatrixPlain;
 import de.uni_augsburg.bazi.common_vector.VectorPlain;
@@ -22,12 +22,12 @@ public class SeparatePlain extends MatrixPlain
 		VOTE_SUM = new StringTable.Key();
 
 	/**
-	 * @param output the output to produce plain output for.
+	 * @param data the output to produce plain output for.
 	 * @param vectorName the display name of the method that was used for the district apportionments.
 	 */
-	public SeparatePlain(MatrixOutput output, String vectorName)
+	public SeparatePlain(MatrixData data, String vectorName)
 	{
-		super(output, vectorName);
+		super(data, vectorName);
 	}
 
 
@@ -36,7 +36,7 @@ public class SeparatePlain extends MatrixPlain
 		List<StringTable> tables = new ArrayList<>();
 		output.districts().forEach(
 			d -> {
-				List<StringTable> dTables = d.plain().get(options);
+				List<StringTable> dTables = null;//d.plain().get(options);
 				dTables.get(0).titles().set(0, Resources.get("output.district", output.districts().indexOf(d) + 1, d.name()));
 				tables.addAll(dTables);
 			}
@@ -68,9 +68,14 @@ public class SeparatePlain extends MatrixPlain
 	{
 		StringTable table = new StringTable();
 
-		VectorOutput out = Data.create(VectorOutput.class);
-		out.parties(parties(key));
-		PlainOptions opt = options.copy(PlainOptions.class);
+		VectorData out = Data.create(VectorData.class);
+		parties(key).forEach(
+			p -> {
+				out.parties().add(null);
+				out.parties().get(out.parties().size() - 1).merge(p);
+			}
+		);
+		PlainOptions opt = options.copy().cast(PlainOptions.class);
 		opt.voteLabel(label(key));
 		StringTable part = new VectorPlain(out, vectorName).get(opt).get(0);
 		part.removeAll(VectorPlain.PARTY);

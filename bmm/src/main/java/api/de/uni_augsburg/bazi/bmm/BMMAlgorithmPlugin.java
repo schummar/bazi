@@ -1,9 +1,10 @@
 package de.uni_augsburg.bazi.bmm;
 
+import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
-import de.uni_augsburg.bazi.common.data.Default;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.math.Int;
+import javafx.beans.property.Property;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,10 +23,9 @@ public class BMMAlgorithmPlugin implements Plugin<BMMAlgorithm>
 	}
 	@Override public Optional<? extends BMMAlgorithm> tryInstantiate(Plugin.Params params)
 	{
+		Params BMMParams = params.cast(Params.class);
 		if (!params.name().matches("bmm|base\\+min\\.\\.max")) return Optional.empty();
-
-		Params bmmParams = params.cast(Params.class);
-		return Optional.of(new BMMAlgorithm(bmmParams.base(), bmmParams.min(), bmmParams.max(), bmmParams.method()));
+		return Optional.of(new BMMAlgorithm(BMMParams.base(), BMMParams.min(), BMMParams.max(), BMMParams.method()));
 	}
 
 
@@ -36,24 +36,32 @@ public class BMMAlgorithmPlugin implements Plugin<BMMAlgorithm>
 		 * The base seats for each party.
 		 * @return the base seats for each party.
 		 */
-		@Default("0") Int base();
+		@Attribute Property<Int> baseProperty();
+		default Int base() { return baseProperty().getValue(); }
+		default void base(Int v) { baseProperty().setValue(v); }
 
 		/**
 		 * The min seats for each party.
 		 * @return the min seats for each party.
 		 */
-		@Default("0") Int min();
+		@Attribute Property<Int> minProperty();
+		default Int min() { return minProperty().getValue(); }
+		default void min(Int v) { minProperty().setValue(v); }
 
 		/**
 		 * The max seats for each party.
 		 * @return the max seats for each party.
 		 */
-		@Default("oo") Int max();
+		@Attribute(def = "oo") Property<Int> maxProperty();
+		default Int max() { return maxProperty().getValue(); }
+		default void max(Int v) { maxProperty().setValue(v); }
 
 		/**
 		 * The algorithm to calculate the actual apportionment with.
 		 * @return the algorithm to calculate the actual apportionment with.
 		 */
-		@Default("divstd") VectorAlgorithm<?> method();
+		@Attribute(def = "divstd") Property<Algorithm> methodProperty();
+		default Algorithm method() { return methodProperty().getValue(); }
+		default void method(Algorithm v) { methodProperty().setValue(v); }
 	}
 }

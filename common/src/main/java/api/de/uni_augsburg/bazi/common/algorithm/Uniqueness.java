@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
-import de.uni_augsburg.bazi.common.format.ConvertibleEnum;
+
+import de.schummar.castable.ConvertibleEnum;
 
 /** Is the number of seats in an apportionment unique or could it be more/less? */
 public enum Uniqueness implements ConvertibleEnum

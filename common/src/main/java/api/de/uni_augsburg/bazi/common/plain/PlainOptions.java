@@ -1,7 +1,8 @@
 package de.uni_augsburg.bazi.common.plain;
 
+import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.common.data.Default;
+import javafx.beans.property.Property;
 
 /** Collection of Options for the plain output. */
 public interface PlainOptions extends Plugin.Params
@@ -10,72 +11,47 @@ public interface PlainOptions extends Plugin.Params
 	 * The way divisors should be displayed in plain output.
 	 * @return the way divisors should be displayed in plain output.
 	 */
-	@Default("quotients") DivisorFormat divisorFormat();
+	@Attribute(def = "quotients") Property<DivisorFormat> divisorFormatProperty();
+	default DivisorFormat divisorFormat() { return divisorFormatProperty().getValue(); }
+	default void divisorFormat(DivisorFormat v) { divisorFormatProperty().setValue(v); }
 
 	/**
 	 * The orientation in which the tables of the plain should be printed.
 	 * @return the orientation in which the tables of the plain should be printed.
 	 */
-	@Default("verhor") Orientation orientation();
+	@Attribute(def = "verhor") Property<Orientation> orientationProperty();
+	default Orientation orientation() { return orientationProperty().getValue(); }
+	default void orientation(Orientation v) { orientationProperty().setValue(v); }
 
 	/**
 	 * The way ties should be represented in plain output.
 	 * @return the way ties should be represented in plain output.
 	 */
-	@Default("coded") TieFormat tieFormat();
+	@Attribute(def = "coded") Property<TieFormat> tieFormatProperty();
+	default TieFormat tieFormat() { return tieFormatProperty().getValue(); }
+	default void tieFormat(TieFormat v) { tieFormatProperty().setValue(v); }
 
 	/**
 	 * The maximum number of decimal places to display in plain output.
 	 * @return the maximum number of decimal places to display in plain output.
 	 */
-	@Default("10") Integer maxDigits();
+	@Attribute(def = "10") Property<Integer> maxDigitsProperty();
+	default Integer maxDigits() { return maxDigitsProperty().getValue(); }
+	default void maxDigits(Integer v) { maxDigitsProperty().setValue(v); }
 
 	/**
 	 * The label to top the party name column/row.
 	 * @return the label to top the party name column/row.
 	 */
-	String nameLabel();
+	@Attribute Property<String> nameLabelPropery();
+	default String nameLabel() { return nameLabelPropery().getValue(); }
+	default void nameLabel(String v) { nameLabelPropery().setValue(v); }
 
 	/**
 	 * The label to top the party vote column/row.
 	 * @return the label to top the party vote column/row.
 	 */
-	String voteLabel();
-
-
-	/**
-	 * The way divisors should be displayed in plain output.
-	 * @param divisorFormat the way divisors should be displayed in plain output.
-	 */
-	void divisorFormat(DivisorFormat divisorFormat);
-
-	/**
-	 * The orientation in which the tables of the plain should be printed.
-	 * @param orientation the orientation in which the tables of the plain should be printed.
-	 */
-	void oritentation(Orientation orientation);
-
-	/**
-	 * The way ties should be represented in plain output.
-	 * @param tieFormat the way ties should be represented in plain output.
-	 */
-	void tieFormat(TieFormat tieFormat);
-
-	/**
-	 * The maximum number of decimal places to display in plain output.
-	 * @param maxDigits the maximum number of decimal places to display in plain output.
-	 */
-	void maxDigits(Integer maxDigits);
-
-	/**
-	 * The label to top the party name column/row.
-	 * @param nameLabel the label to top the party name column/row.
-	 */
-	void nameLabel(String nameLabel);
-
-	/**
-	 * The label to top the party vote column/row.
-	 * @param voteLabel the label to top the party vote column/row.
-	 */
-	void voteLabel(String voteLabel);
+	@Attribute Property<String> voteLabelPropery();
+	default String voteLabel() { return voteLabelPropery().getValue(); }
+	default void voteLabel(String v) { voteLabelPropery().setValue(v); }
 }

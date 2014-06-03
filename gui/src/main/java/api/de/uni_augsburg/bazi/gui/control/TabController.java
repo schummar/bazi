@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.gui.control;
 
-import de.uni_augsburg.bazi.common.data.Data;
+
+import de.schummar.castable.CastableObject;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
@@ -16,7 +17,7 @@ import javafx.scene.control.TabPane;
 public class TabController
 {
 	private final TabPane tabPane;
-	public TabController(TabPane tabPane, Data data)
+	public TabController(TabPane tabPane, CastableObject data)
 	{
 		this.tabPane = tabPane;
 		tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);

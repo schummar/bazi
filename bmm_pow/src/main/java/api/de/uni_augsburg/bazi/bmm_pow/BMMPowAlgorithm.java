@@ -2,7 +2,7 @@ package de.uni_augsburg.bazi.bmm_pow;
 
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorInput;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.data.Data;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.math.Int;
@@ -47,6 +47,6 @@ public class BMMPowAlgorithm implements Algorithm<BMMPowOutput>
 
 	@Override public BMMPowOutput applyUnfiltered(Data in, Options options)
 	{
-		return BMMPowAlgorithmImpl.calculate(in.cast(VectorInput.class), method, base, min, max, options);
+		return BMMPowAlgorithmImpl.calculate(in.cast(VectorData.class), method, base, min, max, options);
 	}
 }

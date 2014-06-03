@@ -1,19 +1,22 @@
 package de.uni_augsburg.bazi.cl;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.Version;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.data.Data;
-import de.uni_augsburg.bazi.common.data.MapData;
 import de.uni_augsburg.bazi.common.format.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -56,8 +59,8 @@ class BAZIImpl
 		Optional<Locale> locale = readValue(args, "-l", Locale::forLanguageTag);
 		Optional<Path> in = readValue(args, "-i", BAZIImpl::readIn);
 		Optional<Path> out = readValue(args, "-o", BAZIImpl::readOut);
-		Optional<Format> inFormat = readValue(args, "-if", s -> PluginManager.tryInstantiate(Format.class, () -> s).get());
-		Optional<Format> outFormat = readValue(args, "-of", s -> PluginManager.tryInstantiate(Format.class, () -> s).get());
+		Optional<Format> inFormat = readValue(args, "-if", s -> PluginManager.tryInstantiate(Format.class, params(s)).get());
+		Optional<Format> outFormat = readValue(args, "-of", s -> PluginManager.tryInstantiate(Format.class, params(s)).get());
 
 
 		// backup plans
@@ -66,14 +69,14 @@ class BAZIImpl
 			String name = in.isPresent()
 				? Files.getFileExtension(in.get().toString())
 				: "json";
-			inFormat = PluginManager.tryInstantiate(Format.class, () -> name);
+			inFormat = PluginManager.tryInstantiate(Format.class, params(name));
 		}
 		if (!outFormat.isPresent())
 		{
 			String name = out.isPresent()
 				? Files.getFileExtension(out.get().toString())
 				: "plain";
-			outFormat = PluginManager.tryInstantiate(Format.class, () -> name);
+			outFormat = PluginManager.tryInstantiate(Format.class, params(name));
 		}
 
 
@@ -83,10 +86,10 @@ class BAZIImpl
 
 
 		// input from file or args
-		String inputString;
+		InputStream inputStream;
 		if (in.isPresent()) try
 		{
-			inputString = Files.toString(in.get().toFile(), StandardCharsets.UTF_8);
+			inputStream = new FileInputStream(in.get().toFile());
 		}
 		catch (IOException e)
 		{
@@ -94,7 +97,7 @@ class BAZIImpl
 		}
 		else if (args.length > 0 || !args[args.length - 1].startsWith("-"))
 		{
-			inputString = args[args.length - 1];
+			inputStream = new ByteArrayInputStream(args[args.length - 1].getBytes(Charsets.UTF_8));
 		}
 		else throw new RuntimeException(Resources.get("params.noinput"));
 
@@ -108,15 +111,15 @@ class BAZIImpl
 
 
 		// now the actual work begins
-		BaziFile baziFile = new MapData(inFormat.get().deserialize(inputString)).cast(BaziFile.class);
+		BaziFile baziFile = inFormat.get().deserialize(inputStream).asCastableObject().cast(BaziFile.class);
 		if (baziFile.output() != null)
 			outFormat.get().configure(baziFile.output());
 
 		Algorithm algorithm = baziFile.algorithm();
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
 
-		Data result = algorithm.apply(baziFile, new Options());
-		System.out.println(outFormat.get().serialize(result.toMapData()));
+		algorithm.apply(baziFile, new Options());
+		outFormat.get().serialize(baziFile.src(), System.out);
 	}
 
 	public interface BaziFile extends Data
@@ -182,5 +185,12 @@ class BAZIImpl
 			LOGGER.warn(Resources.get("params.invalid_path: {}"), s);
 			return null;
 		}
+	}
+
+	private static Plugin.Params params(String name)
+	{
+		Plugin.Params params = Data.create(Plugin.Params.class);
+		params.name(name);
+		return params;
 	}
 }

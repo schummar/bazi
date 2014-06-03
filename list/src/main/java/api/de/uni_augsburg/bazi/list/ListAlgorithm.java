@@ -1,26 +1,26 @@
 package de.uni_augsburg.bazi.list;
 
+import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
-import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.Collections;
 import java.util.List;
 
 /** The algorithm for combined lists. */
-public class ListAlgorithm implements VectorAlgorithm<ListOutput>
+public class ListAlgorithm implements Algorithm
 {
 	/** The algorithm used for the main apportionment. */
-	public VectorAlgorithm<?> Super;
+	public Algorithm Super;
 
 	/** The algorithm used for the sub apportionments. */
-	public VectorAlgorithm<?> sub;
+	public Algorithm sub;
 
 	/**
 	 * @param Super the algorithm used for the main apportionment.
 	 * @param sub the algorithm used for the main apportionment.
 	 */
-	public ListAlgorithm(VectorAlgorithm<?> Super, VectorAlgorithm<?> sub)
+	public ListAlgorithm(Algorithm Super, Algorithm sub)
 	{
 		this.Super = Super;
 		this.sub = sub;
@@ -28,8 +28,8 @@ public class ListAlgorithm implements VectorAlgorithm<ListOutput>
 
 	@Override public String name() { return ""; }
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
-	@Override public ListOutput applyUnfiltered(Data in, Options options)
+	@Override public void applyUnfiltered(Data data, Options options)
 	{
-		return ListAlgorithmImpl.calculate(in.cast(ListInput.class), Super, sub, options);
+		ListAlgorithmImpl.calculate(data.cast(ListData.class), Super, sub, options);
 	}
 }

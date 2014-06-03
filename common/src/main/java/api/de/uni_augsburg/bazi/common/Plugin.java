@@ -1,6 +1,8 @@
 package de.uni_augsburg.bazi.common;
 
-import de.uni_augsburg.bazi.common.data.Data;
+import de.schummar.castable.Attribute;
+import de.schummar.castable.Data;
+import javafx.beans.property.Property;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +33,7 @@ public interface Plugin<T extends Plugin.Instance>
 	 * @param params the parameters.
 	 * @return an Optional of the new instance if the parameters fit, an empty Optional else.
 	 */
-	Optional<? extends T> tryInstantiate(Params params);
+	Optional<? extends T> tryInstantiate(Params data);
 
 
 	/** Minimal interface for plugin parameters. */
@@ -41,7 +43,9 @@ public interface Plugin<T extends Plugin.Instance>
 		 * The name of the plugin instance.
 		 * @return the name of the plugin instance.
 		 */
-		String name();
+		@Attribute Property<String> nameProperty();
+		default String name() { return nameProperty().getValue(); }
+		default void name(String v) { nameProperty().setValue(v); }
 	}
 
 	/** Classes that implement this interface can be created by plugins. */

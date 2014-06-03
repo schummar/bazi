@@ -1,7 +1,7 @@
 package de.uni_augsburg.bazi.common.plain;
 
+import de.schummar.castable.ConvertibleEnum;
 import de.uni_augsburg.bazi.common.Resources;
-import de.uni_augsburg.bazi.common.format.ConvertibleEnum;
 
 /** The orientation in which the tables of the plain output should be printed. */
 public enum Orientation implements ConvertibleEnum

@@ -6,7 +6,7 @@ import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 import de.uni_augsburg.bazi.common_vector.VectorPlain;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
-import de.uni_augsburg.bazi.divisor.DivisorOutput;
+import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.divisor.DivisorPlain;
 import de.uni_augsburg.bazi.math.Real;
 
@@ -70,7 +70,7 @@ public class BMMPowPlain implements PlainSupplier
 	public StringTable firstColumns(PlainOptions options)
 	{
 		StringTable table = new StringTable();
-		DivisorPlain vp = new DivisorPlain(output.cast(DivisorOutput.class), method.roundingFunction(), "a");
+		DivisorPlain vp = new DivisorPlain(output.cast(DivisorData.class), method.roundingFunction(), "a");
 		vp.partyColumn(table.col(), options);
 		vp.voteColumn(table.col(), options);
 		return table;

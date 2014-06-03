@@ -1,16 +1,15 @@
 package de.uni_augsburg.bazi.quota;
 
 
+import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
-import de.uni_augsburg.bazi.common.algorithm.VectorInput;
-import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.Collections;
 import java.util.List;
 
 /** The quota algorithm. */
-public class QuotaAlgorithm implements VectorAlgorithm
+public class QuotaAlgorithm implements Algorithm
 {
 	private final QuotaFunction quotaFunction;
 	private final ResidualHandler residualHandler;
@@ -30,10 +29,10 @@ public class QuotaAlgorithm implements VectorAlgorithm
 
 	@Override public String name() { return name; }
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
-	@Override public QuotaOutput applyUnfiltered(Data in, Options options)
+	@Override public void applyUnfiltered(Data data, Options options)
 	{
-		return QuotaAlgorithmImpl.calculate(
-			in.cast(VectorInput.class),
+		QuotaAlgorithmImpl.calculate(
+			data.cast(QuotaData.class),
 			quotaFunction,
 			residualHandler,
 			name

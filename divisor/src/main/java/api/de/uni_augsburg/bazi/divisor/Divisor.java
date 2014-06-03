@@ -1,18 +1,16 @@
 package de.uni_augsburg.bazi.divisor;
 
-import de.uni_augsburg.bazi.common.format.Converter;
-import de.uni_augsburg.bazi.common.format.ObjectConverter;
+import de.schummar.castable.Castable;
+import de.schummar.castable.CastableObject;
+import de.schummar.castable.Convert;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /** An interval of Real numbers with possibly a nicer value that is element of that interval. */
-@Converter(Divisor.Converter.class)
+@Convert(Divisor.Converter.class)
 public class Divisor implements Interval
 {
 	private final Real min, nice, max;
@@ -26,6 +24,13 @@ public class Divisor implements Interval
 		this.min = min;
 		this.max = max;
 		this.nice = BMath.niceMidValue(this);
+	}
+
+	public Divisor(Real min, Real nice, Real max)
+	{
+		this.min = min;
+		this.nice = nice;
+		this.max = max;
 	}
 
 	/**
@@ -92,25 +97,39 @@ public class Divisor implements Interval
 	}
 
 
-	public static class Converter implements ObjectConverter<Divisor>
+	public static class Converter implements de.schummar.castable.Converter<Divisor>
 	{
 		private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
-
-		@Override public Object serialize(Divisor value)
+		@Override public Divisor apply(Castable castable)
 		{
-			Map<String, String> map = new HashMap<>();
+			Real min = null, nice = null, max = null;
+			CastableObject co = castable.asCastableObject();
 			try
 			{
-				map.put(Divisor.class.getMethod("min").getName(), value.min().toString());
-				map.put(Divisor.class.getMethod("nice").getName(), value.nice().toString());
-				map.put(Divisor.class.getMethod("max").getName(), value.max().toString());
+				min = (Real) co.getProperty(Divisor.class.getMethod("min")).getValue();
+				nice = (Real) co.getProperty(Divisor.class.getMethod("nice")).getValue();
+				max = (Real) co.getProperty(Divisor.class.getMethod("max")).getValue();
 			}
 			catch (Exception e)
 			{
 				LOGGER.warn(e.getMessage());
 			}
-
-			return map;
+			return new Divisor(min, nice, max);
+		}
+		@Override public Castable applyInverse(Divisor divisor)
+		{
+			CastableObject co = new CastableObject();
+			try
+			{
+				co.getProperty(Divisor.class.getMethod("min")).setValue(divisor.min());
+				co.getProperty(Divisor.class.getMethod("nice")).setValue(divisor.nice());
+				co.getProperty(Divisor.class.getMethod("max")).setValue(divisor.max());
+			}
+			catch (Exception e)
+			{
+				LOGGER.warn(e.getMessage());
+			}
+			return co;
 		}
 	}
 }

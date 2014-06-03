@@ -1,7 +1,8 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
+import de.schummar.castable.CastableObject;
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.List;
 
@@ -29,14 +30,14 @@ public interface Filter extends Plugin.Instance
 
 	/**
 	 * Apply this filter to the input data.
-	 * @param in the input data to be filtered
+	 * @param data the input data to be filtered
 	 */
-	void preprocess(Data in);
+	void preprocess(Data data);
 
 	/**
 	 * Apply this filter to the output data.
 	 * @param in the input data just in case this filter needs input data that was lost when applying the wrapped algorithm.
 	 * @param out the output data to be filtered.
 	 */
-	void postprocess(Data in, Data out);
+	void postprocess(Data data);
 }

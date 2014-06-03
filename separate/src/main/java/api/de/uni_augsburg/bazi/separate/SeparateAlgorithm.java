@@ -1,21 +1,20 @@
 package de.uni_augsburg.bazi.separate;
 
-import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
-import de.uni_augsburg.bazi.common.algorithm.MatrixOutput;
+import de.schummar.castable.CastableObject;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.algorithm.MatrixData;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
-import de.uni_augsburg.bazi.common.data.Data;
 
 import java.util.Collections;
 import java.util.List;
 
 /** The algorithm for separate district evaluations. */
-public class SeparateAlgorithm implements MatrixAlgorithm<MatrixOutput>
+public class SeparateAlgorithm implements Algorithm
 {
-	private final VectorAlgorithm<?> method;
+	private final Algorithm method;
 
 	/** @param method the method used for the district apportionments. */
-	public SeparateAlgorithm(VectorAlgorithm<?> method)
+	public SeparateAlgorithm(Algorithm method)
 	{
 		this.method = method;
 	}
@@ -31,13 +30,10 @@ public class SeparateAlgorithm implements MatrixAlgorithm<MatrixOutput>
 	}
 
 
-	@Override public MatrixOutput applyUnfiltered(Data in, Options options)
+	@Override public void applyUnfiltered(CastableObject data, Options options)
 	{
-		MatrixOutput out = in.copy(MatrixOutput.class);
-
-		out.districts().parallelStream().forEach(d -> d.merge(method.apply(d, options)));
-
-		out.plain(new SeparatePlain(out, method.name()));
-		return out;
+		MatrixData matrixData = data.cast(MatrixData.class);
+		matrixData.districts().parallelStream().forEach(d -> method.apply(CastableObject.of(d), options));
+		//matrixData.plain(new SeparatePlain(out, method.name()));
 	}
 }

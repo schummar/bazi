@@ -11,13 +11,13 @@ import java.util.List;
 /** A PlainSupplier that generates plain output for the ListAlgorithm on request. */
 public class ListPlain implements PlainSupplier
 {
-	private final ListOutput output;
+	private final ListData output;
 	private final PlainSupplier mainSupplier;
 
 	/**
 	 * @param output the output to produce plain output for.
 	 */
-	public ListPlain(ListOutput output)
+	public ListPlain(ListData output)
 	{
 		this.output = output;
 		this.mainSupplier = output.plain();

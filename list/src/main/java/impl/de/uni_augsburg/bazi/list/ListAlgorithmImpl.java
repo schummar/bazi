@@ -1,34 +1,30 @@
 package de.uni_augsburg.bazi.list;
 
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
 import de.uni_augsburg.bazi.math.BMath;
 
-import static de.uni_augsburg.bazi.list.ListOutput.Party;
+import static de.uni_augsburg.bazi.list.ListData.Party;
 
 class ListAlgorithmImpl
 {
-	public static ListOutput calculate(ListInput in, VectorAlgorithm<?> Super, VectorAlgorithm<?> sub, Options options)
+	public static void calculate(ListData data, Algorithm Super, Algorithm sub, Options options)
 	{
-		ListOutput out = in.copy().cast(ListOutput.class);
-		out.parties().forEach(ListAlgorithmImpl::sumSubParties);
 
-		out.merge(Super.applyUnfiltered(in, options));
+		data.parties().forEach(ListAlgorithmImpl::sumSubParties);
 
-		out.parties().parallelStream().forEach(
+		Super.applyUnfiltered(data, options);
+
+		data.parties().parallelStream().forEach(
 			p -> {
 				if (p.parties() == null || p.parties().isEmpty()) return;
 
-				VectorOutput subOut = sub == null
-					? Super.apply(p, options)
-					: sub.apply(p, options);
-				p.merge(subOut);
+				if (sub != null) sub.apply(p, options);
+				else Super.apply(p, options);
 			}
 		);
 
-		out.plain(new ListPlain(out));
-		return out;
+		//data.plain(new ListPlain(out));
 	}
 
 	private static void sumSubParties(Party party)

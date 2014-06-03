@@ -1,22 +1,22 @@
 package de.uni_augsburg.bazi.bmm;
 
+import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
-import de.uni_augsburg.bazi.common.data.Data;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.math.Int;
 
 import java.util.Collections;
 import java.util.List;
 
 /** The base+min..max algorithm. */
-public class BMMAlgorithm implements VectorAlgorithm<VectorOutput>
+public class BMMAlgorithm implements Algorithm
 {
 	/** Constraints for the seats of each party. */
 	public final Int base, min, max;
 
 	/** The algorithm to calculate the actual apportionment with. */
-	public final VectorAlgorithm<?> method;
+	public final Algorithm method;
 
 	/**
 	 * Consreuctor with initielizers.
@@ -25,7 +25,7 @@ public class BMMAlgorithm implements VectorAlgorithm<VectorOutput>
 	 * @param max the max seats for each party.
 	 * @param method the algorithm to calculate the actual apportionment with.
 	 */
-	public BMMAlgorithm(Int base, Int min, Int max, VectorAlgorithm<?> method)
+	public BMMAlgorithm(Int base, Int min, Int max, Algorithm method)
 	{
 		this.base = base;
 		this.min = min;
@@ -44,29 +44,28 @@ public class BMMAlgorithm implements VectorAlgorithm<VectorOutput>
 	}
 
 
-	@Override public VectorOutput applyUnfiltered(Data in, Options options)
+	@Override public void applyUnfiltered(Data data, Options options)
 	{
-		VectorOutput data = in.cast(VectorOutput.class);
-		data.parties().forEach(
+		VectorData vecData = data.cast(VectorData.class);
+		vecData.parties().forEach(
 			p -> {
 				p.min(min);
 				p.max(max);
 			}
 		);
-		data.seats(data.seats().sub(base.mul(data.parties().size())));
+		vecData.seats(vecData.seats().sub(base.mul(vecData.parties().size())));
 
-		data = method.applyUnfiltered(data, options);
+		method.applyUnfiltered(data, options);
 
-		data.parties().forEach(
+		vecData.parties().forEach(
 			p -> {
 				p.seats(p.seats().add(base));
 				p.min(null);
 				p.max(null);
 			}
 		);
-		data.seats(data.seats().add(base.mul(data.parties().size())));
+		vecData.seats(vecData.seats().add(base.mul(vecData.parties().size())));
 
-		data.plain(new BMMPlain(data, this));
-		return data;
+		//vecData.plain(new BMMPlain(vecData, this));
 	}
 }

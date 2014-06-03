@@ -1,8 +1,9 @@
 package de.uni_augsburg.bazi.list;
 
+import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
-import de.uni_augsburg.bazi.common.data.Default;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import javafx.beans.property.Property;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +20,8 @@ public class ListAlgorithmPlugin implements Plugin<ListAlgorithm>
 		if (!params.name().equals("list")) return Optional.empty();
 
 		Params listParams = params.cast(Params.class);
-		VectorAlgorithm<?> Super = listParams.Super() != null ? listParams.Super() : listParams.method();
-		VectorAlgorithm<?> sub = listParams.sub() != null ? listParams.sub() : listParams.method();
+		Algorithm Super = listParams.Super() != null ? listParams.Super() : listParams.method();
+		Algorithm sub = listParams.sub() != null ? listParams.sub() : listParams.method();
 		return Optional.of(new ListAlgorithm(Super, sub));
 	}
 
@@ -32,18 +33,24 @@ public class ListAlgorithmPlugin implements Plugin<ListAlgorithm>
 		 * The algorithm used for the main apportionment.
 		 * @return the algorithm used for the main apportionment.
 		 */
-		VectorAlgorithm<?> Super();
+		@Attribute Property<Algorithm> superProperty();
+		default Algorithm Super() { return superProperty().getValue(); }
+		default void Super(Algorithm v) { superProperty().setValue(v); }
 
 		/**
 		 * The algorithm used for the sub apportionment.
 		 * @return the algorithm used for the sub apportionment.
 		 */
-		VectorAlgorithm<?> sub();
+		@Attribute Property<Algorithm> subProperty();
+		default Algorithm sub() { return subProperty().getValue(); }
+		default void sub(Algorithm v) { subProperty().setValue(v); }
 
 		/**
 		 * The algorithm used for the all apportionments without own algorithms.
 		 * @return the algorithm used for the all apportionments without own algorithms.
 		 */
-		@Default("divstd") VectorAlgorithm<?> method();
+		@Attribute(def = "divstd") Property<Algorithm> methodProperty();
+		default Algorithm method() { return methodProperty().getValue(); }
+		default void method(Algorithm v) { methodProperty().setValue(v); }
 	}
 }

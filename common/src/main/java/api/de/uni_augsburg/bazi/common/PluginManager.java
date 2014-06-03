@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.common;
 
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Filter;
 import org.reflections.Reflections;
@@ -58,7 +59,7 @@ public class PluginManager
 
 
 			getPluginsOfInstanceType(Filter.class)
-				.forEach(p -> p.tryInstantiate(() -> null).ifPresent(filters::add));
+				.forEach(p -> p.tryInstantiate(Data.create(Plugin.Params.class)).ifPresent(filters::add));
 
 			LOGGER.info(
 				"loaded filters:\n{}", filters.stream()
@@ -95,14 +96,14 @@ public class PluginManager
 	 * Create an instance of the given type and with the given parameters.
 	 * @param <T> the type the instance must be a subtype of.
 	 * @param type the class of the type the instance must be a subtype of.
-	 * @param params the parameters for instantiation.
+	 * @param data the parameters for instantiation.
 	 * @return an Optional of the instance if any, an empty Optional else.
 	 */
-	public static <T extends Plugin.Instance> Optional<T> tryInstantiate(Class<T> type, Plugin.Params params)
+	public static <T extends Plugin.Instance> Optional<T> tryInstantiate(Class<T> type, Data data)
 	{
 		for (Plugin<? extends T> plugin : getPluginsOfInstanceType(type))
 		{
-			Optional<? extends T> t = plugin.tryInstantiate(params);
+			Optional<? extends T> t = plugin.tryInstantiate(data.cast(Plugin.Params.class));
 			if (t.isPresent()) return Optional.ofNullable(t.get());
 		}
 		return Optional.empty();

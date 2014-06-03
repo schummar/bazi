@@ -4,7 +4,7 @@ import com.google.common.collect.Table;
 import de.uni_augsburg.bazi.biprop.BipropAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
-import de.uni_augsburg.bazi.divisor.DivisorOutput;
+import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 
@@ -36,7 +36,7 @@ public class ASAlgorithm extends BipropAlgorithm
 		return "alternating scaling";
 	}
 
-	@Override protected Map<Object, Real> calculate(Table<DivisorOutput, String, Party> table, Map<Object, Int> seats, Options options)
+	@Override protected Map<Object, Real> calculate(Table<DivisorData, String, Party> table, Map<Object, Int> seats, Options options)
 	{
 		return ASAlgorithmImpl.calculate(table, seats, divisorUpdateFunction, Super, options);
 	}

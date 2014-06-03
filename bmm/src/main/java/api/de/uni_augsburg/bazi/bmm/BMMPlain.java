@@ -2,7 +2,7 @@ package de.uni_augsburg.bazi.bmm;
 
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.plain.PlainSupplier;
@@ -13,7 +13,7 @@ import java.util.List;
 /** A PlainSupplier that generates plain output for the bmm algorithm on request. */
 public class BMMPlain implements PlainSupplier
 {
-	protected final VectorOutput output;
+	protected final VectorData output;
 	protected final PlainSupplier sub;
 	protected final BMMAlgorithm algo;
 
@@ -22,10 +22,11 @@ public class BMMPlain implements PlainSupplier
 	 * @param output the result to produce plain output for.
 	 * @param algo the used algorithm.
 	 */
-	public BMMPlain(VectorOutput output, BMMAlgorithm algo)
+	public BMMPlain(VectorData output, BMMAlgorithm algo)
 	{
 		this.output = output;
-		this.sub = output.plain();
+		//this.sub = output.plain();
+		this.sub = null;
 		this.algo = algo;
 	}
 

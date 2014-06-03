@@ -1,15 +1,15 @@
 package de.uni_augsburg.bazi.divisor;
 
+import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
-import de.uni_augsburg.bazi.common.algorithm.VectorInput;
-import de.uni_augsburg.bazi.common.data.Data;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 
 import java.util.Collections;
 import java.util.List;
 
 /** A divisor algorithm. */
-public class DivisorAlgorithm implements VectorAlgorithm<DivisorOutput>
+public class DivisorAlgorithm implements Algorithm
 {
 	private final RoundingFunction roundingFunction;
 	private final String name;
@@ -36,10 +36,10 @@ public class DivisorAlgorithm implements VectorAlgorithm<DivisorOutput>
 	}
 
 	@Override public List<Object> getInputAttributes() { return Collections.emptyList(); }
-	@Override public DivisorOutput applyUnfiltered(Data in, Options options)
+	@Override public void applyUnfiltered(Data data, Options options)
 	{
-		return DivisorAlgorithmImpl.calculate(
-			in.cast(VectorInput.class),
+		DivisorAlgorithmImpl.calculate(
+			data.cast(DivisorData.class),
 			roundingFunction,
 			name,
 			options

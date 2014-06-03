@@ -2,7 +2,7 @@ package de.uni_augsburg.bazi.quota;
 
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common_vector.VectorPlain;
@@ -13,13 +13,13 @@ import de.uni_augsburg.bazi.math.Real;
 /** A PlainSupplier that generates plain output for the divisor algorithm on request. */
 public class QuotaPlain extends VectorPlain
 {
-	private final QuotaOutput output;
+	private final QuotaData output;
 
 	/**
 	 * @param output the output to produce plain output for.
 	 * @param name the display name of the algorithm.
 	 */
-	public QuotaPlain(QuotaOutput output, String name)
+	public QuotaPlain(QuotaData output, String name)
 	{
 		super(output, name);
 		this.output = output;
@@ -105,7 +105,7 @@ public class QuotaPlain extends VectorPlain
 	public Interval splitInterval()
 	{
 		Real min = BMath.ZERO, max = BMath.ONE;
-		for (VectorOutput.Party p : output.parties())
+		for (VectorData.Party p : output.parties())
 		{
 			Real q = p.votes().div(output.quota()), i = q.floor(), f = q.frac();
 			if (p.seats().equals(i)) min = min.max(f);

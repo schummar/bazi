@@ -2,7 +2,7 @@ package de.uni_augsburg.bazi.common_vector;
 
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.Orientation;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.plain.PlainSupplier;
@@ -23,7 +23,7 @@ public class VectorPlain implements PlainSupplier
 		CONDITION = new StringTable.Key(),
 		SEAT = new StringTable.Key();
 
-	protected final VectorOutput output;
+	protected final VectorData output;
 	protected final String name;
 
 	/**
@@ -31,7 +31,7 @@ public class VectorPlain implements PlainSupplier
 	 * @param output the result to produce plain output for.
 	 * @param name the name of the vector method used for the apportionment.
 	 */
-	public VectorPlain(VectorOutput output, String name)
+	public VectorPlain(VectorData output, String name)
 	{
 		this.output = output;
 		this.name = name;
@@ -46,7 +46,7 @@ public class VectorPlain implements PlainSupplier
 			table.titles().add(output.name());
 
 		Real sum = output.parties().stream()
-			.map(VectorOutput.Party::votes)
+			.map(VectorData.Party::votes)
 			.reduce(Real::add).orElse(BMath.ZERO);
 		Real half = sum.div(2);
 		output.parties().stream()
@@ -94,7 +94,7 @@ public class VectorPlain implements PlainSupplier
 		output.parties().forEach(p -> col.add(p.votes().precision(options.maxDigits()).toString()));
 
 		Real sum = output.parties().stream()
-			.map(VectorOutput.Party::votes)
+			.map(VectorData.Party::votes)
 			.reduce(Real::add).orElse(BMath.ZERO);
 		col.add(sum.precision(options.maxDigits()).toString());
 	}
@@ -111,10 +111,10 @@ public class VectorPlain implements PlainSupplier
 		output.parties().forEach(p -> col.add(String.format("%s..%s", p.min(), p.max())));
 
 		Int minSum = output.parties().stream()
-			.map(VectorOutput.Party::min)
+			.map(VectorData.Party::min)
 			.reduce(Int::add).orElse(BMath.ZERO);
 		Int maxSum = output.parties().stream()
-			.map(VectorOutput.Party::max)
+			.map(VectorData.Party::max)
 			.reduce(Int::add).orElse(BMath.ZERO);
 		col.add(String.format("%s..%s", minSum, maxSum));
 
@@ -133,7 +133,7 @@ public class VectorPlain implements PlainSupplier
 		output.parties().forEach(p -> col.add(p.seats().toString() + p.uniqueness().toString()));
 
 		Int sum = output.parties().stream()
-			.map(VectorOutput.Party::seats)
+			.map(VectorData.Party::seats)
 			.reduce(Int::add).orElse(BMath.ZERO);
 		col.add(sum.toString());
 	}

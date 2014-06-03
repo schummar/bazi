@@ -1,7 +1,7 @@
 package de.uni_augsburg.bazi.common.plain;
 
+import de.schummar.castable.ConvertibleEnum;
 import de.uni_augsburg.bazi.common.Resources;
-import de.uni_augsburg.bazi.common.format.ConvertibleEnum;
 
 /** The way divisors should be displayed in plain output. */
 public enum DivisorFormat implements ConvertibleEnum

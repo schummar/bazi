@@ -10,7 +10,7 @@ import de.uni_augsburg.bazi.math.Real;
 /** A PlainSupplier that generates plain output for the divisor algorithm on request. */
 public class DivisorPlain extends VectorPlain
 {
-	protected final DivisorOutput output;
+	protected final DivisorData output;
 	protected final RoundingFunction r;
 
 	/**
@@ -18,7 +18,7 @@ public class DivisorPlain extends VectorPlain
 	 * @param r the rounding function the divisor algorithm used.
 	 * @param name the display name of the algorithm.
 	 */
-	public DivisorPlain(DivisorOutput output, RoundingFunction r, String name)
+	public DivisorPlain(DivisorData output, RoundingFunction r, String name)
 	{
 		super(output, name);
 		this.output = output;

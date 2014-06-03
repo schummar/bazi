@@ -1,30 +1,28 @@
 package de.uni_augsburg.bazi.bmm_pow;
 
+import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.algorithm.OutputList;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
-import de.uni_augsburg.bazi.divisor.DivisorOutput;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
+import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.math.Real;
+import javafx.beans.property.Property;
 
 import java.util.List;
 
 /** Output iof the BMMPow Algorithm. */
-public interface BMMPowOutput extends OutputList, VectorOutput
+public interface BMMPowOutput extends OutputList, VectorData
 {
-	@Override List<BMMPowResult> results();
+	@Override @Attribute List<? extends BMMPowResult> results();
 
 	/** One possible result (for one possible power). */
-	public interface BMMPowResult extends DivisorOutput
+	public interface BMMPowResult extends DivisorData
 	{
 		/**
 		 * The power the votes were exponentiated with.
 		 * @return the power the votes were exponentiated with.
 		 */
-		Real power();
-
-		/**
-		 * The power the votes were exponentiated with.
-		 * @param power the power the votes were exponentiated with.
-		 */
-		void power(Real power);
+		@Attribute Property<Real> powerProperty();
+		default Real power() { return powerProperty().getValue(); }
+		default void power(Real v) { powerProperty().setValue(v); }
 	}
 }

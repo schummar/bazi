@@ -1,8 +1,7 @@
 package de.uni_augsburg.bazi.common_vector;
 
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
-import de.uni_augsburg.bazi.common.algorithm.VectorInput;
-import de.uni_augsburg.bazi.common.algorithm.VectorOutput;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
@@ -14,7 +13,7 @@ import java.util.List;
 /** Manages increases or decreases of seats. The order is determined by a given ShiftFunction. */
 public class ShiftQueue
 {
-	private final List<? extends VectorOutput.Party> parties;
+	private final List<? extends VectorData.Party> parties;
 	private final ShiftFunction shiftFunction;
 
 	private final List<Integer> increase, decrease;
@@ -24,7 +23,7 @@ public class ShiftQueue
 	 * @param parties the list of parties.
 	 * @param shiftFunction the shift function that determindes the order in which to increase/decrease.
 	 */
-	public ShiftQueue(List<? extends VectorOutput.Party> parties, ShiftFunction shiftFunction)
+	public ShiftQueue(List<? extends VectorData.Party> parties, ShiftFunction shiftFunction)
 	{
 		this.parties = parties;
 		this.shiftFunction = shiftFunction;
@@ -126,7 +125,7 @@ public class ShiftQueue
 	/** Sets the uniquenesses for all parties. */
 	public void updateUniquenesses()
 	{
-		for (VectorOutput.Party party : parties)
+		for (VectorData.Party party : parties)
 			party.uniqueness(Uniqueness.UNIQUE);
 
 		int lastIncrease = decrease.get(0);
@@ -166,7 +165,7 @@ public class ShiftQueue
 	}
 
 
-	private int compare(VectorInput.Party p0, Int s0, VectorInput.Party p1, Int s1, boolean increase)
+	private int compare(VectorData.Party p0, Int s0, VectorData.Party p1, Int s1, boolean increase)
 	{
 		int compare = shiftFunction.value(p0, s0, increase).compareTo(shiftFunction.value(p1, s1, increase));
 		if (compare != 0)
@@ -175,7 +174,7 @@ public class ShiftQueue
 	}
 
 
-	private static int bias(VectorInput.Party p, Int s)
+	private static int bias(VectorData.Party p, Int s)
 	{
 		if (s.sub(1).compareTo(p.min()) < 0)
 			return 1;
@@ -200,7 +199,7 @@ public class ShiftQueue
 		 * @param increase whether the party competes for an increase (if false: a decrease).
 		 * @return the priority of a given party with a given number of seats.
 		 */
-		public Real value(VectorInput.Party p, Int s, boolean increase);
+		public Real value(VectorData.Party p, Int s, boolean increase);
 
 		/**
 		 * Returns this shift function with the addition that 0/oo values are given if

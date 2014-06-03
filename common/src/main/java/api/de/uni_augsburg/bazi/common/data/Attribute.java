@@ -37,12 +37,6 @@ public class Attribute<T>
 	}
 
 
-	public T get(Data data)
-	{
-		@SuppressWarnings("unchecked")
-		T t = (T) data.toMapData().get(name);
-		return t;
-	}
 	public String getName()
 	{
 		return name;

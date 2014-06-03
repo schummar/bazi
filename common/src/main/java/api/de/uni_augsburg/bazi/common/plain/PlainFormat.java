@@ -1,13 +1,12 @@
 package de.uni_augsburg.bazi.common.plain;
 
-import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.Version;
-import de.uni_augsburg.bazi.common.data.Data;
+import de.schummar.castable.Castable;
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.format.Format;
 
 import javax.naming.OperationNotSupportedException;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /** The PlainFormat is a human-readable output format */
 public class PlainFormat implements Format
@@ -16,11 +15,11 @@ public class PlainFormat implements Format
 
 	/**
 	 * Constructor with options initializer.
-	 * @param data the options.
+	 * @param options the options.
 	 */
-	public PlainFormat(Data data)
+	public PlainFormat(PlainOptions options)
 	{
-		options = data.cast(PlainOptions.class);
+		this.options = options;
 	}
 
 	@Override public void configure(Data data)
@@ -29,13 +28,13 @@ public class PlainFormat implements Format
 	}
 
 
-	@Override public Map<String, Object> deserialize(String s)
+	@Override public Castable deserialize(InputStream stream)
 	{
 		throw new RuntimeException(new OperationNotSupportedException());
 	}
-	@Override public String serialize(Data data)
+	@Override public void serialize(Castable data, OutputStream stream)
 	{
-		if (data.plain() != null)
+		/*if (data.plain() != null)
 		{
 			String s = "************************************************************\n";
 			s += data.plain().get(options).stream()
@@ -46,6 +45,6 @@ public class PlainFormat implements Format
 			s += "************************************************************\n";
 			return s;
 		}
-		return null;
+		return null;*/
 	}
 }
