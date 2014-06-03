@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CastBinding<T> implements Property<T>, InvalidationListener
 {
-	private final Castable castable;
+	private final Castable<?> castable;
 	private final Converter<T> adapter;
 	private final List<ChangeListener<? super T>> changeListeners = new ArrayList<>();
 	private final List<InvalidationListener> invalidationListeners = new ArrayList<>();

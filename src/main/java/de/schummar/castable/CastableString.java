@@ -3,7 +3,7 @@ package de.schummar.castable;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
 
-public class CastableString extends SimpleStringProperty implements Castable
+public class CastableString extends SimpleStringProperty implements Castable<String>
 {
 	public CastableString()
 	{
@@ -30,6 +30,10 @@ public class CastableString extends SimpleStringProperty implements Castable
 		return new CastableString(getValue());
 	}
 	@Override public void overwrite(Castable castable)
+	{
+		setValue(castable.asCastableString().getValue());
+	}
+	@Override public void merge(Castable castable)
 	{
 		setValue(castable.asCastableString().getValue());
 	}

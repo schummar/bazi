@@ -1,66 +1,135 @@
 package de.schummar.castable;
 
-import com.google.common.primitives.Primitives;
 import javafx.beans.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Converters
 {
-	public static Converter<?> get(Type type, Converter<?> contentAdapter)
+	private static Map<Method, Converter> converterCache = new HashMap<>();
+	public static Converter get(Method method)
 	{
-		Class<?> c = classOf(type);
-		c = Primitives.wrap(c);
-
-		if (c == Integer.class) return INTEGER_OBJ_ADAPTER;
-		if (c == Long.class) return LONG_OBJ_ADAPTER;
-		if (c == Float.class) return FLOAT_OBJ_ADAPTER;
-		if (c == Double.class) return DOUBLE_OBJ_ADAPTER;
-		if (c == String.class) return STRING_OBJ_ADAPTER;
-
-		if (c.isAssignableFrom(List.class))
+		try
 		{
-			if (contentAdapter == null)
-				contentAdapter = get(((ParameterizedType) type).getActualTypeArguments()[0], null);
-			return new ListAdapter<>(contentAdapter);
-		}
+			Converter converter = converterCache.get(method);
+			if (converter != null) return converter;
 
-		if (c.isInterface())
+			Attribute attribute = method.getAnnotation(Attribute.class);
+			if (attribute.converter() != Converter.class) converter = attribute.converter().newInstance();
+			else
+			{
+				Type type = method.getReturnType().isAssignableFrom(Property.class)
+					? ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]
+					: method.getGenericReturnType();
+				Converter contentconverter = null;
+				if (attribute.contentConverter() != Converter.class) contentconverter = attribute.contentConverter().newInstance();
+				converter = get(type, contentconverter);
+			}
+			converterCache.put(method, converter);
+			return converter;
+		}
+		catch (Exception e)
 		{
-			return new MapAdapter<>(c);
+			throw new RuntimeException(e);
 		}
-
-		throw new RuntimeException(String.format("No adapter for type %s available.", type));
 	}
 
-	public static class ListAdapter<T> implements Converter<List<T>>
+	public static Converter<?> get(Type type, Converter<?> contentconverter) throws IllegalAccessException, InstantiationException
 	{
-		private final Converter<T> adapter;
-		public ListAdapter(Converter<T> adapter)
+		Class<?> c = classOf(type);
+
+		if (c.isAnnotationPresent(Convert.class))
+			return c.getAnnotation(Convert.class).value().newInstance();
+
+		if (c == Integer.class || c == int.class) return INTEGER_OBJ_converter;
+		if (c == Long.class || c == long.class) return LONG_OBJ_converter;
+		if (c == Float.class || c == float.class) return FLOAT_OBJ_converter;
+		if (c == Double.class || c == double.class) return DOUBLE_OBJ_converter;
+		if (c == String.class) return STRING_OBJ_converter;
+		if (Enum.class.isAssignableFrom(c)) return EnumConverter.of(c);
+
+		if (c.isAssignableFrom(CList.class))
 		{
-			this.adapter = adapter;
+			Type contentType = ((ParameterizedType) type).getActualTypeArguments()[0];
+			if (contentconverter == null)
+				contentconverter = get(contentType, null);
+
+			return c.isAssignableFrom(DataList.class)
+				? create(contentconverter, classOf(contentType))
+				: new Listconverter<>(contentconverter);
 		}
-		@Override public List<T> apply(Castable o)
+
+		if (Data.class.isAssignableFrom(c) && c.isInterface())
 		{
-			return o.asCastableList().cast(adapter);
+			@SuppressWarnings("unchecked")
+			Class<? extends Data> d = (Class<? extends Data>) c;
+			return new Mapconverter<>(d);
 		}
-		@Override public Castable applyInverse(List<T> ts)
+
+		throw new RuntimeException(String.format("No converter for type %s available.", type));
+	}
+
+
+	public static class Listconverter<T> implements Converter<CList<T>>
+	{
+		private final Converter<T> converter;
+		public Listconverter(Converter<T> converter)
+		{
+			this.converter = converter;
+		}
+		@Override public CList<T> apply(Castable o)
+		{
+			return new CList<>(o.asCastableList(), converter);
+		}
+		@Override public Castable applyInverse(CList<T> ts)
 		{
 			CastableList o = new CastableList();
 			if (ts != null && !ts.isEmpty())
-				o.cast(adapter).addAll(ts);
+				new CList<>(o, converter).addAll(ts);
 			return o;
 		}
 	}
 
-	public static class MapAdapter<T> implements Converter<T>
+	public static <T extends Data> DataListconverter<T> create(Converter<?> converter, Class<?> type)
+	{
+		@SuppressWarnings("unchecked") Converter<T> tConverter = (Converter<T>) converter;
+		@SuppressWarnings("unchecked") Class<T> tType = (Class<T>) type;
+		return new DataListconverter<>(tConverter, tType);
+	}
+	public static class DataListconverter<T extends Data> implements Converter<DataList<T>>
+	{
+		private final Converter<T> converter;
+		private final Class<T> type;
+		public DataListconverter(Converter<T> converter, Class<T> type)
+		{
+			this.converter = converter;
+			this.type = type;
+		}
+		@Override public DataList<T> apply(Castable o)
+		{
+			return new DataList<>(o.asCastableList(), converter, type);
+		}
+		@Override public Castable applyInverse(DataList<T> ts)
+		{
+			CastableList o = new CastableList();
+			if (ts != null && !ts.isEmpty())
+				new DataList<>(o, converter, type).addAll(ts);
+			return o;
+		}
+	}
+
+
+	public static class Mapconverter<T extends Data> implements Converter<T>
 	{
 		private final Class<T> c;
-		public MapAdapter(Class<T> c)
+		public Mapconverter(Class<T> c)
 		{
 			this.c = c;
 		}
@@ -92,7 +161,58 @@ public abstract class Converters
 		}
 	}
 
-	public static final Converter<Integer> INTEGER_OBJ_ADAPTER = new Converter<Integer>()
+	public static class EnumConverter<T extends Enum<T>> implements Converter<T>
+	{
+		private static final Logger LOGGER = LoggerFactory.getLogger(EnumConverter.class);
+
+		public static <T extends Enum<T>> EnumConverter<T> of(Class<?> type)
+		{
+			if (!ConvertibleEnum.class.isAssignableFrom(type)
+				|| !type.isEnum())
+				throw new IllegalArgumentException();
+			@SuppressWarnings("unchecked")
+			EnumConverter<T> converter = new EnumConverter<>((Class<T>) type);
+			return converter;
+		}
+
+
+		private final Class<T> type;
+		public EnumConverter(Class<T> type)
+		{
+			this.type = type;
+
+			if (!ConvertibleEnum.class.isAssignableFrom(type)) return;
+			for (T t : type.getEnumConstants())
+			{
+				ConvertibleEnum cet = (ConvertibleEnum) t;
+				if (!cet.matches(cet.key()))
+					LOGGER.error(String.format("The enum value %s in does not match its own key.", t));
+			}
+
+		}
+
+		@Override public T apply(Castable o)
+		{
+			if (!ConvertibleEnum.class.isAssignableFrom(type))
+				return Enum.valueOf(type, o.asCastableString().getValue());
+
+			String name = o.asCastableString().getValue().toLowerCase();
+			for (T t : type.getEnumConstants())
+				if (((ConvertibleEnum) t).matches(name))
+					return t;
+
+			LOGGER.error(String.format("No enum value in %s matches '%s'.", type, o));
+			return type.getEnumConstants()[0];
+		}
+		@Override public Castable applyInverse(T t)
+		{
+			if (t instanceof ConvertibleEnum)
+				return new CastableString(((ConvertibleEnum) t).key());
+			return new CastableString(t.name());
+		}
+	}
+
+	public static final Converter<Integer> INTEGER_OBJ_converter = new Converter<Integer>()
 	{
 		@Override public Integer apply(Castable o)
 		{
@@ -112,7 +232,7 @@ public abstract class Converters
 		}
 	};
 
-	public static final Converter<Long> LONG_OBJ_ADAPTER = new Converter<Long>()
+	public static final Converter<Long> LONG_OBJ_converter = new Converter<Long>()
 	{
 		@Override public Long apply(Castable o)
 		{
@@ -132,7 +252,7 @@ public abstract class Converters
 		}
 	};
 
-	public static final Converter<Float> FLOAT_OBJ_ADAPTER = new Converter<Float>()
+	public static final Converter<Float> FLOAT_OBJ_converter = new Converter<Float>()
 	{
 		@Override public Float apply(Castable o)
 		{
@@ -146,7 +266,7 @@ public abstract class Converters
 		}
 	};
 
-	public static final Converter<Double> DOUBLE_OBJ_ADAPTER = new Converter<Double>()
+	public static final Converter<Double> DOUBLE_OBJ_converter = new Converter<Double>()
 	{
 		@Override public Double apply(Castable o)
 		{
@@ -160,7 +280,7 @@ public abstract class Converters
 		}
 	};
 
-	public static final Converter<String> STRING_OBJ_ADAPTER = new Converter<String>()
+	public static final Converter<String> STRING_OBJ_converter = new Converter<String>()
 	{
 		@Override public String apply(Castable o)
 		{

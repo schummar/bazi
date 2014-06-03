@@ -4,7 +4,7 @@ import javafx.beans.property.Property;
 
 import java.util.List;
 
-public interface Party
+public interface Party extends Data
 {
 	@Attribute() Property<String> nameProperty();
 	public default String name() { return nameProperty().getValue(); }

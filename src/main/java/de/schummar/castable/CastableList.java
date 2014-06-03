@@ -4,12 +4,12 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CastableList extends SimpleListProperty<Castable> implements Castable
+public class CastableList extends SimpleListProperty<Castable<?>> implements Castable<ObservableList<Castable<?>>>
 {
 	public CastableList()
 	{
@@ -45,6 +45,14 @@ public class CastableList extends SimpleListProperty<Castable> implements Castab
 		forEach(v -> copy.add(v.copy()));
 		return copy;
 	}
+	@Override public void merge(Castable castable)
+	{
+		CastableList that = castable.asCastableList();
+		for (int i = 0; i < size() && i < that.size(); i++)
+			get(i).merge(that.get(i));
+		for (int i = size(); i < that.size(); i++)
+			add(that.get(i));
+	}
 	@Override public void overwrite(Castable castable)
 	{
 		CastableList that = castable.asCastableList();
@@ -53,39 +61,9 @@ public class CastableList extends SimpleListProperty<Castable> implements Castab
 	}
 	@Override public CastableList asCastableList() { return this; }
 
+
 	@Override public String toString()
 	{
 		return getValue().toString();
-	}
-
-
-	public <T> List<T> cast(Converter<T> adapter) { return new View<>(adapter); }
-	private class View<T> extends AbstractList<T>
-	{
-		private final Converter<T> adapter;
-		private View(Converter<T> adapter)
-		{
-			this.adapter = adapter;
-		}
-		@Override public T get(int index)
-		{
-			return adapter.apply(CastableList.this.get(index));
-		}
-		@Override public int size()
-		{
-			return CastableList.this.size();
-		}
-		@Override public T set(int index, T element)
-		{
-			return adapter.apply(CastableList.this.set(index, adapter.applyInverse(element)));
-		}
-		@Override public void add(int index, T element)
-		{
-			CastableList.this.add(index, adapter.applyInverse(element));
-		}
-		@Override public T remove(int index)
-		{
-			return adapter.apply(CastableList.this.remove(index));
-		}
 	}
 }

@@ -5,20 +5,36 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 
-public class CastableObject extends SimpleMapProperty<String, Castable> implements Castable
+public class CastableObject extends SimpleMapProperty<String, Castable<?>> implements Castable<ObservableMap<String, Castable<?>>>, Data
 {
+	public static CastableObject create(Object o)
+	{
+		if (o instanceof Data) return ((Data) o).src();
+		try
+		{
+			@SuppressWarnings("unchecked")
+			Converter<Object> converter = (Converter<Object>) Converters.get(o.getClass(), null);
+			return converter.applyInverse(o).asCastableObject();
+		}
+		catch (Exception ignore) { }
+		return null;
+	}
+
 
 	public CastableObject()
 	{
 		super(FXCollections.observableMap(new LinkedHashMap<>()));
 		addListener(changeListener);
 	}
-
 
 	private final List<InvalidationListener> deepListeners = new ArrayList<>();
 	@Override public void addDeepListener(InvalidationListener invalidationListener)
@@ -29,22 +45,51 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 	{
 		deepListeners.remove(invalidationListener);
 	}
-	private InvalidationListener deepListener = observable -> {
-		deepListeners.forEach(l -> l.invalidated(this));
-	};
+	private InvalidationListener deepListener = observable -> deepListeners.forEach(l -> l.invalidated(this));
 	private MapChangeListener<String, Castable> changeListener = change -> {
 		if (change.wasAdded()) change.getValueAdded().addDeepListener(deepListener);
 		else change.getValueRemoved().removeDeepListener(deepListener);
 	};
 
 
-	@Override public Castable copy()
+	@Override public CastableObject src() { return this; }
+	@Override public CastableObject copy()
 	{
 		CastableObject copy = new CastableObject();
 		forEach((k, v) -> copy.put(k, v.copy()));
 		return copy;
 	}
-	@Override public void overwrite(Castable castable)
+	public <T extends Data> T cast(Class<T> c)
+	{
+		if (c.isInstance(this))
+		{
+			@SuppressWarnings("unchecked")
+			T t = (T) this;
+			return t;
+		}
+		if (!c.isInterface()) throw new RuntimeException(c + " is no interface.");
+
+		@SuppressWarnings("unchecked")
+		T t = (T) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{c}, invocationHandler);
+		return t;
+	}
+	@Override public void merge(Data that)
+	{
+		merge((Castable<?>) that.src());
+	}
+
+
+	@Override public void merge(Castable<?> castable)
+	{
+		CastableObject that = castable.asCastableObject();
+		that.forEach(
+			(k, v) -> {
+				if (containsKey(k)) get(k).merge(v);
+				else put(k, v);
+			}
+		);
+	}
+	@Override public void overwrite(Castable<?> castable)
 	{
 		CastableObject that = castable.asCastableObject();
 		clear();
@@ -56,28 +101,18 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 	@Override public String toString() { return getValue().toString(); }
 
 
-	public <T> T cast(Class<T> c)
-	{
-		if (!c.isInterface()) throw new RuntimeException(c + " is no interface.");
-
-		@SuppressWarnings("unchecked")
-		T t = (T) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{c}, invocationHandler);
-		return t;
-	}
-
-
 	private final InvocationHandler invocationHandler = (proxy, method, args) -> {
 		if (method.isAnnotationPresent(Attribute.class))
 			return get(method);
+		if (method.getDeclaringClass().isAssignableFrom(CastableObject.class))
+			return method.invoke(CastableObject.this, args);
 		if (method.isDefault())
 			return invokeDefault(proxy, method, args);
-		if (method.getDeclaringClass() == Object.class)
-			return method.invoke(CastableObject.this, args);
 		return null;
 	};
 
 
-	Object get(Method method) throws Exception
+	private Object get(Method method) throws Throwable
 	{
 		if (method.getReturnType().isAssignableFrom(Property.class))
 			return getProperty(method);
@@ -85,12 +120,12 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 	}
 
 	private final Map<Method, Property> propertyCache = new HashMap<>();
-	Property getProperty(Method method) throws Exception
+	public Property getProperty(Method method)
 	{
 		Property property = propertyCache.get(method);
 		if (property == null)
 		{
-			Converter<?> adapter = getAdapter(method);
+			Converter<?> adapter = Converters.get(method);
 			Castable castable = getObj(method, adapter);
 			property = new CastBinding<>(castable, adapter);
 			propertyCache.put(method, property);
@@ -98,39 +133,18 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 		return property;
 	}
 
-
-	private static Map<Method, Converter> adapterCache = new HashMap<>();
-	static Converter getAdapter(Method method) throws Exception
-	{
-		Converter adapter = adapterCache.get(method);
-		if (adapter != null) return adapter;
-
-		Attribute attribute = method.getAnnotation(Attribute.class);
-		if (attribute.adapter() != Converter.class) adapter = attribute.adapter().newInstance();
-		else
-		{
-			Type type = method.getReturnType().isAssignableFrom(Property.class)
-				? ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]
-				: method.getGenericReturnType();
-			Converter contentAdapter = null;
-			if (attribute.contentAdapter() != Converter.class) contentAdapter = attribute.contentAdapter().newInstance();
-			adapter = Converters.get(type, contentAdapter);
-		}
-		adapterCache.put(method, adapter);
-		return adapter;
-	}
-
-	Castable getObj(Method method, Converter adapter)
+	private Castable getObj(Method method, Converter<?> adapter)
 	{
 		String name = method.getName().toLowerCase();
 		if (name.endsWith("property")) name = name.substring(0, name.indexOf("property"));
-		return get(name, adapter);
-	}
-
-	public Castable get(Object key, Converter<?> adapter)
-	{
-		Castable o = get(key);
-		if (o == null && adapter != null) put(key.toString(), o = adapter.applyInverse(null));
+		Castable o = get(name);
+		if (o == null)
+		{
+			o = adapter.applyInverse(null);
+			if (o instanceof CastableString)
+				o.asCastableString().setValue(method.getAnnotation(Attribute.class).def());
+			put(name, o);
+		}
 		return o;
 	}
 
