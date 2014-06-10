@@ -1,24 +1,19 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
-import de.schummar.castable.CProperty;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Pos;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
 
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MTable<T> extends TableView<T>
 {
 	private Supplier<T> supplier = null;
-	private ObjectProperty<MTableCell<T, ?>> selectedMCell = new SimpleObjectProperty<>();
-	private ObjectProperty<MTableCell<T, ?>> editingMCell = new SimpleObjectProperty<>();
+	private ObjectProperty<MTableCell<T>> selectedMCell = new SimpleObjectProperty<>();
+	private ObjectProperty<MTableCell<T>> editingMCell = new SimpleObjectProperty<>();
 
 	public MTable()
 	{
@@ -38,40 +33,34 @@ public class MTable<T> extends TableView<T>
 	{
 		this.supplier = supplier;
 	}
-	public MTableCell<T, ?> getSelectedMCell()
+	public MTableCell<T> getSelectedMCell()
 	{
 		return selectedMCell.get();
 	}
-	public void setSelectedMCell(MTableCell<T, ?> selectedMCell)
+	public void setSelectedMCell(MTableCell<T> selectedMCell)
 	{
 		this.selectedMCell.set(selectedMCell);
 	}
-	public ObjectProperty<MTableCell<T, ?>> selectedMCellProperty()
+	public ObjectProperty<MTableCell<T>> selectedMCellProperty()
 	{
 		return selectedMCell;
 	}
-	public MTableCell<T, ?> getEditingMCell()
+	public MTableCell<T> getEditingMCell()
 	{
 		return editingMCell.get();
 	}
-	public void setEditingMCell(MTableCell<T, ?> editingMCell)
+	public void setEditingMCell(MTableCell<T> editingMCell)
 	{
 		this.editingMCell.set(editingMCell);
 	}
-	public ObjectProperty<MTableCell<T, ?>> editingMCellProperty()
+	public ObjectProperty<MTableCell<T>> editingMCellProperty()
 	{
 		return editingMCell;
 	}
 
-	public <S> void addColumn(
-		ObservableValue<String> name,
-		Function<T, CProperty<S>> attribute,
-		BinaryOperator<S> addOp,
-		Pos alignment
-	)
+	public <S> void addColumn(MTableColumnDefinition<T, S> definition)
 	{
-		TableColumn<T, S> col = new MTableColumn<>(name, attribute, addOp, alignment);
-		getColumns().add(col);
+		getColumns().add(definition.createColumn());
 	}
 	public int selectedRow()
 	{

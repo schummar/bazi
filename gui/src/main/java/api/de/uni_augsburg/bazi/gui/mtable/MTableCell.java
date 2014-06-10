@@ -1,7 +1,5 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
-import de.schummar.castable.CProperty;
-import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
@@ -9,8 +7,6 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-
-import java.util.function.Function;
 
 public class MTableCell<T> extends TableCell<T, String>
 {
@@ -48,7 +44,7 @@ public class MTableCell<T> extends TableCell<T, String>
 		}
 		else
 		{
-			setItem(attribute.deserializer().apply(item));
+			setItem(item);
 			updateView();
 		}
 	}
@@ -72,11 +68,11 @@ public class MTableCell<T> extends TableCell<T, String>
 	{
 		try
 		{
-			commitEdit(attribute.deserializer().apply(textField.getText()));
+			commitEdit(textField.getText());
 		}
 		catch (Exception e)
 		{
-			commitEdit(attribute.deserializer().apply(null));
+			commitEdit(null);
 		}
 		updateView();
 		getTableView().requestFocus();
@@ -88,7 +84,7 @@ public class MTableCell<T> extends TableCell<T, String>
 		commitEdit();
 	}
 
-	@Override public void updateItem(S item, boolean empty)
+	@Override public void updateItem(String item, boolean empty)
 	{
 		super.updateItem(item, empty);
 		updateView();
@@ -104,12 +100,12 @@ public class MTableCell<T> extends TableCell<T, String>
 				setGraphic(textField);
 			}
 			setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-			textField.setText(attribute.serializer().apply(getItem()));
+			textField.setText(getItem());
 		}
 		else
 		{
 			setContentDisplay(ContentDisplay.TEXT_ONLY);
-			setText(attribute.serializer().apply(getItem()));
+			setText(getItem());
 		}
 	}
 

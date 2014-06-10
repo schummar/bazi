@@ -1,53 +1,42 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
-import de.schummar.castable.CProperty;
-import de.uni_augsburg.bazi.gui.bind.NestedBinding;
 import de.uni_augsburg.bazi.gui.view.EditableLabel;
-import javafx.beans.binding.ListBinding;
-import javafx.beans.binding.StringBinding;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-
 public class MTableColumn<T, S> extends TableColumn<T, String>
 {
-	public MTableColumn(
-		ObservableValue<String> name,
-		Function<T, CProperty<S>> attribute,
-		BinaryOperator<S> addOp,
-		Pos alignment
-	)
+	public MTableColumn(MTableColumnDefinition<T, S> definition)
 	{
 		setSortable(false);
 		setMinWidth(100);
-		setCellFactory(c -> new MTableCell(alignment));
-		setCellValueFactory(p ->  attribute.apply(p.getValue()).asStringProperty());
+		setCellFactory(c -> new MTableCell(definition.alignment()));
+		setCellValueFactory(p -> definition.attribute().apply(p.getValue()).asStringProperty());
 
 
-		EditableLabel tableHeader = new EditableLabel(name);
+		EditableLabel tableHeader = new EditableLabel(definition.title());
 		tableHeader.setPrefWidth(1000);
 		HBox box = new HBox();
 		box.setAlignment(Pos.CENTER);
 		box.getChildren().add(tableHeader);
-		if (attribute.addition() != null) box.getChildren().add(createAggregation(attribute));
+		if (definition.op() != null) box.getChildren().add(sum(definition));
 		setGraphic(box);
 	}
 
-	private Label createAggregation(MTableAttribute<T, S> attribute)
+	private Label sum(MTableColumnDefinition<T, S> definition)
 	{
-		ListBinding<ObservableValue<S>> attributes = NestedBinding.of(tableViewProperty())
+	/*	ListBinding<ObservableValue<S>> attributes = NestedBinding.of(tableViewProperty())
 			.listProperty(TableView::itemsProperty)
 			.map(attribute.extractor());
 
-		tableViewProperty().get().item
+
 
 
 		StringBinding b = new StringBinding()
@@ -75,10 +64,16 @@ public class MTableColumn<T, S> extends TableColumn<T, String>
 
 				return String.format("Σ=%s", aggregated != null ? aggregated : "");
 			}
-		};
+		};*/
+
+		ObjectBinding<ObservableList<ObservableValue<S>>> values = Bindings.select(
+			tableViewProperty(), "items"
+		);
+		values.addListener((observable, oldValue, newValue) -> System.out.println(newValue));
+
 
 		Label label = new Label();
-		label.textProperty().bind(b);
+//		label.textProperty().bind(b);
 		label.setMinWidth(Region.USE_PREF_SIZE);
 		return label;
 	}

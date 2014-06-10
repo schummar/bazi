@@ -41,7 +41,10 @@ allprojects {
 		}
 	}
 
-	repositories { mavenCentral() }
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
 	dependencies {
 		testCompile 'junit:junit:4.11'
 	}

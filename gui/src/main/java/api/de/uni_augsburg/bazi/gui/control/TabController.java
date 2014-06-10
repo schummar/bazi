@@ -2,6 +2,9 @@ package de.uni_augsburg.bazi.gui.control;
 
 
 import de.schummar.castable.CastableObject;
+import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
+import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
@@ -34,7 +37,13 @@ public class TabController
 
 	private void createNewTab()
 	{
-		tabPane.getTabs().add(new DistrictTab(tabPane.getTabs().size(), options, district));
+		tabPane.getTabs().add(
+			new DistrictTab(
+				tabPane.getTabs().size(),
+				Data.create(PlainOptions.class),
+				Data.create(VectorData.class)
+			)
+		);
 		tabPane.getSelectionModel().select(tabPane.getTabs().size() - 1);
 	}
 

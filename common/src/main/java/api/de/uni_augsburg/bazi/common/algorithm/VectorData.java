@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
 import de.schummar.castable.Attribute;
+import de.schummar.castable.CProperty;
 import de.schummar.castable.Data;
 import de.schummar.castable.DataList;
 import de.uni_augsburg.bazi.math.Int;
@@ -48,7 +49,7 @@ public interface VectorData extends Data
 		 * The votes of the party. Can be any non-negative real number.
 		 * @return the votes of the party.
 		 */
-		@Attribute Property<Real> votesProperty();
+		@Attribute CProperty<Real> votesProperty();
 		default Real votes() { return votesProperty().getValue(); }
 		default void votes(Real v) { votesProperty().setValue(v); }
 
