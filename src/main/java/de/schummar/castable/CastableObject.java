@@ -112,7 +112,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 	};
 
 
-	private Object get(Method method) throws Throwable
+	public Object get(Method method) throws Throwable
 	{
 		if (method.getReturnType().isAssignableFrom(Property.class))
 			return getProperty(method);
@@ -125,24 +125,29 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 		Property property = propertyCache.get(method);
 		if (property == null)
 		{
-			Converter<?> adapter = Converters.get(method);
-			Castable castable = getObj(method, adapter);
-			property = new CastBinding<>(castable, adapter);
+			String name = method.getName().toLowerCase();
+			if (name.endsWith("property")) name = name.substring(0, name.indexOf("property"));
+			Converter<?> converter = Converters.get(method);
+			Castable<?> castable = getObj(name, converter, method.getAnnotation(Attribute.class).def());
+			property = new CastBinding<>(castable, converter);
 			propertyCache.put(method, property);
 		}
 		return property;
 	}
-
-	private Castable getObj(Method method, Converter<?> adapter)
+	public <T> Property<T> getProperty(String name, Converter<T> converter) { return getProperty(name, converter, ""); }
+	public <T> Property<T> getProperty(String name, Converter<T> converter, String def)
 	{
-		String name = method.getName().toLowerCase();
-		if (name.endsWith("property")) name = name.substring(0, name.indexOf("property"));
+		return new CastBinding<>(getObj(name, converter, def), converter);
+	}
+
+	private Castable getObj(String name, Converter<?> converter, String def)
+	{
 		Castable o = get(name);
 		if (o == null)
 		{
-			o = adapter.applyInverse(null);
+			o = converter.applyInverse(null);
 			if (o instanceof CastableString)
-				o.asCastableString().setValue(method.getAnnotation(Attribute.class).def());
+				o.asCastableString().setValue(def);
 			put(name, o);
 		}
 		return o;

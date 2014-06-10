@@ -39,22 +39,22 @@ public abstract class Converters
 
 
 	private static final Map<Type, Converter<?>> TYPE_CONVERTER_CACHE = new HashMap<>();
-	public static Converter<?> get(Type type, Converter<?> contentconverter)
+	public static Converter<?> get(Type type, Converter<?> contentConverter)
 	{
 		Converter<?> converter = null;
-		if (contentconverter == null) converter = TYPE_CONVERTER_CACHE.get(type);
+		if (contentConverter == null) converter = TYPE_CONVERTER_CACHE.get(type);
 		if (converter == null)
 		{
 			try
 			{
-				converter = _get(type, contentconverter);
+				converter = _get(type, contentConverter);
 			}
 			catch (Exception e) { throw new RuntimeException(e); }
-			if (contentconverter == null) TYPE_CONVERTER_CACHE.put(type, converter);
+			if (contentConverter == null) TYPE_CONVERTER_CACHE.put(type, converter);
 		}
 		return converter;
 	}
-	private static Converter<?> _get(Type type, Converter<?> contentconverter) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+	private static Converter<?> _get(Type type, Converter<?> contentConverter) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
 	{
 		Class<?> c = classOf(type);
 
@@ -82,40 +82,52 @@ public abstract class Converters
 			q.addAll(Arrays.asList(cur.getInterfaces()));
 		}
 
-		if (c == Integer.class || c == int.class) return INTEGER_OBJ_converter;
-		if (c == Long.class || c == long.class) return LONG_OBJ_converter;
-		if (c == Float.class || c == float.class) return FLOAT_OBJ_converter;
-		if (c == Double.class || c == double.class) return DOUBLE_OBJ_converter;
-		if (c == String.class) return STRING_OBJ_converter;
+		if (c == Boolean.class || c == boolean.class) return BOOLEAN_OBJ_CONVERTER;
+		if (c == Integer.class || c == int.class) return INTEGER_OBJ_CONVERTER;
+		if (c == Long.class || c == long.class) return LONG_OBJ_CONVERTER;
+		if (c == Float.class || c == float.class) return FLOAT_OBJ_CONVERTER;
+		if (c == Double.class || c == double.class) return DOUBLE_OBJ_CONVERTER;
+		if (c == String.class) return STRING_OBJ_CONVERTER;
 		if (Enum.class.isAssignableFrom(c)) return EnumConverter.of(c);
 
 		if (c.isAssignableFrom(DataList.class))
 		{
 			Type contentType = ((ParameterizedType) type).getActualTypeArguments()[0];
-			if (contentconverter == null)
-				contentconverter = get(contentType, null);
+			if (contentConverter == null)
+				contentConverter = get(contentType, null);
 
 			return c.isAssignableFrom(CList.class)
-				? new Listconverter<>(contentconverter)
-				: create(contentconverter, classOf(contentType));
+				? new ListConverter<>(contentConverter)
+				: create(contentConverter, classOf(contentType));
+		}
 
+		if (c.isAssignableFrom(CMap.class))
+		{
+			Type keyType = ((ParameterizedType) type).getActualTypeArguments()[0];
+			if (keyType != String.class)
+				throw new RuntimeException(String.format("Cannot convert map with key type other than String (used %s).", keyType));
+			Type contentType = ((ParameterizedType) type).getActualTypeArguments()[1];
+			if (contentConverter == null)
+				contentConverter = get(contentType, null);
+
+			return new MapConverter<>(contentConverter);
 		}
 
 		if (Data.class.isAssignableFrom(c) && c.isInterface())
 		{
 			@SuppressWarnings("unchecked")
 			Class<? extends Data> d = (Class<? extends Data>) c;
-			return new Mapconverter<>(d);
+			return new ObjectConverter<>(d);
 		}
 
 		throw new RuntimeException(String.format("No converter for type %s available.", type));
 	}
 
 
-	public static class Listconverter<T> implements Converter<CList<T>>
+	public static class ListConverter<T> implements Converter<CList<T>>
 	{
 		private final Converter<T> contentConverter;
-		public Listconverter(Converter<T> contentConverter)
+		public ListConverter(Converter<T> contentConverter)
 		{
 			this.contentConverter = contentConverter;
 		}
@@ -132,17 +144,17 @@ public abstract class Converters
 		}
 	}
 
-	public static <T extends Data> DataListconverter<T> create(Converter<?> converter, Class<?> type)
+	public static <T extends Data> DataListConverter<T> create(Converter<?> converter, Class<?> type)
 	{
 		@SuppressWarnings("unchecked") Converter<T> tConverter = (Converter<T>) converter;
 		@SuppressWarnings("unchecked") Class<T> tType = (Class<T>) type;
-		return new DataListconverter<>(tConverter, tType);
+		return new DataListConverter<>(tConverter, tType);
 	}
-	public static class DataListconverter<T extends Data> implements Converter<DataList<T>>
+	public static class DataListConverter<T extends Data> implements Converter<DataList<T>>
 	{
 		private final Converter<T> contentConverter;
 		private final Class<T> contentType;
-		public DataListconverter(Converter<T> contentConverter, Class<T> contentType)
+		public DataListConverter(Converter<T> contentConverter, Class<T> contentType)
 		{
 			this.contentConverter = contentConverter;
 			this.contentType = contentType;
@@ -160,11 +172,31 @@ public abstract class Converters
 		}
 	}
 
+	public static class MapConverter<T> implements Converter<CMap<T>>
+	{
+		private final Converter<T> contentConverter;
+		public MapConverter(Converter<T> contentConverter)
+		{
+			this.contentConverter = contentConverter;
+		}
+		@Override public CMap<T> apply(Castable o)
+		{
+			return new CMap<>(o.asCastableObject(), contentConverter);
+		}
+		@Override public Castable applyInverse(CMap<T> tcMap)
+		{
+			CastableObject o = new CastableObject();
+			if (tcMap != null && !tcMap.isEmpty())
+				new CMap<>(o, contentConverter).putAll(tcMap);
+			return o;
+		}
+	}
 
-	public static class Mapconverter<T extends Data> implements Converter<T>
+
+	public static class ObjectConverter<T extends Data> implements Converter<T>
 	{
 		private final Class<T> c;
-		public Mapconverter(Class<T> c)
+		public ObjectConverter(Class<T> c)
 		{
 			this.c = c;
 		}
@@ -248,7 +280,25 @@ public abstract class Converters
 		}
 	}
 
-	public static final Converter<Integer> INTEGER_OBJ_converter = new Converter<Integer>()
+	public static final Converter<Boolean> BOOLEAN_OBJ_CONVERTER = new Converter<Boolean>()
+	{
+		@Override public Boolean apply(Castable o)
+		{
+			try
+			{
+				String s = o.asCastableString().getValue();
+				return Boolean.parseBoolean(s);
+			}
+			catch (Exception ignore) {}
+			return false;
+		}
+		@Override public Castable applyInverse(Boolean v)
+		{
+			return new CastableString(v == null ? "" : v.toString());
+		}
+	};
+
+	public static final Converter<Integer> INTEGER_OBJ_CONVERTER = new Converter<Integer>()
 	{
 		@Override public Integer apply(Castable o)
 		{
@@ -268,7 +318,7 @@ public abstract class Converters
 		}
 	};
 
-	public static final Converter<Long> LONG_OBJ_converter = new Converter<Long>()
+	public static final Converter<Long> LONG_OBJ_CONVERTER = new Converter<Long>()
 	{
 		@Override public Long apply(Castable o)
 		{
@@ -288,7 +338,7 @@ public abstract class Converters
 		}
 	};
 
-	public static final Converter<Float> FLOAT_OBJ_converter = new Converter<Float>()
+	public static final Converter<Float> FLOAT_OBJ_CONVERTER = new Converter<Float>()
 	{
 		@Override public Float apply(Castable o)
 		{
@@ -302,7 +352,7 @@ public abstract class Converters
 		}
 	};
 
-	public static final Converter<Double> DOUBLE_OBJ_converter = new Converter<Double>()
+	public static final Converter<Double> DOUBLE_OBJ_CONVERTER = new Converter<Double>()
 	{
 		@Override public Double apply(Castable o)
 		{
@@ -316,7 +366,7 @@ public abstract class Converters
 		}
 	};
 
-	public static final Converter<String> STRING_OBJ_converter = new Converter<String>()
+	public static final Converter<String> STRING_OBJ_CONVERTER = new Converter<String>()
 	{
 		@Override public String apply(Castable o)
 		{

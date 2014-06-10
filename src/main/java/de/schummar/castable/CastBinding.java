@@ -13,14 +13,14 @@ import java.util.List;
 public class CastBinding<T> implements Property<T>, InvalidationListener
 {
 	private final Castable<?> castable;
-	private final Converter<T> adapter;
+	private final Converter<T> converter;
 	private final List<ChangeListener<? super T>> changeListeners = new ArrayList<>();
 	private final List<InvalidationListener> invalidationListeners = new ArrayList<>();
 	private T value = null;
-	public CastBinding(Castable castable, Converter<T> adapter)
+	public CastBinding(Castable castable, Converter<T> converter)
 	{
 		this.castable = castable;
-		this.adapter = adapter;
+		this.converter = converter;
 		castable.addDeepListener(this);
 	}
 
@@ -76,7 +76,7 @@ public class CastBinding<T> implements Property<T>, InvalidationListener
 	}
 	@Override public T getValue()
 	{
-		if (value == null) value = adapter.apply(castable);
+		if (value == null) value = converter.apply(castable);
 		return value;
 	}
 	@Override public void addListener(InvalidationListener listener)
@@ -89,7 +89,7 @@ public class CastBinding<T> implements Property<T>, InvalidationListener
 	}
 	@Override public void setValue(T value)
 	{
-		castable.overwrite(adapter.applyInverse(value));
+		castable.overwrite(converter.applyInverse(value));
 		T oldValue = this.value;
 		this.value = value;
 		informListeners(oldValue);
