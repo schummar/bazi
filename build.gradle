@@ -9,25 +9,21 @@ repositories { mavenCentral() }
 dependencies { compile 'org.slf4j:slf4j-api:1.7.6' }
 
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = 'sources'
+task sourceJar(type: Jar) {
 	from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-	classifier = 'javadoc'
+task javadocJar(type: Jar) {
 	from javadoc.destinationDir
-}
-
-artifacts {
-	archives sourcesJar
-	archives javadocJar
 }
 
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			from components.java
+
+            artifact sourceJar { classifier 'sources' }
+            artifact javadocJar { classifier 'javadoc' }
 		}
 	}
 	repositories {
