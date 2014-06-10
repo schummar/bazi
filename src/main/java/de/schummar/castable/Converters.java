@@ -39,6 +39,12 @@ public abstract class Converters
 
 
 	private static final Map<Type, Converter<?>> TYPE_CONVERTER_CACHE = new HashMap<>();
+	public static <T> Converter<T> get(Class<T> c)
+	{
+		@SuppressWarnings("unchecked")
+		Converter<T> converter = (Converter<T>) get(c, null);
+		return converter;
+	}
 	public static Converter<?> get(Type type, Converter<?> contentConverter)
 	{
 		Converter<?> converter = null;

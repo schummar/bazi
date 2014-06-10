@@ -1,7 +1,6 @@
 package de.schummar.castable;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
@@ -10,27 +9,27 @@ import javafx.beans.value.ObservableValue;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CastBinding<T> implements Property<T>, InvalidationListener
+public class CProperty<T> implements Property<T>
 {
 	private final Castable<?> castable;
 	private final Converter<T> converter;
 	private final List<ChangeListener<? super T>> changeListeners = new ArrayList<>();
 	private final List<InvalidationListener> invalidationListeners = new ArrayList<>();
 	private T value = null;
-	public CastBinding(Castable castable, Converter<T> converter)
+	public CProperty(Castable castable, Converter<T> converter)
 	{
 		this.castable = castable;
 		this.converter = converter;
-		castable.addDeepListener(this);
+		castable.addDeepListener(invalidationListener);
 	}
 
 
-	@Override public void invalidated(Observable observable)
+	private final InvalidationListener invalidationListener = observable ->
 	{
 		T oldValue = value;
 		value = null;
 		informListeners(oldValue);
-	}
+	};
 	private void informListeners(T oldValue)
 	{
 		changeListeners.forEach(l -> l.changed(this, oldValue, getValue()));
@@ -40,11 +39,11 @@ public class CastBinding<T> implements Property<T>, InvalidationListener
 
 	@Override public void bind(ObservableValue<? extends T> observable)
 	{
-		throw new RuntimeException("cannot bind an CastBinding");
+		throw new RuntimeException("cannot bind a CProperty");
 	}
 	@Override public void unbind()
 	{
-		castable.removeListener(this);
+		castable.removeListener(invalidationListener);
 	}
 	@Override public boolean isBound()
 	{
@@ -94,9 +93,12 @@ public class CastBinding<T> implements Property<T>, InvalidationListener
 		this.value = value;
 		informListeners(oldValue);
 	}
-
 	@Override public String toString()
 	{
 		return getValue().toString();
+	}
+	public Property<String> asStringProperty()
+	{
+		return castable.asCastableString();
 	}
 }

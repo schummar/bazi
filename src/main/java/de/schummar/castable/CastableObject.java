@@ -129,7 +129,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 			if (name.endsWith("property")) name = name.substring(0, name.indexOf("property"));
 			Converter<?> converter = Converters.get(method);
 			Castable<?> castable = getObj(name, converter, method.getAnnotation(Attribute.class).def());
-			property = new CastBinding<>(castable, converter);
+			property = new CProperty<>(castable, converter);
 			propertyCache.put(method, property);
 		}
 		return property;
@@ -137,7 +137,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 	public <T> Property<T> getProperty(String name, Converter<T> converter) { return getProperty(name, converter, ""); }
 	public <T> Property<T> getProperty(String name, Converter<T> converter, String def)
 	{
-		return new CastBinding<>(getObj(name, converter, def), converter);
+		return new CProperty<>(getObj(name, converter, def), converter);
 	}
 
 	private Castable getObj(String name, Converter<?> converter, String def)

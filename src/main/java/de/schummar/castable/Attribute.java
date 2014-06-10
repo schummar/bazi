@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 public @interface Attribute
 {
 	String def() default "";
-	String key() default "";
 	Class<? extends Converter> converter() default Converter.class;
 	Class<? extends Converter> contentConverter() default Converter.class;
 }

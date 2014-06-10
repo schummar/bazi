@@ -119,4 +119,8 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 	{
 		return get(size() - 1);
 	}
+	public <S> CList<S> cast(Class<S> c)
+	{
+		return new CList<>(list, Converters.get(c));
+	}
 }
