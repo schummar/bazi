@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Convert
 {
-	Class<? extends Converter<?>> value();
+	Class<? extends Converter> value();
+	boolean forSubClasses() default false;
 }

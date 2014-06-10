@@ -24,12 +24,6 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 	private ListChangeListener<? super Castable<?>> listChangeListener = change -> {
 		ListChangeListener.Change<T> tChange = new ListChangeListener.Change<T>(this)
 		{
-			private final int[] permutation;
-			{
-				permutation = new int[getTo() - getFrom()];
-				for (int i = getFrom(); i < getTo(); i++)
-					permutation[i] = change.getPermutation(i + getFrom());
-			}
 			@Override public boolean next() { return change.next(); }
 			@Override public void reset() { change.reset(); }
 			@Override public int getFrom() { return change.getFrom(); }
@@ -40,7 +34,13 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 				change.getRemoved().forEach(c -> removed.add(converter.apply(c)));
 				return removed;
 			}
-			@Override protected int[] getPermutation() { return permutation; }
+			@Override protected int[] getPermutation()
+			{
+				int[] permutation = new int[getTo() - getFrom()];
+				for (int i = getFrom(); i < getTo(); i++)
+					permutation[i] = change.getPermutation(i + getFrom());
+				return permutation;
+			}
 		};
 		listChangeListeners.forEach(listener -> listener.onChanged(tChange));
 	};

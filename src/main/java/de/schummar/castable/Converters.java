@@ -4,49 +4,83 @@ import javafx.beans.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 public abstract class Converters
 {
-	private static Map<Method, Converter> converterCache = new HashMap<>();
+	private static final Map<Method, Converter> METHOD_CONVERTER_CACHE = new HashMap<>();
 	public static Converter get(Method method)
 	{
-		try
+		Converter converter = METHOD_CONVERTER_CACHE.get(method);
+		if (converter == null)
 		{
-			Converter converter = converterCache.get(method);
-			if (converter != null) return converter;
-
-			Attribute attribute = method.getAnnotation(Attribute.class);
-			if (attribute.converter() != Converter.class) converter = attribute.converter().newInstance();
-			else
+			try
 			{
-				Type type = method.getReturnType().isAssignableFrom(Property.class)
-					? ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]
-					: method.getGenericReturnType();
-				Converter contentconverter = null;
-				if (attribute.contentConverter() != Converter.class) contentconverter = attribute.contentConverter().newInstance();
-				converter = get(type, contentconverter);
+				converter = _get(method);
 			}
-			converterCache.put(method, converter);
-			return converter;
+			catch (Exception e) { throw new RuntimeException(e); }
+			METHOD_CONVERTER_CACHE.put(method, converter);
 		}
-		catch (Exception e)
-		{
-			throw new RuntimeException(e);
-		}
+		return converter;
+	}
+	private static Converter _get(Method method) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException
+	{
+		Attribute attribute = method.getAnnotation(Attribute.class);
+		if (attribute.converter() != Converter.class) return attribute.converter().getConstructor().newInstance();
+
+		Type type = method.getReturnType().isAssignableFrom(Property.class)
+			? ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]
+			: method.getGenericReturnType();
+		Converter contentconverter = null;
+		if (attribute.contentConverter() != Converter.class) contentconverter = attribute.contentConverter().getConstructor().newInstance();
+		return get(type, contentconverter);
 	}
 
-	public static Converter<?> get(Type type, Converter<?> contentconverter) throws IllegalAccessException, InstantiationException
+
+	private static final Map<Type, Converter<?>> TYPE_CONVERTER_CACHE = new HashMap<>();
+	public static Converter<?> get(Type type, Converter<?> contentconverter)
+	{
+		Converter<?> converter = null;
+		if (contentconverter == null) converter = TYPE_CONVERTER_CACHE.get(type);
+		if (converter == null)
+		{
+			try
+			{
+				converter = _get(type, contentconverter);
+			}
+			catch (Exception e) { throw new RuntimeException(e); }
+			if (contentconverter == null) TYPE_CONVERTER_CACHE.put(type, converter);
+		}
+		return converter;
+	}
+	private static Converter<?> _get(Type type, Converter<?> contentconverter) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
 	{
 		Class<?> c = classOf(type);
 
 		if (c.isAnnotationPresent(Convert.class))
-			return c.getAnnotation(Convert.class).value().newInstance();
+			return c.getAnnotation(Convert.class).value().getConstructor().newInstance();
+
+		Queue<Class<?>> q = new LinkedList<>();
+		q.add(c);
+		while (!q.isEmpty())
+		{
+			Class<?> cur = q.remove();
+			if (cur.isAnnotationPresent(Convert.class) && cur.getAnnotation(Convert.class).forSubClasses())
+			{
+				try {return cur.getAnnotation(Convert.class).value().getConstructor(Type.class).newInstance(type);}
+				catch (Exception ignore) {}
+				try {return cur.getAnnotation(Convert.class).value().getConstructor(Class.class).newInstance(c);}
+				catch (Exception ignore) {}
+				try { return cur.getAnnotation(Convert.class).value().getConstructor().newInstance();}
+				catch (Exception e) { throw new RuntimeException(e); }
+			}
+
+
+			Class<?> sup = cur.getSuperclass();
+			if (sup != null) q.add(sup);
+			q.addAll(Arrays.asList(cur.getInterfaces()));
+		}
 
 		if (c == Integer.class || c == int.class) return INTEGER_OBJ_converter;
 		if (c == Long.class || c == long.class) return LONG_OBJ_converter;
@@ -55,15 +89,16 @@ public abstract class Converters
 		if (c == String.class) return STRING_OBJ_converter;
 		if (Enum.class.isAssignableFrom(c)) return EnumConverter.of(c);
 
-		if (c.isAssignableFrom(CList.class))
+		if (c.isAssignableFrom(DataList.class))
 		{
 			Type contentType = ((ParameterizedType) type).getActualTypeArguments()[0];
 			if (contentconverter == null)
 				contentconverter = get(contentType, null);
 
-			return c.isAssignableFrom(DataList.class)
-				? create(contentconverter, classOf(contentType))
-				: new Listconverter<>(contentconverter);
+			return c.isAssignableFrom(CList.class)
+				? new Listconverter<>(contentconverter)
+				: create(contentconverter, classOf(contentType));
+
 		}
 
 		if (Data.class.isAssignableFrom(c) && c.isInterface())
@@ -79,20 +114,20 @@ public abstract class Converters
 
 	public static class Listconverter<T> implements Converter<CList<T>>
 	{
-		private final Converter<T> converter;
-		public Listconverter(Converter<T> converter)
+		private final Converter<T> contentConverter;
+		public Listconverter(Converter<T> contentConverter)
 		{
-			this.converter = converter;
+			this.contentConverter = contentConverter;
 		}
 		@Override public CList<T> apply(Castable o)
 		{
-			return new CList<>(o.asCastableList(), converter);
+			return new CList<>(o.asCastableList(), contentConverter);
 		}
 		@Override public Castable applyInverse(CList<T> ts)
 		{
 			CastableList o = new CastableList();
 			if (ts != null && !ts.isEmpty())
-				new CList<>(o, converter).addAll(ts);
+				new CList<>(o, contentConverter).addAll(ts);
 			return o;
 		}
 	}
@@ -105,22 +140,22 @@ public abstract class Converters
 	}
 	public static class DataListconverter<T extends Data> implements Converter<DataList<T>>
 	{
-		private final Converter<T> converter;
-		private final Class<T> type;
-		public DataListconverter(Converter<T> converter, Class<T> type)
+		private final Converter<T> contentConverter;
+		private final Class<T> contentType;
+		public DataListconverter(Converter<T> contentConverter, Class<T> contentType)
 		{
-			this.converter = converter;
-			this.type = type;
+			this.contentConverter = contentConverter;
+			this.contentType = contentType;
 		}
 		@Override public DataList<T> apply(Castable o)
 		{
-			return new DataList<>(o.asCastableList(), converter, type);
+			return new DataList<>(o.asCastableList(), contentConverter, contentType);
 		}
 		@Override public Castable applyInverse(DataList<T> ts)
 		{
 			CastableList o = new CastableList();
 			if (ts != null && !ts.isEmpty())
-				new DataList<>(o, converter, type).addAll(ts);
+				new DataList<>(o, contentConverter, contentType).addAll(ts);
 			return o;
 		}
 	}
@@ -206,6 +241,7 @@ public abstract class Converters
 		}
 		@Override public Castable applyInverse(T t)
 		{
+			if (t == null) return new CastableString();
 			if (t instanceof ConvertibleEnum)
 				return new CastableString(((ConvertibleEnum) t).key());
 			return new CastableString(t.name());

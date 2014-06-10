@@ -167,4 +167,15 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 			.bindTo(obj)
 			.invokeWithArguments(args);
 	}
+
+
+	@Override public int hashCode()
+	{
+		return System.identityHashCode(this);
+	}
+	@Override public boolean equals(Object obj)
+	{
+		if (obj instanceof Data) obj = ((Data) obj).src();
+		return this == obj;
+	}
 }
