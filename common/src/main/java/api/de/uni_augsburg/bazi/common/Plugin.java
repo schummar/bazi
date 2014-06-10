@@ -1,6 +1,7 @@
 package de.uni_augsburg.bazi.common;
 
 import de.schummar.castable.Attribute;
+import de.schummar.castable.Convert;
 import de.schummar.castable.Data;
 import javafx.beans.property.Property;
 
@@ -49,6 +50,7 @@ public interface Plugin<T extends Plugin.Instance>
 	}
 
 	/** Classes that implement this interface can be created by plugins. */
+	@Convert(value = PluginConverter.class, forSubClasses = true)
 	public interface Instance
 	{}
 }

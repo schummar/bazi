@@ -41,7 +41,7 @@ public class BMath
 
 	public static Rational valueOf(String s)
 	{
-		if (s == null) return ZERO;
+		if (s == null || s.isEmpty()) return ZERO;
 
 		switch (s.toLowerCase())
 		{

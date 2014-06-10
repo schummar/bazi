@@ -1,9 +1,13 @@
 package de.uni_augsburg.bazi.math;
 
+import de.schummar.castable.Castable;
+import de.schummar.castable.CastableString;
+import de.schummar.castable.Convert;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.apfloat.Apint;
 
+@Convert(value = Real.Converter.class, forSubClasses = true)
 public class Real implements Comparable<Real>, Interval
 {
 	public static Real valueOf(String that)
@@ -302,5 +306,19 @@ public class Real implements Comparable<Real>, Interval
 	public String toString()
 	{
 		return round(precision()).delegate.toString(true);
+	}
+
+
+	public static class Converter implements de.schummar.castable.Converter<Real>
+	{
+		@Override public Real apply(Castable o)
+		{
+			return valueOf(o.asCastableString().getValue());
+		}
+		@Override public Castable applyInverse(Real v)
+		{
+			if (v == null) return new CastableString();
+			return new CastableString(v.toString());
+		}
 	}
 }

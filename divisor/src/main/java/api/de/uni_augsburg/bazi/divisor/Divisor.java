@@ -6,8 +6,6 @@ import de.schummar.castable.Convert;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** An interval of Real numbers with possibly a nicer value that is element of that interval. */
 @Convert(Divisor.Converter.class)
@@ -99,35 +97,24 @@ public class Divisor implements Interval
 
 	public static class Converter implements de.schummar.castable.Converter<Divisor>
 	{
-		private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
+		private static final de.schummar.castable.Converter<Real> REAL_CONVERTER = new Real.Converter();
 		@Override public Divisor apply(Castable castable)
 		{
-			Real min = null, nice = null, max = null;
 			CastableObject co = castable.asCastableObject();
-			try
-			{
-				min = (Real) co.getProperty(Divisor.class.getMethod("min")).getValue();
-				nice = (Real) co.getProperty(Divisor.class.getMethod("nice")).getValue();
-				max = (Real) co.getProperty(Divisor.class.getMethod("max")).getValue();
-			}
-			catch (Exception e)
-			{
-				LOGGER.warn(e.getMessage());
-			}
-			return new Divisor(min, nice, max);
+			Real min = co.getProperty("min", REAL_CONVERTER, "-oo").getValue();
+			Real max = co.getProperty("max", REAL_CONVERTER, "oo").getValue();
+			Real nice = co.getProperty("nice", REAL_CONVERTER, "0").getValue();
+			if (!Interval.of(min, max).contains(nice)) nice = null;
+			return nice == null ? new Divisor(min, max) : new Divisor(min, nice, max);
 		}
 		@Override public Castable applyInverse(Divisor divisor)
 		{
 			CastableObject co = new CastableObject();
-			try
+			if (divisor != null)
 			{
-				co.getProperty(Divisor.class.getMethod("min")).setValue(divisor.min());
-				co.getProperty(Divisor.class.getMethod("nice")).setValue(divisor.nice());
-				co.getProperty(Divisor.class.getMethod("max")).setValue(divisor.max());
-			}
-			catch (Exception e)
-			{
-				LOGGER.warn(e.getMessage());
+				co.getProperty("min", REAL_CONVERTER).setValue(divisor.min());
+				co.getProperty("max", REAL_CONVERTER).setValue(divisor.max());
+				co.getProperty("nice", REAL_CONVERTER).setValue(divisor.nice);
 			}
 			return co;
 		}

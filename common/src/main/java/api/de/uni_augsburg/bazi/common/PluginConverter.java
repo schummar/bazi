@@ -1,13 +1,11 @@
-package de.uni_augsburg.bazi.common.format;
+package de.uni_augsburg.bazi.common;
 
 import de.schummar.castable.Castable;
 import de.schummar.castable.CastableObject;
 import de.schummar.castable.CastableString;
 import de.schummar.castable.Converter;
-import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.common.PluginManager;
 
-class PluginConverter<T extends Plugin.Instance> implements Converter<T>
+public class PluginConverter<T extends Plugin.Instance> implements Converter<T>
 {
 	private final Class<T> type;
 
@@ -23,13 +21,14 @@ class PluginConverter<T extends Plugin.Instance> implements Converter<T>
 		else if (castable instanceof CastableString)
 		{
 			data = new CastableObject();
-			data.cast(Plugin.Params.class).name(castable.toString());
+			data.cast(Plugin.Params.class).name(castable.asCastableString().getValue());
 		}
 		else data = new CastableObject();
-		return PluginManager.tryInstantiate(type, data).get();
+		return PluginManager.tryInstantiate(type, data).orElse(null);
 	}
 	@Override public Castable applyInverse(T t)
 	{
+		if (t == null) return new CastableString();
 		return new CastableString(t.toString());
 	}
 }

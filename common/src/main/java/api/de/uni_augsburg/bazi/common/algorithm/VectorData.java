@@ -40,37 +40,37 @@ public interface VectorData extends Data
 		 * The name of the party.
 		 * @return the name of the party.
 		 */
-		@Attribute Property<String> namePropery();
-		default String name() { return namePropery().getValue(); }
-		default void name(String v) { namePropery().setValue(v); }
+		@Attribute Property<String> nameProperty();
+		default String name() { return nameProperty().getValue(); }
+		default void name(String v) { nameProperty().setValue(v); }
 
 		/**
 		 * The votes of the party. Can be any non-negative real number.
 		 * @return the votes of the party.
 		 */
-		@Attribute Property<Real> votesPropery();
-		default Real votes() { return votesPropery().getValue(); }
-		default void votes(Real v) { votesPropery().setValue(v); }
+		@Attribute Property<Real> votesProperty();
+		default Real votes() { return votesProperty().getValue(); }
+		default void votes(Real v) { votesProperty().setValue(v); }
 
 		/**
 		 * The minimum number of seats the party shall receive.
 		 * @return the minimum number of seats the party shall receive.
 		 */
-		@Attribute Property<Int> minPropery();
-		default Int min() { return minPropery().getValue(); }
-		default void min(Int v) { minPropery().setValue(v); }
+		@Attribute Property<Int> minProperty();
+		default Int min() { return minProperty().getValue(); }
+		default void min(Int v) { minProperty().setValue(v); }
 
 		/**
 		 * The maximum number of seats the party shall receive.
 		 * @return the maximum number of seats the party shall receive.
 		 */
-		@Attribute(def = "oo") Property<Int> maxPropery();
-		default Int max() { return maxPropery().getValue(); }
-		default void max(Int v) { maxPropery().setValue(v); }
+		@Attribute(def = "oo") Property<Int> maxProperty();
+		default Int max() { return maxProperty().getValue(); }
+		default void max(Int v) { maxProperty().setValue(v); }
 
-		@Attribute Property<Int> seatsPropery();
-		default Int seats() { return seatsPropery().getValue(); }
-		default void seats(Int v) { seatsPropery().setValue(v); }
+		@Attribute Property<Int> seatsProperty();
+		default Int seats() { return seatsProperty().getValue(); }
+		default void seats(Int v) { seatsProperty().setValue(v); }
 
 		@Attribute Property<Uniqueness> uniquenessProperty();
 		default Uniqueness uniqueness() { return uniquenessProperty().getValue(); }
