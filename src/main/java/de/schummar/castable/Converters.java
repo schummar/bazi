@@ -29,7 +29,7 @@ public abstract class Converters
 		Attribute attribute = method.getAnnotation(Attribute.class);
 		if (attribute.converter() != Converter.class) return attribute.converter().getConstructor().newInstance();
 
-		Type type = method.getReturnType().isAssignableFrom(Property.class)
+		Type type = method.getReturnType().isAssignableFrom(CProperty.class)
 			? ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]
 			: method.getGenericReturnType();
 		Converter contentconverter = null;
