@@ -1,10 +1,10 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
+import de.schummar.castable.CProperty;
 import de.uni_augsburg.bazi.gui.bind.NestedBinding;
 import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import javafx.beans.binding.ListBinding;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
@@ -14,18 +14,22 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 
-public class MTableColumn<T, S> extends TableColumn<T, S>
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+
+public class MTableColumn<T, S> extends TableColumn<T, String>
 {
 	public MTableColumn(
-		ObservableObjectValue<String> name,
-		MTableAttribute<T, S> attribute,
+		ObservableValue<String> name,
+		Function<T, CProperty<S>> attribute,
+		BinaryOperator<S> addOp,
 		Pos alignment
 	)
 	{
 		setSortable(false);
 		setMinWidth(100);
-		setCellFactory(c -> new MTableCell<>(attribute, alignment));
-		setCellValueFactory(p -> attribute.extractor().apply(p.getValue()));
+		setCellFactory(c -> new MTableCell(alignment));
+		setCellValueFactory(p ->  attribute.apply(p.getValue()).asStringProperty());
 
 
 		EditableLabel tableHeader = new EditableLabel(name);
@@ -42,6 +46,8 @@ public class MTableColumn<T, S> extends TableColumn<T, S>
 		ListBinding<ObservableValue<S>> attributes = NestedBinding.of(tableViewProperty())
 			.listProperty(TableView::itemsProperty)
 			.map(attribute.extractor());
+
+		tableViewProperty().get().item
 
 
 		StringBinding b = new StringBinding()

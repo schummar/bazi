@@ -1,14 +1,17 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
+import de.schummar.castable.CProperty;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
 
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MTable<T> extends TableView<T>
@@ -61,12 +64,13 @@ public class MTable<T> extends TableView<T>
 	}
 
 	public <S> void addColumn(
-		ObservableObjectValue<String> name,
-		MTableAttribute<T, S> attribute,
+		ObservableValue<String> name,
+		Function<T, CProperty<S>> attribute,
+		BinaryOperator<S> addOp,
 		Pos alignment
 	)
 	{
-		TableColumn<T, S> col = new MTableColumn<>(name, attribute.nullSafe(), alignment);
+		TableColumn<T, S> col = new MTableColumn<>(name, attribute, addOp, alignment);
 		getColumns().add(col);
 	}
 	public int selectedRow()

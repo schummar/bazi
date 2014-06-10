@@ -1,5 +1,7 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
+import de.schummar.castable.CProperty;
+import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
@@ -8,15 +10,14 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
-public class MTableCell<T, S> extends TableCell<T, S>
-{
-	private final MTableAttribute<T, S> attribute;
+import java.util.function.Function;
 
+public class MTableCell<T> extends TableCell<T, String>
+{
 	private TextField textField = null;
 
-	public MTableCell(MTableAttribute<T, S> attribute, Pos alignment)
+	public MTableCell(Pos alignment)
 	{
-		this.attribute = attribute;
 
 		selectedProperty().addListener((ChangeListener<Boolean>) this::updateSelected);
 		editingProperty().addListener(this::updateEditing);

@@ -1,6 +1,5 @@
 package de.uni_augsburg.bazi.gui.view;
 
-import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.WritableObjectValue;
 import javafx.beans.value.WritableStringValue;
@@ -17,7 +16,7 @@ public class EditableLabel extends Label
 	private TextField textField;
 	private ContextMenu contextMenu;
 
-	public EditableLabel(ObservableObjectValue<String> text)
+	public EditableLabel(ObservableValue<String> text)
 	{
 		textProperty().bind(text);
 		if (text instanceof WritableStringValue)

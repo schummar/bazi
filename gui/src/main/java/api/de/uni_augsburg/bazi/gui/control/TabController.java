@@ -34,7 +34,7 @@ public class TabController
 
 	private void createNewTab()
 	{
-		tabPane.getTabs().add(new DistrictTab(tabPane.getTabs().size()));
+		tabPane.getTabs().add(new DistrictTab(tabPane.getTabs().size(), options, district));
 		tabPane.getSelectionModel().select(tabPane.getTabs().size() - 1);
 	}
 
