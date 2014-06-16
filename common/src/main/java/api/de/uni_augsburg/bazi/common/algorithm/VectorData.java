@@ -6,7 +6,6 @@ import de.schummar.castable.Data;
 import de.schummar.castable.DataList;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import javafx.beans.property.Property;
 
 /** A minimal vector input interface. */
 public interface VectorData extends Data
@@ -15,7 +14,7 @@ public interface VectorData extends Data
 	 * The name of the apportionment.
 	 * @return the name of the apportionment.
 	 */
-	@Attribute Property<String> nameProperty();
+	@Attribute CProperty<String> nameProperty();
 	default String name() { return nameProperty().getValue(); }
 	default void name(String v) { nameProperty().setValue(v); }
 
@@ -23,7 +22,7 @@ public interface VectorData extends Data
 	 * The number of seats to be apportioned.
 	 * @return the number of seats to be distributed.
 	 */
-	@Attribute Property<Int> seatsProperty();
+	@Attribute CProperty<Int> seatsProperty();
 	default Int seats() { return seatsProperty().getValue(); }
 	default void seats(Int v) { seatsProperty().setValue(v); }
 
@@ -41,7 +40,7 @@ public interface VectorData extends Data
 		 * The name of the party.
 		 * @return the name of the party.
 		 */
-		@Attribute Property<String> nameProperty();
+		@Attribute CProperty<String> nameProperty();
 		default String name() { return nameProperty().getValue(); }
 		default void name(String v) { nameProperty().setValue(v); }
 
@@ -57,7 +56,7 @@ public interface VectorData extends Data
 		 * The minimum number of seats the party shall receive.
 		 * @return the minimum number of seats the party shall receive.
 		 */
-		@Attribute Property<Int> minProperty();
+		@Attribute CProperty<Int> minProperty();
 		default Int min() { return minProperty().getValue(); }
 		default void min(Int v) { minProperty().setValue(v); }
 
@@ -65,19 +64,19 @@ public interface VectorData extends Data
 		 * The maximum number of seats the party shall receive.
 		 * @return the maximum number of seats the party shall receive.
 		 */
-		@Attribute(def = "oo") Property<Int> maxProperty();
+		@Attribute(def = "oo") CProperty<Int> maxProperty();
 		default Int max() { return maxProperty().getValue(); }
 		default void max(Int v) { maxProperty().setValue(v); }
 
-		@Attribute Property<Int> seatsProperty();
+		@Attribute CProperty<Int> seatsProperty();
 		default Int seats() { return seatsProperty().getValue(); }
 		default void seats(Int v) { seatsProperty().setValue(v); }
 
-		@Attribute Property<Uniqueness> uniquenessProperty();
+		@Attribute CProperty<Uniqueness> uniquenessProperty();
 		default Uniqueness uniqueness() { return uniquenessProperty().getValue(); }
 		default void uniqueness(Uniqueness v) { uniquenessProperty().setValue(v); }
 
-		@Attribute Property<Boolean> conditionUsedProperty();
+		@Attribute CProperty<Boolean> conditionUsedProperty();
 		default Boolean conditionUsed() { return conditionUsedProperty().getValue(); }
 		default void conditionUsed(Boolean v) { conditionUsedProperty().setValue(v); }
 	}

@@ -58,6 +58,7 @@ public class MTable<T> extends TableView<T>
 		return editingMCell;
 	}
 
+
 	public <S> void addColumn(MTableColumnDefinition<T, S> definition)
 	{
 		getColumns().add(definition.createColumn());
@@ -75,7 +76,15 @@ public class MTable<T> extends TableView<T>
 	}
 	public void newRow(int row)
 	{
-		getItems().add(row, supplier.get());
+		T item = supplier.get();
+		getItems().add(row, item);
+		getColumns().forEach(
+			c -> {
+				@SuppressWarnings("unchecked")
+				MTableColumn<T, ?> col = (MTableColumn<T, ?>) c;
+				col.clear(item);
+			}
+		);
 		Platform.runLater(() -> getSelectionModel().select(row, selectedCol()));
 	}
 	public void selectNext()
@@ -114,7 +123,10 @@ public class MTable<T> extends TableView<T>
 	}
 	public void clearSelected()
 	{
-		getSelectedMCell().overwrite(null);
+		T item = getSelectionModel().getSelectedItem();
+		@SuppressWarnings("unchecked")
+		MTableColumn<T, ?> col = (MTableColumn<T, ?>) selectedCol();
+		col.clear(item);
 	}
 	public void deleteSelectedRow()
 	{

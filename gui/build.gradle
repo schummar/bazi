@@ -1,3 +1,4 @@
 dependencies {
 	compile project(':common')
+	compile 'org.fxmisc.easybind:easybind:1.0.0'
 }

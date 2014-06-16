@@ -1,6 +1,5 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
@@ -14,13 +13,12 @@ public class MTableCell<T> extends TableCell<T, String>
 
 	public MTableCell(Pos alignment)
 	{
-
-		selectedProperty().addListener((ChangeListener<Boolean>) this::updateSelected);
+		selectedProperty().addListener(this::updateSelectedCell);
 		editingProperty().addListener(this::updateEditing);
 		setAlignment(alignment);
 
 	}
-	private void updateSelected(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)
+	private void updateSelectedCell(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)
 	{
 		if (newValue) getTable().setSelectedMCell(this);
 	}

@@ -3,10 +3,12 @@ package de.uni_augsburg.bazi.gui.control;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
+import de.uni_augsburg.bazi.gui.bind.Constant;
 import de.uni_augsburg.bazi.gui.mtable.MTable;
 import de.uni_augsburg.bazi.gui.mtable.MTableColumnDefinition;
 import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import de.uni_augsburg.bazi.math.BMath;
+import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -20,10 +22,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.uni_augsburg.bazi.common.algorithm.VectorData.Party;
+
 public class DistrictTab extends Tab implements Initializable
 {
 	@FXML private TextField seatsTextField;
-	@FXML private MTable<VectorData.Party> partyTable;
+	@FXML private MTable<Party> partyTable;
 
 	private final PlainOptions options;
 	private final VectorData district;
@@ -49,32 +53,57 @@ public class DistrictTab extends Tab implements Initializable
 
 	@Override public void initialize(URL location, ResourceBundle resources)
 	{
-		if (district.parties().isEmpty()) district.parties().add(null);
 		if (options.nameLabel().isEmpty()) options.nameLabel("name");
 		if (options.voteLabel().isEmpty()) options.voteLabel("votes");
 
 
-		partyTable.setItems(district.parties().cast(VectorData.Party.class));
-		partyTable.setSupplier(() -> Data.create(VectorData.Party.class));
+		partyTable.setItems(district.parties().cast(Party.class));
+		partyTable.setSupplier(() -> Data.create(Party.class));
 
-		partyTable.<Real>addColumn(
+		partyTable.addColumn(
+			MTableColumnDefinition.create(
+				options.nameLabelPropery(),
+				Party::nameProperty,
+				Pos.CENTER_LEFT
+			)
+		);
+
+		partyTable.addColumn(
 			MTableColumnDefinition.create(
 				options.voteLabelPropery(),
-				VectorData.Party::votesProperty,
+				party -> party.votesProperty().asStringProperty(),
+				Party::votesProperty,
 				Real::add,
 				Real::sub,
 				BMath.ZERO,
 				Pos.CENTER_RIGHT
 			)
 		);
-		//	partyTable.addColumn(options.nameLabelPropery(), null, Pos.CENTER_LEFT);
-		//partyTable.addColumn(options.voteLabelPropery(), null, Pos.CENTER_RIGHT);
-	}
 
-/*	private static final MTableColumnDefinition<VectorData.Party, String> NAME_COLUMN = MTableColumnDefinition.create(
-		VectorData.Party::nameProperty
-	);
-	private static final MTableColumnDefinition<VectorData.Party,String> VOTE_COLUMN = MTableColumnDefinition.create(
-		VectorData.Party::nameProperty
-	);*/
+		partyTable.addColumn(
+			MTableColumnDefinition.create(
+				Constant.of("min"),
+				party -> party.minProperty().asStringProperty(),
+				Party::minProperty,
+				Int::add,
+				Int::sub,
+				BMath.ZERO,
+				Pos.CENTER_RIGHT
+			)
+		);
+
+		partyTable.addColumn(
+			MTableColumnDefinition.create(
+				Constant.of("max"),
+				party -> party.maxProperty().asStringProperty(),
+				Party::maxProperty,
+				Int::add,
+				Int::sub,
+				BMath.INF,
+				Pos.CENTER_RIGHT
+			)
+		);
+
+		partyTable.newRow(0);
+	}
 }
