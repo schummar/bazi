@@ -10,7 +10,7 @@ public interface Party extends Data
 	public default String name() { return nameProperty().getValue(); }
 	public default void name(String name) { nameProperty().setValue(name); }
 
-	@Attribute() Property<Double> voteProperty();
+	@Attribute() CProperty<Double> voteProperty();
 	public default Double vote() { return voteProperty().getValue(); }
 	public default void vote(Double vote) { voteProperty().setValue(vote); }
 

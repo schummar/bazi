@@ -114,7 +114,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 
 	public Object get(Method method) throws Throwable
 	{
-		if (method.getReturnType().isAssignableFrom(Property.class))
+		if (method.getReturnType().isAssignableFrom(CProperty.class))
 			return getProperty(method);
 		return getProperty(method).getValue();
 	}

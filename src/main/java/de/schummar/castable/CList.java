@@ -20,7 +20,7 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 		list.addListener(listChangeListener);
 	}
 
-	private InvalidationListener invalidationListener = observable -> invalidationListeners.forEach(listener -> listener.invalidated(this));
+	private InvalidationListener invalidationListener = observable -> new ArrayList<>(invalidationListeners).forEach(listener -> listener.invalidated(this));
 	private ListChangeListener<? super Castable<?>> listChangeListener = change -> {
 		ListChangeListener.Change<T> tChange = new ListChangeListener.Change<T>(this)
 		{
@@ -36,13 +36,14 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 			}
 			@Override protected int[] getPermutation()
 			{
+				if (!change.wasPermutated()) return new int[0];
 				int[] permutation = new int[getTo() - getFrom()];
 				for (int i = getFrom(); i < getTo(); i++)
 					permutation[i] = change.getPermutation(i + getFrom());
 				return permutation;
 			}
 		};
-		listChangeListeners.forEach(listener -> listener.onChanged(tChange));
+		new ArrayList<>(listChangeListeners).forEach(l -> l.onChanged(tChange));
 	};
 
 
