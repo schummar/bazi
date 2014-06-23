@@ -10,7 +10,7 @@ public class Test
 	public static void main(String[] args) throws Exception
 	{
 		CastableObject m = new CastableObject();
-		m.addDeepListener(System.out::println);
+		/*m.addDeepListener(System.out::println);
 
 		Party p = m.cast(Party.class);
 		p.name("Die Partei");
@@ -26,7 +26,16 @@ public class Test
 		p1.parties().get(0).bla("sjfgsdf");
 
 
-		System.out.println(p.parties());
+		System.out.println(p.parties());*/
+
+		A a = m.cast(A.class);
+		System.out.println(Arrays.asList(m, a));
+		a.a().setValue(10);
+		System.out.println(Arrays.asList(m, a));
+		a.a().asStringProperty(20).setValue("abc");
+		System.out.println(Arrays.asList(m, a.a()));
+
+
 	}
 
 	public static interface P extends Party
@@ -36,5 +45,10 @@ public class Test
 		default void bla(String bla) { blaProperty().setValue(bla); }
 
 		@Override @Attribute List<? extends P> parties();
+	}
+
+	private interface A extends Data
+	{
+		@Attribute CProperty<Integer> a();
 	}
 }

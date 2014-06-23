@@ -22,14 +22,14 @@ public class CMap<T> implements ObservableMap<String, T>
 
 
 	private InvalidationListener invalidationListener = observable -> invalidationListeners.forEach(listener -> listener.invalidated(this));
-	private MapChangeListener<? super String, ? super Castable<?>> mapChangeListener = change -> {
+	private MapChangeListener<? super String, ? super Castable> mapChangeListener = change -> {
 		MapChangeListener.Change<String, T> tChange = new MapChangeListener.Change<String, T>(this)
 		{
 			@Override public boolean wasAdded() { return change.wasAdded(); }
 			@Override public boolean wasRemoved() { return change.wasRemoved(); }
 			@Override public String getKey() { return change.getKey(); }
-			@Override public T getValueAdded() { return converter.apply(change.getValueAdded()); }
-			@Override public T getValueRemoved() { return converter.apply(change.getValueRemoved()); }
+			@Override public T getValueAdded() { return converter.unpack(change.getValueAdded()); }
+			@Override public T getValueRemoved() { return converter.unpack(change.getValueRemoved()); }
 		};
 		mapChangeListeners.forEach(listener -> listener.onChanged(tChange));
 	};
@@ -64,14 +64,14 @@ public class CMap<T> implements ObservableMap<String, T>
 	@Override public T get(Object key)
 	{
 		if (!(key instanceof String)) return null;
-		Castable<?> v = map.get(key);
-		if (v == null) map.put((String) key, v = converter.applyInverse(null));
-		return converter.apply(v);
+		Castable v = map.get(key);
+		if (v == null) map.put((String) key, v = converter.pack(null));
+		return converter.unpack(v);
 	}
 	@Override public T put(String key, T value)
 	{
 		T old = get(key);
-		map.put(key, converter.applyInverse(value));
+		map.put(key, converter.pack(value));
 		return old;
 	}
 	@Override public T remove(Object key)
@@ -114,7 +114,7 @@ public class CMap<T> implements ObservableMap<String, T>
 	{
 		@Override public Iterator<T> iterator()
 		{
-			Iterator<Castable<?>> iterator = map.values().iterator();
+			Iterator<Castable> iterator = map.values().iterator();
 			return new Iterator<T>()
 			{
 				@Override public boolean hasNext()
@@ -123,7 +123,7 @@ public class CMap<T> implements ObservableMap<String, T>
 				}
 				@Override public T next()
 				{
-					return converter.apply(iterator.next());
+					return converter.unpack(iterator.next());
 				}
 			};
 		}
@@ -138,18 +138,18 @@ public class CMap<T> implements ObservableMap<String, T>
 	{
 		@Override public Iterator<Entry<String, T>> iterator()
 		{
-			Iterator<Entry<String, Castable<?>>> iterator = map.entrySet().iterator();
+			Iterator<Entry<String, Castable>> iterator = map.entrySet().iterator();
 			return new Iterator<Entry<String, T>>()
 			{
 				@Override public boolean hasNext() { return iterator.hasNext(); }
 				@Override public Entry<String, T> next()
 				{
-					Entry<String, Castable<?>> entry = iterator.next();
+					Entry<String, Castable> entry = iterator.next();
 					return new Entry<String, T>()
 					{
 						@Override public String getKey() { return entry.getKey(); }
-						@Override public T getValue() { return converter.apply(entry.getValue()); }
-						@Override public T setValue(T value) { return converter.apply(entry.setValue(converter.applyInverse(value))); }
+						@Override public T getValue() { return converter.unpack(entry.getValue()); }
+						@Override public T setValue(T value) { return converter.unpack(entry.setValue(converter.pack(value))); }
 					};
 				}
 			};

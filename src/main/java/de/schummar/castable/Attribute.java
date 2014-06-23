@@ -9,7 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Attribute
 {
-	String def() default "";
+	public static final String NULL = "dkldjakjdchxövaksölsdglkh.andk,sdhgkshck.sajdlsdigsdkljalcjailsdzukg";
+	String def() default NULL;
 	Class<? extends Converter> converter() default Converter.class;
 	Class<? extends Converter> contentConverter() default Converter.class;
 }

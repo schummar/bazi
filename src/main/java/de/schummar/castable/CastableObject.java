@@ -5,7 +5,6 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
@@ -14,7 +13,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
 
-public class CastableObject extends SimpleMapProperty<String, Castable<?>> implements Castable<ObservableMap<String, Castable<?>>>, Data
+public class CastableObject extends SimpleMapProperty<String, Castable> implements Castable, Data
 {
 	public static CastableObject create(Object o)
 	{
@@ -23,7 +22,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 		{
 			@SuppressWarnings("unchecked")
 			Converter<Object> converter = (Converter<Object>) Converters.get(o.getClass(), null);
-			return converter.applyInverse(o).asCastableObject();
+			return converter.pack(o).asCastableObject();
 		}
 		catch (Exception ignore) { }
 		return null;
@@ -75,11 +74,11 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 	}
 	@Override public void merge(Data that)
 	{
-		merge((Castable<?>) that.src());
+		merge((Castable) that.src());
 	}
 
 
-	@Override public void merge(Castable<?> castable)
+	@Override public void merge(Castable castable)
 	{
 		CastableObject that = castable.asCastableObject();
 		that.forEach(
@@ -89,7 +88,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 			}
 		);
 	}
-	@Override public void overwrite(Castable<?> castable)
+	@Override public void overwrite(Castable castable)
 	{
 		CastableObject that = castable.asCastableObject();
 		clear();
@@ -119,17 +118,19 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 		return getProperty(method).getValue();
 	}
 
-	private final Map<Method, Property> propertyCache = new HashMap<>();
-	public Property getProperty(Method method)
+	private final Map<Method, Property<?>> propertyCache = new HashMap<>();
+	public <T> Property<T> getProperty(Method method)
 	{
-		Property property = propertyCache.get(method);
+		@SuppressWarnings("unchecked")
+		Property<T> property = (Property<T>) propertyCache.get(method);
 		if (property == null)
 		{
 			String name = method.getName().toLowerCase();
 			if (name.endsWith("property")) name = name.substring(0, name.indexOf("property"));
-			Converter<?> converter = Converters.get(method);
-			Castable<?> castable = getObj(name, converter, method.getAnnotation(Attribute.class).def());
-			property = new CProperty<>(castable, converter);
+			Converter<T> converter = Converters.get(method);
+			String def = method.getAnnotation(Attribute.class).def();
+			Castable castable = getObj(name, def);
+			property = new CProperty<>(castable, converter, def(converter, def));
 			propertyCache.put(method, property);
 		}
 		return property;
@@ -137,17 +138,21 @@ public class CastableObject extends SimpleMapProperty<String, Castable<?>> imple
 	public <T> Property<T> getProperty(String name, Converter<T> converter) { return getProperty(name, converter, ""); }
 	public <T> Property<T> getProperty(String name, Converter<T> converter, String def)
 	{
-		return new CProperty<>(getObj(name, converter, def), converter);
+		return new CProperty<>(getObj(name, def), converter, def(converter, def));
+	}
+	private <T> T def(Converter<T> converter, String def)
+	{
+		return Attribute.NULL.equals(def) ? null : converter.unpack(new CastableString(def));
 	}
 
-	private Castable getObj(String name, Converter<?> converter, String def)
+	private Castable getObj(String name, String def)
 	{
 		Castable o = get(name);
 		if (o == null)
 		{
-			o = converter.applyInverse(null);
-			if (o instanceof CastableString)
-				o.asCastableString().setValue(def);
+			o = (Attribute.NULL.equals(def))
+				? new CastableUninitialized()
+				: new CastableString(def);
 			put(name, o);
 		}
 		return o;

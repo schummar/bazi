@@ -9,10 +9,10 @@ import java.util.*;
 
 public abstract class Converters
 {
-	private static final Map<Method, Converter> METHOD_CONVERTER_CACHE = new HashMap<>();
-	public static Converter get(Method method)
+	private static final Map<Method, Converter<?>> METHOD_CONVERTER_CACHE = new HashMap<>();
+	public static <T> Converter<T> get(Method method)
 	{
-		Converter converter = METHOD_CONVERTER_CACHE.get(method);
+		Converter<?> converter = METHOD_CONVERTER_CACHE.get(method);
 		if (converter == null)
 		{
 			try
@@ -22,7 +22,9 @@ public abstract class Converters
 			catch (Exception e) { throw new RuntimeException(e); }
 			METHOD_CONVERTER_CACHE.put(method, converter);
 		}
-		return converter;
+		@SuppressWarnings("unchecked")
+		Converter<T> tConverter = (Converter<T>) converter;
+		return tConverter;
 	}
 	private static Converter _get(Method method) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException
 	{
@@ -137,16 +139,16 @@ public abstract class Converters
 		{
 			this.contentConverter = contentConverter;
 		}
-		@Override public CList<T> apply(Castable o)
+		@Override public CList<T> unpack(Castable c)
 		{
-			return new CList<>(o.asCastableList(), contentConverter);
+			return new CList<>(c.asCastableList(), contentConverter);
 		}
-		@Override public Castable applyInverse(CList<T> ts)
+		@Override public Castable pack(CList<T> ts)
 		{
-			CastableList o = new CastableList();
+			CastableList l = new CastableList();
 			if (ts != null && !ts.isEmpty())
-				new CList<>(o, contentConverter).addAll(ts);
-			return o;
+				new CList<>(l, contentConverter).addAll(ts);
+			return l;
 		}
 	}
 
@@ -165,16 +167,16 @@ public abstract class Converters
 			this.contentConverter = contentConverter;
 			this.contentType = contentType;
 		}
-		@Override public DataList<T> apply(Castable o)
+		@Override public DataList<T> unpack(Castable c)
 		{
-			return new DataList<>(o.asCastableList(), contentConverter, contentType);
+			return new DataList<>(c.asCastableList(), contentConverter, contentType);
 		}
-		@Override public Castable applyInverse(DataList<T> ts)
+		@Override public Castable pack(DataList<T> ts)
 		{
-			CastableList o = new CastableList();
+			CastableList l = new CastableList();
 			if (ts != null && !ts.isEmpty())
-				new DataList<>(o, contentConverter, contentType).addAll(ts);
-			return o;
+				new DataList<>(l, contentConverter, contentType).addAll(ts);
+			return l;
 		}
 	}
 
@@ -185,11 +187,11 @@ public abstract class Converters
 		{
 			this.contentConverter = contentConverter;
 		}
-		@Override public CMap<T> apply(Castable o)
+		@Override public CMap<T> unpack(Castable o)
 		{
 			return new CMap<>(o.asCastableObject(), contentConverter);
 		}
-		@Override public Castable applyInverse(CMap<T> tcMap)
+		@Override public Castable pack(CMap<T> tcMap)
 		{
 			CastableObject o = new CastableObject();
 			if (tcMap != null && !tcMap.isEmpty())
@@ -201,23 +203,21 @@ public abstract class Converters
 
 	public static class ObjectConverter<T extends Data> implements Converter<T>
 	{
-		private final Class<T> c;
-		public ObjectConverter(Class<T> c)
+		private final Class<T> type;
+		public ObjectConverter(Class<T> type)
 		{
-			this.c = c;
+			this.type = type;
 		}
-		@Override public T apply(Castable o)
+		@Override public T unpack(Castable o)
 		{
-			return o.asCastableObject().cast(c);
+			return o.asCastableObject().cast(type);
 		}
-		@Override public Castable applyInverse(T t)
+		@Override public Castable pack(T t)
 		{
-			if (t == null) return new CastableObject();
-
 			CastableObject o = new CastableObject();
-			for (Method method : t.getClass().getMethods())
+			if (t != null) for (Method method : t.getClass().getMethods())
 			{
-				try { method = c.getMethod(method.getName(), method.getParameterTypes()); } // no annotations on proxy
+				try { method = type.getMethod(method.getName(), method.getParameterTypes()); } // no annotations on proxy
 				catch (NoSuchMethodException ignore) { }
 				if (!method.isAnnotationPresent(Attribute.class)) continue;
 				try
@@ -248,7 +248,6 @@ public abstract class Converters
 			return converter;
 		}
 
-
 		private final Class<T> type;
 		public EnumConverter(Class<T> type)
 		{
@@ -261,10 +260,9 @@ public abstract class Converters
 				if (!cet.matches(cet.key()))
 					LOGGER.error(String.format("The enum value %s in does not match its own key.", t));
 			}
-
 		}
 
-		@Override public T apply(Castable o)
+		@Override public T unpack(Castable o)
 		{
 			if (!ConvertibleEnum.class.isAssignableFrom(type))
 				return Enum.valueOf(type, o.asCastableString().getValue());
@@ -277,110 +275,90 @@ public abstract class Converters
 			LOGGER.error(String.format("No enum value in %s matches '%s'.", type, o));
 			return type.getEnumConstants()[0];
 		}
-		@Override public Castable applyInverse(T t)
+		@Override public Castable pack(T t)
 		{
-			if (t == null) return new CastableString();
+			CastableString s = new CastableString();
 			if (t instanceof ConvertibleEnum)
-				return new CastableString(((ConvertibleEnum) t).key());
-			return new CastableString(t.name());
+				s.setValue(((ConvertibleEnum) t).key());
+			else if (t != null) s.setValue(t.name());
+			return s;
 		}
 	}
 
 	public static final Converter<Boolean> BOOLEAN_OBJ_CONVERTER = new Converter<Boolean>()
 	{
-		@Override public Boolean apply(Castable o)
+		@Override public Boolean unpack(Castable o)
 		{
-			try
-			{
-				String s = o.asCastableString().getValue();
-				return Boolean.parseBoolean(s);
-			}
-			catch (Exception ignore) {}
-			return false;
+			String s = o.asCastableString().getValue();
+			return s == null ? null : Boolean.parseBoolean(s);
 		}
-		@Override public Castable applyInverse(Boolean v)
+		@Override public Castable pack(Boolean v)
 		{
-			return new CastableString(v == null ? "" : v.toString());
+			return new CastableString(v == null ? null : v.toString());
 		}
 	};
 
 	public static final Converter<Integer> INTEGER_OBJ_CONVERTER = new Converter<Integer>()
 	{
-		@Override public Integer apply(Castable o)
+		@Override public Integer unpack(Castable o)
 		{
-			try
-			{
-				String s = o.asCastableString().getValue();
-				if (s.contains(".")) s = s.substring(0, s.indexOf("."));
-				if (s.isEmpty()) return 0;
-				return Integer.parseInt(s);
-			}
-			catch (Exception ignore) {}
-			return 0;
+			String s = o.asCastableString().getValue();
+			return s == null ? null : Integer.parseInt(s);
 		}
-		@Override public Castable applyInverse(Integer integer)
+		@Override public Castable pack(Integer v)
 		{
-			return new CastableString(integer == null ? "" : integer.toString());
+			return new CastableString(v == null ? null : v.toString());
 		}
 	};
 
 	public static final Converter<Long> LONG_OBJ_CONVERTER = new Converter<Long>()
 	{
-		@Override public Long apply(Castable o)
+		@Override public Long unpack(Castable o)
 		{
-			try
-			{
-				String s = o.asCastableString().getValue();
-				if (s.contains(".")) s = s.substring(0, s.indexOf("."));
-				if (s.isEmpty()) return 0l;
-				return Long.parseLong(s);
-			}
-			catch (Exception ignore) {}
-			return 0l;
+			String s = o.asCastableString().getValue();
+			return s == null ? null : Long.parseLong(s);
 		}
-		@Override public Castable applyInverse(Long l)
+		@Override public Castable pack(Long v)
 		{
-			return new CastableString(l == null ? "" : l.toString());
+			return new CastableString(v == null ? null : v.toString());
 		}
 	};
 
 	public static final Converter<Float> FLOAT_OBJ_CONVERTER = new Converter<Float>()
 	{
-		@Override public Float apply(Castable o)
+		@Override public Float unpack(Castable o)
 		{
-			try { return Float.parseFloat(o.asCastableString().getValue()); }
-			catch (Exception ignore) {}
-			return 0f;
+			String s = o.asCastableString().getValue();
+			return s == null ? null : Float.parseFloat(s);
 		}
-		@Override public Castable applyInverse(Float f)
+		@Override public Castable pack(Float v)
 		{
-			return new CastableString(f == null ? "" : f.toString());
+			return new CastableString(v == null ? null : v.toString());
 		}
 	};
 
 	public static final Converter<Double> DOUBLE_OBJ_CONVERTER = new Converter<Double>()
 	{
-		@Override public Double apply(Castable o)
+		@Override public Double unpack(Castable o)
 		{
-			try { return Double.parseDouble(o.asCastableString().getValue()); }
-			catch (Exception ignore) {}
-			return 0d;
+			String s = o.asCastableString().getValue();
+			return s == null ? null : Double.parseDouble(s);
 		}
-		@Override public Castable applyInverse(Double d)
+		@Override public Castable pack(Double v)
 		{
-			return new CastableString(d == null ? "" : d.toString());
+			return new CastableString(v == null ? null : v.toString());
 		}
 	};
 
 	public static final Converter<String> STRING_OBJ_CONVERTER = new Converter<String>()
 	{
-		@Override public String apply(Castable o)
+		@Override public String unpack(Castable o)
 		{
 			return o.asCastableString().getValue();
 		}
-		@Override public Castable applyInverse(String s)
+		@Override public Castable pack(String v)
 		{
-			return new CastableString(s == null ? "" : s);
+			return new CastableString(v);
 		}
 	};
 

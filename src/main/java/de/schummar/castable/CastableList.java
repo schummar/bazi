@@ -4,12 +4,11 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CastableList extends SimpleListProperty<Castable<?>> implements Castable<ObservableList<Castable<?>>>
+public class CastableList extends SimpleListProperty<Castable> implements Castable
 {
 	public CastableList()
 	{
@@ -27,9 +26,7 @@ public class CastableList extends SimpleListProperty<Castable<?>> implements Cas
 	{
 		deepListeners.remove(invalidationListener);
 	}
-	private InvalidationListener deepListener = observable -> {
-		deepListeners.forEach(l -> l.invalidated(this));
-	};
+	private InvalidationListener deepListener = observable -> deepListeners.forEach(l -> l.invalidated(this));
 	private ListChangeListener<Castable> changeListener = change -> {
 		while (change.next())
 		{

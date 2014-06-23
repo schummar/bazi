@@ -21,7 +21,7 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 	}
 
 	private InvalidationListener invalidationListener = observable -> new ArrayList<>(invalidationListeners).forEach(listener -> listener.invalidated(this));
-	private ListChangeListener<? super Castable<?>> listChangeListener = change -> {
+	private ListChangeListener<? super Castable> listChangeListener = change -> {
 		ListChangeListener.Change<T> tChange = new ListChangeListener.Change<T>(this)
 		{
 			@Override public boolean next() { return change.next(); }
@@ -31,7 +31,7 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 			@Override public List<T> getRemoved()
 			{
 				List<T> removed = new ArrayList<>();
-				change.getRemoved().forEach(c -> removed.add(converter.apply(c)));
+				change.getRemoved().forEach(c -> removed.add(converter.unpack(c)));
 				return removed;
 			}
 			@Override protected int[] getPermutation()
@@ -84,7 +84,7 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 	}
 	@Override public T get(int index)
 	{
-		return converter.apply(list.get(index));
+		return converter.unpack(list.get(index));
 	}
 	@Override public int size()
 	{
@@ -100,20 +100,20 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 	}
 	@Override public T set(int index, T element)
 	{
-		return converter.apply(list.set(index, converter.applyInverse(element)));
+		return converter.unpack(list.set(index, converter.pack(element)));
 	}
 	@Override public void add(int index, T element)
 	{
-		list.add(index, converter.applyInverse(element));
+		list.add(index, converter.pack(element));
 	}
 	@Override public T remove(int index)
 	{
-		return converter.apply(list.remove(index));
+		return converter.unpack(list.remove(index));
 	}
 
 	public T addNew()
 	{
-		add(converter.apply(null));
+		add(converter.unpack(null));
 		return last();
 	}
 	public T last()

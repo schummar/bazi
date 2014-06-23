@@ -19,15 +19,15 @@ public class DataList<T extends Data> extends CList<T>
 	}
 	@Override public T set(int index, Data element)
 	{
-		return converter.apply(list.set(index, converter.applyInverse(element == null ? null : element.cast(type))));
+		return converter.unpack(list.set(index, converter.pack(element == null ? null : element.cast(type))));
 	}
 	@Override public boolean add(Data element)
 	{
-		return list.add(converter.applyInverse(element == null ? null : element.cast(type)));
+		return list.add(converter.pack(element == null ? null : element.cast(type)));
 	}
 	@Override public void add(int index, Data element)
 	{
-		list.add(index, converter.applyInverse(element == null ? null : element.cast(type)));
+		list.add(index, converter.pack(element == null ? null : element.cast(type)));
 	}
 	public boolean addAllData(int index, Collection<? extends Data> c)
 	{
@@ -42,6 +42,6 @@ public class DataList<T extends Data> extends CList<T>
 	}
 	@Override public T remove(int index)
 	{
-		return converter.apply(list.remove(index));
+		return converter.unpack(list.remove(index));
 	}
 }
