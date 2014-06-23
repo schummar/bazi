@@ -48,7 +48,7 @@ public interface VectorData extends Data
 		 * The votes of the party. Can be any non-negative real number.
 		 * @return the votes of the party.
 		 */
-		@Attribute CProperty<Real> votesProperty();
+		@Attribute(def = "0") CProperty<Real> votesProperty();
 		default Real votes() { return votesProperty().getValue(); }
 		default void votes(Real v) { votesProperty().setValue(v); }
 
@@ -56,7 +56,7 @@ public interface VectorData extends Data
 		 * The minimum number of seats the party shall receive.
 		 * @return the minimum number of seats the party shall receive.
 		 */
-		@Attribute CProperty<Int> minProperty();
+		@Attribute(def = "0") CProperty<Int> minProperty();
 		default Int min() { return minProperty().getValue(); }
 		default void min(Int v) { minProperty().setValue(v); }
 

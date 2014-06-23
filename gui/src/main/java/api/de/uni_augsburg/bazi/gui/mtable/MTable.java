@@ -1,8 +1,6 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
@@ -12,8 +10,6 @@ import java.util.function.Supplier;
 public class MTable<T> extends TableView<T>
 {
 	private Supplier<T> supplier = null;
-	private ObjectProperty<MTableCell<T>> selectedMCell = new SimpleObjectProperty<>();
-	private ObjectProperty<MTableCell<T>> editingMCell = new SimpleObjectProperty<>();
 
 	public MTable()
 	{
@@ -32,30 +28,6 @@ public class MTable<T> extends TableView<T>
 	public void setSupplier(Supplier<T> supplier)
 	{
 		this.supplier = supplier;
-	}
-	public MTableCell<T> getSelectedMCell()
-	{
-		return selectedMCell.get();
-	}
-	public void setSelectedMCell(MTableCell<T> selectedMCell)
-	{
-		this.selectedMCell.set(selectedMCell);
-	}
-	public ObjectProperty<MTableCell<T>> selectedMCellProperty()
-	{
-		return selectedMCell;
-	}
-	public MTableCell<T> getEditingMCell()
-	{
-		return editingMCell.get();
-	}
-	public void setEditingMCell(MTableCell<T> editingMCell)
-	{
-		this.editingMCell.set(editingMCell);
-	}
-	public ObjectProperty<MTableCell<T>> editingMCellProperty()
-	{
-		return editingMCell;
 	}
 
 
@@ -78,13 +50,6 @@ public class MTable<T> extends TableView<T>
 	{
 		T item = supplier.get();
 		getItems().add(row, item);
-		getColumns().forEach(
-			c -> {
-				@SuppressWarnings("unchecked")
-				MTableColumn<T, ?> col = (MTableColumn<T, ?>) c;
-				col.clear(item);
-			}
-		);
 		Platform.runLater(() -> getSelectionModel().select(row, selectedCol()));
 	}
 	public void selectNext()
@@ -160,6 +125,6 @@ public class MTable<T> extends TableView<T>
 	{
 		if (e.getCharacter().trim().length() == 0) return;
 		editSelected();
-		getEditingMCell().overwrite(e.getCharacter());
+		//getEditingMCell().overwrite(e.getCharacter());
 	}
 }

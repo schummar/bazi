@@ -98,7 +98,7 @@ public class Divisor implements Interval
 	public static class Converter implements de.schummar.castable.Converter<Divisor>
 	{
 		private static final de.schummar.castable.Converter<Real> REAL_CONVERTER = new Real.Converter();
-		@Override public Divisor apply(Castable castable)
+		@Override public Divisor unpack(Castable castable)
 		{
 			CastableObject co = castable.asCastableObject();
 			Real min = co.getProperty("min", REAL_CONVERTER, "-oo").getValue();
@@ -107,7 +107,7 @@ public class Divisor implements Interval
 			if (!Interval.of(min, max).contains(nice)) nice = null;
 			return nice == null ? new Divisor(min, max) : new Divisor(min, nice, max);
 		}
-		@Override public Castable applyInverse(Divisor divisor)
+		@Override public Castable pack(Divisor divisor)
 		{
 			CastableObject co = new CastableObject();
 			if (divisor != null)

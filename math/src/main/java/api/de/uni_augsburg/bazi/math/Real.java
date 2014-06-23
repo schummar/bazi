@@ -311,14 +311,14 @@ public class Real implements Comparable<Real>, Interval
 
 	public static class Converter implements de.schummar.castable.Converter<Real>
 	{
-		@Override public Real apply(Castable o)
+		@Override public Real unpack(Castable o)
 		{
-			return valueOf(o.asCastableString().getValue());
+			String s = o.asCastableString().getValue();
+			return s == null ? null : valueOf(s);
 		}
-		@Override public Castable applyInverse(Real v)
+		@Override public Castable pack(Real v)
 		{
-			if (v == null) return new CastableString();
-			return new CastableString(v.toString());
+			return new CastableString(v == null ? null : v.toString());
 		}
 	}
 }

@@ -48,11 +48,11 @@ public interface DivisorUpdateFunction
 
 	public static class Converter implements de.schummar.castable.Converter<DivisorUpdateFunction>
 	{
-		@Override public DivisorUpdateFunction apply(Castable castable)
+		@Override public DivisorUpdateFunction unpack(Castable castable)
 		{
 			return MIDPOINT;
 		}
-		@Override public Castable applyInverse(DivisorUpdateFunction divisorUpdateFunction)
+		@Override public Castable pack(DivisorUpdateFunction divisorUpdateFunction)
 		{
 			return new CastableString("mid");
 		}

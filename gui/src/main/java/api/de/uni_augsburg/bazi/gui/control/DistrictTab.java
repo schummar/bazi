@@ -53,8 +53,8 @@ public class DistrictTab extends Tab implements Initializable
 
 	@Override public void initialize(URL location, ResourceBundle resources)
 	{
-		if (options.nameLabel().isEmpty()) options.nameLabel("name");
-		if (options.voteLabel().isEmpty()) options.voteLabel("votes");
+		if (options.nameLabel() == null) options.nameLabel("name");
+		if (options.voteLabel() == null) options.voteLabel("votes");
 
 
 		partyTable.setItems(district.parties().cast(Party.class));

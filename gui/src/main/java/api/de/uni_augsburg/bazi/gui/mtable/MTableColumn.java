@@ -1,7 +1,6 @@
 package de.uni_augsburg.bazi.gui.mtable;
 
 import de.uni_augsburg.bazi.gui.bind.BindingHelper;
-import de.uni_augsburg.bazi.gui.bind.ReductionBinding;
 import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import javafx.beans.binding.Binding;
 import javafx.beans.value.ObservableValue;
@@ -24,7 +23,6 @@ public class MTableColumn<T, S> extends TableColumn<T, String>
 		this.definition = definition;
 
 		setSortable(false);
-		setMinWidth(100);
 		setCellFactory(c -> new MTableCell<>(definition.alignment()));
 		setCellValueFactory(p -> definition.stringAttribute().apply(p.getValue()));
 
@@ -57,7 +55,7 @@ public class MTableColumn<T, S> extends TableColumn<T, String>
 
 	private Label createAggregation()
 	{
-		Binding<S> sumBinding = new ReductionBinding<>(attributes(), definition.op(), definition.invOp());
+		Binding<S> sumBinding = EasyBind.combine(attributes(), s -> s.reduce(definition.op()).orElse(definition.def()));
 		Binding<String> stringBinding = EasyBind.map(sumBinding, sum -> String.format("Σ=%s", sum));
 
 		Label label = new Label();

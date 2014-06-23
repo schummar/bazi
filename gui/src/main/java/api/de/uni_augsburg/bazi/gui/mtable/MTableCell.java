@@ -13,18 +13,7 @@ public class MTableCell<T> extends TableCell<T, String>
 
 	public MTableCell(Pos alignment)
 	{
-		selectedProperty().addListener(this::updateSelectedCell);
-		editingProperty().addListener(this::updateEditing);
 		setAlignment(alignment);
-
-	}
-	private void updateSelectedCell(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)
-	{
-		if (newValue) getTable().setSelectedMCell(this);
-	}
-	private void updateEditing(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue)
-	{
-		if (newValue) getTable().setEditingMCell(this);
 	}
 
 
@@ -33,31 +22,10 @@ public class MTableCell<T> extends TableCell<T, String>
 		return (MTable<T>) getTableView();
 	}
 
-	public void overwrite(String item)
-	{
-		if (isEditing())
-		{
-			textField.setText(item);
-			textField.end();
-		}
-		else
-		{
-			setItem(item);
-			updateView();
-		}
-	}
-
 	@Override public void startEdit()
 	{
-		if (!isEditable()
-			|| !getTableView().isEditable()
-			|| !getTableColumn().isEditable())
-		{
-			return;
-		}
 		super.startEdit();
 		updateView();
-
 		textField.requestFocus();
 		textField.selectAll();
 	}

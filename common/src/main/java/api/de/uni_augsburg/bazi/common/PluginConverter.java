@@ -14,7 +14,7 @@ public class PluginConverter<T extends Plugin.Instance> implements Converter<T>
 		this.type = type;
 	}
 
-	@Override public T apply(Castable castable)
+	@Override public T unpack(Castable castable)
 	{
 		CastableObject data;
 		if (castable instanceof CastableObject) data = castable.asCastableObject();
@@ -26,9 +26,8 @@ public class PluginConverter<T extends Plugin.Instance> implements Converter<T>
 		else data = new CastableObject();
 		return PluginManager.tryInstantiate(type, data).orElse(null);
 	}
-	@Override public Castable applyInverse(T t)
+	@Override public Castable pack(T t)
 	{
-		if (t == null) return new CastableString();
-		return new CastableString(t.toString());
+		return new CastableString(t == null ? null : t.toString());
 	}
 }
