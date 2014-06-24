@@ -45,7 +45,6 @@ public class MainController extends VBox
 		{
 			Reader reader = new InputStreamReader(new FileInputStream("C:/Users/Marco/Dropbox/Bazi/testdaten/matrix.json"));
 			BAZIFile loaded = new JsonFormat().deserialize(reader).asCastableObject().cast(BAZIFile.class);
-			System.out.println(loaded);
 			data.src().overwrite(loaded.src());
 		}
 		catch (FileNotFoundException e)

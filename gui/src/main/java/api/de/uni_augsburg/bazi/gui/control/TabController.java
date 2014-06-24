@@ -24,7 +24,9 @@ public class TabController
 	private final PlainOptions options;
 	private final VectorData vData;
 	private final MatrixData mData;
-	private MatrixData backup = null;
+
+	private DistrictTab singleTab = null;
+	private Map<VectorData, DistrictTab> districts = new HashMap<>();
 
 	public TabController(TabPane tabPane, Button addDistrict, BAZIFile data)
 	{
@@ -55,13 +57,12 @@ public class TabController
 		tabPane.getSelectionModel().select(tabPane.getTabs().size() - 1);
 		return tab;
 	}
-	private Map<VectorData, DistrictTab> districtToTab = new HashMap<>();
 	private void districtsChanged(ListChangeListener.Change<? extends VectorData> change)
 	{
 		while (change.next())
 		{
-			change.getRemoved().forEach(d -> tabPane.getTabs().remove(districtToTab.get(d)));
-			change.getAddedSubList().forEach(d -> districtToTab.put(d, createNewTab(d)));
+			change.getRemoved().forEach(d -> tabPane.getTabs().remove(districts.get(d)));
+			change.getAddedSubList().forEach(d -> districts.put(d, createNewTab(d)));
 		}
 	}
 
@@ -76,24 +77,21 @@ public class TabController
 				vData.seats(mData.districts().get(0).seats());
 			}
 
-			backup = mData.copy().cast(MatrixData.class);
 			mData.districts().clear();
-			createNewTab(vData);
+			singleTab = createNewTab(vData);
 
 			tabPane.getStyleClass().add("single");
 		}
 		else
 		{
-			tabPane.getTabs().clear();
-			if (backup != null)
-				mData.districts().setAllData(backup.districts());
-			VectorData first = mData.districts().isEmpty()
-				? createNewDistrict()
-				: mData.districts().get(0);
-			first.parties().setAllData(vData.parties());
-			first.seats(vData.seats());
-			if (first.name() == null)
-				first.name("abc");
+			tabPane.getTabs().remove(singleTab);
+			if (mData.districts().isEmpty())
+			{
+				VectorData first = createNewDistrict();
+				first.parties().setAllData(vData.parties());
+				first.seats(vData.seats());
+				first.name(vData.name() == null ? "abc" : vData.name());
+			}
 
 			vData.parties().clear();
 			vData.seats(null);
