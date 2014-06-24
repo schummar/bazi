@@ -8,7 +8,8 @@
 
 .m-text-field {
     -fx-padding: 0;
-    -fx-alignment: center;
+    -fx-background-color: white;
+    -fx-background-radius: 0;
 }
 
 .table-row-cell:empty {

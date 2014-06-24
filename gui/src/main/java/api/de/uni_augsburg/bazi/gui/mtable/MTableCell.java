@@ -84,6 +84,7 @@ public class MTableCell<T> extends TableCell<T, String>
 	{
 		TextField textField = new TextField();
 		textField.getStyleClass().add("m-text-field");
+		textField.setAlignment(getAlignment());
 		textField.setOnKeyPressed(this::keyPressed);
 		textField.focusedProperty().addListener(this::focusChanged);
 		return textField;

@@ -1,11 +1,13 @@
 package de.uni_augsburg.bazi.divisor;
 
 
+import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Rational;
+import javafx.beans.property.Property;
 
 import java.util.*;
 
@@ -113,12 +115,16 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 		 * The parameter p for power rounding.
 		 * @return the parameter p for power rounding.
 		 */
-		String p();
+		@Attribute(def = "") Property<String> pProperty();
+		default String p() { return pProperty().getValue(); }
+		default void p(String v) { pProperty().setValue(v); }
 
 		/**
 		 * The parameter r for stationary rounding.
 		 * @return the parameter r for stationary rounding.
 		 */
-		String r();
+		@Attribute(def = "") Property<String> rProperty();
+		default String r() { return rProperty().getValue(); }
+		default void r(String v) { rProperty().setValue(v); }
 	}
 }

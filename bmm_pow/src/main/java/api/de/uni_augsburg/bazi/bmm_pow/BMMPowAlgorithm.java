@@ -8,7 +8,6 @@ import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.math.Int;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -39,11 +38,6 @@ public class BMMPowAlgorithm implements Algorithm
 	@Override public String name()
 	{
 		return "bmmpow";
-	}
-
-	@Override public List<Object> getInputAttributes()
-	{
-		return Collections.emptyList();
 	}
 
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()

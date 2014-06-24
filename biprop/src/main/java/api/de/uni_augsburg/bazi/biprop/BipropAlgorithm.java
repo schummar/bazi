@@ -27,11 +27,6 @@ import static de.uni_augsburg.bazi.common.algorithm.VectorData.Party;
  */
 public abstract class BipropAlgorithm implements Algorithm
 {
-	@Override public List<Object> getInputAttributes()
-	{
-		return null;
-	}
-
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
 	{
 		return (data, options) -> new BipropPlain(data.cast(BipropData.class), options, Super(), sub().name()).get();

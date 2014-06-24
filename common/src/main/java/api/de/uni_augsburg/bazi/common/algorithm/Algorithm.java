@@ -1,12 +1,10 @@
 package de.uni_augsburg.bazi.common.algorithm;
 
-import de.schummar.castable.CastableObject;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
-import de.uni_augsburg.bazi.common.plain.PlainSupplier;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,20 +19,11 @@ public interface Algorithm extends Plugin.Instance
 	 */
 	String name();
 
-	/**
-	 * The list of Attributes this algorithm uses in its input data.
-	 * Since the inputs are generic this method gives information about attributes that can or must be included and their types.
-	 * @return the list of Attributes this algorithm uses in its input data.
-	 */
-	List<Object> getInputAttributes();
-
 	BiFunction<Data,PlainOptions,List<StringTable>> plainFormatter();
 
 	/**
 	 * Applies this algorithm to the given input without using any filters.
-	 * @param in input
 	 * @param options general calculation options
-	 * @return the algorithm's result
 	 */
 	void applyUnfiltered(Data data, Options options);
 
@@ -42,7 +31,6 @@ public interface Algorithm extends Plugin.Instance
 	 * Applies this algorithm to the given input. Automatically uses available Filters for pre- and postprocessing.
 	 * @param data input
 	 * @param options general calculation options
-	 * @return the algorithm's result
 	 */
 	default void apply(Data data, Options options)
 	{

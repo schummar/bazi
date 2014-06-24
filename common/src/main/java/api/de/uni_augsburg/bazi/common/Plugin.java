@@ -44,7 +44,7 @@ public interface Plugin<T extends Plugin.Instance>
 		 * The name of the plugin instance.
 		 * @return the name of the plugin instance.
 		 */
-		@Attribute Property<String> nameProperty();
+		@Attribute(def = "") Property<String> nameProperty();
 		default String name() { return nameProperty().getValue(); }
 		default void name(String v) { nameProperty().setValue(v); }
 	}

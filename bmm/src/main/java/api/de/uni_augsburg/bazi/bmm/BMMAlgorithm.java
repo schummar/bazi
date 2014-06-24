@@ -8,7 +8,6 @@ import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.math.Int;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -41,10 +40,7 @@ public class BMMAlgorithm implements Algorithm
 	{
 		return method.name();
 	}
-	@Override public List<Object> getInputAttributes()
-	{
-		return Collections.emptyList();
-	}
+
 
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
 	{

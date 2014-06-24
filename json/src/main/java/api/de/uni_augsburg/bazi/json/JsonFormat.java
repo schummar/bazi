@@ -5,16 +5,16 @@ import de.schummar.castable.*;
 import de.uni_augsburg.bazi.common.format.Format;
 
 import java.io.*;
-import java.util.Map;
 
 /** Serializes and deserializes data to and from json Strings. */
 public class JsonFormat implements Format
 {
 	private final Gson gson = new GsonBuilder()
 		.setPrettyPrinting()
-		.registerTypeAdapter(
-			CastableString.class, (JsonSerializer<CastableString>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getValue())
-		)
+		.registerTypeAdapter(CastableObject.class, OBJECT_SERIALIZER)
+		.registerTypeAdapter(CastableList.class, LIST_SERIALIZER)
+		.registerTypeAdapter(CastableString.class, STRING_SERIALIZER)
+		.registerTypeAdapter(CastableUninitialized.class, UNINITIALIZED_SERIALIZER)
 		.create();
 
 
@@ -30,16 +30,14 @@ public class JsonFormat implements Format
 	private CastableObject deserialize(JsonObject object)
 	{
 		CastableObject co = new CastableObject();
-		for (Map.Entry<String, JsonElement> e : object.entrySet())
-			co.put(e.getKey(), deserialize(e.getValue()));
+		object.entrySet().forEach(e -> co.put(e.getKey(), deserialize(e.getValue())));
 		return co;
 	}
 
 	private CastableList deserialize(JsonArray array)
 	{
 		CastableList list = new CastableList();
-		for (JsonElement element : array)
-			list.add(deserialize(element));
+		array.forEach(e -> list.add(deserialize(e)));
 		return list;
 	}
 
@@ -53,6 +51,25 @@ public class JsonFormat implements Format
 
 	@Override public void serialize(Castable data, OutputStream stream)
 	{
-		gson.toJson(data, new OutputStreamWriter(stream));
+		try
+		{
+			Writer writer = new BufferedWriter(new OutputStreamWriter(stream));
+			gson.toJson(data, writer);
+			writer.append("\n");
+			writer.flush();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
+
+	private static final JsonSerializer<CastableObject> OBJECT_SERIALIZER =
+		(src, typeOfSrc, context) -> src.isEmpty() ? JsonNull.INSTANCE : context.serialize(src.getValue());
+	private static final JsonSerializer<CastableList> LIST_SERIALIZER =
+		(src, typeOfSrc, context) -> src.isEmpty() ? JsonNull.INSTANCE : context.serialize(src.getValue());
+	private static final JsonSerializer<CastableString> STRING_SERIALIZER =
+		(src, typeOfSrc, context) -> src.getValue() == null ? JsonNull.INSTANCE : context.serialize(src.getValue());
+	private static final JsonSerializer<CastableUninitialized> UNINITIALIZED_SERIALIZER =
+		(src, typeOfSrc, context) -> JsonNull.INSTANCE;
 }
