@@ -1,8 +1,7 @@
 package de.uni_augsburg.bazi.gui.view;
 
 import javafx.beans.value.ObservableValue;
-import javafx.beans.value.WritableObjectValue;
-import javafx.beans.value.WritableStringValue;
+import javafx.beans.value.WritableValue;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -11,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 
 public class EditableLabel extends Label
 {
-	private final WritableObjectValue<String> text;
+	private final WritableValue<String> text;
 	private boolean editing = false;
 	private TextField textField;
 	private ContextMenu contextMenu;
@@ -19,9 +18,11 @@ public class EditableLabel extends Label
 	public EditableLabel(ObservableValue<String> text)
 	{
 		textProperty().bind(text);
-		if (text instanceof WritableStringValue)
+		if (text instanceof WritableValue<?>)
 		{
-			this.text = (WritableStringValue) text;
+			@SuppressWarnings("unchecked")
+			WritableValue<String> stringWritableValue = (WritableValue<String>) text;
+			this.text = stringWritableValue;
 			setOnMouseClicked(this::clicked);
 			getStyleClass().add("editable");
 		}
@@ -73,7 +74,7 @@ public class EditableLabel extends Label
 		}
 
 		setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-		textField.setText(text.get());
+		textField.setText(text.getValue());
 		textField.selectAll();
 		textField.requestFocus();
 	}
