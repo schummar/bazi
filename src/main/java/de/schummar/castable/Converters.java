@@ -264,10 +264,12 @@ public abstract class Converters
 
 		@Override public T unpack(Castable o)
 		{
+			String s = o.asCastableString().getValue();
+			if (s == null) return null;
 			if (!ConvertibleEnum.class.isAssignableFrom(type))
-				return Enum.valueOf(type, o.asCastableString().getValue());
+				return Enum.valueOf(type, s);
 
-			String name = o.asCastableString().getValue().toLowerCase();
+			String name = s.toLowerCase();
 			for (T t : type.getEnumConstants())
 				if (((ConvertibleEnum) t).matches(name))
 					return t;

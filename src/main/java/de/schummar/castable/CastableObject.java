@@ -61,12 +61,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 	}
 	public <T extends Data> T cast(Class<T> c)
 	{
-		if (c.isInstance(this))
-		{
-			@SuppressWarnings("unchecked")
-			T t = (T) this;
-			return t;
-		}
+		if (c.isInstance(this)) return c.cast(this);
 		if (!c.isInterface()) throw new RuntimeException(c + " is no interface.");
 
 		@SuppressWarnings("unchecked")
@@ -137,7 +132,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 		}
 		return property;
 	}
-	public <T> Property<T> getProperty(String name, Converter<T> converter) { return getProperty(name, converter, ""); }
+	public <T> Property<T> getProperty(String name, Converter<T> converter) { return getProperty(name, converter, null); }
 	public <T> Property<T> getProperty(String name, Converter<T> converter, String def)
 	{
 		Function<String, String> validator = converter.createValidator(def(converter, def));
@@ -145,7 +140,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 	}
 	private <T> T def(Converter<T> converter, String def)
 	{
-		return Attribute.NULL.equals(def) ? null : converter.unpack(new CastableString(def));
+		return def == null || Attribute.NULL.equals(def) ? null : converter.unpack(new CastableString(def));
 	}
 
 	private Castable getObj(String name, String def)

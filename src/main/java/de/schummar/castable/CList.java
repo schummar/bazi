@@ -113,7 +113,7 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 
 	public T addNew()
 	{
-		add(converter.unpack(null));
+		list.add(converter.pack(null));
 		return last();
 	}
 	public T last()
@@ -123,5 +123,9 @@ public class CList<T> extends AbstractList<T> implements ObservableList<T>
 	public <S> CList<S> cast(Class<S> c)
 	{
 		return new CList<>(list, Converters.get(c));
+	}
+	public CastableList src()
+	{
+		return list;
 	}
 }
