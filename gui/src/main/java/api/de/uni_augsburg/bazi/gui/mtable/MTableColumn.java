@@ -37,7 +37,6 @@ public class MTableColumn<T, S> extends TableColumn<T, String>
 
 	public void clear(T item)
 	{
-		System.out.println(item + ", " + definition.def());
 		definition.attribute().apply(item).setValue(definition.def());
 	}
 

@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 public class MTable<T> extends TableView<T>
 {
 	private Supplier<T> supplier = null;
+	private String startedTyping = null;
 
 	public MTable()
 	{
@@ -29,12 +30,18 @@ public class MTable<T> extends TableView<T>
 	{
 		this.supplier = supplier;
 	}
+	public String startedTyping()
+	{
+		return startedTyping;
+	}
 
 
 	public <S> void addColumn(MTableColumnDefinition<T, S> definition)
 	{
 		getColumns().add(definition.createColumn());
 	}
+
+
 	public int selectedRow()
 	{
 		return getSelectionModel().getSelectedCells().size() > 0
@@ -124,7 +131,8 @@ public class MTable<T> extends TableView<T>
 	public void keyTyped(KeyEvent e)
 	{
 		if (e.getCharacter().trim().length() == 0) return;
+		startedTyping = e.getCharacter();
 		editSelected();
-		//getEditingMCell().overwrite(e.getCharacter());
+		startedTyping = null;
 	}
 }

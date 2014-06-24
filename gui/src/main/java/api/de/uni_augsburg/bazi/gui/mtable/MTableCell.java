@@ -27,7 +27,12 @@ public class MTableCell<T> extends TableCell<T, String>
 		super.startEdit();
 		updateView();
 		textField.requestFocus();
-		textField.selectAll();
+		if (getTable().startedTyping() != null)
+		{
+			textField.setText(getTable().startedTyping());
+			textField.end();
+		}
+		else textField.selectAll();
 	}
 
 	public void commitEdit()
@@ -40,7 +45,6 @@ public class MTableCell<T> extends TableCell<T, String>
 		{
 			commitEdit(null);
 		}
-		updateView();
 		getTableView().requestFocus();
 	}
 
