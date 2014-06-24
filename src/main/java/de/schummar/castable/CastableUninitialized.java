@@ -66,6 +66,10 @@ public class CastableUninitialized implements Castable
 			if (c instanceof CastableString) return asCastableString();
 			throw new CastableNotInitialized();
 		}
+		@Override public String toString()
+		{
+			return "null";
+		}
 	};
 
 
@@ -109,8 +113,10 @@ public class CastableUninitialized implements Castable
 	{
 		return value.asCastableObject();
 	}
-
-
+	@Override public String toString()
+	{
+		return value.toString();
+	}
 	public static class CastableNotInitialized extends RuntimeException {}
 
 	private static final Castable NOT_INITIALIZED = null;

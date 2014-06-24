@@ -32,8 +32,8 @@ public class Test
 		System.out.println(Arrays.asList(m, a));
 		a.a().setValue(10);
 		System.out.println(Arrays.asList(m, a));
-		a.a().asStringProperty(20).setValue("abc");
-		System.out.println(Arrays.asList(m, a.a()));
+		a.a().asStringProperty().setValue("abc");
+		System.out.println(Arrays.asList(m, a));
 
 
 	}
@@ -49,6 +49,6 @@ public class Test
 
 	private interface A extends Data
 	{
-		@Attribute CProperty<Integer> a();
+		@Attribute(def = "42") CProperty<Integer> a();
 	}
 }

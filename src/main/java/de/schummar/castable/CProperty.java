@@ -8,38 +8,34 @@ import javafx.beans.value.ObservableValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 public class CProperty<T> implements Property<T>
 {
-	private final Castable castable;
-	private final Converter<T> converter;
-	private final T def;
-	private final List<ChangeListener<? super T>> changeListeners = new ArrayList<>();
-	private final List<InvalidationListener> invalidationListeners = new ArrayList<>();
-	private T value = null;
-	private boolean invalid = true;
-	public CProperty(Castable castable, Converter<T> converter, T def)
+	protected final Castable castable;
+	protected final Converter<T> converter;
+	protected final Function<String, String> validator;
+	protected final List<ChangeListener<? super T>> changeListeners = new ArrayList<>();
+	protected final List<InvalidationListener> invalidationListeners = new ArrayList<>();
+	protected T value = null;
+	protected boolean valid = false;
+	public CProperty(Castable castable, Converter<T> converter, Function<String, String> validator)
 	{
 		this.castable = castable;
 		this.converter = converter;
-		this.def = def;
+		this.validator = validator;
 		castable.addDeepListener(invalidationListener);
 	}
 
-	private void invalidate()
+	protected final InvalidationListener invalidationListener = observable ->
 	{
-		invalid = true;
-	}
-
-
-	private final InvalidationListener invalidationListener = observable ->
-	{
-		if (invalid) return;
+		if (!valid) return;
 		T oldValue = getValue();
-		invalidate();
+		valid = false;
 		informListeners(oldValue);
 	};
-	private void informListeners(T oldValue)
+	protected void informListeners(T oldValue)
 	{
 		changeListeners.forEach(l -> l.changed(this, oldValue, getValue()));
 		invalidationListeners.forEach(l -> l.invalidated(this));
@@ -84,7 +80,11 @@ public class CProperty<T> implements Property<T>
 	}
 	@Override public T getValue()
 	{
-		if (invalid) value = converter.unpack(castable);
+		if (!valid)
+		{
+			value = converter.unpack(castable);
+			valid = true;
+		}
 		return value;
 	}
 	@Override public void addListener(InvalidationListener listener)
@@ -97,30 +97,39 @@ public class CProperty<T> implements Property<T>
 	}
 	@Override public void setValue(T value)
 	{
+		T oldValue = getValue();
+		if (Objects.equals(oldValue, value)) return;
+
+		valid = false;
 		castable.overwrite(converter.pack(value));
-		T oldValue = this.value;
 		this.value = value;
+		valid = true;
 		informListeners(oldValue);
 	}
 	@Override public String toString()
 	{
 		return String.valueOf(getValue());
 	}
+	private Property<String> stringProperty = null;
 	public Property<String> asStringProperty()
 	{
-		return new CProperty<String>(castable, Converters.STRING_OBJ_CONVERTER, null)
-		{
-			@Override public void setValue(String value)
+		if (stringProperty == null)
+			stringProperty = new CProperty<String>(castable, Converters.STRING_OBJ_CONVERTER, validator)
 			{
-				if (value != null) try
+				@Override public void setValue(String value)
 				{
-					T t = converter.unpack(new CastableString(value));
-					CProperty.this.setValue(t);
-					return;
+					String oldValue = getValue();
+					if (Objects.equals(oldValue, value)) return;
+
+					value = validator.apply(value);
+					valid = false;
+					castable.overwrite(converter.pack(value));
+					this.value = value;
+					valid = true;
+					informListeners(oldValue);
 				}
-				catch (Exception ignore) { }
-				CProperty.this.setValue(def);
-			}
-		};
+			};
+
+		return stringProperty;
 	}
 }

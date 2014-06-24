@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
+import java.util.function.Function;
 
 public class CastableObject extends SimpleMapProperty<String, Castable> implements Castable, Data
 {
@@ -130,7 +131,8 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 			Converter<T> converter = Converters.get(method);
 			String def = method.getAnnotation(Attribute.class).def();
 			Castable castable = getObj(name, def);
-			property = new CProperty<>(castable, converter, def(converter, def));
+			Function<String, String> validator = converter.createValidator(def(converter, def));
+			property = new CProperty<>(castable, converter, validator);
 			propertyCache.put(method, property);
 		}
 		return property;
@@ -138,7 +140,8 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 	public <T> Property<T> getProperty(String name, Converter<T> converter) { return getProperty(name, converter, ""); }
 	public <T> Property<T> getProperty(String name, Converter<T> converter, String def)
 	{
-		return new CProperty<>(getObj(name, def), converter, def(converter, def));
+		Function<String, String> validator = converter.createValidator(def(converter, def));
+		return new CProperty<>(getObj(name, def), converter, validator);
 	}
 	private <T> T def(Converter<T> converter, String def)
 	{
