@@ -7,10 +7,8 @@ import de.uni_augsburg.bazi.common.Version;
 import de.uni_augsburg.bazi.common.format.Format;
 
 import javax.naming.OperationNotSupportedException;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Reader;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -41,11 +39,11 @@ public class PlainFormat implements Format
 	}
 
 
-	@Override public Castable deserialize(InputStream stream)
+	@Override public Castable deserialize(Reader reader)
 	{
 		throw new RuntimeException(new OperationNotSupportedException());
 	}
-	@Override public void serialize(Castable data, OutputStream stream)
+	@Override public void serialize(Castable data, PrintStream writer)
 	{
 		if (formatter == null) return;
 
@@ -54,14 +52,14 @@ public class PlainFormat implements Format
 			.collect(Collectors.joining("\n\n"));
 		if (!output.endsWith("\n")) output += "\n";
 
-		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream)))
+		try
 		{
-			writer.write("************************************************************\n");
-			writer.write(output);
-			writer.write("BAZI ");
-			writer.write(Version.getCurrentVersionName());
-			writer.write(" - Made in Augsburg University\n");
-			writer.write("************************************************************\n");
+			writer.println("************************************************************");
+			writer.print(output);
+			writer.print("BAZI ");
+			writer.print(Version.getCurrentVersionName());
+			writer.println(" - Made in Augsburg University");
+			writer.println("************************************************************");
 		}
 		catch (Exception e)
 		{

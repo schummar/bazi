@@ -5,8 +5,7 @@ import de.schummar.castable.CastableObject;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Plugin;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /** A format plugin is used to convert file formats (json,xml,...) to raw data and vice versa. */
 public interface Format extends Plugin.Instance
@@ -19,7 +18,7 @@ public interface Format extends Plugin.Instance
 	 * @param s the serialized data.
 	 * @return a raw data map.
 	 */
-	Castable deserialize(InputStream stream);
+	Castable deserialize(Reader reader);
 
 	/**
 	 * Serialize the given map of raw data.
@@ -29,7 +28,7 @@ public interface Format extends Plugin.Instance
 	 * @param data a raw data map.
 	 * @return the serialized data.
 	 */
-	void serialize(Castable data, OutputStream stream);
+	void serialize(Castable data, PrintStream writer);
 
 	/**
 	 * Configure the format.

@@ -4,7 +4,8 @@ import com.google.gson.*;
 import de.schummar.castable.*;
 import de.uni_augsburg.bazi.common.format.Format;
 
-import java.io.*;
+import java.io.PrintStream;
+import java.io.Reader;
 
 /** Serializes and deserializes data to and from json Strings. */
 public class JsonFormat implements Format
@@ -21,9 +22,9 @@ public class JsonFormat implements Format
 	@Override public void configure(Data data) { }
 
 
-	@Override public Castable deserialize(InputStream stream)
+	@Override public Castable deserialize(Reader reader)
 	{
-		JsonElement root = new JsonParser().parse(new InputStreamReader(stream));
+		JsonElement root = new JsonParser().parse(reader);
 		return deserialize(root);
 	}
 
@@ -49,19 +50,9 @@ public class JsonFormat implements Format
 	}
 
 
-	@Override public void serialize(Castable data, OutputStream stream)
+	@Override public void serialize(Castable data, PrintStream writer)
 	{
-		try
-		{
-			Writer writer = new BufferedWriter(new OutputStreamWriter(stream));
-			gson.toJson(data, writer);
-			writer.append("\n");
-			writer.flush();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		gson.toJson(data, writer);
 	}
 
 	private static final JsonSerializer<CastableObject> OBJECT_SERIALIZER =

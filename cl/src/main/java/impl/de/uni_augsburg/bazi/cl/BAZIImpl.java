@@ -15,10 +15,7 @@ import de.uni_augsburg.bazi.common.plain.PlainFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -88,10 +85,10 @@ class BAZIImpl
 
 
 		// input from file or args
-		InputStream inputStream;
+		Reader reader;
 		if (in.isPresent()) try
 		{
-			inputStream = new FileInputStream(in.get().toFile());
+			reader = new InputStreamReader(new FileInputStream(in.get().toFile()), Charsets.UTF_8);
 		}
 		catch (IOException e)
 		{
@@ -99,9 +96,20 @@ class BAZIImpl
 		}
 		else if (args.length > 0 || !args[args.length - 1].startsWith("-"))
 		{
-			inputStream = new ByteArrayInputStream(args[args.length - 1].getBytes(Charsets.UTF_8));
+			reader = new StringReader(args[args.length - 1]);
 		}
-		else throw new RuntimeException(Resources.get("params.noinput"));
+		else reader = new InputStreamReader(System.in);
+
+		PrintStream writer;
+		if (out.isPresent()) try
+		{
+			writer = new PrintStream(out.get().toFile());
+		}
+		catch (FileNotFoundException e)
+		{
+			throw new RuntimeException(Resources.get("params.file_write", out.get()));
+		}
+		else writer = System.out;
 
 
 		// infos
@@ -113,7 +121,7 @@ class BAZIImpl
 
 
 		// now the actual work begins
-		BAZIFile baziFile = inFormat.get().deserialize(inputStream).asCastableObject().cast(BAZIFile.class);
+		BAZIFile baziFile = inFormat.get().deserialize(reader).asCastableObject().cast(BAZIFile.class);
 		if (baziFile.output() != null)
 			outFormat.get().configure(baziFile.output());
 
@@ -124,7 +132,7 @@ class BAZIImpl
 
 
 		algorithm.apply(baziFile, new Options());
-		outFormat.get().serialize(baziFile.src(), System.out);
+		outFormat.get().serialize(baziFile.src(), writer);
 	}
 
 
