@@ -22,7 +22,7 @@ public interface VectorData extends Data
 	 * The number of seats to be apportioned.
 	 * @return the number of seats to be distributed.
 	 */
-	@Attribute CProperty<Int> seatsProperty();
+	@Attribute(def = "10") CProperty<Int> seatsProperty();
 	default Int seats() { return seatsProperty().getValue(); }
 	default void seats(Int v) { seatsProperty().setValue(v); }
 
@@ -68,11 +68,11 @@ public interface VectorData extends Data
 		default Int max() { return maxProperty().getValue(); }
 		default void max(Int v) { maxProperty().setValue(v); }
 
-		@Attribute CProperty<Int> seatsProperty();
+		@Attribute(def = "0") CProperty<Int> seatsProperty();
 		default Int seats() { return seatsProperty().getValue(); }
 		default void seats(Int v) { seatsProperty().setValue(v); }
 
-		@Attribute CProperty<Uniqueness> uniquenessProperty();
+		@Attribute(def = "") CProperty<Uniqueness> uniquenessProperty();
 		default Uniqueness uniqueness() { return uniquenessProperty().getValue(); }
 		default void uniqueness(Uniqueness v) { uniquenessProperty().setValue(v); }
 

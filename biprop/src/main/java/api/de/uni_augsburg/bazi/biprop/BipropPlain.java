@@ -42,19 +42,19 @@ public class BipropPlain extends MatrixPlain
 
 	public static final StringTable.Key DIVISOR = new StringTable.Key();
 
-	protected final BipropData output;
+	protected final BipropData data;
 	protected final DivisorAlgorithm Super;
 
 	/**
 	 * Constructor with initializers.
-	 * @param output the biproportional result to produce plain data for.
+	 * @param data the biproportional result to produce plain data for.
 	 * @param sub the name of the divisor method used for the main apportionment.
 	 */
-	public BipropPlain(BipropData output, PlainOptions options, DivisorAlgorithm Super, String sub)
+	public BipropPlain(BipropData data, PlainOptions options, DivisorAlgorithm Super, String sub)
 	{
-		super(output, options, sub);
+		super(data, options, sub);
 		this.Super = Super;
-		this.output = output;
+		this.data = data;
 	}
 
 
@@ -62,7 +62,7 @@ public class BipropPlain extends MatrixPlain
 	{
 		boolean sorted = options.cast(BipropPlainOptions.class).sortSuper();
 		if (sorted)
-			output.superApportionment().parties().sort(
+			data.superApportionment().parties().sort(
 				Comparator.<Party, Real>comparing(Party::votes)
 					.<Int>thenComparing((Function<Party, Int>) Party::seats)
 					.reversed()
@@ -70,11 +70,12 @@ public class BipropPlain extends MatrixPlain
 
 		List<StringTable> tables = new ArrayList<>();
 
-		List<StringTable> dTables = Super.plainFormatter().apply(output.superApportionment(), options);
-		dTables.get(0).titles().set(0, Resources.get(sorted ? "output.super_sorted" : "output.super"));
+		List<StringTable> dTables = Super.plainFormatter().apply(data.superApportionment(), options);
+		dTables.get(0).titles().clear();
+		dTables.get(0).titles().add(Resources.get(sorted ? "output.super_sorted" : "output.super"));
 		tables.addAll(dTables);
 
-		tables.get(0).titles().add(0, output.name());
+		tables.get(0).titles().add(0, data.name());
 
 		tables.add(getBipropTable());
 		return tables;
@@ -139,7 +140,7 @@ public class BipropPlain extends MatrixPlain
 	{
 		return key instanceof DivisorData
 			? ((DivisorData) key).divisor()
-			: output.partyDivisors().get(key.toString());
+			: data.partyDivisors().get(key.toString());
 	}
 
 
@@ -151,8 +152,8 @@ public class BipropPlain extends MatrixPlain
 	public List<Divisor> rowDivisors(boolean forDistrict)
 	{
 		return forDistrict
-			? names().stream().map(n -> output.partyDivisors().get(n)).collect(Collectors.toList())
-			: output.districts().stream().map(d -> d.divisor()).collect(Collectors.toList());
+			? names().stream().map(n -> data.partyDivisors().get(n)).collect(Collectors.toList())
+			: data.districts().stream().map(d -> d.divisor()).collect(Collectors.toList());
 	}
 
 
@@ -209,7 +210,7 @@ public class BipropPlain extends MatrixPlain
 
 	@Override public List<String> names()
 	{
-		return output.superApportionment().parties().stream()
+		return data.superApportionment().parties().stream()
 			.map(Party::name)
 			.collect(Collectors.toList());
 	}

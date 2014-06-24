@@ -1,4 +1,8 @@
 dependencies {
 	compile project(':common')
+	compile project(':json')
+
+	compile project(':divisor')
+	compile project(':as')
 	compile 'org.fxmisc.easybind:easybind:1.0.0'
 }

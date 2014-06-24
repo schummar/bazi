@@ -1,11 +1,12 @@
 package de.uni_augsburg.bazi.common.format;
 
 import de.schummar.castable.Castable;
-import de.schummar.castable.CastableObject;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Plugin;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.Reader;
 
 /** A format plugin is used to convert file formats (json,xml,...) to raw data and vice versa. */
 public interface Format extends Plugin.Instance
@@ -29,6 +30,15 @@ public interface Format extends Plugin.Instance
 	 * @return the serialized data.
 	 */
 	void serialize(Castable data, PrintStream writer);
+	default String serialize(Castable data)
+	{
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		PrintStream writer = new PrintStream(byteArrayOutputStream);
+		serialize(data, writer);
+		writer.flush();
+		writer.close();
+		return byteArrayOutputStream.toString();
+	}
 
 	/**
 	 * Configure the format.

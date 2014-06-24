@@ -1,63 +1,117 @@
 package de.uni_augsburg.bazi.gui.control;
 
 
-import de.schummar.castable.CastableObject;
-import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.algorithm.MatrixData;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
+import de.uni_augsburg.bazi.common.data.BAZIFile;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
-import de.uni_augsburg.bazi.math.BMath;
-import de.uni_augsburg.bazi.math.Int;
-import de.uni_augsburg.bazi.math.Rational;
-import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Tab;
+import javafx.collections.ListChangeListener;
+import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TabController
 {
 	private final TabPane tabPane;
-	public TabController(TabPane tabPane, CastableObject data)
+	private final Button addDistrict;
+
+	private BooleanProperty districtsActivated = new SimpleBooleanProperty(false);
+	private final PlainOptions options;
+	private final VectorData vData;
+	private final MatrixData mData;
+	private MatrixData backup = null;
+
+	public TabController(TabPane tabPane, Button addDistrict, BAZIFile data)
 	{
 		this.tabPane = tabPane;
-		tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-		tabPane.getSelectionModel().selectedItemProperty().addListener(this::tabChanged);
-		tabPane.getTabs().get(0).setClosable(false);
-		createNewTab();
+		this.addDistrict = addDistrict;
+		options = data.cast(PlainOptions.class);
+		vData = data.cast(VectorData.class);
+		mData = data.cast(MatrixData.class);
+
+		districtsActivated.addListener(this::districtsActivatedChanged);
+		addDistrict.setOnAction(e -> createNewDistrict());
+		addDistrict.visibleProperty().bind(districtsActivatedProperty());
+		mData.districts().addListener(this::districtsChanged);
+
+		districtsActivatedChanged(null, true, false);
 	}
 
-	private void tabChanged(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue)
+	private VectorData createNewDistrict()
 	{
-		if (tabPane.getSelectionModel().getSelectedIndex() == 0)
-			Platform.runLater(this::createNewTab);
+		VectorData district = mData.districts().addNew();
+		district.name("District " + mData.districts().size());
+		return district;
 	}
-
-	private void createNewTab()
+	private DistrictTab createNewTab(VectorData district)
 	{
-		tabPane.getTabs().add(
-			new DistrictTab(
-				tabPane.getTabs().size(),
-				Data.create(PlainOptions.class),
-				Data.create(VectorData.class)
-			)
-		);
+		DistrictTab tab = new DistrictTab(options, district);
+		tabPane.getTabs().add(tab);
 		tabPane.getSelectionModel().select(tabPane.getTabs().size() - 1);
+		return tab;
+	}
+	private Map<VectorData, DistrictTab> districtToTab = new HashMap<>();
+	private void districtsChanged(ListChangeListener.Change<? extends VectorData> change)
+	{
+		while (change.next())
+		{
+			change.getRemoved().forEach(d -> tabPane.getTabs().remove(districtToTab.get(d)));
+			change.getAddedSubList().forEach(d -> districtToTab.put(d, createNewTab(d)));
+		}
 	}
 
-	// placeholder
-	private class Party
+	private void districtsActivatedChanged(ObservableValue<? extends Boolean> observable, boolean oldValue, boolean newValue)
 	{
-		StringProperty name = new SimpleStringProperty();
-		ObjectProperty<Rational> vote = new SimpleObjectProperty<>(BMath.ZERO);
-		ObjectProperty<Int> min = new SimpleObjectProperty<>(BMath.ZERO),
-			max = new SimpleObjectProperty<>(BMath.INF);
+		if (oldValue == newValue) return;
+		if (!newValue)
+		{
+			if (!mData.districts().isEmpty())
+			{
+				vData.parties().setAllData(mData.districts().get(0).parties());
+				vData.seats(mData.districts().get(0).seats());
+			}
 
-		public StringProperty nameProperty() { return name; }
-		public ObjectProperty<Rational> voteProperty() { return vote; }
-		public ObjectProperty<Int> minProperty() { return min; }
-		public ObjectProperty<Int> maxProperty() { return max; }
+			backup = mData.copy().cast(MatrixData.class);
+			mData.districts().clear();
+			createNewTab(vData);
+
+			tabPane.getStyleClass().add("single");
+		}
+		else
+		{
+			tabPane.getTabs().clear();
+			if (backup != null)
+				mData.districts().setAllData(backup.districts());
+			VectorData first = mData.districts().isEmpty()
+				? createNewDistrict()
+				: mData.districts().get(0);
+			first.parties().setAllData(vData.parties());
+			first.seats(vData.seats());
+			if (first.name() == null)
+				first.name("abc");
+
+			vData.parties().clear();
+			vData.seats(null);
+
+			tabPane.getStyleClass().remove("single");
+		}
+	}
+
+	public boolean getDistrictsActivated()
+	{
+		return districtsActivated.get();
+	}
+	public BooleanProperty districtsActivatedProperty()
+	{
+		return districtsActivated;
+	}
+	public void setDistrictsActivated(boolean districtsActivated)
+	{
+		this.districtsActivated.set(districtsActivated);
 	}
 }

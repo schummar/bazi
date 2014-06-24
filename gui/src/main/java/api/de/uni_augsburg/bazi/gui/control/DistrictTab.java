@@ -10,7 +10,6 @@ import de.uni_augsburg.bazi.gui.view.EditableLabel;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -30,9 +29,9 @@ public class DistrictTab extends Tab implements Initializable
 	@FXML private MTable<Party> partyTable;
 
 	private final PlainOptions options;
-	private final VectorData district;
+	private VectorData district;
 
-	public DistrictTab(int number, PlainOptions options, VectorData district)
+	public DistrictTab(PlainOptions options, VectorData district)
 	{
 		this.options = options;
 		this.district = district;
@@ -48,13 +47,24 @@ public class DistrictTab extends Tab implements Initializable
 		{
 			throw new RuntimeException(e);
 		}
-		setGraphic(new EditableLabel(new SimpleStringProperty("District " + number)));
+		setGraphic(new EditableLabel(district.nameProperty()));
+	}
+
+	public VectorData getDistrict()
+	{
+		return district;
+	}
+	public void setDistrict(VectorData district)
+	{
+		this.district = district;
+		partyTable.setItems(district.parties().cast(Party.class));
 	}
 
 	@Override public void initialize(URL location, ResourceBundle resources)
 	{
 		if (options.nameLabel() == null) options.nameLabel("name");
 		if (options.voteLabel() == null) options.voteLabel("votes");
+		seatsTextField.textProperty().bindBidirectional(district.seatsProperty().asStringProperty());
 
 
 		partyTable.setItems(district.parties().cast(Party.class));
@@ -104,6 +114,6 @@ public class DistrictTab extends Tab implements Initializable
 			)
 		);
 
-		partyTable.newRow(0);
+		if (partyTable.getItems().size() == 0) partyTable.newRow(0);
 	}
 }

@@ -52,3 +52,15 @@
 .label.editable {
     -fx-cursor: hand;
 }
+
+.tab-pane.single .tab-header-area {
+    -fx-pref-height: 0;
+}
+
+.tab-pane .tab-header-area {
+    -fx-padding: 5 5 5 35;
+}
+
+.text-area {
+    -fx-font-family: monospace;
+}
