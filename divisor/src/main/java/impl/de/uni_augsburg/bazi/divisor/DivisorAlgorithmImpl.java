@@ -43,8 +43,6 @@ class DivisorAlgorithmImpl
 			data.parties().forEach(p -> p.seats(BMath.NAN));
 			data.divisor(new Divisor(BMath.NAN, BMath.NAN));
 		}
-
-		//data.plain(new DivisorPlain(data, r, name));
 	}
 
 	private static void calculateInitialSeats(DivisorData output, RoundingFunction r, Options options)

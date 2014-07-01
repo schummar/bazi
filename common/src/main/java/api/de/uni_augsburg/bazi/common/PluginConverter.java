@@ -17,8 +17,8 @@ public class PluginConverter<T extends Plugin.Instance> implements Converter<T>
 	@Override public T unpack(Castable castable)
 	{
 		CastableObject data;
-		if (castable instanceof CastableObject) data = castable.asCastableObject();
-		else if (castable instanceof CastableString)
+		if (castable.isCastableObject()) data = castable.asCastableObject();
+		else if (castable.isCastableString())
 		{
 			data = new CastableObject();
 			data.cast(Plugin.Params.class).name(castable.asCastableString().getValue());

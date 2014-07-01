@@ -9,7 +9,7 @@ import javafx.beans.property.Property;
 /** Output of the DirFilter */
 public interface DirData extends ListData
 {
-	@Override DataList<? extends Party> parties();
+	@Override @Attribute DataList<? extends Party> parties();
 
 
 	public interface Party extends ListData.Party

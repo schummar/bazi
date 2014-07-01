@@ -23,8 +23,6 @@ class ListAlgorithmImpl
 				else Super.apply(p, options);
 			}
 		);
-
-		//data.plain(new ListPlain(out));
 	}
 
 	private static void sumSubParties(Party party)

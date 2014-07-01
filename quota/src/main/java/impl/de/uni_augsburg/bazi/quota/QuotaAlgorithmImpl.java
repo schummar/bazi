@@ -38,7 +38,5 @@ class QuotaAlgorithmImpl
 		q.shift(seatsOff.get());
 
 		q.updateUniquenesses();
-
-		//data.plain(new QuotaPlain(output, name));
 	}
 }

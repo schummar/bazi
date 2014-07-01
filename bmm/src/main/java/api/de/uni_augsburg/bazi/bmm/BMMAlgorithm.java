@@ -4,6 +4,7 @@ import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
+import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.math.Int;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 /** The base+min..max algorithm. */
-public class BMMAlgorithm implements Algorithm
+public class BMMAlgorithm implements VectorAlgorithm
 {
 	/** Constraints for the seats of each party. */
 	public final Int base, min, max;
@@ -68,7 +69,5 @@ public class BMMAlgorithm implements Algorithm
 			}
 		);
 		vecData.seats(vecData.seats().add(base.mul(vecData.parties().size())));
-
-		//vecData.plain(new BMMPlain(vecData, this));
 	}
 }

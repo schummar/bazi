@@ -2,15 +2,15 @@ package de.uni_augsburg.bazi.divisor;
 
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
+import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
 /** A divisor algorithm. */
-public class DivisorAlgorithm implements Algorithm
+public class DivisorAlgorithm implements VectorAlgorithm
 {
 	private final RoundingFunction roundingFunction;
 	private final String name;

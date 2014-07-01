@@ -31,7 +31,6 @@ public class DirFilter implements Filter
 	{
 		DirData dirData = data.cast(DirData.class);
 		dirData.parties().forEach(DirFilter::sumDir);
-		//dout.plain(new DirPlain(dout));
 	}
 
 	private static void sumDir(Party party)

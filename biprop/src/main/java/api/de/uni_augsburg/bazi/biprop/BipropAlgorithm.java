@@ -4,7 +4,7 @@ import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.divisor.Divisor;
@@ -25,7 +25,7 @@ import static de.uni_augsburg.bazi.common.algorithm.VectorData.Party;
  * A biproportional algorithm calculates a set of row and column divisors that solve a two dimensional
  * apportionment problem.
  */
-public abstract class BipropAlgorithm implements Algorithm
+public abstract class BipropAlgorithm implements MatrixAlgorithm
 {
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
 	{

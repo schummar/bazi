@@ -1,25 +1,23 @@
 package de.uni_augsburg.bazi.gui.control;
 
 import de.schummar.castable.Data;
-import de.uni_augsburg.bazi.as.ASAlgorithm;
-import de.uni_augsburg.bazi.as.DivisorUpdateFunction;
+import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
-import de.uni_augsburg.bazi.common.algorithm.MatrixData;
+import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.data.BAZIFile;
 import de.uni_augsburg.bazi.common.plain.PlainFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
-import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
-import de.uni_augsburg.bazi.divisor.RoundingFunction;
 import de.uni_augsburg.bazi.json.JsonFormat;
+import javafx.application.Platform;
+import javafx.beans.binding.Binding;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.fxmisc.easybind.EasyBind;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.File;
 
 public class MainController extends VBox
 {
@@ -34,43 +32,43 @@ public class MainController extends VBox
 
 	public void initialize()
 	{
+		PluginManager.load();
+
 		new TabController(districts, addDistrict, data)
 			.districtsActivatedProperty()
 			.bindBidirectional(districtsActivatedCheckbox.selectedProperty());
+		Binding<Boolean> b = EasyBind.map(data.algorithmProperty(), a -> (a instanceof MatrixAlgorithm));
+		districtsActivatedCheckbox.selectedProperty().bind(b);
 
-		title.textProperty().bindBidirectional(data.cast(MatrixData.class).nameProperty());
-		title.setText("Title....");
+		title.textProperty().bindBidirectional(data.cast(VectorData.class).nameProperty());
+		//title.setText("Title....");
 
-		try
-		{
-			Reader reader = new InputStreamReader(new FileInputStream("C:/Users/Marco/Dropbox/Bazi/testdaten/matrix.json"));
-			BAZIFile loaded = new JsonFormat().deserialize(reader).asCastableObject().cast(BAZIFile.class);
-			data.src().overwrite(loaded.src());
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
+		File file = new File("input_matrix.json");
+		JsonFormat json = new JsonFormat();
+		BAZIFile loaded = json.deserialize(file).asCastableObject().cast(BAZIFile.class);
+		data.src().overwrite(loaded.src());
+
+		calculate.setOnAction(e -> new Thread(this::calc).start());
+	}
+
+	private void calc()
+	{
+
+		long t = System.currentTimeMillis();
+
+		BAZIFile data = this.data.copy().cast(BAZIFile.class);
+		Algorithm algorithm = data.algorithm();
 
 
-		calculate.setOnAction(
-			e -> {
-				Algorithm algorithm = !districtsActivatedCheckbox.isSelected()
-					? new DivisorAlgorithm(RoundingFunction.DIV_STD, "DivStd")
-					: new ASAlgorithm(
-					new DivisorAlgorithm(RoundingFunction.DIV_STD, "DivStd"),
-					new DivisorAlgorithm(RoundingFunction.DIV_STD, "DivStd"),
-					DivisorUpdateFunction.MIDPOINT
-				);
+		Options options = new Options(20);
+		algorithm.apply(data, options);
+		PlainFormat format = new PlainFormat(data.output().cast(PlainOptions.class));
+		format.configure(algorithm.plainFormatter());
+		String s = format.serialize(data.src());
 
-				BAZIFile data = this.data.copy().cast(BAZIFile.class);
-				Options options = new Options(20);
-				algorithm.apply(data, options);
-				PlainFormat format = new PlainFormat(data.output().cast(PlainOptions.class));
-				format.configure(algorithm.plainFormatter());
-				String s = format.serialize(data.src());
-				output.setText(s);
-			}
-		);
+		Platform.runLater(() -> output.setText(s));
+
+		t = System.currentTimeMillis() - t;
+		System.out.println(String.format("%sms", t));
 	}
 }

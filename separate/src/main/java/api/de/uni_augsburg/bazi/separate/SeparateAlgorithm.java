@@ -37,6 +37,5 @@ public class SeparateAlgorithm implements MatrixAlgorithm
 	{
 		MatrixData matrixData = data.cast(MatrixData.class);
 		matrixData.districts().parallelStream().forEach(d -> method.apply(d, options));
-		//matrixData.plain(new SeparatePlain(out, method.name()));
 	}
 }
