@@ -40,13 +40,25 @@ public class CastableUninitialized implements Castable
 		{
 			listeners.remove(listener);
 		}
+		@Override public boolean isCastableString()
+		{
+			return true;
+		}
 		@Override public CastableString asCastableString()
 		{
 			return init(new CastableString());
 		}
+		@Override public boolean isCastableList()
+		{
+			return true;
+		}
 		@Override public CastableList asCastableList()
 		{
 			return init(new CastableList());
+		}
+		@Override public boolean isCastableObject()
+		{
+			return true;
 		}
 		@Override public CastableObject asCastableObject()
 		{
@@ -101,13 +113,25 @@ public class CastableUninitialized implements Castable
 	{
 		value.removeListener(listener);
 	}
+	@Override public boolean isCastableString()
+	{
+		return value.isCastableString();
+	}
 	@Override public CastableString asCastableString()
 	{
 		return value.asCastableString();
 	}
+	@Override public boolean isCastableList()
+	{
+		return value.isCastableList();
+	}
 	@Override public CastableList asCastableList()
 	{
 		return value.asCastableList();
+	}
+	@Override public boolean isCastableObject()
+	{
+		return value.isCastableObject();
 	}
 	@Override public CastableObject asCastableObject()
 	{

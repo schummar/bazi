@@ -37,10 +37,9 @@ public class CastableString extends SimpleStringProperty implements Castable
 	{
 		setValue(castable.asCastableString().getValue());
 	}
-	@Override public CastableString asCastableString()
-	{
-		return this;
-	}
+
+	@Override public boolean isCastableString() { return true; }
+	@Override public CastableString asCastableString() { return this; }
 
 
 	@Override public String toString()

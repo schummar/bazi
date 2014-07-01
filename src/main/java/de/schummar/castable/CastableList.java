@@ -56,6 +56,8 @@ public class CastableList extends SimpleListProperty<Castable> implements Castab
 		clear();
 		addAll(that);
 	}
+
+	@Override public boolean isCastableList() { return true; }
 	@Override public CastableList asCastableList() { return this; }
 
 

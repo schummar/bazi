@@ -132,7 +132,7 @@ public abstract class Converters
 	}
 
 
-	public static class ListConverter<T> implements Converter<CList<T>>
+	@ConvertShallow public static class ListConverter<T> implements Converter<CList<T>>
 	{
 		private final Converter<T> contentConverter;
 		public ListConverter(Converter<T> contentConverter)
@@ -158,7 +158,7 @@ public abstract class Converters
 		@SuppressWarnings("unchecked") Class<T> tType = (Class<T>) type;
 		return new DataListConverter<>(tConverter, tType);
 	}
-	public static class DataListConverter<T extends Data> implements Converter<DataList<T>>
+	@ConvertShallow public static class DataListConverter<T extends Data> implements Converter<DataList<T>>
 	{
 		private final Converter<T> contentConverter;
 		private final Class<T> contentType;
@@ -180,7 +180,7 @@ public abstract class Converters
 		}
 	}
 
-	public static class MapConverter<T> implements Converter<CMap<T>>
+	@ConvertShallow public static class MapConverter<T> implements Converter<CMap<T>>
 	{
 		private final Converter<T> contentConverter;
 		public MapConverter(Converter<T> contentConverter)
@@ -201,7 +201,7 @@ public abstract class Converters
 	}
 
 
-	public static class ObjectConverter<T extends Data> implements Converter<T>
+	@ConvertShallow public static class ObjectConverter<T extends Data> implements Converter<T>
 	{
 		private final Class<T> type;
 		public ObjectConverter(Class<T> type)

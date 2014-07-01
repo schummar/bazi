@@ -116,11 +116,8 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 		);
 	}
 
-	@Override
-	public CastableObject asCastableObject()
-	{
-		return this;
-	}
+	@Override public boolean isCastableObject() { return true; }
+	@Override public CastableObject asCastableObject() { return this; }
 
 
 	@Override

@@ -27,6 +27,11 @@ public interface Converter<T>
 		return new CastableUninitialized();
 	}
 
+	default boolean shallow()
+	{
+		return getClass().isAnnotationPresent(ConvertShallow.class);
+	}
+
 	default Function<String, String> createValidator(T def)
 	{
 		if (def == null) return Function.identity();

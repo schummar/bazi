@@ -26,7 +26,8 @@ public class CProperty<T> implements Property<T>
 		this.castable = castable;
 		this.converter = converter;
 		this.validator = validator;
-		castable.addDeepListener(invalidationListener);
+		if (converter.shallow()) castable.addListener(invalidationListener);
+		else castable.addDeepListener(invalidationListener);
 	}
 
 	protected final InvalidationListener invalidationListener = observable ->
