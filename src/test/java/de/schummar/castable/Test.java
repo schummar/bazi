@@ -1,54 +1,22 @@
 package de.schummar.castable;
 
-import javafx.beans.property.Property;
+public class Test {
+    public static void main(String[] args) throws Exception {
+        CastableObject o = new CastableObject();
+        A a = o.cast(A.class);
+        CProperty<String> aa = a.a();
 
-import java.util.Arrays;
-import java.util.List;
+        aa.addListener((x, y, z) -> System.out.println(String.format("%s -> %s", y, z)));
 
-public class Test
-{
-	public static void main(String[] args) throws Exception
-	{
-		CastableObject m = new CastableObject();
-		/*m.addDeepListener(System.out::println);
+        a.a().setValue("1");
 
-		Party p = m.cast(Party.class);
-		p.name("Die Partei");
-		p.vote(100.0);
-		p.seat(50);
-		p.sub().name("Sub");
-		p.tests().addAll(Arrays.asList("a", "b", "c"));
-		p.parties().add(null);
-		p.parties().get(0).name("parties_0");
+        CastableObject o1 = new CastableObject();
+        o1.put("a", new CastableString("2"));
+        o.overwrite(o1);
+    }
 
-		P p1 = m.cast(P.class);
-		p1.bla("jdlfkfdj");
-		p1.parties().get(0).bla("sjfgsdf");
-
-
-		System.out.println(p.parties());*/
-
-		A a = m.cast(A.class);
-		System.out.println(Arrays.asList(m, a));
-		a.a().setValue(10);
-		System.out.println(Arrays.asList(m, a));
-		a.a().asStringProperty().setValue("abc");
-		System.out.println(Arrays.asList(m, a));
-
-
-	}
-
-	public static interface P extends Party
-	{
-		@Attribute Property<String> blaProperty();
-		default String bla() { return blaProperty().getValue(); }
-		default void bla(String bla) { blaProperty().setValue(bla); }
-
-		@Override @Attribute List<? extends P> parties();
-	}
-
-	private interface A extends Data
-	{
-		@Attribute(def = "42") CProperty<Integer> a();
-	}
+    private interface A extends Data {
+        @Attribute
+        CProperty<String> a();
+    }
 }

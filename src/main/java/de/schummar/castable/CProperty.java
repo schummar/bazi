@@ -20,6 +20,7 @@ public class CProperty<T> implements Property<T>
 	protected final List<InvalidationListener> invalidationListeners = new ArrayList<>();
 	protected T value = null;
 	protected boolean valid = false;
+
 	public CProperty(Castable castable, Converter<T> converter, Function<String, String> validator)
 	{
 		this.castable = castable;
@@ -30,11 +31,11 @@ public class CProperty<T> implements Property<T>
 
 	protected final InvalidationListener invalidationListener = observable ->
 	{
-		if (!valid) return;
 		T oldValue = getValue();
 		valid = false;
 		informListeners(oldValue);
 	};
+
 	protected void informListeners(T oldValue)
 	{
 		changeListeners.forEach(l -> l.changed(this, oldValue, getValue()));
@@ -42,43 +43,63 @@ public class CProperty<T> implements Property<T>
 	}
 
 
-	@Override public void bind(ObservableValue<? extends T> observable)
+	@Override
+	public void bind(ObservableValue<? extends T> observable)
 	{
 		throw new RuntimeException("cannot bind a CProperty");
 	}
-	@Override public void unbind()
+
+	@Override
+	public void unbind()
 	{
 		castable.removeListener(invalidationListener);
 	}
-	@Override public boolean isBound()
+
+	@Override
+	public boolean isBound()
 	{
 		return true;
 	}
-	@Override public void bindBidirectional(Property<T> other)
+
+	@Override
+	public void bindBidirectional(Property<T> other)
 	{
 		Bindings.bindBidirectional(this, other);
 	}
-	@Override public void unbindBidirectional(Property<T> other)
+
+	@Override
+	public void unbindBidirectional(Property<T> other)
 	{
 		Bindings.unbindBidirectional(this, other);
 	}
-	@Override public Object getBean()
+
+	@Override
+	public Object getBean()
 	{
 		return null;
 	}
-	@Override public String getName()
+
+	@Override
+	public String getName()
 	{
 		return "";
 	}
-	@Override public void addListener(ChangeListener<? super T> listener)
+
+	@Override
+	public void addListener(ChangeListener<? super T> listener)
 	{
+		getValue();
 		changeListeners.add(listener);
 	}
-	@Override public void removeListener(ChangeListener<? super T> listener)
+
+	@Override
+	public void removeListener(ChangeListener<? super T> listener)
 	{
 		changeListeners.remove(listener);
 	}
-	@Override public T getValue()
+
+	@Override
+	public T getValue()
 	{
 		if (!valid)
 		{
@@ -87,15 +108,22 @@ public class CProperty<T> implements Property<T>
 		}
 		return value;
 	}
-	@Override public void addListener(InvalidationListener listener)
+
+	@Override
+	public void addListener(InvalidationListener listener)
 	{
+		getValue();
 		invalidationListeners.add(listener);
 	}
-	@Override public void removeListener(InvalidationListener listener)
+
+	@Override
+	public void removeListener(InvalidationListener listener)
 	{
 		invalidationListeners.remove(listener);
 	}
-	@Override public void setValue(T value)
+
+	@Override
+	public void setValue(T value)
 	{
 		T oldValue = getValue();
 		if (Objects.equals(oldValue, value)) return;
@@ -106,17 +134,22 @@ public class CProperty<T> implements Property<T>
 		valid = true;
 		informListeners(oldValue);
 	}
-	@Override public String toString()
+
+	@Override
+	public String toString()
 	{
 		return String.valueOf(getValue());
 	}
+
 	private Property<String> stringProperty = null;
+
 	public Property<String> asStringProperty()
 	{
 		if (stringProperty == null)
 			stringProperty = new CProperty<String>(castable, Converters.STRING_OBJ_CONVERTER, validator)
 			{
-				@Override public void setValue(String value)
+				@Override
+				public void setValue(String value)
 				{
 					String oldValue = getValue();
 					if (Objects.equals(oldValue, value)) return;
