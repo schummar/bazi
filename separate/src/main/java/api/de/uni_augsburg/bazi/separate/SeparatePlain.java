@@ -4,6 +4,7 @@ import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.MatrixData;
+import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common_matrix.MatrixPlain;
@@ -21,13 +22,15 @@ public class SeparatePlain extends MatrixPlain
 	public static final StringTable.Key
 		VOTE_SUM = new StringTable.Key();
 
+	protected VectorAlgorithm method;
+
 	/**
 	 * @param data the output to produce plain output for.
-	 * @param vectorName the display name of the method that was used for the district apportionments.
 	 */
-	public SeparatePlain(MatrixData data, PlainOptions options, String vectorName)
+	public SeparatePlain(MatrixData data, PlainOptions options, VectorAlgorithm method)
 	{
-		super(data, options, vectorName);
+		super(data, options, method.name());
+		this.method = method;
 	}
 
 
@@ -36,7 +39,7 @@ public class SeparatePlain extends MatrixPlain
 		List<StringTable> tables = new ArrayList<>();
 		output.districts().forEach(
 			d -> {
-				List<StringTable> dTables = null;//d.plain().get(options);
+				List<StringTable> dTables = method.plainFormatter().apply(d, options);
 				dTables.get(0).titles().set(0, Resources.get("output.district", output.districts().indexOf(d) + 1, d.name()));
 				tables.addAll(dTables);
 			}
