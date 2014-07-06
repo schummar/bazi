@@ -93,11 +93,11 @@
                         <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="10.0" VBox.vgrow="NEVER">
                             <children>
                                 <Label minWidth="-Infinity" text="%gui.orientation" />
-                                <ComboBox minWidth="100.0" />
+                                <ComboBox fx:id="orientation" minWidth="-Infinity" />
                                 <Label minWidth="-Infinity" text="%gui.divisor" />
-                                <ComboBox minWidth="100.0" />
+                                <ComboBox fx:id="divisorFormat" minWidth="-Infinity" />
                                 <Label minWidth="-Infinity" text="%gui.tie" />
-                                <ComboBox minWidth="100.0" />
+                                <ComboBox fx:id="tieFormat" minWidth="-Infinity" />
                             </children>
                         </HBox>
                         <TextArea fx:id="output" minWidth="-Infinity" VBox.vgrow="ALWAYS" />

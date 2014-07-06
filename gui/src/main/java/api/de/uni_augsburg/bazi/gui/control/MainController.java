@@ -7,8 +7,7 @@ import de.uni_augsburg.bazi.common.algorithm.MatrixData;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.data.BAZIFile;
-import de.uni_augsburg.bazi.common.plain.PlainFormat;
-import de.uni_augsburg.bazi.common.plain.PlainOptions;
+import de.uni_augsburg.bazi.common.plain.*;
 import de.uni_augsburg.bazi.json.JsonFormat;
 import javafx.application.Platform;
 import javafx.beans.binding.Binding;
@@ -28,6 +27,10 @@ public class MainController extends VBox
 	@FXML private TabPane districts;
 	@FXML private CheckBox districtsActivatedCheckbox;
 	@FXML private Button calculate;
+
+	@FXML private ComboBox<Orientation> orientation;
+	@FXML private ComboBox<DivisorFormat> divisorFormat;
+	@FXML private ComboBox<TieFormat> tieFormat;
 	@FXML private TextArea output;
 
 	public void initialize()
@@ -39,6 +42,8 @@ public class MainController extends VBox
 			.bindBidirectional(districtsActivatedCheckbox.selectedProperty());
 		Binding<Boolean> b = EasyBind.map(data.algorithmProperty(), a -> a != null && MatrixData.class.isAssignableFrom(a.dataType()));
 		districtsActivatedCheckbox.selectedProperty().bind(b);
+
+		new OutputController(orientation, divisorFormat, tieFormat);
 
 		title.textProperty().bindBidirectional(data.cast(VectorData.class).nameProperty());
 		//title.setText("Title....");
