@@ -43,7 +43,7 @@ public class MainController extends VBox
 		Binding<Boolean> b = EasyBind.map(data.algorithmProperty(), a -> a != null && MatrixData.class.isAssignableFrom(a.dataType()));
 		districtsActivatedCheckbox.selectedProperty().bind(b);
 
-		new OutputController(orientation, divisorFormat, tieFormat);
+		new OutputController(orientation, divisorFormat, tieFormat, data.output().cast(PlainOptions.class));
 
 		title.textProperty().bindBidirectional(data.cast(VectorData.class).nameProperty());
 		//title.setText("Title....");

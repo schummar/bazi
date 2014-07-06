@@ -3,7 +3,6 @@ package de.uni_augsburg.bazi.common_vector;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
-import de.uni_augsburg.bazi.common.plain.Orientation;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
@@ -59,9 +58,7 @@ public class VectorPlain
 		conditionColumn(table.col(CONDITION));
 		resultColumn(table.col(SEAT));
 
-		if (options.orientation() == Orientation.HORIZONTAL
-			|| options.orientation() == Orientation.HORVER)
-			return Arrays.asList(table.transposed());
+		table.setTransposed(!options.orientation().vectorVertical());
 		return Arrays.asList(table);
 	}
 

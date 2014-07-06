@@ -2,6 +2,7 @@ package de.uni_augsburg.bazi.gui.control;
 
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.Orientation;
+import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.plain.TieFormat;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
@@ -14,13 +15,15 @@ public class OutputController
 	private final ComboBox<Orientation> orientation;
 	private final ComboBox<DivisorFormat> divisorFormat;
 	private final ComboBox<TieFormat> tieFormat;
+	private final PlainOptions plainOptions;
 
 
-	public OutputController(ComboBox<Orientation> orientation, ComboBox<DivisorFormat> divisorFormat, ComboBox<TieFormat> tieFormat)
+	public OutputController(ComboBox<Orientation> orientation, ComboBox<DivisorFormat> divisorFormat, ComboBox<TieFormat> tieFormat, PlainOptions plainOptions)
 	{
 		this.orientation = orientation;
 		this.divisorFormat = divisorFormat;
 		this.tieFormat = tieFormat;
+		this.plainOptions = plainOptions;
 
 		orientation.setItems(
 			FXCollections.observableArrayList(
@@ -30,7 +33,7 @@ public class OutputController
 				Orientation.VERHOR
 			)
 		);
-		orientation.setValue(Orientation.HORIZONTAL);
+		orientation.valueProperty().bindBidirectional(plainOptions.orientationProperty());
 
 		divisorFormat.setItems(
 			FXCollections.observableArrayList(
@@ -41,7 +44,7 @@ public class OutputController
 				DivisorFormat.QUOTIENTS
 			)
 		);
-		divisorFormat.setValue(DivisorFormat.DIV_SPLIT);
+		divisorFormat.valueProperty().bindBidirectional(plainOptions.divisorFormatProperty());
 
 		tieFormat.setItems(
 			FXCollections.observableArrayList(
@@ -50,6 +53,6 @@ public class OutputController
 				TieFormat.LIST
 			)
 		);
-		tieFormat.setValue(TieFormat.CODED);
+		tieFormat.valueProperty().bindBidirectional(plainOptions.tieFormatProperty());
 	}
 }

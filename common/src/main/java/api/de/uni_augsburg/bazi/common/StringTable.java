@@ -20,7 +20,16 @@ public class StringTable
 
 	private final List<Column> columns = new ArrayList<>();
 	private final List<String> titles = new ArrayList<>(), footnotes = new ArrayList<>();
+	private boolean transposed = false;
 
+	public boolean isTransposed()
+	{
+		return transposed;
+	}
+	public void setTransposed(boolean transposed)
+	{
+		this.transposed = transposed;
+	}
 
 	/**
 	 * A list of titles that will be printed before the table.
@@ -157,6 +166,8 @@ public class StringTable
 	 */
 	public String toString(int margin)
 	{
+		if (transposed) return transposed().toString(margin);
+
 		List<Function<String, String>> paddings = new ArrayList<>();
 		for (int col = 0; col < width(); col++)
 		{
@@ -180,6 +191,23 @@ public class StringTable
 		}
 		footnotes.forEach(f -> s.append("*").append(f).append("\n"));
 		return s.toString();
+	}
+	/**
+	 * Switch columns and rows.
+	 * @return a transposed version of this table.
+	 */
+	private StringTable transposed()
+	{
+		StringTable that = new StringTable();
+		that.titles.addAll(titles);
+		for (int i = 0; i < height(); i++)
+		{
+			Column col = that.col();
+			for (int j = 0; j < width(); j++)
+				col.add(col(j).get(i));
+		}
+		that.footnotes.addAll(footnotes);
+		return that;
 	}
 
 
@@ -212,23 +240,6 @@ public class StringTable
 	{
 		that.columns.forEach(col -> columns.add(new Column(col)));
 		return this;
-	}
-
-
-	/**
-	 * Switch columns and rows.
-	 * @return a transposed version of this table.
-	 */
-	public StringTable transposed()
-	{
-		StringTable that = new StringTable();
-		for (int i = 0; i < height(); i++)
-		{
-			Column col = that.col();
-			for (int j = 0; j < width(); j++)
-				col.add(col(j).get(i));
-		}
-		return that;
 	}
 
 
