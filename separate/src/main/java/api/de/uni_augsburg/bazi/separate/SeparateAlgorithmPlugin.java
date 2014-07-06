@@ -2,7 +2,8 @@ package de.uni_augsburg.bazi.separate;
 
 import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.Plugin;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import javafx.beans.property.Property;
 
 import java.util.Collections;
@@ -34,8 +35,8 @@ public class SeparateAlgorithmPlugin implements Plugin<SeparateAlgorithm>
 		 * The method used for the district apportionments.
 		 * @return the method used for the district apportionments.
 		 */
-		@Attribute(def = "divstd") Property<VectorAlgorithm> methodProperty();
-		default VectorAlgorithm method() { return methodProperty().getValue(); }
-		default void method(VectorAlgorithm v) { methodProperty().setValue(v); }
+		@Attribute(def = "divstd") Property<Algorithm<? extends VectorData>> methodProperty();
+		default  Algorithm<? extends VectorData> method() { return methodProperty().getValue(); }
+		default void method( Algorithm<? extends VectorData> v) { methodProperty().setValue(v); }
 	}
 }

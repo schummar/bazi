@@ -2,18 +2,18 @@ package de.uni_augsburg.bazi.list;
 
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.math.BMath;
 
 import static de.uni_augsburg.bazi.list.ListData.Party;
 
 class ListAlgorithmImpl
 {
-	public static void calculate(ListData data, Algorithm Super, Algorithm sub, Options options)
+	public static void calculate(ListData data, Algorithm<? extends VectorData> Super, Algorithm<? extends VectorData> sub, Options options)
 	{
-
 		data.parties().forEach(ListAlgorithmImpl::sumSubParties);
 
-		Super.applyUnfiltered(data, options);
+		Super.apply(data, options);
 
 		data.parties().parallelStream().forEach(
 			p -> {

@@ -1,8 +1,6 @@
 package de.uni_augsburg.bazi.common;
 
 import de.schummar.castable.Data;
-import de.uni_augsburg.bazi.common.algorithm.Algorithm;
-import de.uni_augsburg.bazi.common.algorithm.Filter;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,51 +22,65 @@ public class PluginManager
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
 
+	private static boolean loading = false, loaded = false;
 	private static final List<Plugin<?>> plugins = new ArrayList<>();
-	private static final List<Filter> filters = new ArrayList<>();
 
 
 	/** Find and cache all plugins in the classpath. */
-	public static void load()
+	synchronized public static void load()
 	{
-		plugins.clear();
-		filters.clear();
-		try
-		{
-			Reflections reflections = new Reflections("de.uni_augsburg.bazi");
+		if (loading || loaded) return;
+		loading = true;
 
-			for (Class<? extends Plugin> c : reflections.getSubTypesOf(Plugin.class))
+		new Thread(
+			new Runnable()
 			{
-				if (c.isInterface() || Modifier.isAbstract(c.getModifiers())) continue;
-				try
+				@Override public void run()
 				{
-					Plugin<?> plugin = c.getConstructor().newInstance();
-					plugins.add(plugin);
-				}
-				catch (NoSuchMethodException | SecurityException e)
-				{
-					LOGGER.warn(e.getMessage());
+					try
+					{
+						Reflections reflections = new Reflections("de.uni_augsburg.bazi");
+
+						for (Class<? extends Plugin> c : reflections.getSubTypesOf(Plugin.class))
+						{
+							if (c.isInterface() || Modifier.isAbstract(c.getModifiers())) continue;
+							try
+							{
+								Plugin<?> plugin = c.getConstructor().newInstance();
+								plugins.add(plugin);
+							}
+							catch (NoSuchMethodException | SecurityException e)
+							{
+								LOGGER.warn(e.getMessage());
+							}
+						}
+						LOGGER.info(
+							"loaded plugins:\n{}", plugins.stream()
+								.map(p -> p.getClass().toString())
+								.sorted()
+								.collect(Collectors.joining(",\n"))
+						);
+					}
+					catch (Exception e) { LOGGER.warn(e.getMessage()); }
+					finally
+					{
+						synchronized (PluginManager.class)
+						{
+							loading = false;
+							loaded = true;
+							PluginManager.class.notifyAll();
+						}
+					}
 				}
 			}
-			LOGGER.info(
-				"loaded plugins:\n{}", plugins.stream()
-					.map(p -> p.getClass().toString())
-					.sorted()
-					.collect(Collectors.joining(",\n"))
-			);
+		).start();
+	}
 
-
-			getPluginsOfInstanceType(Filter.class)
-				.forEach(p -> p.tryInstantiate(Data.create(Plugin.Params.class)).ifPresent(filters::add));
-
-			LOGGER.info(
-				"loaded filters:\n{}", filters.stream()
-					.map(f -> f.getClass().toString())
-					.sorted()
-					.collect(Collectors.joining(",\n"))
-			);
-		}
-		catch (Exception e) {e.printStackTrace();}
+	synchronized public static void ensureLoaded()
+	{
+		load();
+		while (!loaded) try {PluginManager.class.wait();}
+		catch (InterruptedException e) { LOGGER.error(e.getMessage()); }
 	}
 
 
@@ -80,6 +92,8 @@ public class PluginManager
 	 */
 	public static <T extends Plugin.Instance> List<Plugin<? extends T>> getPluginsOfInstanceType(Class<T> type)
 	{
+		ensureLoaded();
+
 		List<Plugin<? extends T>> list = new ArrayList<>();
 		plugins.stream().filter(plugin -> type.isAssignableFrom(plugin.getInstanceType())).forEach(
 			plugin -> {
@@ -107,30 +121,5 @@ public class PluginManager
 			if (t.isPresent()) return Optional.ofNullable(t.get());
 		}
 		return Optional.empty();
-	}
-
-
-	/**
-	 * Find all global filters.
-	 * @return all global filters.
-	 */
-	public static List<Filter> getGlobalFilters()
-	{
-		return filters.stream()
-			.filter(Filter::applicableGlobally)
-			.collect(Collectors.toList());
-	}
-
-
-	/**
-	 * Find all filters that are applicable for the given algorithm.
-	 * @param algorithm the algorithm to find filters for.
-	 * @return all filters that are applicable for the given algorithm.
-	 */
-	public static List<Filter> getFiltersFor(Algorithm algorithm)
-	{
-		return filters.stream()
-			.filter(f -> f.applicableTo(algorithm))
-			.collect(Collectors.toList());
 	}
 }

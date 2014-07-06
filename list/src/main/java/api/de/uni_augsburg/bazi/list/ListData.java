@@ -8,7 +8,7 @@ import de.uni_augsburg.bazi.math.Int;
 /** Output of the ListAlgorithm. */
 public interface ListData extends VectorData
 {
-	@Override DataList<? extends Party> parties();
+	@Override @Attribute DataList<? extends Party> parties();
 
 	public interface Party extends VectorData.Party, VectorData
 	{

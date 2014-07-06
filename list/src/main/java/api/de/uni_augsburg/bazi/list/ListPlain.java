@@ -2,7 +2,8 @@ package de.uni_augsburg.bazi.list;
 
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 
 import java.util.ArrayList;
@@ -13,12 +14,12 @@ public class ListPlain
 {
 	private final ListData data;
 	private final PlainOptions options;
-	private final VectorAlgorithm Super, sub;
+	private final Algorithm<? extends VectorData> Super, sub;
 
 	/**
 	 * @param data the data to produce plain data for.
 	 */
-	public ListPlain(ListData data, PlainOptions options, VectorAlgorithm Super, VectorAlgorithm sub)
+	public ListPlain(ListData data, PlainOptions options, Algorithm<? extends VectorData> Super, Algorithm<? extends VectorData> sub)
 	{
 		this.data = data;
 		this.options = options;

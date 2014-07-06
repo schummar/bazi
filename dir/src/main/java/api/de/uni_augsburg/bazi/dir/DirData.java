@@ -18,7 +18,7 @@ public interface DirData extends ListData
 		 * The number of direct seats the party gets.
 		 * @return the number of direct seats the party gets.
 		 */
-		@Attribute Property<Int> dirProperty();
+		@Attribute(def = "0") Property<Int> dirProperty();
 		default Int dir() { return dirProperty().getValue(); }
 		default void dir(Int v) { dirProperty().setValue(v); }
 	}

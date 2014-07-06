@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/** A PlainSupplier that generates plain output for matrix algorithms on request. */
+/** A PlainSupplier that generates plain data for matrix algorithms on request. */
 public abstract class MatrixPlain
 {
 	public static final StringTable.Key
@@ -30,7 +30,7 @@ public abstract class MatrixPlain
 
 	/**
 	 * Constructor with initializers.
-	 * @param output the result to produce plain output for.
+	 * @param output the result to produce plain data for.
 	 * @param vectorName the name of the vector method used for the apportionment.
 	 */
 	protected MatrixPlain(MatrixData output, PlainOptions options, String vectorName)

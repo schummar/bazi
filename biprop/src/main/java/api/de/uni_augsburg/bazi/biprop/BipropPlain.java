@@ -4,11 +4,15 @@ import de.schummar.castable.Attribute;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.plain.DivisorFormat;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common.util.CollectionHelper;
 import de.uni_augsburg.bazi.common_matrix.MatrixPlain;
-import de.uni_augsburg.bazi.divisor.*;
+import de.uni_augsburg.bazi.divisor.Divisor;
+import de.uni_augsburg.bazi.divisor.DivisorData;
+import de.uni_augsburg.bazi.divisor.DivisorPlain;
+import de.uni_augsburg.bazi.divisor.RoundingFunction;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.math.Real;
@@ -43,14 +47,14 @@ public class BipropPlain extends MatrixPlain
 	public static final StringTable.Key DIVISOR = new StringTable.Key();
 
 	protected final BipropData data;
-	protected final DivisorAlgorithm Super;
+	protected final Algorithm<? extends DivisorData> Super;
 
 	/**
 	 * Constructor with initializers.
 	 * @param data the biproportional result to produce plain data for.
 	 * @param sub the name of the divisor method used for the main apportionment.
 	 */
-	public BipropPlain(BipropData data, PlainOptions options, DivisorAlgorithm Super, String sub)
+	public BipropPlain(BipropData data, PlainOptions options, Algorithm<? extends DivisorData> Super, String sub)
 	{
 		super(data, options, sub);
 		this.Super = Super;

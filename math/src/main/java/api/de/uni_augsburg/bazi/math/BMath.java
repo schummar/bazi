@@ -143,10 +143,12 @@ public class BMath
 
 	public static Real niceMidValue(Interval i)
 	{
+		if (i.min().equals(NAN) || i.max().equals(NAN)) return NAN;
 		if (i.min().equals(i.max())) return i.min();
 		if (i.min().sgn() < 0 && i.max().sgn() > 0) return ZERO;
 		if (i.max().equals(INF)) return ONE.scale(i.min().scale() + 1);
 		if (i.min().equals(INFN)) return MINUS_ONE.scale(i.max().scale() + 1);
+
 
 		Real nice = i.min().add(i.max()).div(2);
 		long digits = -nice.scale() - 1;

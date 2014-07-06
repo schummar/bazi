@@ -4,11 +4,10 @@ import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Table;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.StringTable;
-import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.divisor.Divisor;
-import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
@@ -25,14 +24,14 @@ import static de.uni_augsburg.bazi.common.algorithm.VectorData.Party;
  * A biproportional algorithm calculates a set of row and column divisors that solve a two dimensional
  * apportionment problem.
  */
-public abstract class BipropAlgorithm implements MatrixAlgorithm
+public abstract class BipropAlgorithm<T extends BipropData> implements Algorithm<T>
 {
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
 	{
 		return (data, options) -> new BipropPlain(data.cast(BipropData.class), options, Super(), sub().name()).get();
 	}
 
-	@Override public void applyUnfiltered(Data data, Options options)
+	@Override public void apply(Data data, Options options)
 	{
 		BipropData bipropData = data.cast(BipropData.class);
 		Table<DivisorData, String, Party> table = generateTable(bipropData);
@@ -115,7 +114,7 @@ public abstract class BipropAlgorithm implements MatrixAlgorithm
 	}
 
 
-	protected abstract DivisorAlgorithm Super();
-	protected abstract DivisorAlgorithm sub();
+	protected abstract Algorithm<? extends DivisorData> Super();
+	protected abstract Algorithm<? extends DivisorData> sub();
 	protected abstract Map<Object, Real> calculate(Table<DivisorData, String, Party> table, Map<Object, Int> seats, Options options);
 }

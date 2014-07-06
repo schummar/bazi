@@ -10,13 +10,13 @@ import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Interval;
 import de.uni_augsburg.bazi.math.Real;
 
-/** A PlainSupplier that generates plain output for the divisor algorithm on request. */
+/** A PlainSupplier that generates plain data for the divisor algorithm on request. */
 public class QuotaPlain extends VectorPlain
 {
 	private final QuotaData output;
 
 	/**
-	 * @param output the output to produce plain output for.
+	 * @param output the data to produce plain data for.
 	 * @param name the display name of the algorithm.
 	 */
 	public QuotaPlain(QuotaData output, PlainOptions options, String name)
@@ -115,7 +115,7 @@ public class QuotaPlain extends VectorPlain
 
 	/**
 	 * Returns the quota label.
-	 * @param options output options.
+	 * @param options data options.
 	 * @return the quota label.
 	 */
 	public static String quotaLabel(PlainOptions options)

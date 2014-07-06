@@ -3,6 +3,7 @@ package de.uni_augsburg.bazi.bmm;
 import de.schummar.castable.Attribute;
 import de.uni_augsburg.bazi.common.Plugin;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
+import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.math.Int;
 import javafx.beans.property.Property;
 
@@ -60,8 +61,8 @@ public class BMMAlgorithmPlugin implements Plugin<BMMAlgorithm>
 		 * The algorithm to calculate the actual apportionment with.
 		 * @return the algorithm to calculate the actual apportionment with.
 		 */
-		@Attribute(def = "divstd") Property<Algorithm> methodProperty();
-		default Algorithm method() { return methodProperty().getValue(); }
-		default void method(Algorithm v) { methodProperty().setValue(v); }
+		@Attribute(def = "divstd") Property<Algorithm<? extends VectorData>> methodProperty();
+		default Algorithm<? extends VectorData> method() { return methodProperty().getValue(); }
+		default void method(Algorithm<? extends VectorData> v) { methodProperty().setValue(v); }
 	}
 }

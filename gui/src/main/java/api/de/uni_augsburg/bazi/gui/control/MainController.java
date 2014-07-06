@@ -3,7 +3,7 @@ package de.uni_augsburg.bazi.gui.control;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.PluginManager;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
-import de.uni_augsburg.bazi.common.algorithm.MatrixAlgorithm;
+import de.uni_augsburg.bazi.common.algorithm.MatrixData;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.data.BAZIFile;
@@ -37,13 +37,13 @@ public class MainController extends VBox
 		new TabController(districts, addDistrict, data)
 			.districtsActivatedProperty()
 			.bindBidirectional(districtsActivatedCheckbox.selectedProperty());
-		Binding<Boolean> b = EasyBind.map(data.algorithmProperty(), a -> (a instanceof MatrixAlgorithm));
+		Binding<Boolean> b = EasyBind.map(data.algorithmProperty(), a -> a != null && MatrixData.class.isAssignableFrom(a.dataType()));
 		districtsActivatedCheckbox.selectedProperty().bind(b);
 
 		title.textProperty().bindBidirectional(data.cast(VectorData.class).nameProperty());
 		//title.setText("Title....");
 
-		File file = new File("input_matrix.json");
+		File file = new File("input.json");
 		JsonFormat json = new JsonFormat();
 		BAZIFile loaded = json.deserialize(file).asCastableObject().cast(BAZIFile.class);
 		data.src().overwrite(loaded.src());
@@ -57,7 +57,7 @@ public class MainController extends VBox
 		long t = System.currentTimeMillis();
 
 		BAZIFile data = this.data.copy().cast(BAZIFile.class);
-		Algorithm algorithm = data.algorithm();
+		Algorithm<?> algorithm = data.algorithm();
 
 
 		Options options = new Options(20);

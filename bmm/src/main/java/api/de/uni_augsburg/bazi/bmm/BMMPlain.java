@@ -49,7 +49,7 @@ public class BMMPlain
 		for (int i = 0; i < data.parties().size(); i++)
 		{
 			String s = String.format("%s+%s", algorithm.base, quotients.get(i));
-			if (data.parties().get(i).conditionUsed()) s += Resources.get("output.");
+			if (data.parties().get(i).conditionUsed()) s += Resources.get("data.");
 			quotients.set(i, s);
 		}
 	}

@@ -3,8 +3,8 @@ package de.uni_augsburg.bazi.separate;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.MatrixData;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.common_matrix.MatrixPlain;
@@ -16,18 +16,18 @@ import de.uni_augsburg.bazi.math.Real;
 import java.util.ArrayList;
 import java.util.List;
 
-/** A PlainSupplier that generates plain output for the separate algorithm on request. */
+/** A PlainSupplier that generates plain data for the separate algorithm on request. */
 public class SeparatePlain extends MatrixPlain
 {
 	public static final StringTable.Key
 		VOTE_SUM = new StringTable.Key();
 
-	protected VectorAlgorithm method;
+	protected Algorithm<? extends VectorData> method;
 
 	/**
-	 * @param data the output to produce plain output for.
+	 * @param data the data to produce plain data for.
 	 */
-	public SeparatePlain(MatrixData data, PlainOptions options, VectorAlgorithm method)
+	public SeparatePlain(MatrixData data, PlainOptions options,  Algorithm<? extends VectorData> method)
 	{
 		super(data, options, method.name());
 		this.method = method;

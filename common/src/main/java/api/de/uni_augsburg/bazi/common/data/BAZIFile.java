@@ -9,9 +9,9 @@ public interface BAZIFile extends Data
 {
 	@Attribute Data output();
 
-	@Attribute Property<Algorithm> algorithmProperty();
-	default Algorithm algorithm() { return algorithmProperty().getValue(); }
-	default void algorithm(Algorithm v) { algorithmProperty().setValue(v); }
+	@Attribute Property<Algorithm<?>> algorithmProperty();
+	default Algorithm<?> algorithm() { return algorithmProperty().getValue(); }
+	default void algorithm(Algorithm<?> v) { algorithmProperty().setValue(v); }
 
 	@Attribute Property<String> infoProperty();
 	default String info() { return infoProperty().getValue(); }

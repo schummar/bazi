@@ -125,7 +125,7 @@ class BAZIImpl
 		if (baziFile.output() != null)
 			outFormat.get().configure(baziFile.output());
 
-		Algorithm algorithm = baziFile.algorithm();
+		Algorithm<?> algorithm = baziFile.algorithm();
 		if (algorithm == null) throw new RuntimeException(Resources.get("input.no_such_algorithm", baziFile.algorithm()));
 		if (outFormat.get() instanceof PlainFormat)
 			((PlainFormat) outFormat.get()).configure(algorithm.plainFormatter());

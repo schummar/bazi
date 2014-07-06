@@ -2,8 +2,8 @@ package de.uni_augsburg.bazi.bmm_pow;
 
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.StringTable;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
-import de.uni_augsburg.bazi.common.algorithm.VectorAlgorithm;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
 import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.math.Int;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 /** The base+min..max(pow) algorithm. */
-public class BMMPowAlgorithm implements VectorAlgorithm
+public class BMMPowAlgorithm implements Algorithm<BMMPowData>
 {
 	/** Constraints for the seats of each party. */
 	public final Int base, min, max;
@@ -35,17 +35,15 @@ public class BMMPowAlgorithm implements VectorAlgorithm
 		this.method = method;
 	}
 
-	@Override public String name()
-	{
-		return "bmmpow";
-	}
+	@Override public String name() { return "bmmpow"; }
+	@Override public Class<BMMPowData> dataType() { return BMMPowData.class; }
 
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
 	{
 		return (data, options) -> new BMMPowPlain(method, data.cast(BMMPowData.class), options).get();
 	}
 
-	@Override public void applyUnfiltered(Data in, Options options)
+	@Override public void apply(Data in, Options options)
 	{
 		BMMPowAlgorithmImpl.calculate(in.cast(BMMPowData.class), method, base, min, max, options);
 	}

@@ -15,9 +15,15 @@ public interface Interval
 	Real min();
 	default Real nice() { return BMath.niceMidValue(this); }
 	Real max();
-	default boolean contains(Real r) { return min().compareTo(r) <= 0 && r.compareTo(max()) <= 0; }
+	default boolean contains(Real r)
+	{
+		if (min().equals(BMath.NAN) || max().equals(BMath.NAN) || r.equals(BMath.NAN)) return false;
+		return min().compareTo(r) <= 0 && r.compareTo(max()) <= 0;
+	}
 	default int compareTo(Real r)
 	{
+		if (min().equals(BMath.NAN) || max().equals(BMath.NAN) || r.equals(BMath.NAN)) return 0;
+
 		int cmin = r.compareTo(min());
 		int cmax = r.compareTo(max());
 		if (cmin == cmax) return cmin;

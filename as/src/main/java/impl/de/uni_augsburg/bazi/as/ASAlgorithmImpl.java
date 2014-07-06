@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.UserCanceledException;
+import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
 import de.uni_augsburg.bazi.common.util.CollectionHelper;
@@ -25,7 +26,7 @@ class ASAlgorithmImpl
 		Table<DivisorData, String, Party> table,
 		Map<Object, Int> seats,
 		DivisorUpdateFunction divisorUpdateFunction,
-		DivisorAlgorithm divisorAlgorithm,
+		Algorithm<? extends DivisorData> divisorAlgorithm,
 		Options options
 	)
 	{
@@ -37,10 +38,10 @@ class ASAlgorithmImpl
 	Map<?, ? extends Map<?, Party>> rows, cols, rowsAndCols;
 	Map<Object, Int> seats;
 	private final DivisorUpdateFunction divisorUpdateFunction;
-	private final DivisorAlgorithm divisorAlgorithm;
+	private final Algorithm<? extends DivisorData> divisorAlgorithm;
 	private final Options options;
 
-	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, DivisorAlgorithm divisorAlgorithm, Table<DivisorData, String, Party> table, Map<Object, Int> seats, Options options)
+	ASAlgorithmImpl(DivisorUpdateFunction divisorUpdateFunction, Algorithm<? extends DivisorData> divisorAlgorithm, Table<DivisorData, String, Party> table, Map<Object, Int> seats, Options options)
 	{
 		this.divisorUpdateFunction = divisorUpdateFunction;
 		this.divisorAlgorithm = divisorAlgorithm;
