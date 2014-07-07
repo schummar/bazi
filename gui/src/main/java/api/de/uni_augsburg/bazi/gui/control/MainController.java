@@ -12,6 +12,7 @@ import de.uni_augsburg.bazi.json.JsonFormat;
 import javafx.application.Platform;
 import javafx.beans.binding.Binding;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.fxmisc.easybind.EasyBind;
@@ -21,6 +22,20 @@ import java.io.File;
 public class MainController extends VBox
 {
 	private final BAZIFile data = Data.create(BAZIFile.class);
+
+	@FXML private MenuItem menuFileOpen;
+	@FXML private MenuItem menuFileReopen;
+	@FXML private MenuItem menuFileRestart;
+	@FXML private MenuItem menuFileSave;
+	@FXML private MenuItem menuFileOptions;
+	@FXML private MenuItem menuFileQuit;
+
+	@FXML private MenuItem menuDatabase;
+
+	@FXML private MenuItem menuHelpAbout;
+	@FXML private MenuItem menuHelpChangelog;
+	@FXML private MenuItem menuHelpUpdate;
+
 
 	@FXML private TextField title;
 	@FXML private Button addDistrict;
@@ -33,11 +48,19 @@ public class MainController extends VBox
 	@FXML private ComboBox<TieFormat> tieFormat;
 	@FXML private TextArea output;
 
+	private MenuController menuController;
 	private TabController tabController;
 	private OutputController outputController;
+
 	public void initialize()
 	{
 		PluginManager.load();
+
+		menuController = new MenuController(
+			EasyBind.select(sceneProperty()).selectObject(Scene::windowProperty),
+			menuFileOpen, menuFileReopen, menuFileRestart, menuFileSave, menuFileOptions, menuFileQuit,
+			menuDatabase, menuHelpAbout, menuHelpChangelog, menuHelpUpdate
+		);
 
 		tabController = new TabController(districts, addDistrict, data);
 		tabController.districtsActivatedProperty()
