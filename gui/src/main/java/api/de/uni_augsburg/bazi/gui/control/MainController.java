@@ -33,17 +33,19 @@ public class MainController extends VBox
 	@FXML private ComboBox<TieFormat> tieFormat;
 	@FXML private TextArea output;
 
+	private TabController tabController;
+	private OutputController outputController;
 	public void initialize()
 	{
 		PluginManager.load();
 
-		new TabController(districts, addDistrict, data)
-			.districtsActivatedProperty()
+		tabController = new TabController(districts, addDistrict, data);
+		tabController.districtsActivatedProperty()
 			.bindBidirectional(districtsActivatedCheckbox.selectedProperty());
 		Binding<Boolean> b = EasyBind.map(data.algorithmProperty(), a -> a != null && MatrixData.class.isAssignableFrom(a.dataType()));
 		districtsActivatedCheckbox.selectedProperty().bind(b);
 
-		new OutputController(orientation, divisorFormat, tieFormat, data.output().cast(PlainOptions.class));
+		outputController = new OutputController(orientation, divisorFormat, tieFormat, output, data.output().cast(PlainOptions.class));
 
 		title.textProperty().bindBidirectional(data.cast(VectorData.class).nameProperty());
 		//title.setText("Title....");
@@ -71,7 +73,7 @@ public class MainController extends VBox
 		format.configure(algorithm.plainFormatter());
 		String s = format.serialize(data.src());
 
-		Platform.runLater(() -> output.setText(s));
+		Platform.runLater(() -> outputController.append(s));
 
 		t = System.currentTimeMillis() - t;
 		System.out.println(String.format("%sms", t));
