@@ -57,7 +57,7 @@ public interface RoundingFunction
 	 */
 	default ShiftQueue.ShiftFunction getShiftFunction(long minPrecision)
 	{
-		return (party, seats, increase) -> {
+		return (party, seats) -> {
 			Real border = apply(seats, minPrecision);
 			if (border.sgn() <= 0)
 				return BMath.INF;

@@ -76,7 +76,7 @@ public interface VectorData extends Data
 		default Uniqueness uniqueness() { return uniquenessProperty().getValue(); }
 		default void uniqueness(Uniqueness v) { uniquenessProperty().setValue(v); }
 
-		@Attribute CProperty<Boolean> conditionUsedProperty();
+		@Attribute(def = "") CProperty<Boolean> conditionUsedProperty();
 		default Boolean conditionUsed() { return conditionUsedProperty().getValue(); }
 		default void conditionUsed(Boolean v) { conditionUsedProperty().setValue(v); }
 	}

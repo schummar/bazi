@@ -83,7 +83,7 @@ public class ShiftQueue
 	public Real nextIncreaseValue()
 	{
 		int i = nextIncrease();
-		return shiftFunction.value(parties.get(i), parties.get(i).seats(), true);
+		return shiftFunction.value(parties.get(i), parties.get(i).seats());
 	}
 
 
@@ -118,7 +118,7 @@ public class ShiftQueue
 	public Real nextDecreaseValue()
 	{
 		int i = nextDecrease();
-		return shiftFunction.value(parties.get(i), parties.get(i).seats().sub(1), false);
+		return shiftFunction.value(parties.get(i), parties.get(i).seats().sub(1));
 	}
 
 
@@ -130,14 +130,14 @@ public class ShiftQueue
 
 		int lastIncrease = decrease.get(0);
 		for (int i : increase)
-			if (compare(parties.get(i), parties.get(i).seats(), parties.get(lastIncrease), parties.get(lastIncrease).seats().sub(1), true) >= 0)
+			if (compare(parties.get(i), parties.get(i).seats(), parties.get(lastIncrease), parties.get(lastIncrease).seats().sub(1)) >= 0)
 				parties.get(i).uniqueness(Uniqueness.CAN_BE_MORE);
 			else
 				break;
 
 		int lastDecrease = increase.get(0);
 		for (int i : decrease)
-			if (compare(parties.get(i), parties.get(i).seats().sub(1), parties.get(lastDecrease), parties.get(lastDecrease).seats(), false) <= 0)
+			if (compare(parties.get(i), parties.get(i).seats().sub(1), parties.get(lastDecrease), parties.get(lastDecrease).seats()) <= 0)
 				parties.get(i).uniqueness(Uniqueness.CAN_BE_LESS);
 			else
 				break;
@@ -148,7 +148,7 @@ public class ShiftQueue
 	{
 		Collections.sort(
 			increase, (x, y) -> {
-				int comp = -compare(parties.get(x), parties.get(x).seats(), parties.get(y), parties.get(y).seats(), true);
+				int comp = -compare(parties.get(x), parties.get(x).seats(), parties.get(y), parties.get(y).seats());
 				if (comp == 0)
 					comp = x.compareTo(y);
 				return comp;
@@ -156,7 +156,7 @@ public class ShiftQueue
 		);
 		Collections.sort(
 			decrease, (x, y) -> {
-				int comp = compare(parties.get(x), parties.get(x).seats().sub(1), parties.get(y), parties.get(y).seats().sub(1), false);
+				int comp = compare(parties.get(x), parties.get(x).seats().sub(1), parties.get(y), parties.get(y).seats().sub(1));
 				if (comp == 0)
 					comp = -x.compareTo(y);
 				return comp;
@@ -165,22 +165,9 @@ public class ShiftQueue
 	}
 
 
-	private int compare(VectorData.Party p0, Int s0, VectorData.Party p1, Int s1, boolean increase)
+	private int compare(VectorData.Party p0, Int s0, VectorData.Party p1, Int s1)
 	{
-		int compare = shiftFunction.value(p0, s0, increase).compareTo(shiftFunction.value(p1, s1, increase));
-		if (compare != 0)
-			return compare;
-		return bias(p0, s0) - bias(p1, s1);
-	}
-
-
-	private static int bias(VectorData.Party p, Int s)
-	{
-		if (s.sub(1).compareTo(p.min()) < 0)
-			return 1;
-		if (s.compareTo(p.max()) > 0)
-			return -1;
-		return 0;
+		return shiftFunction.value(p0, s0).compareTo(shiftFunction.value(p1, s1));
 	}
 
 
@@ -196,10 +183,9 @@ public class ShiftQueue
 		 * Returns the priority of a given party with a given number of seats.
 		 * @param p the party.
 		 * @param s the number of seats.
-		 * @param increase whether the party competes for an increase (if false: a decrease).
 		 * @return the priority of a given party with a given number of seats.
 		 */
-		public Real value(VectorData.Party p, Int s, boolean increase);
+		public Real value(VectorData.Party p, Int s);
 
 		/**
 		 * Returns this shift function with the addition that 0/oo values are given if
@@ -210,14 +196,12 @@ public class ShiftQueue
 		public default ShiftFunction mindConditions()
 		{
 			ShiftFunction that = this;
-			return (party, seats, increase) -> {
-				if (seats.compareTo(party.min()) < 0
-					|| (seats.equals(party.min()) && !increase))
+			return (party, seats) -> {
+				if (seats.compareTo(party.min()) < 0)
 					return BMath.INF;
-				if (seats.compareTo(party.max()) > 0
-					|| (seats.equals(party.max()) && increase))
+				if (seats.compareTo(party.max()) >= 0)
 					return BMath.ZERO;
-				return that.value(party, seats, increase);
+				return that.value(party, seats);
 			};
 		}
 	}

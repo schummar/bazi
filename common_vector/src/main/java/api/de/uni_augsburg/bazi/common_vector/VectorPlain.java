@@ -103,7 +103,7 @@ public class VectorPlain
 	public void conditionColumn(StringTable.Column col)
 	{
 		col.add(Resources.get("output.conditions"));
-		data.parties().forEach(p -> col.add(String.format("%s..%s", p.min(), p.max())));
+		data.parties().forEach(p -> col.add(String.format("%s%s..%s", p.conditionUsed() ? "●" : "", p.min(), p.max())));
 
 		Int minSum = data.parties().stream()
 			.map(VectorData.Party::min)
@@ -113,7 +113,11 @@ public class VectorPlain
 			.reduce(Int::add).orElse(BMath.ZERO);
 		col.add(String.format("%s..%s", minSum, maxSum));
 
-		if (minSum.equals(BMath.ZERO) && maxSum.equals(BMath.INF)) col.delete();
+		long relevantMax = data.parties().stream()
+			.map(VectorData.Party::max)
+			.filter(m -> !m.equals(BMath.INF))
+			.count();
+		if (minSum.equals(BMath.ZERO) && relevantMax == 0) col.delete();
 	}
 
 

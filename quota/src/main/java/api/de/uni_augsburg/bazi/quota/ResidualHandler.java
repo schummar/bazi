@@ -22,7 +22,7 @@ public interface ResidualHandler
 	public static ResidualHandler
 
 		GREATEST_REMINDERS =
-		quota -> (party, seats, increase) -> {
+		quota -> (party, seats) -> {
 			Real quotient = party.votes().div(quota);
 			Int initialSeats = quotient.floor();
 			if (seats.compareTo(initialSeats.add(1)) > 0) return BMath.ZERO;
@@ -31,7 +31,7 @@ public interface ResidualHandler
 		},
 
 	GREATEST_REMAINDERS_MIN =
-		quota -> (party, seats, increase) -> {
+		quota -> (party, seats) -> {
 			Real quotient = party.votes().div(quota);
 			Int initialSeats = quotient.floor();
 			if (initialSeats.equals(BMath.ZERO) || seats.compareTo(initialSeats.add(1)) > 0) return BMath.ZERO;
@@ -39,7 +39,7 @@ public interface ResidualHandler
 			return quotient.frac();
 		},
 
-	WINNER_TAKES_ALL = quota -> (party, seats, increase) -> {
+	WINNER_TAKES_ALL = quota -> (party, seats) -> {
 		Real quotient = party.votes().div(quota);
 		Int initialSeats = quotient.floor();
 		if (seats.compareTo(initialSeats) <= 0) return BMath.INF;
