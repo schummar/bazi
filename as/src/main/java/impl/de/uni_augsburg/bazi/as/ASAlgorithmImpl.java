@@ -8,7 +8,6 @@ import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.Uniqueness;
 import de.uni_augsburg.bazi.common.util.CollectionHelper;
-import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;

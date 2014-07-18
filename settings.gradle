@@ -13,4 +13,5 @@ include 'as',
 	'list',
 	'math',
 	'quota',
-	'separate'
+	'separate',
+	'zipdatabase'
