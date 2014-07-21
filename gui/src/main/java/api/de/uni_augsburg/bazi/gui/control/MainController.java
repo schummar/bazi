@@ -59,7 +59,6 @@ public class MainController
 			{ bind(data.algorithmProperty()); }
 			@Override protected String computeValue()
 			{
-				if(data.algorithm()!=null)System.out.println(data.algorithm().unwrap());
 				return "Algorithmus: " + (
 					data.algorithm() == null ? "-"
 						: data.algorithm().unwrap().name()

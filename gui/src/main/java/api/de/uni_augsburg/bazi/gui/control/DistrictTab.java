@@ -36,7 +36,7 @@ public class DistrictTab extends Tab implements Initializable
 		this.options = options;
 		this.district = district;
 
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../district_tab.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/uni_augsburg/bazi/gui/district_tab.fxml"));
 		fxmlLoader.setController(this);
 		fxmlLoader.setResources(ResourceBundle.getBundle("de.uni_augsburg.bazi.common.bazi"));
 		try
