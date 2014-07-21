@@ -29,7 +29,7 @@ public class ListAlgorithm implements Algorithm<ListData>
 		this.sub = sub != null ? sub : Super;
 	}
 
-	@Override public String name() { return ""; }
+	@Override public String name() { return String.format("%s (%s)", Super.name(), sub.name()); }
 	@Override public Class<ListData> dataType() { return ListData.class; }
 
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()

@@ -35,7 +35,7 @@ public class BMMPowAlgorithm implements Algorithm<BMMPowData>
 		this.method = method;
 	}
 
-	@Override public String name() { return "bmmpow"; }
+	@Override public String name() { return String.format("BMM(POW) - %s+%s..%s", base, min, max); }
 	@Override public Class<BMMPowData> dataType() { return BMMPowData.class; }
 
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()

@@ -5,6 +5,7 @@ import de.uni_augsburg.bazi.common.algorithm.MatrixData;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.data.BAZIFile;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +36,16 @@ public class TabController
 		options = data.cast(PlainOptions.class);
 		vData = data.cast(VectorData.class);
 		mData = data.cast(MatrixData.class);
+		districtsActivated.bind(
+			new BooleanBinding()
+			{
+				{ bind(data.algorithmProperty()); }
+				@Override protected boolean computeValue()
+				{
+					return data.algorithm() != null && MatrixData.class.isAssignableFrom(data.algorithm().dataType());
+				}
+			}
+		);
 
 		districtsActivated.addListener(this::districtsActivatedChanged);
 		addDistrict.setOnAction(e -> createNewDistrict());

@@ -1,63 +1,106 @@
 package de.uni_augsburg.bazi.gui.control;
 
-import javafx.beans.binding.Binding;
+import com.google.common.base.Charsets;
+import de.schummar.castable.Castable;
+import de.schummar.castable.Data;
+import de.uni_augsburg.bazi.common.Plugin;
+import de.uni_augsburg.bazi.common.PluginManager;
+import de.uni_augsburg.bazi.common.database.Tree;
+import de.uni_augsburg.bazi.common.format.Format;
+import de.uni_augsburg.bazi.zipdatabase.ZipDatabase;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
-import javafx.stage.Window;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.io.*;
+import java.util.Optional;
 
-/**
- * Created by Marco on 07.07.2014.
- */
 public class MenuController
 {
-	private final Binding<Window> window;
+	private static final Logger LOGGER = LoggerFactory.getLogger(MenuController.class);
 
-	private final MenuItem menuFileOpen;
-	private final MenuItem menuFileReopen;
-	private final MenuItem menuFileRestart;
-	private final MenuItem menuFileSave;
-	private final MenuItem menuFileOptions;
-	private final MenuItem menuFileQuit;
 
-	private final MenuItem menuDatabase;
+	@FXML public MenuItem menuFileOpen;
+	@FXML public MenuItem menuFileReopen;
+	@FXML public MenuItem menuFileRestart;
+	@FXML public MenuItem menuFileSave;
+	@FXML public MenuItem menuFileOptions;
+	@FXML public MenuItem menuFileQuit;
 
-	private final MenuItem menuHelpAbout;
-	private final MenuItem menuHelpChangelog;
-	private final MenuItem menuHelpUpdate;
+	@FXML public Menu menuDatabase;
 
-	public MenuController(
-		Binding<Window> window,
-		MenuItem menuFileOpen,
-		MenuItem menuFileReopen,
-		MenuItem menuFileRestart,
-		MenuItem menuFileSave,
-		MenuItem menuFileOptions,
-		MenuItem menuFileQuit,
-		MenuItem menuDatabase,
-		MenuItem menuHelpAbout,
-		MenuItem menuHelpChangelog,
-		MenuItem menuHelpUpdate)
+	@FXML public MenuItem menuHelpAbout;
+	@FXML public MenuItem menuHelpChangelog;
+	@FXML public MenuItem menuHelpUpdate;
+
+
+	public MainController main;
+	private Castable last = null;
+
+	@FXML void initialize()
 	{
-		this.window = window;
-		this.menuFileOpen = menuFileOpen;
-		this.menuFileReopen = menuFileReopen;
-		this.menuFileRestart = menuFileRestart;
-		this.menuFileSave = menuFileSave;
-		this.menuFileOptions = menuFileOptions;
-		this.menuFileQuit = menuFileQuit;
-		this.menuDatabase = menuDatabase;
-		this.menuHelpAbout = menuHelpAbout;
-		this.menuHelpChangelog = menuHelpChangelog;
-		this.menuHelpUpdate = menuHelpUpdate;
+		menuFileOpen.setOnAction(this::open);
+		new Thread(this::init).start();
+	}
 
-		menuFileOpen.setOnAction(
-			e -> {
-				FileChooser fileChooser = new FileChooser();
-				fileChooser.setTitle("sdfkjsdgfdjkfg");
-				File file = fileChooser.showOpenDialog(window.getValue());
+	private void open(ActionEvent e)
+	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Open");
+		File file = fileChooser.showOpenDialog(main.title.getScene().getWindow());
+		int i = file.getName().lastIndexOf(".");
+		String ending = i == -1 ? file.getName() : file.getName().substring(i + 1);
+		load(ending, () -> new FileInputStream(file));
+	}
+
+	private void init()
+	{
+		ZipDatabase db = new ZipDatabase(new File("data.zip"));
+		db.load();
+		db.get().children.forEach(c -> init(menuDatabase, c));
+	}
+
+	private void init(Menu menu, Tree tree)
+	{
+		MenuItem child;
+		if (tree.isLeaf())
+		{
+			child = new MenuItem(tree.name);
+			child.setOnAction(e -> load(tree.ending, tree.loader));
+		}
+		else
+		{
+			child = new Menu(tree.name);
+			tree.children.forEach(c -> init((Menu) child, c));
+		}
+		menu.getItems().add(child);
+	}
+
+	private void load(String ending, Tree.Loader loader)
+	{
+		try (InputStream stream = loader.load())
+		{
+			Plugin.Params params = Data.create(Plugin.Params.class);
+			params.name(ending.toLowerCase());
+			Optional<Format> format = PluginManager.tryInstantiate(Format.class, params);
+
+			if (!format.isPresent())
+			{
+				LOGGER.error("unknown format");
+				return;
 			}
-		);
+
+			last = format.get().deserialize(new InputStreamReader(stream, Charsets.UTF_8));
+			main.data.src().overwrite(last);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

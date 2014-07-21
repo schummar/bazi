@@ -8,82 +8,69 @@ import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.data.BAZIFile;
 import de.uni_augsburg.bazi.common.plain.*;
-import de.uni_augsburg.bazi.json.JsonFormat;
 import javafx.application.Platform;
 import javafx.beans.binding.Binding;
+import javafx.beans.binding.ObjectBinding;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import org.fxmisc.easybind.EasyBind;
 
-import java.io.File;
-
-public class MainController extends VBox
+public class MainController
 {
-	private final BAZIFile data = Data.create(BAZIFile.class);
+	public final BAZIFile data = Data.create(BAZIFile.class);
 
-	@FXML private MenuItem menuFileOpen;
-	@FXML private MenuItem menuFileReopen;
-	@FXML private MenuItem menuFileRestart;
-	@FXML private MenuItem menuFileSave;
-	@FXML private MenuItem menuFileOptions;
-	@FXML private MenuItem menuFileQuit;
-
-	@FXML private MenuItem menuDatabase;
-
-	@FXML private MenuItem menuHelpAbout;
-	@FXML private MenuItem menuHelpChangelog;
-	@FXML private MenuItem menuHelpUpdate;
+	@FXML public MenuController menuController;
 
 
-	@FXML private TextField title;
-	@FXML private Button addDistrict;
-	@FXML private TabPane districts;
-	@FXML private CheckBox districtsActivatedCheckbox;
-	@FXML private Button calculate;
+	@FXML public TextField title;
+	@FXML public Button addDistrict;
+	@FXML public TabPane districts;
+	@FXML public Button calculate;
 
-	@FXML private ComboBox<Orientation> orientation;
-	@FXML private ComboBox<DivisorFormat> divisorFormat;
-	@FXML private ComboBox<TieFormat> tieFormat;
-	@FXML private TextArea output;
+	@FXML public ComboBox<Orientation> orientation;
+	@FXML public ComboBox<DivisorFormat> divisorFormat;
+	@FXML public ComboBox<TieFormat> tieFormat;
+	@FXML public TextArea output;
 
-	private MenuController menuController;
+	@FXML public Label info;
+	private ObjectBinding<String> infoText;
+
 	private TabController tabController;
 	private OutputController outputController;
 
-	public void initialize()
+	@FXML public void initialize()
 	{
+		menuController.main = this;
+
 		PluginManager.load();
 
-		menuController = new MenuController(
-			EasyBind.select(sceneProperty()).selectObject(Scene::windowProperty),
-			menuFileOpen, menuFileReopen, menuFileRestart, menuFileSave, menuFileOptions, menuFileQuit,
-			menuDatabase, menuHelpAbout, menuHelpChangelog, menuHelpUpdate
-		);
 
 		tabController = new TabController(districts, addDistrict, data);
-		tabController.districtsActivatedProperty()
-			.bindBidirectional(districtsActivatedCheckbox.selectedProperty());
 		Binding<Boolean> b = EasyBind.map(data.algorithmProperty(), a -> a != null && MatrixData.class.isAssignableFrom(a.dataType()));
-		districtsActivatedCheckbox.selectedProperty().bind(b);
 
 		outputController = new OutputController(orientation, divisorFormat, tieFormat, output, data.output().cast(PlainOptions.class));
 
 		title.textProperty().bindBidirectional(data.cast(VectorData.class).nameProperty());
-		//title.setText("Title....");
-
-		File file = new File("input.json");
-		JsonFormat json = new JsonFormat();
-		BAZIFile loaded = json.deserialize(file).asCastableObject().cast(BAZIFile.class);
-		data.src().overwrite(loaded.src());
 
 		calculate.setOnAction(e -> new Thread(this::calc).start());
+
+		infoText = new ObjectBinding<String>()
+		{
+			{ bind(data.algorithmProperty()); }
+			@Override protected String computeValue()
+			{
+				if(data.algorithm()!=null)System.out.println(data.algorithm().unwrap());
+				return "Algorithmus: " + (
+					data.algorithm() == null ? "-"
+						: data.algorithm().unwrap().name()
+				);
+			}
+		};
+		info.textProperty().bind(infoText);
 	}
 
 	private void calc()
 	{
-
 		long t = System.currentTimeMillis();
 
 		BAZIFile data = this.data.copy().cast(BAZIFile.class);

@@ -260,6 +260,11 @@ public class StringTable
 		public Column(Collection<? extends String> c)
 		{
 			super(c);
+			if (c instanceof Column)
+			{
+				key = ((Column) c).key;
+				alignment = ((Column) c).alignment;
+			}
 		}
 
 		/**

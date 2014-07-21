@@ -12,7 +12,7 @@ public class Tree
 {
 	public final String name, ending;
 	public final ObservableList<Tree> children = FXCollections.observableArrayList();
-	private final Loader loader;
+	public final Loader loader;
 	public Tree()
 	{
 		this.name = "/";

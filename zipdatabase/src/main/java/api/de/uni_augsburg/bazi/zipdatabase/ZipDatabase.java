@@ -45,17 +45,23 @@ public class ZipDatabase
 		this.loader = loader;
 	}
 
-	public void open()
+	public Tree get()
 	{
-		try (ZipFile zip = new ZipFile(file))
+		return tree;
+	}
+
+	public void load()
+	{
+		try
 		{
+			ZipFile zip = new ZipFile(file);
 			lang = ResourceBundleHelper.getUTF8Bundle(BASENAME, Prefs.locale(), loader);
 
 			Enumeration<? extends ZipEntry> entries = zip.entries();
 			while (entries.hasMoreElements())
 			{
 				ZipEntry entry = entries.nextElement();
-				if (entry.isDirectory()) continue;
+				if (entry.isDirectory() || entry.getName().endsWith(".lang")) continue;
 
 				Path path = Paths.get(entry.getName());
 				String name = translate(path.toString(), () -> withoutEnding(path.getFileName()));

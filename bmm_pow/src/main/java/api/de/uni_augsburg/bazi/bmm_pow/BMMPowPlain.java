@@ -37,8 +37,6 @@ public class BMMPowPlain
 
 	public List<StringTable> get()
 	{
-		List<StringTable> partTables = new ArrayList<>();
-
 		StringTable table = firstColumns();
 
 		AtomicInteger i = new AtomicInteger(1);
@@ -65,7 +63,6 @@ public class BMMPowPlain
 
 	/**
 	 * Returns the name and the vote column.
-	 * @param options data options.
 	 * @return the name and the vote column.
 	 */
 	public StringTable firstColumns()

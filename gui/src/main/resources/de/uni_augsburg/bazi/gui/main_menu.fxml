@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
+<MenuBar xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uni_augsburg.bazi.gui.control.MenuController">
+    <Menu mnemonicParsing="false" text="%gui.file">
+        <MenuItem fx:id="menuFileOpen" mnemonicParsing="false" styleClass="icon,open" text="%gui.file.open">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="menuFileReopen" mnemonicParsing="false" styleClass="icon,reopen" text="%gui.file.reopen">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="menuFileSave" mnemonicParsing="false" styleClass="icon,save" text="%gui.file.save">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="menuFileRestart" mnemonicParsing="false" styleClass="icon,restart" text="%gui.file.restart">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="menuFileOptions" mnemonicParsing="false" styleClass="icon,options" text="%gui.file.options">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="T" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="menuFileQuit" mnemonicParsing="false" styleClass="icon,quit" text="%gui.file.quit">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+    </Menu>
+    <Menu fx:id="menuDatabase" mnemonicParsing="false" text="%gui.database"/>
+    <Menu mnemonicParsing="false" text="Help">
+        <MenuItem fx:id="menuHelpAbout" mnemonicParsing="false" styleClass="icon,about" text="%gui.help.about"/>
+        <MenuItem fx:id="menuHelpChangelog" mnemonicParsing="false" styleClass="icon,changelog" text="%gui.help.changelog"/>
+        <MenuItem fx:id="menuHelpUpdate" mnemonicParsing="false" styleClass="icon,update" text="%gui.help.update"/>
+    </Menu>
+</MenuBar>

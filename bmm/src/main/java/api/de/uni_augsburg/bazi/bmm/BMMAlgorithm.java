@@ -6,6 +6,7 @@ import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.plain.PlainOptions;
+import de.uni_augsburg.bazi.math.BMath;
 import de.uni_augsburg.bazi.math.Int;
 
 import java.util.List;
@@ -36,8 +37,8 @@ public class BMMAlgorithm implements Algorithm<VectorData>
 	}
 
 
-	@Override public String name()	{		return method.name();	}
-	@Override public Class<VectorData> dataType()	{		return VectorData.class;	}
+	@Override public String name() { return method.name(); }
+	@Override public Class<VectorData> dataType() { return VectorData.class; }
 
 	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
 	{
@@ -60,8 +61,8 @@ public class BMMAlgorithm implements Algorithm<VectorData>
 		vecData.parties().forEach(
 			p -> {
 				p.seats(p.seats().add(base));
-				p.min(null);
-				p.max(null);
+				p.min(BMath.ZERO);
+				p.max(BMath.INF);
 			}
 		);
 		vecData.seats(vecData.seats().add(base.mul(vecData.parties().size())));

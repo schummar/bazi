@@ -1,113 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.input.*?>
 <?import javafx.scene.layout.*?>
-
-<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@main_window.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uni_augsburg.bazi.gui.control.MainController">
+<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@main_window.css"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.uni_augsburg.bazi.gui.control.MainController"
+      fx:id="foo">
     <children>
-        <MenuBar>
-            <menus>
-                <Menu mnemonicParsing="false" text="%gui.file">
-                    <items>
-                        <MenuItem fx:id="menuFileOpen" mnemonicParsing="false" styleClass="open" text="%gui.file.open">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </MenuItem>
-                        <MenuItem fx:id="menuFileReopen" mnemonicParsing="false" styleClass="reopen" text="%gui.file.reopen">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </MenuItem>
-                        <MenuItem fx:id="menuFileSave" mnemonicParsing="false" styleClass="save" text="%gui.file.save">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </MenuItem>
-                        <MenuItem fx:id="menuFileRestart" mnemonicParsing="false" styleClass="restart" text="%gui.file.restart">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </MenuItem>
-                        <MenuItem fx:id="menuFileOptions" mnemonicParsing="false" styleClass="options" text="%gui.file.options">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="T" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </MenuItem>
-                        <MenuItem fx:id="menuFileQuit" mnemonicParsing="false" styleClass="quit" text="%gui.file.quit">
-                            <accelerator>
-                                <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                            </accelerator>
-                        </MenuItem>
-                    </items>
-                </Menu>
-                <Menu fx:id="menuDatabase" mnemonicParsing="false" text="%gui.database" />
-                <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem fx:id="menuHelpAbout" mnemonicParsing="false" styleClass="about" text="%gui.help.about" />
-                        <MenuItem fx:id="menuHelpChangelog" mnemonicParsing="false" styleClass="changelog" text="%gui.help.changelog" />
-                        <MenuItem fx:id="menuHelpUpdate" mnemonicParsing="false" styleClass="update" text="%gui.help.update" />
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
+        <fx:include source="main_menu.fxml" fx:id="menu"/>
+
         <SplitPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
             <items>
                 <VBox prefHeight="200.0" prefWidth="100.0">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                             <children>
-                                <Label text="%gui.title" />
+                                <Label text="%gui.title"/>
                                 <TextField fx:id="title" HBox.hgrow="ALWAYS">
                                 </TextField>
                             </children>
                             <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </padding>
                         </HBox>
-                        <Separator prefWidth="200.0" />
-                        <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" />
-                        <CheckBox fx:id="districtsActivatedCheckbox" mnemonicParsing="false" text="districtsActivated" />
+                        <Separator prefWidth="200.0"/>
+                        <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0"/>
+                        <Label fx:id="info"/>
 
 
                         <StackPane>
                             <children>
-                                <TabPane fx:id="districts" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" tabClosingPolicy="ALL_TABS" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+                                <TabPane fx:id="districts" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0"
+                                         tabClosingPolicy="ALL_TABS" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
                                 <Button fx:id="addDistrict" mnemonicParsing="false" text="+" StackPane.alignment="TOP_LEFT">
                                     <StackPane.margin>
-                                        <Insets left="5.0" top="5.0" />
+                                        <Insets left="5.0" top="5.0"/>
                                     </StackPane.margin>
                                 </Button>
                             </children>
                         </StackPane>
 
 
-                        <Button fx:id="calculate" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="start" />
+                        <Button fx:id="calculate" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="start"/>
                     </children>
                 </VBox>
                 <VBox id="output" spacing="10.0" styleClass="vbox" HBox.hgrow="ALWAYS">
                     <children>
                         <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="10.0" VBox.vgrow="NEVER">
                             <children>
-                                <Label minWidth="-Infinity" text="%gui.orientation" />
-                                <ComboBox fx:id="orientation" minWidth="-Infinity" />
-                                <Label minWidth="-Infinity" text="%gui.divisor" />
-                                <ComboBox fx:id="divisorFormat" minWidth="-Infinity" />
-                                <Label minWidth="-Infinity" text="%gui.tie" />
-                                <ComboBox fx:id="tieFormat" minWidth="-Infinity" />
+                                <Label minWidth="-Infinity" text="%gui.orientation"/>
+                                <ComboBox fx:id="orientation" minWidth="-Infinity"/>
+                                <Label minWidth="-Infinity" text="%gui.divisor"/>
+                                <ComboBox fx:id="divisorFormat" minWidth="-Infinity"/>
+                                <Label minWidth="-Infinity" text="%gui.tie"/>
+                                <ComboBox fx:id="tieFormat" minWidth="-Infinity"/>
                             </children>
                         </HBox>
-                        <TextArea fx:id="output" editable="false" minWidth="-Infinity" VBox.vgrow="ALWAYS" />
+                        <TextArea fx:id="output" editable="false" minWidth="-Infinity" VBox.vgrow="ALWAYS"/>
                     </children>
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
                 </VBox>
             </items>
         </SplitPane>
-        <Label text="Status" />
+        <Label text="Status"/>
     </children>
 </VBox>
