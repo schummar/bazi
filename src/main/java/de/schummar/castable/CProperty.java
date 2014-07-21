@@ -39,8 +39,8 @@ public class CProperty<T> implements Property<T>
 
 	protected void informListeners(T oldValue)
 	{
-		changeListeners.forEach(l -> l.changed(this, oldValue, getValue()));
-		invalidationListeners.forEach(l -> l.invalidated(this));
+		new ArrayList<>(changeListeners).forEach(l -> l.changed(this, oldValue, getValue()));
+		new ArrayList<>(invalidationListeners).forEach(l -> l.invalidated(this));
 	}
 
 

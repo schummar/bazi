@@ -28,14 +28,19 @@ public abstract class Converters
 	}
 	private static Converter _get(Method method) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException
 	{
-		Attribute attribute = method.getAnnotation(Attribute.class);
-		if (attribute.converter() != Converter.class) return attribute.converter().getConstructor().newInstance();
-
 		Type type = method.getReturnType().isAssignableFrom(CProperty.class)
 			? ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0]
 			: method.getGenericReturnType();
+
+		Attribute attribute = method.getAnnotation(Attribute.class);
+		if (attribute.converter() != Converter.class) return createConverter(attribute.converter(), type);
+
 		Converter contentconverter = null;
-		if (attribute.contentConverter() != Converter.class) contentconverter = attribute.contentConverter().getConstructor().newInstance();
+		if (attribute.contentConverter() != Converter.class)
+		{
+			Type contentType = ((ParameterizedType) type).getActualTypeArguments()[0];
+			contentconverter = createConverter(attribute.contentConverter(), contentType);
+		}
 		return get(type, contentconverter);
 	}
 
@@ -67,7 +72,7 @@ public abstract class Converters
 		Class<?> c = classOf(type);
 
 		if (c.isAnnotationPresent(Convert.class))
-			return c.getAnnotation(Convert.class).value().getConstructor().newInstance();
+			return createConverter(c.getAnnotation(Convert.class).value(), type);
 
 		Queue<Class<?>> q = new LinkedList<>();
 		q.add(c);
@@ -75,14 +80,7 @@ public abstract class Converters
 		{
 			Class<?> cur = q.remove();
 			if (cur.isAnnotationPresent(Convert.class) && cur.getAnnotation(Convert.class).forSubClasses())
-			{
-				try {return cur.getAnnotation(Convert.class).value().getConstructor(Type.class).newInstance(type);}
-				catch (Exception ignore) {}
-				try {return cur.getAnnotation(Convert.class).value().getConstructor(Class.class).newInstance(c);}
-				catch (Exception ignore) {}
-				try { return cur.getAnnotation(Convert.class).value().getConstructor().newInstance();}
-				catch (Exception e) { throw new RuntimeException(e); }
-			}
+				return createConverter(cur.getAnnotation(Convert.class).value(), type);
 
 
 			Class<?> sup = cur.getSuperclass();
@@ -106,7 +104,7 @@ public abstract class Converters
 
 			return c.isAssignableFrom(CList.class)
 				? new ListConverter<>(contentConverter)
-				: create(contentConverter, classOf(contentType));
+				: createListConverter(contentConverter, classOf(contentType));
 		}
 
 		if (c.isAssignableFrom(CMap.class))
@@ -130,6 +128,15 @@ public abstract class Converters
 
 		throw new RuntimeException(String.format("No converter for type %s available.", type));
 	}
+	private static Converter<?> createConverter(Class<? extends Converter> cClass, Type type)
+	{
+		try {return cClass.getConstructor(Type.class).newInstance(type);}
+		catch (Exception ignore) {}
+		try {return cClass.getConstructor(Class.class).newInstance(classOf(type));}
+		catch (Exception ignore) {}
+		try { return cClass.getConstructor().newInstance();}
+		catch (Exception e) { throw new RuntimeException(e); }
+	}
 
 
 	@ConvertShallow public static class ListConverter<T> implements Converter<CList<T>>
@@ -152,7 +159,7 @@ public abstract class Converters
 		}
 	}
 
-	public static <T extends Data> DataListConverter<T> create(Converter<?> converter, Class<?> type)
+	public static <T extends Data> DataListConverter<T> createListConverter(Converter<?> converter, Class<?> type)
 	{
 		@SuppressWarnings("unchecked") Converter<T> tConverter = (Converter<T>) converter;
 		@SuppressWarnings("unchecked") Class<T> tType = (Class<T>) type;

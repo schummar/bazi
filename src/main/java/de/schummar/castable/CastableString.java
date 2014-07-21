@@ -21,7 +21,7 @@ public class CastableString extends SimpleStringProperty implements Castable
 	}
 	@Override public void removeDeepListener(InvalidationListener invalidationListener)
 	{
-		addListener(invalidationListener);
+		removeListener(invalidationListener);
 	}
 
 

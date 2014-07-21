@@ -53,7 +53,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 		deepListeners.remove(invalidationListener);
 	}
 
-	private InvalidationListener deepListener = observable -> deepListeners.forEach(l -> l.invalidated(this));
+	private InvalidationListener deepListener = observable -> new ArrayList<>(deepListeners).forEach(l -> l.invalidated(this));
 	private MapChangeListener<String, Castable> changeListener = change -> {
 		if (change.wasAdded()) change.getValueAdded().addDeepListener(deepListener);
 		else change.getValueRemoved().removeDeepListener(deepListener);
@@ -107,7 +107,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 	public void overwrite(Castable castable)
 	{
 		CastableObject that = castable.asCastableObject();
-		entrySet().removeIf(e -> !that.containsKey(e.getKey()));
+		//entrySet().removeIf(e -> !that.containsKey(e.getKey()));
 		that.forEach(
 			(k, v) -> {
 				if (containsKey(k)) get(k).overwrite(v);
@@ -160,7 +160,7 @@ public class CastableObject extends SimpleMapProperty<String, Castable> implemen
 			Castable castable = getObj(name, def);
 			Function<String, String> validator = converter.createValidator(def(converter, def));
 			property = new CProperty<>(castable, converter, validator);
-			propertyCache.put(method, property);
+			//propertyCache.put(method, property);
 		}
 		return property;
 	}

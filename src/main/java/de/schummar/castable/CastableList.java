@@ -26,7 +26,7 @@ public class CastableList extends SimpleListProperty<Castable> implements Castab
 	{
 		deepListeners.remove(invalidationListener);
 	}
-	private InvalidationListener deepListener = observable -> deepListeners.forEach(l -> l.invalidated(this));
+	private InvalidationListener deepListener = observable -> new ArrayList<>(deepListeners).forEach(l -> l.invalidated(this));
 	private ListChangeListener<Castable> changeListener = change -> {
 		while (change.next())
 		{
