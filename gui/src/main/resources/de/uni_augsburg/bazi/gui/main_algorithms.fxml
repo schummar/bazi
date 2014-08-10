@@ -1,10 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import de.uni_augsburg.bazi.gui.view.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="10" stylesheets="@main_algorithms.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uni_augsburg.bazi.gui.control.AlgorithmsController">
+   <children>
 
-<?import de.uni_augsburg.bazi.gui.view.NumberCheckbox?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-    <NumberCheckbox text="abc"/>
+       <StackPane styleClass="titled">
+      <children>
+              <Label styleClass="title" text="Algorithmus" />
+              <VBox prefHeight="100" />
+      </children>
+       </StackPane>
+
+       <StackPane styleClass="titled">
+      <children>
+              <Label styleClass="title" text="Zuteilungsmethoden" />
+              <GridPane hgap="30.0" vgap="10.0">
+                  <columnConstraints>
+                      <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                 <children>
+                     <NumberCheckbox fx:id="hareCheck" text="HaQgrR" />
+                     <Label text="( Hare/Niemeyer )" GridPane.columnIndex="1" />
+
+                     <NumberCheckbox fx:id="divdwnCheck" text="DivAbr" GridPane.rowIndex="1" />
+                     <Label text="( D'Hondt )" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                     <NumberCheckbox fx:id="divstdCheck" text="DivStd" GridPane.rowIndex="2" />
+                     <Label text="( Sainte Lague )" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                     <NumberCheckbox fx:id="divgeoCheck" text="DivGeo" GridPane.rowIndex="3" />
+                     <Label text="( Hill )" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                     <NumberCheckbox fx:id="divharCheck" text="DivHar" GridPane.rowIndex="4" />
+                     <Label text="( Dean )" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                     <NumberCheckbox fx:id="divupwCheck" text="DivAuf" GridPane.rowIndex="5" />
+                     <Label text="( Adams )" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                     <NumberCheckbox fx:id="divpotCheck" text="DivPot" GridPane.rowIndex="6" />
+                     <Label text="( Potenz-Rundung )" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                     <NumberCheckbox fx:id="divstaCheck" text="DivSta" GridPane.rowIndex="7" />
+                     <Label text="( Sationäre Rundung )" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
+                     <NumberCheckbox fx:id="droopCheck" text="DrqgrR" GridPane.rowIndex="8" />
+                     <Label text="( Droop )" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                 </children>
+              </GridPane>
+      </children>
+       </StackPane>
+   </children>
 </VBox>

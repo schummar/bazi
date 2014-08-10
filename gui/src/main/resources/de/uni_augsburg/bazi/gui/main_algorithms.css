@@ -1,0 +1,14 @@
+.titled {
+    -fx-border-style: solid;
+    -fx-border-color: lightgray;
+    -fx-alignment: top-left;
+    -fx-padding: 10;
+}
+
+.titled .title {
+    -fx-position-shape: true;
+    -fx-translate-x: 10;
+    -fx-translate-y: -20;
+    -fx-background-color: -fx-background;
+    -fx-font-weight: bold;
+}

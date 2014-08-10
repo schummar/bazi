@@ -71,13 +71,6 @@ public class MainController
 			}
 		};
 		info.textProperty().bind(infoText);
-
-		ObservableList<NumberCheckbox> selection = FXCollections.observableArrayList();
-		algoarea.getChildren().addAll(
-			new NumberCheckbox("abc", selection),
-			new NumberCheckbox("def", selection),
-			new NumberCheckbox("ghi", selection)
-		);
 	}
 
 	private void calc()
