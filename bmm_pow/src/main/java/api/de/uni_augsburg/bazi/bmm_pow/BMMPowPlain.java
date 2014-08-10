@@ -9,7 +9,6 @@ import de.uni_augsburg.bazi.divisor.DivisorData;
 import de.uni_augsburg.bazi.divisor.DivisorPlain;
 import de.uni_augsburg.bazi.math.Real;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,6 +37,7 @@ public class BMMPowPlain
 	public List<StringTable> get()
 	{
 		StringTable table = firstColumns();
+		table.titles().add(data.name());
 
 		AtomicInteger i = new AtomicInteger(1);
 		data.results().forEach(

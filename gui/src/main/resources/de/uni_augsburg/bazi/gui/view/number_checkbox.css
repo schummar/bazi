@@ -1,0 +1,9 @@
+.number_mark {
+    -fx-padding: 0 0 0 -1;
+    -fx-font-weight: bold;
+    visibility: hidden;
+}
+
+.check-box:selected .number_mark {
+    visibility: visible;
+}
