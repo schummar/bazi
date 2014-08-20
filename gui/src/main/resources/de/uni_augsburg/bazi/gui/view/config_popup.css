@@ -1,0 +1,32 @@
+.popup {
+    -fx-alignment: top-left;
+}
+
+.connector {
+    -fx-border-style: solid solid none none;
+    -fx-border-color: -fx-box-border;
+    -fx-border-width: 2;
+    -fx-max-width: 40;
+    -fx-max-height: 15;
+}
+
+.wrapper {
+    -fx-translate-x: 15;
+    -fx-translate-y: 15;
+    -fx-background-color: -fx-background;
+    -fx-border-color: -fx-box-border;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-padding: 10;
+}
+
+.wrapper * {
+    -fx-max-width: 500;
+
+}
+
+.info {
+    -fx-border-color: -fx-box-border;
+    -fx-border-style: solid;
+    -fx-padding: 10;
+}

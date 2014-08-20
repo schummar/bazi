@@ -42,11 +42,11 @@ public class ASAlgorithm extends BipropAlgorithm<BipropData>
 		return ASAlgorithmImpl.calculate(table, seats, divisorUpdateFunction, Super, options);
 	}
 
-	@Override protected Algorithm<? extends DivisorData> Super()
+	@Override public Algorithm<? extends DivisorData> Super()
 	{
 		return Super;
 	}
-	@Override protected Algorithm<? extends DivisorData> sub()
+	@Override public Algorithm<? extends DivisorData> sub()
 	{
 		return Super;
 	}

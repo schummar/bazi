@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uni_augsburg.bazi.gui.control.ConfigBmmController">
+    <children>
+        <HBox spacing="30.0">
+            <children>
+                <HBox spacing="10.0">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%gui.methods.bmm.base" />
+                        <TextField fx:id="base" />
+                    </children>
+                </HBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%gui.methods.bmm.min" />
+                        <TextField fx:id="min" />
+                    </children>
+                </HBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%gui.methods.bmm.max" />
+                        <TextField fx:id="max" />
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+        <Label styleClass="info" text="%gui.methods.bmm.info" wrapText="true" />
+    </children>
+</VBox>

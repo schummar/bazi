@@ -70,6 +70,7 @@
     -fx-border-color: lightgray;
     -fx-alignment: top-left;
     -fx-padding: 10;
+    -fx-start-margin: 20;
 }
 
 .titled .title {
@@ -78,4 +79,8 @@
     -fx-translate-y: -20;
     -fx-background-color: -fx-background;
     -fx-font-weight: bold;
+}
+
+.tab-content-area {
+    -fx-padding: 15 0 0 0;
 }

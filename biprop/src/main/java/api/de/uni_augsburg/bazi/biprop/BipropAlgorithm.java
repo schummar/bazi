@@ -114,7 +114,7 @@ public abstract class BipropAlgorithm<T extends BipropData> implements Algorithm
 	}
 
 
-	protected abstract Algorithm<? extends DivisorData> Super();
-	protected abstract Algorithm<? extends DivisorData> sub();
+	public abstract Algorithm<? extends DivisorData> Super();
+	public abstract Algorithm<? extends DivisorData> sub();
 	protected abstract Map<Object, Real> calculate(Table<DivisorData, String, Party> table, Map<Object, Int> seats, Options options);
 }

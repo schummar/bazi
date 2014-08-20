@@ -3,7 +3,15 @@ dependencies {
 	compile project(':json')
 	compile project(':zipdatabase')
 
-	compile project(':divisor')
 	compile project(':as')
+	compile project(':biprop')
+	compile project(':bmm')
+	compile project(':bmm_pow')
+	compile project(':dir')
+	compile project(':divisor')
+	compile project(':list')
+	compile project(':quota')
+	compile project(':separate')
+	
 	compile 'org.fxmisc.easybind:easybind:1.0.0'
 }

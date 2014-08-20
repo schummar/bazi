@@ -15,11 +15,11 @@
             <option name="USE_RELATIVE_INDENTS" value="false" />
           </value>
         </option>
+        <option name="RIGHT_MARGIN" value="160" />
         <option name="JD_ALIGN_PARAM_COMMENTS" value="false" />
         <option name="JD_ALIGN_EXCEPTION_COMMENTS" value="false" />
         <option name="JD_ADD_BLANK_AFTER_DESCRIPTION" value="false" />
         <option name="JD_DO_NOT_WRAP_ONE_LINE_COMMENTS" value="true" />
-        <option name="RIGHT_MARGIN" value="160" />
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>

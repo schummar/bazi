@@ -8,12 +8,9 @@ import de.uni_augsburg.bazi.common.algorithm.Options;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
 import de.uni_augsburg.bazi.common.data.BAZIFile;
 import de.uni_augsburg.bazi.common.plain.*;
-import de.uni_augsburg.bazi.gui.view.NumberCheckbox;
 import javafx.application.Platform;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -24,6 +21,7 @@ public class MainController
 	public final BAZIFile data = Data.create(BAZIFile.class);
 
 	@FXML public MenuController menuController;
+	@FXML public AlgorithmsController algorithmsController;
 
 
 	@FXML public TextField title;
@@ -46,7 +44,7 @@ public class MainController
 	@FXML public void initialize()
 	{
 		menuController.main = this;
-
+		algorithmsController.setData(data);
 		PluginManager.load();
 
 

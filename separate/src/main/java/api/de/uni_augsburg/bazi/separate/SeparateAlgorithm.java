@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 /** The algorithm for separate district evaluations. */
 public class SeparateAlgorithm implements Algorithm<MatrixData>
 {
-	private final Algorithm<? extends VectorData> method;
+	public final Algorithm<? extends VectorData> method;
 
 	/** @param method the method used for the district apportionments. */
 	public SeparateAlgorithm(Algorithm<? extends VectorData> method)

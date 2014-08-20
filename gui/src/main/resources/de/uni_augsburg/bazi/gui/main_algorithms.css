@@ -12,3 +12,16 @@
     -fx-background-color: -fx-background;
     -fx-font-weight: bold;
 }
+
+.config {
+    -fx-background-image: url("img/options2.png");
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-color: -fx-background;
+}
+
+.config:hover {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-background-radius: 3px, 3px, 2px, 1px;
+}
