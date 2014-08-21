@@ -15,7 +15,7 @@
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <TextField fx:id="percent" />
+                <TextField fx:id="percent" HBox.hgrow="ALWAYS" />
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="\%" />
             </children>
         </HBox>

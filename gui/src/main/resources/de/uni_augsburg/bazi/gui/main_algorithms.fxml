@@ -15,7 +15,7 @@
               <Label styleClass="title" text="Zuteilungsmethoden" />
             <HBox spacing="10.0">
                <children>
-                    <VBox minWidth="250.0" spacing="10.0">
+                    <VBox maxWidth="-Infinity" minWidth="-Infinity" prefWidth="250.0" spacing="10.0">
                      <children>
                         <RadioButton fx:id="simpleRadio" mnemonicParsing="false" selected="true" text="%gui.methods.simple">
                            <toggleGroup>
@@ -24,10 +24,15 @@
                         </RadioButton>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
-                              <RadioButton fx:id="minxpRadio" mnemonicParsing="false" text="%gui.methods.minxp" toggleGroup="$methodTypes" />
+                              <RadioButton fx:id="minxpRadio" alignment="TOP_LEFT" mnemonicParsing="false" text="%gui.methods.minxp" toggleGroup="$methodTypes" />
                               <Button fx:id="minxpButton" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#minxpConfig" prefHeight="15.0" styleClass="config" />
                            </children>
                         </HBox>
+                        <Label fx:id="minxpAux" text="%gui.methods.minxp.aux">
+                           <VBox.margin>
+                              <Insets left="20.0" top="-10.0" />
+                           </VBox.margin>
+                        </Label>
                         <RadioButton fx:id="vpvRadio" mnemonicParsing="false" text="%gui.methods.vpv" toggleGroup="$methodTypes" />
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
@@ -35,12 +40,22 @@
                               <Button fx:id="bmmButton" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#bmmConfig" prefHeight="15.0" styleClass="config" />
                            </children>
                         </HBox>
+                        <Label fx:id="bmmAux" text="gui.methods.bmm.aux">
+                           <VBox.margin>
+                              <Insets left="20.0" top="-10.0" />
+                           </VBox.margin>
+                        </Label>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <RadioButton fx:id="bmmpRadio" mnemonicParsing="false" text="%gui.methods.bmmp" toggleGroup="$methodTypes" />
                               <Button fx:id="bmmpButton" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#bmmpConfig" prefHeight="15.0" styleClass="config" />
                            </children>
                         </HBox>
+                        <Label fx:id="bmmpAux" text="%gui.methods.bmmp.aux">
+                           <VBox.margin>
+                              <Insets left="20.0" top="-10.0" />
+                           </VBox.margin>
+                        </Label>
                         <RadioButton fx:id="sepRadio" mnemonicParsing="false" text="%gui.methods.sep" toggleGroup="$methodTypes" />
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
@@ -50,51 +65,57 @@
                         </HBox>
                      </children>
                   </VBox>
-                    <GridPane hgap="30.0" vgap="10.0">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                       <children>
-                           <NumberCheckbox fx:id="hareCheck" text="HaQgrR" />
-                           <Label text="( Hare/Niemeyer )" GridPane.columnIndex="1" />
+                  <VBox maxWidth="-Infinity" minWidth="-Infinity" prefWidth="250.0" spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                                 <NumberCheckbox fx:id="hareCheck" text="%gui.methods.hare" />
+                              <Button fx:id="hareButton" minHeight="-Infinity" mnemonicParsing="false" onAction="#hareConfig" prefHeight="15.0" styleClass="config" />
+                           </children>
+                        </HBox>
       
-                           <NumberCheckbox fx:id="divdwnCheck" text="DivAbr" GridPane.rowIndex="1" />
-                           <Label text="( D'Hondt )" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                 <NumberCheckbox fx:id="divdwnCheck" text="%gui.methods.divdwn" />
       
-                           <NumberCheckbox fx:id="divstdCheck" text="DivStd" GridPane.rowIndex="2" />
-                           <Label text="( Sainte Lague )" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                 <NumberCheckbox fx:id="divstdCheck" text="%gui.methods.divstd" />
       
-                           <NumberCheckbox fx:id="divgeoCheck" text="DivGeo" GridPane.rowIndex="3" />
-                           <Label text="( Hill )" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                 <NumberCheckbox fx:id="divgeoCheck" text="%gui.methods.divgeo" />
       
-                           <NumberCheckbox fx:id="divharCheck" text="DivHar" GridPane.rowIndex="4" />
-                           <Label text="( Dean )" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                 <NumberCheckbox fx:id="divharCheck" text="%gui.methods.divgeo" />
       
-                           <NumberCheckbox fx:id="divupwCheck" text="DivAuf" GridPane.rowIndex="5" />
-                           <Label text="( Adams )" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-      
-                           <NumberCheckbox fx:id="divpotCheck" text="DivPot" GridPane.rowIndex="6" />
-                           <Label text="( Potenz-Rundung )" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-      
-                           <NumberCheckbox fx:id="divstaCheck" text="DivSta" GridPane.rowIndex="7" />
-                           <Label text="( Sationäre Rundung )" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-      
-                           <NumberCheckbox fx:id="droopCheck" text="DrqgrR" GridPane.rowIndex="8" />
-                           <Label text="( Droop )" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                       </children>
-                    </GridPane>
+                           <NumberCheckbox fx:id="divupwCheck" text="%gui.methods.divupw" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+            
+                                             <NumberCheckbox fx:id="divpotCheck" text="%gui.methods.divpot" />
+                              <Button fx:id="divpotButton" minHeight="-Infinity" mnemonicParsing="false" onAction="#divpotConfig" prefHeight="15.0" styleClass="config" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="divpotAux" text="%gui.methods.divpot.aux">
+                           <VBox.margin>
+                              <Insets left="20.0" top="-10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+            
+                                 <NumberCheckbox fx:id="divstaCheck" text="%gui.methods.divsta" />
+                              <Button fx:id="divstaButton" minHeight="-Infinity" mnemonicParsing="false" onAction="#divstaConfig" prefHeight="15.0" styleClass="config" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="divstaAux" text="%gui.methods.divsta.aux">
+                           <VBox.margin>
+                              <Insets left="20.0" top="-10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+            
+                                 <NumberCheckbox fx:id="droopCheck" text="%gui.methods.droop" />
+                              <Button fx:id="droopButton" minHeight="-Infinity" mnemonicParsing="false" onAction="#droopConfig" prefHeight="15.0" styleClass="config" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                </children>
             </HBox>
       </children>

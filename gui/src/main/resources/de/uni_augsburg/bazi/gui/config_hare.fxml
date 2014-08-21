@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.uni_augsburg.bazi.gui.control.ConfigHareController">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label text="%gui.methods.quota_function" />
+            <ComboBox fx:id="quotaFunctionComboBox" />
+         </children>
+        </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label text="%gui.methods.residual_handler" />
+            <ComboBox fx:id="residualHandlerComboBox" />
+         </children>
+      </HBox>
+      <Label styleClass="info" text="%gui.methods.hare.info" />
+    </children>
+</VBox>

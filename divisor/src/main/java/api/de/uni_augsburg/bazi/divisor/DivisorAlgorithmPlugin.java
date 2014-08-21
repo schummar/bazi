@@ -71,9 +71,9 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 		return Optional.of(new DivisorAlgorithm(r, name));
 	}
 
-	private static RoundingFunction.Stationary buildStationary(String line)
+	public static RoundingFunction.Stationary buildStationary(String line)
 	{
-		String[] split = line.split("[,|;|\\s]+", 2);
+		String[] split = line.trim().split("[,|;|\\s]+", 2);
 		Rational r = Rational.valueOf(split[0]);
 		Map<Int, Rational> specialCases = split.length > 1 ? buildSpecialCases(split[1]) : null;
 		if (r.equals(BMath.ZERO) && specialCases == null) return RoundingFunction.DIV_UPW;
@@ -82,9 +82,9 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 		return new RoundingFunction.Stationary(r, specialCases);
 	}
 
-	private static RoundingFunction.Power buildPower(String line)
+	public static RoundingFunction.Power buildPower(String line)
 	{
-		String[] split = line.split("[,|;|\\s]+", 2);
+		String[] split = line.trim().split("[,|;|\\s]+", 2);
 		Rational p = Rational.valueOf(split[0]);
 		Map<Int, Rational> specialCases = split.length > 1 ? buildSpecialCases(split[1]) : null;
 		if (p.equals(BMath.ZERO) && specialCases == null) return RoundingFunction.DIV_GEO;
@@ -92,10 +92,10 @@ public class DivisorAlgorithmPlugin implements Plugin<DivisorAlgorithm>
 		return new RoundingFunction.Power(p, specialCases);
 	}
 
-	private static Map<Int, Rational> buildSpecialCases(String line)
+	public static Map<Int, Rational> buildSpecialCases(String line)
 	{
 		Map<Int, Rational> map = new HashMap<>();
-		for (String s : line.split("[,;\\s]+"))
+		for (String s : line.split("[,|;|\\s]+"))
 		{
 			s = s.trim();
 			boolean lowerInterval = s.endsWith("]");

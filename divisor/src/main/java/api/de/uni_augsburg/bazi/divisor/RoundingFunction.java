@@ -44,6 +44,13 @@ public interface RoundingFunction
 
 
 	/**
+	 * Returns the special cases.
+	 * @return the special cases.
+	 */
+	Map<Int, Rational> getSpecialCases();
+
+
+	/**
 	 * Whether the rounding function is impervious (r(0)==0).
 	 * @return true iff the rounding function is impervious (r(0)==0).
 	 */
@@ -144,6 +151,10 @@ public interface RoundingFunction
 		{
 			return r;
 		}
+		@Override public Map<Int, Rational> getSpecialCases()
+		{
+			return specialCases;
+		}
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -192,6 +203,10 @@ public interface RoundingFunction
 		{
 			Rational p = specialCases.getOrDefault(BMath.ZERO, this.p);
 			return p.equals(BMath.ZERO) || p.equals(BMath.MINUS_ONE);
+		}
+		@Override public Map<Int, Rational> getSpecialCases()
+		{
+			return specialCases;
 		}
 	}
 
