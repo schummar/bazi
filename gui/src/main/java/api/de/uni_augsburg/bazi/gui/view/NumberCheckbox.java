@@ -54,8 +54,9 @@ public class NumberCheckbox extends CheckBox
 	};
 
 	private final ListChangeListener<NumberCheckbox> selectionListener = change -> {
-		if (!isSelected()) return;
-		setNumber(selection.indexOf(this) + 1);
+		int index = selection.indexOf(this);
+		setSelected(index >= 0);
+		setNumber(index + 1);
 	};
 
 	public ObservableList<NumberCheckbox> getSelection()

@@ -41,7 +41,7 @@ class BMMPowAlgorithmImpl
 		this.min = min;
 		this.max = max;
 		this.options = options;
-		this.bound = min.add(1).max(method.roundingFunction().isImpervious() ? BMath.TWO : BMath.ONE);
+		this.bound = min.add(1).max(method.roundingFunction.isImpervious() ? BMath.TWO : BMath.ONE);
 	}
 
 	public void calculate()
@@ -117,8 +117,8 @@ class BMMPowAlgorithmImpl
 		Real E = ECache.get(from, to);
 		if (E != null) return E;
 
-		Real a = log(method.roundingFunction().apply(from.seats().sub(BMath.ONE), options.precision())),
-			b = log(method.roundingFunction().apply(to.seats(), options.precision())),
+		Real a = log(method.roundingFunction.apply(from.seats().sub(BMath.ONE), options.precision())),
+			b = log(method.roundingFunction.apply(to.seats(), options.precision())),
 			c = log(from.votes()), d = log(to.votes());
 
 		E = a.sub(b).div(c.sub(d));

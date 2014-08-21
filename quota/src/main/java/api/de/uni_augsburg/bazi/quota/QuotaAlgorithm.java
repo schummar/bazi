@@ -13,9 +13,9 @@ import java.util.function.BiFunction;
 /** The quota algorithm. */
 public class QuotaAlgorithm implements Algorithm<QuotaData>
 {
-	private final QuotaFunction quotaFunction;
-	private final ResidualHandler residualHandler;
-	private final String name;
+	public final QuotaFunction quotaFunction;
+	public final ResidualHandler residualHandler;
+	public final String name;
 
 	/**
 	 * @param quotaFunction the quota function.

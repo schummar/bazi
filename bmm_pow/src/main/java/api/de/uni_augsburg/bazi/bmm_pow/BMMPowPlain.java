@@ -68,7 +68,7 @@ public class BMMPowPlain
 	public StringTable firstColumns()
 	{
 		StringTable table = new StringTable();
-		DivisorPlain vp = new DivisorPlain(data.cast(DivisorData.class), options, method.roundingFunction(), "a");
+		DivisorPlain vp = new DivisorPlain(data.cast(DivisorData.class), options, method.roundingFunction, "a");
 		vp.partyColumn(table.col());
 		vp.voteColumn(table.col());
 		return table;

@@ -5,9 +5,13 @@ import de.uni_augsburg.bazi.bmm.BMMAlgorithm;
 import de.uni_augsburg.bazi.bmm_pow.BMMPowAlgorithm;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
 import de.uni_augsburg.bazi.common.data.BAZIFile;
+import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
+import de.uni_augsburg.bazi.divisor.RoundingFunction;
 import de.uni_augsburg.bazi.gui.view.ConfigPopup;
 import de.uni_augsburg.bazi.gui.view.NumberCheckbox;
 import de.uni_augsburg.bazi.math.Int;
+import de.uni_augsburg.bazi.quota.QuotaAlgorithm;
+import de.uni_augsburg.bazi.quota.QuotaFunction;
 import de.uni_augsburg.bazi.separate.SeparateAlgorithm;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -35,6 +39,7 @@ public class AlgorithmsController
 	@FXML RadioButton bipropRadio;
 	@FXML Button bipropButton;
 
+	private final ObservableList<NumberCheckbox> selection = FXCollections.observableArrayList();
 	@FXML NumberCheckbox hareCheck;
 	@FXML NumberCheckbox divdwnCheck;
 	@FXML NumberCheckbox divstdCheck;
@@ -59,7 +64,6 @@ public class AlgorithmsController
 
 	@FXML void initialize()
 	{
-		ObservableList<NumberCheckbox> selection = FXCollections.observableArrayList();
 		hareCheck.setSelection(selection);
 		divdwnCheck.setSelection(selection);
 		divstdCheck.setSelection(selection);
@@ -97,8 +101,6 @@ public class AlgorithmsController
 		((ConfigBmmController) bmmpPopup.contentController()).bind(bmm_base, bmm_min, bmm_max);
 
 		bipropPopup = new ConfigPopup(bipropButton, "/de/uni_augsburg/bazi/gui/config_biprop.fxml");
-
-
 	}
 
 	public void setData(BAZIFile data)
@@ -156,6 +158,34 @@ public class AlgorithmsController
 
 	void selectMethod(Algorithm<?> method)
 	{
-		System.out.println(method);
+		selection.clear();
+		if (method instanceof QuotaAlgorithm)
+		{
+			QuotaFunction q = ((QuotaAlgorithm) method).quotaFunction;
+			if (q == QuotaFunction.HARE
+				|| q == QuotaFunction.HARE_VAR1
+				|| q == QuotaFunction.HARE_VAR2)
+			{
+				hareCheck.setSelected(true);
+			}
+			else if (q == QuotaFunction.DROOP
+				|| q == QuotaFunction.DROOP_VAR1
+				|| q == QuotaFunction.DROOP_VAR2
+				|| q == QuotaFunction.DROOP_VAR3)
+			{
+				droopCheck.setSelected(true);
+			}
+		}
+		else if (method instanceof DivisorAlgorithm)
+		{
+			RoundingFunction r = ((DivisorAlgorithm) method).roundingFunction;
+			if (r == RoundingFunction.DIV_STD) divstdCheck.setSelected(true);
+			else if (r == RoundingFunction.DIV_DWN) divdwnCheck.setSelected(true);
+			else if (r == RoundingFunction.DIV_UPW) divupwCheck.setSelected(true);
+			else if (r == RoundingFunction.DIV_GEO) divgeoCheck.setSelected(true);
+			else if (r == RoundingFunction.DIV_HAR) hareCheck.setSelected(true);
+			else if (r instanceof RoundingFunction.Stationary) divstaCheck.setSelected(true);
+			else if (r instanceof RoundingFunction.Power) divpotCheck.setSelected(true);
+		}
 	}
 }

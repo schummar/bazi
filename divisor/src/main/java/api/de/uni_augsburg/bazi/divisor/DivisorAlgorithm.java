@@ -12,8 +12,8 @@ import java.util.function.BiFunction;
 /** A divisor algorithm. */
 public class DivisorAlgorithm implements Algorithm<DivisorData>
 {
-	private final RoundingFunction roundingFunction;
-	private final String name;
+	public final RoundingFunction roundingFunction;
+	public final String name;
 
 	/**
 	 * @param roundingFunction the rounding function this algorithm uses.
@@ -23,14 +23,6 @@ public class DivisorAlgorithm implements Algorithm<DivisorData>
 	{
 		this.roundingFunction = roundingFunction;
 		this.name = name;
-	}
-	/**
-	 * The rounding function this algorithm uses.
-	 * @return the rounding function this algorithm uses.
-	 */
-	public RoundingFunction roundingFunction()
-	{
-		return roundingFunction;
 	}
 
 
