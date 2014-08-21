@@ -27,7 +27,6 @@ public class ConfigBmmController
 	public void setLabel(Labeled label)
 	{
 		this.label = label;
-		System.out.println(label);
 		update();
 	}
 
