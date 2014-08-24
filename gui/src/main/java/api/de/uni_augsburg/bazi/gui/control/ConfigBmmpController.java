@@ -2,16 +2,17 @@ package de.uni_augsburg.bazi.gui.control;
 
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.bmm.BMMAlgorithm;
+import de.uni_augsburg.bazi.bmm_pow.BMMPowAlgorithm;
 import de.uni_augsburg.bazi.common.Resources;
 import javafx.fxml.FXML;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
 
 
-public class ConfigBmmController
+public class ConfigBmmpController
 {
 	@FXML TextField base, min, max;
-	BMMAlgorithm algorithm = Data.create(BMMAlgorithm.class);
+	BMMPowAlgorithm algorithm = Data.create(BMMPowAlgorithm.class);
 	private Labeled label;
 
 

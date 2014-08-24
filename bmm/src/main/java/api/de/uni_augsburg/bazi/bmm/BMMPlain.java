@@ -1,5 +1,6 @@
 package de.uni_augsburg.bazi.bmm;
 
+import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.Resources;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.VectorData;
@@ -32,7 +33,7 @@ public class BMMPlain
 
 	public List<StringTable> get()
 	{
-		List<StringTable> tables = algorithm.method.plainFormatter().apply(data, options);
+		List<StringTable> tables = algorithm.method().plainFormatter().apply(data, options);
 		if (options.divisorFormat() == DivisorFormat.QUOTIENTS)
 			modifyQuotientColumn(tables.get(0).col(VectorPlain.QUTIENT));
 		return tables;
@@ -48,7 +49,7 @@ public class BMMPlain
 		List<String> quotients = col.subList(1, col.size() - 1);
 		for (int i = 0; i < data.parties().size(); i++)
 		{
-			String s = String.format("%s+%s", algorithm.base, quotients.get(i));
+			String s = String.format("%s+%s", algorithm.base(), quotients.get(i));
 			if (data.parties().get(i).conditionUsed()) s += Resources.get("data.");
 			quotients.set(i, s);
 		}

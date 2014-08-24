@@ -1,5 +1,7 @@
 package de.uni_augsburg.bazi.bmm_pow;
 
+import de.schummar.castable.Attribute;
+import de.schummar.castable.CProperty;
 import de.schummar.castable.Data;
 import de.uni_augsburg.bazi.common.StringTable;
 import de.uni_augsburg.bazi.common.algorithm.Algorithm;
@@ -12,39 +14,50 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 /** The base+min..max(pow) algorithm. */
-public class BMMPowAlgorithm implements Algorithm<BMMPowData>
+public interface BMMPowAlgorithm extends Algorithm<BMMPowData>, Data
 {
-	/** Constraints for the seats of each party. */
-	public final Int base, min, max;
-
-	/** The algorithm to calculate the actual apportionment with. */
-	public final DivisorAlgorithm method;
+	/**
+	 * The base seats for each party.
+	 * @return the base seats for each party.
+	 */
+	@Attribute(def = "0") CProperty<Int> baseProperty();
+	default Int base() { return baseProperty().getValue(); }
+	default void base(Int v) { baseProperty().setValue(v); }
 
 	/**
-	 * Consreuctor with initielizers.
-	 * @param base the base seats for each party.
-	 * @param min the min seats for each party.
-	 * @param max the max seats for each party.
-	 * @param method the algorithm to calculate the actual apportionment with.
+	 * The min seats for each party.
+	 * @return the min seats for each party.
 	 */
-	public BMMPowAlgorithm(Int base, Int min, Int max, DivisorAlgorithm method)
+	@Attribute(def = "0") CProperty<Int> minProperty();
+	default Int min() { return minProperty().getValue(); }
+	default void min(Int v) { minProperty().setValue(v); }
+
+	/**
+	 * The max seats for each party.
+	 * @return the max seats for each party.
+	 */
+	@Attribute(def = "oo") CProperty<Int> maxProperty();
+	default Int max() { return maxProperty().getValue(); }
+	default void max(Int v) { maxProperty().setValue(v); }
+
+	/**
+	 * The algorithm to calculate the actual apportionment with.
+	 * @return the algorithm to calculate the actual apportionment with.
+	 */
+	@Attribute(def = "divstd") CProperty<DivisorAlgorithm> methodProperty();
+	default DivisorAlgorithm method() { return methodProperty().getValue(); }
+	default void method(DivisorAlgorithm v) { methodProperty().setValue(v); }
+
+	@Override default String name() { return String.format("BMM(POW) - %s+%s..%s", base(), min(), max()); }
+	@Override default Class<BMMPowData> dataType() { return BMMPowData.class; }
+
+	@Override default BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
 	{
-		this.base = base;
-		this.min = min;
-		this.max = max;
-		this.method = method;
+		return (data, options) -> new BMMPowPlain(method(), data.cast(BMMPowData.class), options).get();
 	}
 
-	@Override public String name() { return String.format("BMM(POW) - %s+%s..%s", base, min, max); }
-	@Override public Class<BMMPowData> dataType() { return BMMPowData.class; }
-
-	@Override public BiFunction<Data, PlainOptions, List<StringTable>> plainFormatter()
+	@Override default void apply(Data in, Options options)
 	{
-		return (data, options) -> new BMMPowPlain(method, data.cast(BMMPowData.class), options).get();
-	}
-
-	@Override public void apply(Data in, Options options)
-	{
-		BMMPowAlgorithmImpl.calculate(in.cast(BMMPowData.class), method, base, min, max, options);
+		BMMPowAlgorithmImpl.calculate(in.cast(BMMPowData.class), method(), base(), min(), max(), options);
 	}
 }

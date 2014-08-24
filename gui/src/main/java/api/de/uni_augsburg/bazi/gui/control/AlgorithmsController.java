@@ -9,7 +9,6 @@ import de.uni_augsburg.bazi.divisor.DivisorAlgorithm;
 import de.uni_augsburg.bazi.divisor.RoundingFunction;
 import de.uni_augsburg.bazi.gui.view.ConfigPopup;
 import de.uni_augsburg.bazi.gui.view.NumberCheckbox;
-import de.uni_augsburg.bazi.math.Int;
 import de.uni_augsburg.bazi.quota.QuotaAlgorithm;
 import de.uni_augsburg.bazi.quota.QuotaFunction;
 import de.uni_augsburg.bazi.separate.SeparateAlgorithm;
@@ -59,6 +58,13 @@ public class AlgorithmsController
 
 	private ConfigPopup
 		minxpPopup, bmmPopup, bmmpPopup, bipropPopup, harePopup, divpotPopup, divstaPopup, droopPopup;
+	private ConfigMinxpController minxpController;
+	private ConfigBmmController bmmController;
+	private ConfigBmmpController bmmpController;
+	private ConfigHareController hareController;
+	private ConfigDivpotController divpotController;
+	private ConfigDivstaController divstaController;
+	private ConfigDroopController droopController;
 
 	private BAZIFile data;
 
@@ -77,27 +83,34 @@ public class AlgorithmsController
 
 
 		minxpPopup = new ConfigPopup(minxpButton, "/de/uni_augsburg/bazi/gui/config_minxp.fxml");
-		((ConfigMinxpController) minxpPopup.contentController()).setLabel(minxpAux);
+		minxpController = (ConfigMinxpController) minxpPopup.contentController();
+		minxpController.setLabel(minxpAux);
 
 		bmmPopup = new ConfigPopup(bmmButton, "/de/uni_augsburg/bazi/gui/config_bmm.fxml");
-		((ConfigBmmController) bmmPopup.contentController()).setLabel(bmmAux);
+		bmmController = (ConfigBmmController) bmmPopup.contentController();
+		bmmController.init(bmmAux);
 
-		bmmpPopup = new ConfigPopup(bmmpButton, "/de/uni_augsburg/bazi/gui/config_bmm.fxml");
-		((ConfigBmmController) bmmpPopup.contentController()).setLabel(bmmpAux);
+		bmmpPopup = new ConfigPopup(bmmpButton, "/de/uni_augsburg/bazi/gui/config_bmmp.fxml");
+		bmmpController = (ConfigBmmpController) bmmpPopup.contentController();
+		bmmpController.init(bmmpAux);
 
 		bipropPopup = new ConfigPopup(bipropButton, "/de/uni_augsburg/bazi/gui/config_biprop.fxml");
 
 		harePopup = new ConfigPopup(hareButton, "/de/uni_augsburg/bazi/gui/config_hare.fxml");
-		((ConfigHareController) harePopup.contentController()).setLabel(hareCheck);
+		hareController = (ConfigHareController) harePopup.contentController();
+		hareController.setLabel(hareCheck);
 
 		divpotPopup = new ConfigPopup(divpotButton, "/de/uni_augsburg/bazi/gui/config_divpot.fxml");
-		((ConfigDivpotController) divpotPopup.contentController()).setLabel(divpotAux);
+		divpotController = (ConfigDivpotController) divpotPopup.contentController();
+		divpotController.setLabel(divpotAux);
 
 		divstaPopup = new ConfigPopup(divstaButton, "/de/uni_augsburg/bazi/gui/config_divsta.fxml");
-		((ConfigDivstaController) divstaPopup.contentController()).setLabel(divstaAux);
+		divstaController = (ConfigDivstaController) divstaPopup.contentController();
+		divstaController.setLabel(divstaAux);
 
 		droopPopup = new ConfigPopup(droopButton, "/de/uni_augsburg/bazi/gui/config_droop.fxml");
-		((ConfigDroopController) droopPopup.contentController()).setLabel(droopCheck);
+		droopController = (ConfigDroopController) droopPopup.contentController();
+		droopController.setLabel(droopCheck);
 	}
 
 	public void setData(BAZIFile data)
@@ -121,18 +134,18 @@ public class AlgorithmsController
 		if (algorithm instanceof BMMAlgorithm)
 		{
 			bmmRadio.setSelected(true);
-			Int base = ((BMMAlgorithm) algorithm).base,
+			/*Int base = ((BMMAlgorithm) algorithm).base,
 				min = ((BMMAlgorithm) algorithm).min,
-				max = ((BMMAlgorithm) algorithm).max;
-			selectMethod(((BMMAlgorithm) algorithm).method);
+				max = ((BMMAlgorithm) algorithm).max;*/
+			selectMethod(((BMMAlgorithm) algorithm).method());
 		}
 		else if (algorithm instanceof BMMPowAlgorithm)
 		{
 			bmmpRadio.setSelected(true);
-			Int base = ((BMMPowAlgorithm) algorithm).base,
+			/*Int base = ((BMMPowAlgorithm) algorithm).base,
 				min = ((BMMPowAlgorithm) algorithm).min,
-				max = ((BMMPowAlgorithm) algorithm).max;
-			selectMethod(((BMMPowAlgorithm) algorithm).method);
+				max = ((BMMPowAlgorithm) algorithm).max;*/
+			selectMethod(((BMMPowAlgorithm) algorithm).method());
 		}
 		else if (algorithm instanceof SeparateAlgorithm)
 		{

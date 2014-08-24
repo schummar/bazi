@@ -84,7 +84,10 @@ class BMMPowAlgorithmImpl
 					p -> p.votes(BMath.pow(p.votes(), pow, options.precision()))
 				);
 
-				BMMAlgorithm bmm = new BMMAlgorithm(base, min, BMath.INF, method);
+				BMMAlgorithm bmm = de.schummar.castable.Data.create(BMMAlgorithm.class);
+				bmm.base(base);
+				bmm.min(min);
+				bmm.max(max);
 				bmm.apply(part, options);
 				part.power(pow);
 				return part;
