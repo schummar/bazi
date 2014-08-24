@@ -13,6 +13,14 @@ import java.util.function.Function;
 
 public class CProperty<T> implements Property<T>
 {
+	public static <T> CProperty<T> of(Class<T> c)
+	{
+		Converter<T> converter = Converters.get(c);
+		Function<String, String> validator = converter.createValidator(null);
+		return new CProperty<>(converter.pack(null), converter, validator);
+	}
+
+
 	protected final Castable castable;
 	protected final Converter<T> converter;
 	protected final Function<String, String> validator;

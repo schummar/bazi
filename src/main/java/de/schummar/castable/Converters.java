@@ -74,20 +74,6 @@ public abstract class Converters
 		if (c.isAnnotationPresent(Convert.class))
 			return createConverter(c.getAnnotation(Convert.class).value(), type);
 
-		Queue<Class<?>> q = new LinkedList<>();
-		q.add(c);
-		while (!q.isEmpty())
-		{
-			Class<?> cur = q.remove();
-			if (cur.isAnnotationPresent(Convert.class) && cur.getAnnotation(Convert.class).forSubClasses())
-				return createConverter(cur.getAnnotation(Convert.class).value(), type);
-
-
-			Class<?> sup = cur.getSuperclass();
-			if (sup != null) q.add(sup);
-			q.addAll(Arrays.asList(cur.getInterfaces()));
-		}
-
 		if (c == Boolean.class || c == boolean.class) return BOOLEAN_OBJ_CONVERTER;
 		if (c == Integer.class || c == int.class) return INTEGER_OBJ_CONVERTER;
 		if (c == Long.class || c == long.class) return LONG_OBJ_CONVERTER;
@@ -124,6 +110,20 @@ public abstract class Converters
 			@SuppressWarnings("unchecked")
 			Class<? extends Data> d = (Class<? extends Data>) c;
 			return new ObjectConverter<>(d);
+		}
+
+		Queue<Class<?>> q = new LinkedList<>();
+		q.add(c);
+		while (!q.isEmpty())
+		{
+			Class<?> cur = q.remove();
+			if (cur.isAnnotationPresent(Convert.class) && cur.getAnnotation(Convert.class).forSubClasses())
+				return createConverter(cur.getAnnotation(Convert.class).value(), type);
+
+
+			Class<?> sup = cur.getSuperclass();
+			if (sup != null) q.add(sup);
+			q.addAll(Arrays.asList(cur.getInterfaces()));
 		}
 
 		throw new RuntimeException(String.format("No converter for type %s available.", type));
