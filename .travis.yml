@@ -1,19 +1,9 @@
 notifications:
   email: false
-
 language: java
 jdk:
-  - oraclejdk8
-
-env:
-  global:
-  - secure: F5/SVRO4FYfAflDwujrzcjZIxqAOR8YUcoF88//pI7NFSHQkBiXKyNh6RrQGrroAg4ppTZfZYicHBDoBK3OjkU9is8TtlnIu2DJAfOsgbaCOv6C4r2VuUr0B2VUr0DzuZKeDPdfWB5XZ1sYoKEGkTM5fU/jVjkUbZh/BEDOAB6E=
-  - secure: opK0hpUT/gqOwsi+i/uMnWbXGV7HpWhse4h+oJ7A5S5b/ZfouT3x3r2BTwbTv2T3LnvxSrpJucz92FWrwY28pX0FcoaJm/hH3tDXZN/mo5KnVF2wK2E+WentSoR8Tfz717IywdyqgE6F5cSv3IfkAh3l2C0mkOg5kHU6DDdBiKU=
-  - secure: mYt1m88jxlHukA92zY2T2XhzD795dFmKF9iNHga1dIjHeeC9r420KsyFyrvAHeW5LpO3tPR0olFmr96VBRHA8Ot1EqMKjBVM1AoVeW4NGHJDERXIropK3adR21N1Xv2Voq9thHbFEywH/Rn3d1KzqrrRpXqxQbpN3jvHM6/zT4I=
-  - secure: F6DQX1d3JuyY8jUi88SRfaKofhkP9MWRUW8rXzhzA6ivRgHvqI1czh/lfMERLXZOemLHVzDp/U9ovHDmxp+d1FxT/YlL1D7mxDLmOHvw4v1Nsl0tfnKJmUrukI8pjgF/MJIYUk2B3wAkl2f99fuNLQ61+eMxlPXQGi16agp5dOA=
-
+- oraclejdk8
 install: gradle shadowJar
-
 deploy:
   provider: releases
   api_key:
@@ -22,7 +12,12 @@ deploy:
   on:
     tags: true
     repo: schummar/bazi
-
 after_success:
-  - gem install travis-custom-deploy
-  - travis-custom-deploy sftp build/distributions/
+- gem install travis-custom-deploy
+- travis-custom-deploy sftp build/distributions/
+env:
+  global:
+  - secure: POVspFmyNAVZq7w8JyivGjHYylx0LO6FcNjhNXFpPVbRYnG10xU/VPpVaeTbaPKWQjXCn9eOeY7qzzYWtJv394aNfVF9OsA+zc12AIEI5wRqzL0WxfopSTvThgOom0XLhvThsYlWO6+PZQQqtuMHrkfjvwKe8ExTYRap6+TDybU=
+  - secure: dyVQOwupMWoddhiIjz6+MsLLlpD6astdw1zVPfsWq/yPiH9bAxb245Q/b7IgX2qarTXwHoKnxxKkaUOxCBxvkf6XZHENx6gTn+EnCEBlgj8RpH6IFOl7Pps9JFCpMem2Z0X0tIITwRveEW3DQl53JQSWNJAbQOMLD2JJsAjDEMU=
+  - secure: UobThMeJcBMVfVPdtogWvP4SFLZvZe9Oo8sLL2hNkN6Y4SAceKH1ci3IB/pnx+FVUefwRGVVxAfoDDNglVnEBMJcW2++XmVfZL7kdd3/1sXmF8TgfxhB3f1VKG6dlgz5SnaqLikAtjoQhrKDgSZM3qIfZ8OOG9+37KlasLKTC9U=
+  - secure: FDUGH/b/CC1XbDVoqkZ4w87L0qk0oG8NtOga3FPAzshAXBtaQyPm3Ew1BvXPqkaOYDJk0o33j6mpPo/xAdZpGPPAkguqi65gcKeao3OklsoLcQRpJLnCLA1+wX1DkAvR/2SOaXZTVZRKdBUfbQ2pHiFYMFhn9FYbLZNuVtexEaA=
