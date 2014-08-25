@@ -23,4 +23,6 @@ deploy:
     tags: true
     repo: schummar/bazi
 
-after_success: bundle exec travis-custom-deploy sftp build/distributions/
+after_success:
+  gem "travis-custom-deploy", "~> 0.0.6"
+  bundle exec travis-custom-deploy sftp build/distributions/
