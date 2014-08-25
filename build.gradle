@@ -30,17 +30,6 @@ allprojects {
 	targetCompatibility = 1.8
 	compileJava.options.encoding = 'UTF-8'
 
-	sourceSets {
-		main {
-			java {
-				srcDirs = [
-					'src/main/java/api',
-					'src/main/java/impl'
-				]
-			}
-		}
-	}
-
 	repositories {
 		mavenCentral()
 		mavenLocal()

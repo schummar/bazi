@@ -1,5 +1,6 @@
 dependencies {
+	compile project(':castable')
+
 	compile 'org.apfloat:apfloat:1.8.1'
 	compile 'com.google.guava:guava:16.0.1'
-	compile 'de.schummar:castable:0.9'
 }
