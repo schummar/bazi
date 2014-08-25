@@ -25,4 +25,4 @@ deploy:
 
 after_success:
   gem install travis-custom-deploy
-  bundle exec travis-custom-deploy sftp build/distributions/
+  travis-custom-deploy sftp build/distributions/
