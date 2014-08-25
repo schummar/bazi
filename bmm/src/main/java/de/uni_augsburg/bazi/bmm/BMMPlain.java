@@ -21,7 +21,7 @@ public class BMMPlain
 	 * Constructor with initializers.
 	 * @param algorithm the used algorithm.
 	 * @param data the result to produce plain data for.
-	 * @param options
+	 * @param options options.
 	 */
 	public BMMPlain(BMMAlgorithm algorithm, VectorData data, PlainOptions options)
 	{

@@ -31,6 +31,7 @@ public interface Plugin<T extends Plugin.Instance>
 
 	/**
 	 * Create an instance of <b>T</b> if the parameters fit. (E.g. the name equals the name of this plugin's instance)
+	 * @param data parameters.
 	 * @return an Optional of the new instance if the parameters fit, an empty Optional else.
 	 */
 	Optional<? extends T> tryInstantiate(Params data);

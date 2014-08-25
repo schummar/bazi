@@ -17,6 +17,7 @@ public class QuotaPlain extends VectorPlain
 
 	/**
 	 * @param output the data to produce plain data for.
+	 * @param options options.
 	 * @param name the display name of the algorithm.
 	 */
 	public QuotaPlain(QuotaData output, PlainOptions options, String name)

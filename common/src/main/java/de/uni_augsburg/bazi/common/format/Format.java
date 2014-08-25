@@ -10,12 +10,9 @@ import java.io.*;
 public interface Format extends Plugin.Instance
 {
 	/**
-	 * Deserialize the given String to a map of raw data.
-	 * Each entry represents an attribute.
-	 * The key is the attribute name.
-	 * The value must either be a String, a List of values or again an attribute map.
-	 * @param s the serialized data.
-	 * @return a raw data map.
+	 * Deserialize the given String to a castable.
+	 * @param reader is used to read the serialized data from.
+	 * @return a castable.
 	 */
 	Castable deserialize(Reader reader);
 	default Castable deserialize(File file)
@@ -29,12 +26,9 @@ public interface Format extends Plugin.Instance
 	}
 
 	/**
-	 * Serialize the given map of raw data.
-	 * Each entry represents an attribute.
-	 * The key is the attribute name.
-	 * The value must either be a String, a List of values or again an attribute map.
-	 * @param data a raw data map.
-	 * @return the serialized data.
+	 * Serialize the given castable.
+	 * @param data the castable.
+	 * @param writer is used to write the serialized data to.
 	 */
 	void serialize(Castable data, PrintStream writer);
 	default String serialize(Castable data)

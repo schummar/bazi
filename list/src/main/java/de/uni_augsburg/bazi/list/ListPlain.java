@@ -18,6 +18,9 @@ public class ListPlain
 
 	/**
 	 * @param data the data to produce plain data for.
+	 * @param options options.
+	 * @param Super the super method.
+	 * @param sub the sub method.
 	 */
 	public ListPlain(ListData data, PlainOptions options, Algorithm<? extends VectorData> Super, Algorithm<? extends VectorData> sub)
 	{

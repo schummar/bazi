@@ -15,6 +15,7 @@ public class DivisorPlain extends VectorPlain
 
 	/**
 	 * @param data the data to produce plain data for.
+	 * @param options options.
 	 * @param r the rounding function the divisor algorithm used.
 	 * @param name the display name of the algorithm.
 	 */

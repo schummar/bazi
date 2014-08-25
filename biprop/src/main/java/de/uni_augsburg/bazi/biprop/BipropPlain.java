@@ -52,6 +52,8 @@ public class BipropPlain extends MatrixPlain
 	/**
 	 * Constructor with initializers.
 	 * @param data the biproportional result to produce plain data for.
+	 * @param options options.
+	 * @param Super the super method.
 	 * @param sub the name of the divisor method used for the main apportionment.
 	 */
 	public BipropPlain(BipropData data, PlainOptions options, Algorithm<? extends DivisorData> Super, String sub)
@@ -236,7 +238,8 @@ public class BipropPlain extends MatrixPlain
 			this.rowDivisors = rowDivisors;
 		}
 		@Override public void partyColumn(StringTable.Column col)
-		{ }
+		{
+		}
 		@Override public void voteColumn(StringTable.Column col)
 		{
 			super.voteColumn(col);

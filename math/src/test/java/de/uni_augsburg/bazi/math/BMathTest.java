@@ -1,50 +1,53 @@
 package de.uni_augsburg.bazi.math;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
+import de.schummar.castable.Attribute;
+import de.uni_augsburg.bazi.json.JsonFormat;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 
 public class BMathTest
 {
-	private class Data
+	private interface Data extends de.schummar.castable.Data
 	{
-		Int[] intadd;
-		Int[] intmul;
-		Rational[] ratadd;
-		Rational[] ratmul;
+		@Attribute List<Int> intadd();
+		@Attribute List<Int> intmul();
+		@Attribute List<Rational> ratadd();
+		@Attribute List<Rational> ratmul();
 	}
 
 	@Test public void test() throws IOException
 	{
-		String json = Resources.toString(Resources.getResource(getClass(), "numbers.txt"), Charsets.UTF_8);
-		Data data = null;//Json.fromJson(json, Data.class);
+		Data data = new JsonFormat()
+			.deserialize(new InputStreamReader(BMathTest.class.getResourceAsStream("numbers.txt")))
+			.asCastableObject().cast(Data.class);
 
-		for (int i = 0; i < data.intadd.length; i += 3)
+		for (int i = 0; i < data.intadd().size(); i += 3)
 		{
-			Assert.assertTrue(data.intadd[i].add(data.intadd[i + 1]).equals(data.intadd[i + 2]));
-			Assert.assertTrue(data.intadd[i + 2].sub(data.intadd[i + 1]).equals(data.intadd[i]));
+			Assert.assertTrue(data.intadd().get(i).add(data.intadd().get(i + 1)).equals(data.intadd().get(i + 2)));
+			Assert.assertTrue(data.intadd().get(i + 2).sub(data.intadd().get(i + 1)).equals(data.intadd().get(i)));
 		}
 
-		for (int i = 0; i < data.intmul.length; i += 3)
+		for (int i = 0; i < data.intmul().size(); i += 3)
 		{
-			Assert.assertTrue(data.intmul[i].mul(data.intmul[i + 1]).equals(data.intmul[i + 2]));
-			Assert.assertTrue(data.intmul[i + 2].div(data.intmul[i + 1]).equals(data.intmul[i]));
+			Assert.assertTrue(data.intmul().get(i).mul(data.intmul().get(i + 1)).equals(data.intmul().get(i + 2)));
+			Assert.assertTrue(data.intmul().get(i + 2).div(data.intmul().get(i + 1)).equals(data.intmul().get(i)));
 		}
 
-		for (int i = 0; i < data.ratadd.length; i += 3)
+		for (int i = 0; i < data.ratadd().size(); i += 3)
 		{
-			Assert.assertTrue(data.ratadd[i].add(data.ratadd[i + 1]).equals(data.ratadd[i + 2]));
-			Assert.assertTrue(data.ratadd[i + 2].sub(data.ratadd[i + 1]).equals(data.ratadd[i]));
+			Assert.assertTrue(data.ratadd().get(i).add(data.ratadd().get(i + 1)).equals(data.ratadd().get(i + 2)));
+			Assert.assertTrue(data.ratadd().get(i + 2).sub(data.ratadd().get(i + 1)).equals(data.ratadd().get(i)));
 		}
 
-		for (int i = 0; i < data.intmul.length; i += 3)
+		for (int i = 0; i < data.intmul().size(); i += 3)
 		{
-			Assert.assertTrue(data.ratmul[i].mul(data.ratmul[i + 1]).equals(data.ratmul[i + 2]));
-			if (data.ratmul[i + 1].sgn() != 0)
-				Assert.assertTrue(data.ratmul[i + 2].div(data.ratmul[i + 1]).equals(data.ratmul[i]));
+			Assert.assertTrue(data.ratmul().get(i).mul(data.ratmul().get(i + 1)).equals(data.ratmul().get(i + 2)));
+			if (data.ratmul().get(i + 1).sgn() != 0)
+				Assert.assertTrue(data.ratmul().get(i + 2).div(data.ratmul().get(i + 1)).equals(data.ratmul().get(i)));
 		}
 
 		Assert.assertTrue(BMath.ONE.add(BMath.NAN).equals(BMath.NAN));

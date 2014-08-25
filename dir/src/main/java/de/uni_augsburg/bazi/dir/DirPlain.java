@@ -24,7 +24,8 @@ public class DirPlain
 	/**
 	 * Constructor with initializers.
 	 * @param data the result to produce plain data for.
-	 * @param options * @param algorithm
+	 * @param options options.
+	 * @param algorithm the algorithm.
 	 */
 	public DirPlain(DirData data, PlainOptions options, Algorithm<? extends VectorData> algorithm)
 	{

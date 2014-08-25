@@ -24,7 +24,7 @@ public class BMMPowPlain
 	 * Constructor with initializers.
 	 * @param data the result to produce plain data for.
 	 * @param method the algorithm used for the actual apportionments.
-	 * @param options
+	 * @param options options.
 	 */
 	public BMMPowPlain(DivisorAlgorithm method, BMMPowData data, PlainOptions options)
 	{

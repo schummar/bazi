@@ -26,8 +26,10 @@ public class SeparatePlain extends MatrixPlain
 
 	/**
 	 * @param data the data to produce plain data for.
+	 * @param options options.
+	 * @param method the method.
 	 */
-	public SeparatePlain(MatrixData data, PlainOptions options,  Algorithm<? extends VectorData> method)
+	public SeparatePlain(MatrixData data, PlainOptions options, Algorithm<? extends VectorData> method)
 	{
 		super(data, options, method.name());
 		this.method = method;

@@ -31,6 +31,7 @@ public abstract class MatrixPlain
 	/**
 	 * Constructor with initializers.
 	 * @param output the result to produce plain data for.
+	 * @param options options.
 	 * @param vectorName the name of the vector method used for the apportionment.
 	 */
 	protected MatrixPlain(MatrixData output, PlainOptions options, String vectorName)

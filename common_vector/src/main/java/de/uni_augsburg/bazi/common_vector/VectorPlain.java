@@ -28,6 +28,7 @@ public class VectorPlain
 	/**
 	 * Constructor with initializers.
 	 * @param output the result to produce plain data for.
+	 * @param options options.
 	 * @param name the name of the vector method used for the apportionment.
 	 */
 	public VectorPlain(VectorData output, PlainOptions options, String name)
