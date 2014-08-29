@@ -13,11 +13,11 @@ deploy:
     tags: true
     repo: schummar/bazi
 after_success:
-- gem install travis-custom-deploy
-- travis-custom-deploy sftp build/distributions/
+- chmod 600 deploy_key
+- sftp -i deploy_key -b upload bazi@schummar.de
+before_install:
+- openssl aes-256-cbc -K $encrypted_35fdb35dd58e_key -iv $encrypted_35fdb35dd58e_iv
+  -in deploy_key.enc -out deploy_key -d
 env:
   global:
-  - secure: POVspFmyNAVZq7w8JyivGjHYylx0LO6FcNjhNXFpPVbRYnG10xU/VPpVaeTbaPKWQjXCn9eOeY7qzzYWtJv394aNfVF9OsA+zc12AIEI5wRqzL0WxfopSTvThgOom0XLhvThsYlWO6+PZQQqtuMHrkfjvwKe8ExTYRap6+TDybU=
-  - secure: dyVQOwupMWoddhiIjz6+MsLLlpD6astdw1zVPfsWq/yPiH9bAxb245Q/b7IgX2qarTXwHoKnxxKkaUOxCBxvkf6XZHENx6gTn+EnCEBlgj8RpH6IFOl7Pps9JFCpMem2Z0X0tIITwRveEW3DQl53JQSWNJAbQOMLD2JJsAjDEMU=
-  - secure: UobThMeJcBMVfVPdtogWvP4SFLZvZe9Oo8sLL2hNkN6Y4SAceKH1ci3IB/pnx+FVUefwRGVVxAfoDDNglVnEBMJcW2++XmVfZL7kdd3/1sXmF8TgfxhB3f1VKG6dlgz5SnaqLikAtjoQhrKDgSZM3qIfZ8OOG9+37KlasLKTC9U=
-  - secure: FDUGH/b/CC1XbDVoqkZ4w87L0qk0oG8NtOga3FPAzshAXBtaQyPm3Ew1BvXPqkaOYDJk0o33j6mpPo/xAdZpGPPAkguqi65gcKeao3OklsoLcQRpJLnCLA1+wX1DkAvR/2SOaXZTVZRKdBUfbQ2pHiFYMFhn9FYbLZNuVtexEaA=
+  - secure: Z4Erm11fbuug+HNZ2WIEvpgwiek4rnNX3ZvyBUGsAZJxlg5JZkgxAworofcZAZqHnuuIC04pFbhTf/QvkDHhAlyK3c4xRrOs0XJ1kgqmP1+2ENjjrOwKgKNc62xBeDC/wRNJ8JoCvjt8eO5lDbqKnrnlJngASnVDmJOABZfeb7o=

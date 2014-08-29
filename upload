@@ -1,0 +1,3 @@
+cd http/current
+put build/distributions/bazi.jar
+put -r build/docs/api
